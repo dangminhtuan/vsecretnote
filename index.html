@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TimeCypher - Vietnamese Encoder</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <div id="matrix-canvas-container">
+  <div class="fullscreen-backdrop" id="fs-backdrop" onclick="closeFullscreen()"></div>
+  <canvas id="matrix-canvas"></canvas>
+    </div>
+    <div class="app-container">
+      <header>
+        <h1 class="glitch" data-text="TIMECYPHER">TIMECYPHER</h1>
+        <p class="subtitle">Secure Vietnamese-to-Time Encoding Protocol</p>
+      </header>
+
+      <div class="layout-split">
+        <!-- CỘT 1: SIDEBAR GHI CHÚ -->
+        <aside class="notes-sidebar">
+          <div class="sidebar-header">
+            <h2>/// CIPHER NOTES ///</h2>
+            <div style="display: flex; gap: 5px;">
+              <button id="btn-new-note" class="cyber-btn-small">+ NEW</button>
+              <button id="btn-playground" class="cyber-btn-small" style="background: #110; color: #ff0; border-color: #880;">SANDBOX</button>
+            </div>
+          </div>
+          <div class="search-container">
+            <input type="text" id="search-note" placeholder="Search (VI or Base60)..." spellcheck="false" />
+          </div>
+          <div class="tabs-container">
+            <button class="tab-btn active" data-tab="active">ACTIVE</button>
+            <button class="tab-btn" data-tab="archive">ARCHIVE</button>
+          </div>
+          <!-- Note Actions -->
+          <div class="note-actions">
+            <button id="btn-archive-note" class="cyber-btn-small">ARCHIVE</button>
+            <button id="btn-delete-note" class="cyber-btn-small danger">DELETE</button>
+          </div>
+          <div class="sync-actions" style="display: flex; gap: 5px; margin-bottom: 15px;">
+            <button id="btn-export-json" class="cyber-btn-small" style="flex:1; background: #000; border-color: #555; color: #aaa;">[EXPORT]</button>
+            <button id="btn-import-json" class="cyber-btn-small" style="flex:1; background: #000; border-color: #555; color: #aaa;">[IMPORT]</button>
+            <input type="file" id="import-file" style="display:none;" accept=".json" />
+          </div>
+          <div class="notes-list" id="notes-list">
+            <!-- Notes injected by JS -->
+          </div>
+        </aside>
+
+        <!-- CỘT 2: EDITOR (3 TEXTAREAS + KEYBOARD) -->
+        <main class="converter-box editor-box">
+          <!-- Text Decrypted -->
+          <div class="input-group">
+            <div class="label-row">
+              <label for="text-input">TEXT DECRYPTED [VI/EN]</label>
+              <div class="action-btns">
+                <button id="btn-copy-text" class="copy-btn">COPY</button>
+                <button id="btn-clear-text" class="copy-btn clear-btn">CLEAR</button>
+                <button class="copy-btn btn-fullscreen" onclick="toggleFullscreen(this)">⤢</button>
+              </div>
+            </div>
+            <textarea id="text-input" placeholder="Nhập văn bản cần mã hóa..." spellcheck="false"></textarea>
+          </div>
+          
+          <div class="controls">
+            <button id="btn-encode" class="cyber-btn"><span class="btn-text">ENCODE &darr;</span></button>
+            <button id="btn-decode" class="cyber-btn"><span class="btn-text">DECODE &uarr;</span></button>
+          </div>
+
+          <!-- Time Encrypted -->
+          <div class="input-group">
+            <div class="label-row">
+              <label for="time-input">TIME ENCRYPTED [HH:MM:SS]</label>
+              <div class="action-btns">
+                <button id="btn-copy-time" class="copy-btn">COPY</button>
+                <button id="btn-clear-time" class="copy-btn clear-btn">CLEAR</button>
+                <button class="copy-btn btn-fullscreen" onclick="toggleFullscreen(this)">⤢</button>
+              </div>
+            </div>
+            <textarea id="time-input" placeholder="Mã thời gian..." spellcheck="false"></textarea>
+          </div>
+
+          <!-- Compressed Base60 -->
+          <div class="input-group compressed-group">
+            <div class="label-row">
+              <label for="compressed-input">COMPRESSED CODE [BASE60]</label>
+              <div class="action-btns">
+                <button id="btn-copy-compressed" class="copy-btn">COPY</button>
+                <button id="btn-clear-compressed" class="copy-btn clear-btn">CLEAR</button>
+                <button class="copy-btn btn-fullscreen" onclick="toggleFullscreen(this)">⤢</button>
+              </div>
+            </div>
+            <textarea id="compressed-input" placeholder="Mã nén siêu ngắn..." spellcheck="false"></textarea>
+          </div>
+
+        </main>
+
+        <!-- CỘT 3: BREAKDOWN LOG -->
+        <section class="breakdown-box">
+          <h2 class="dict-title">/// TRANSLATION LOG ///</h2>
+          <div class="breakdown-list" id="breakdown-list">
+             <!-- JS will populate this -->
+          </div>
+        </section>
+
+        <!-- BẢNG TỪ ĐIỂN -->
+        <section class="dictionary-box">
+          <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+             <h2 class="dict-title" style="margin-bottom:0;">/// DICTIONARY MATRIX ///</h2>
+             <div class="dict-controls" style="display:flex; gap: 10px;">
+               <select id="sel-consonant" class="cyber-select">
+                 <option value="base">Phụ âm: CƠ BẢN (24)</option>
+                 <option value="extra">Phụ âm: MỞ RỘNG (8)</option>
+               </select>
+               <select id="sel-rhyme" class="cyber-select">
+                 <option value="base">Vần: CƠ BẢN (60)</option>
+                 <option value="extra1">Vần: MỞ RỘNG 1 (60)</option>
+                 <option value="extra2">Vần: MỞ RỘNG 2 (35)</option>
+               </select>
+             </div>
+          </div>
+          <div class="consonant-grid" id="consonant-grid">
+            <!-- Consonants injected by JS -->
+          </div>
+          <div class="rhyme-matrix" id="rhyme-matrix">
+            <div class="matrix-placeholder">SELECT A CONSONANT TO INITIALIZE MATRIX...</div>
+          </div>
+        </section>
+      </div>
+
+      <div id="status-panel" class="status-panel">
+        <span class="status-indicator"></span> SYSTEM ONLINE. WAITING FOR INPUT...
+      </div>
+    </div>
+    <script type="module" src="/main.js"></script>
+  </body>
+</html>
