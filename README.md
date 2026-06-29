@@ -3,6 +3,9 @@
 
 VSecretNote không phải là một ứng dụng ghi chú bình thường. Nó là một cỗ máy bảo mật cá nhân, sử dụng thuật toán nén và mã hóa ngữ nghĩa tiếng Việt độc quyền (VCOMP) để biến những bí mật của bạn thành các đoạn mã vô nghĩa trong mắt người ngoài, nhưng lại dịch ngược hoàn hảo khi bạn cần.
 
+## 🚀 Live Demo
+**Trải nghiệm trực tiếp tại:** [https://mat-ma-thoi-gian.pages.dev/](https://mat-ma-thoi-gian.pages.dev/)
+
 ## 🌟 Tính năng nổi bật
 - **Mã hóa VCOMP (Base60):** Mọi từ tiếng Việt được nén chặt thành 3 ký tự (Ví dụ: `tuyệt mật` -> `hX9 kA4`). Nếu không có bộ từ điển giải mã, dữ liệu hoàn toàn vô dụng với hacker.
 - **Offline 100%:** Ứng dụng hoạt động hoàn toàn trên trình duyệt của bạn (Client-side). Không có cơ sở dữ liệu đám mây, không gửi API về server. Dữ liệu được lưu trong `LocalStorage` của trình duyệt. Bí mật của bạn chỉ nằm trên máy của bạn.

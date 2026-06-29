@@ -469,18 +469,20 @@ textarea::placeholder {
 .search-container {
   margin-bottom: 10px;
 }
-.search-container input {
+#search-note, #note-tag-input {
   width: 100%;
-  padding: 8px 10px;
-  background: rgba(0, 30, 0, 0.8);
-  border: 1px solid var(--neon-green);
-  color: #fff;
+  background: rgba(0, 20, 0, 0.8);
+  border: 1px solid #333;
+  color: var(--neon-green);
+  padding: 8px;
   font-family: var(--font-mono);
-  font-size: 1rem;
+  box-sizing: border-box;
+  margin-bottom: 10px;
 }
-.search-container input:focus {
+#search-note:focus, #note-tag-input:focus {
+  border-color: var(--neon-green);
   outline: none;
-  box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
 }
 
 .tabs-container {

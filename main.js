@@ -227,6 +227,15 @@ txtDecrypted.addEventListener('input', () => {
 txtEncrypted.addEventListener('input', () => {
   if (document.activeElement === txtEncrypted) handleInput(syncFromTime);
 });
+
+const noteTagInput = document.getElementById('note-tag-input');
+if(noteTagInput) {
+  noteTagInput.addEventListener('input', () => {
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(saveCurrentNote, 1000);
+  });
+}
+
 if(txtCompressed) {
   txtCompressed.addEventListener('input', (e) => {
     let val = txtCompressed.value;
@@ -314,6 +323,7 @@ if (btnPlayground) {
     txtDecrypted.value = '';
     txtEncrypted.value = '';
     if(txtCompressed) txtCompressed.value = '';
+    if(noteTagInput) noteTagInput.value = '';
     renderBreakdown([]);
     document.querySelectorAll('.note-item').forEach(i => i.classList.remove('active'));
     alert("Đã vào chế độ SANDBOX (Nháp). Mọi thứ bạn gõ ở đây sẽ KHÔNG BỊ LƯU LẠI.");
@@ -324,11 +334,13 @@ function saveCurrentNote() {
   if (currentNoteId === 'playground') return; // Sandbox mode, do not save
   if(!txtCompressed || txtCompressed.value.trim() === '') return;
   const base60Data = txtCompressed.value.replace(/[⇧⇪]/g, '').trim();
+  const tagData = noteTagInput ? noteTagInput.value.trim() : '';
   
   if (!currentNoteId) {
     currentNoteId = 'note_' + Date.now();
     const newNote = {
       id: currentNoteId,
+      tag: tagData,
       content: base60Data,
       isArchived: false,
       updatedAt: Date.now()
@@ -337,6 +349,7 @@ function saveCurrentNote() {
   } else {
     const note = notesDB.find(n => n.id === currentNoteId);
     if (note) {
+      note.tag = tagData;
       note.content = base60Data;
       note.updatedAt = Date.now();
       // Move to top
@@ -354,6 +367,7 @@ function loadNote(id) {
   currentNoteId = id;
   if(txtCompressed) {
     txtCompressed.value = note.content;
+    if(noteTagInput) noteTagInput.value = note.tag || '';
     syncFromCompressed();
   }
   renderNotesSidebar();
@@ -365,6 +379,7 @@ function createNewNote() {
   txtDecrypted.value = '';
   txtEncrypted.value = '';
   if(txtCompressed) txtCompressed.value = '';
+  if(noteTagInput) noteTagInput.value = '';
   renderBreakdown([]);
   renderNotesSidebar();
   updateActionButtons();
@@ -404,8 +419,10 @@ function renderNotesSidebar() {
     
     const d = new Date(n.updatedAt);
     const preview = n.content.substring(0, 20) + (n.content.length > 20 ? '...' : '');
+    const tagDisplay = n.tag ? `<div style="color:var(--neon-green); font-weight:bold; margin-bottom:3px;">${n.tag}</div>` : '';
     
     el.innerHTML = `
+      ${tagDisplay}
       <div class="note-time">${d.toLocaleDateString()} ${d.toLocaleTimeString()}</div>
       <div class="note-preview">${preview || '[Empty]'}</div>
     `;
