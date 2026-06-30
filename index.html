@@ -52,9 +52,30 @@
 
         <!-- CỘT 2: EDITOR (3 TEXTAREAS + KEYBOARD) -->
         <main class="converter-box editor-box">
-          <!-- Note Tag / Title -->
+          <!-- Note Tags -->
           <div class="input-group" style="margin-bottom: 10px;">
-            <input type="text" id="note-tag-input" placeholder="#tags or note title..." spellcheck="false" />
+            <div class="label-row">
+              <label style="color: #ff0;">TAGS (OPTIONAL)</label>
+            </div>
+            <div id="note-tags-container" style="display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 5px; min-height: 24px;"></div>
+            <div style="display: flex; gap: 5px;">
+              <input type="text" id="new-tag-input" list="all-tags-datalist" placeholder="Add a tag..." spellcheck="false" style="flex: 1;" />
+              <button id="btn-add-tag" class="cyber-btn-small" style="padding: 0 15px;">ADD</button>
+            </div>
+            <datalist id="all-tags-datalist"></datalist>
+          </div>
+
+          <!-- Linked Note -->
+          <div class="input-group" style="margin-bottom: 5px; display: flex; gap: 10px; align-items: center;">
+            <label style="margin-bottom: 0; white-space: nowrap;">LINK TO:</label>
+            <button id="btn-link-prev" class="cyber-btn-small" title="Quick link to previous note" style="padding: 2px 5px;">[PREV]</button>
+            <select id="sel-linked-note" class="cyber-select" style="flex: 1;">
+              <option value="">-- No Link --</option>
+            </select>
+            <button id="btn-open-link" class="cyber-btn-small" style="display: none;">OPEN &rarr;</button>
+          </div>
+          <div id="backlinks-container" style="display: none; margin-bottom: 15px;">
+            <div id="backlinks-list"></div>
           </div>
 
           <!-- Text Decrypted -->
@@ -141,5 +162,6 @@
       </div>
     </div>
     <script type="module" src="/main.js"></script>
+    <script type="module" src="/keyboard.js"></script>
   </body>
 </html>

@@ -307,7 +307,7 @@ textarea::placeholder {
 .layout-split {
   display: flex;
   gap: 15px;
-  align-items: flex-start;
+  align-items: stretch;
   height: calc(100vh - 160px);
 }
 
@@ -474,7 +474,7 @@ textarea::placeholder {
 .search-container {
   margin-bottom: 10px;
 }
-#search-note, #note-tag-input {
+#search-note {
   width: 100%;
   background: rgba(0, 20, 0, 0.8);
   border: 1px solid #333;
@@ -484,10 +484,28 @@ textarea::placeholder {
   box-sizing: border-box;
   margin-bottom: 10px;
 }
-#search-note:focus, #note-tag-input:focus {
+#search-note:focus {
   border-color: var(--neon-green);
   outline: none;
   box-shadow: 0 0 10px rgba(0, 255, 0, 0.2);
+}
+
+#note-tag-input {
+  width: 100%;
+  background: rgba(20, 20, 0, 0.8);
+  border: 1px solid #aa0;
+  color: #ff0;
+  padding: 10px;
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  box-sizing: border-box;
+  margin-bottom: 5px;
+  border-radius: 2px;
+}
+#note-tag-input:focus {
+  border-color: #ff0;
+  outline: none;
+  box-shadow: 0 0 15px rgba(255, 255, 0, 0.4);
 }
 
 .tabs-container {
@@ -598,3 +616,111 @@ textarea::placeholder {
     height: 400px;
   }
 }
+
+/* =========================================
+   SWIPE KEYBOARD STYLES
+   ========================================= */
+#swipe-keyboard {
+  position: absolute;
+  z-index: 1000;
+  background: rgba(10, 20, 10, 0.95);
+  border: 1px solid var(--neon-green);
+  border-radius: 4px;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(5px);
+  user-select: none;
+}
+
+#vk-suggestions {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed var(--neon-green);
+}
+
+#vk-suggestions::-webkit-scrollbar { height: 4px; }
+#vk-suggestions::-webkit-scrollbar-thumb { background: var(--neon-green); border-radius: 2px; }
+
+.vk-suggestion-btn {
+  background: rgba(0, 20, 0, 0.8);
+  border: 1px solid #1a1;
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.vk-suggestion-btn:hover {
+  background: var(--neon-green);
+  color: #000;
+  border-color: var(--neon-green);
+}
+
+#vk-keys-container {
+  position: relative;
+  touch-action: none; /* Important for swipe to not scroll page */
+}
+
+#vk-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; /* Let pointer events pass through to keys */
+  z-index: 2;
+}
+
+.vk-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.vk-key {
+  background: rgba(0, 30, 0, 0.8);
+  border: 1px solid #2a2;
+  color: #8f8;
+  width: 35px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: crosshair;
+  transition: all 0.1s;
+  text-transform: uppercase;
+}
+
+.vk-key.active, .vk-key:active {
+  background: var(--neon-green);
+  color: #000;
+  transform: scale(1.1);
+  box-shadow: 0 0 15px var(--neon-green);
+  z-index: 3;
+}
+
+.vk-key-space {
+  width: 150px;
+}
+.vk-key-action {
+  width: 60px;
+  background: rgba(30, 0, 0, 0.8);
+  border-color: #522;
+  color: #f55;
+}
+.vk-key-action:active {
+  background: #f55;
+  color: #000;
+  box-shadow: 0 0 15px #f55;
+}
+

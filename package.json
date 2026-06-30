@@ -1,0 +1,33 @@
+{
+  "name": "vcomp",
+  "version": "1.0.0",
+  "description": "Vietnamese Compression Protocol for AI and Data Storage",
+  "main": "vcomp.js",
+  "type": "module",
+  "files": [
+    "vcomp.js",
+    "data.js",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "vietnamese",
+    "compression",
+    "ai",
+    "token",
+    "base60"
+  ],
+  "author": "TimeCypher",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^8.0.12"
+  },
+  "dependencies": {
+    "jsdom": "^29.1.1"
+  }
+}

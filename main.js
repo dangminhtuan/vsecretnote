@@ -215,6 +215,15 @@ btnEncode.addEventListener('click', syncFromDecrypted);
 btnDecode.addEventListener('click', syncFromTime);
 
 let saveTimeout = null;
+
+function forceSave() {
+  if (saveTimeout) {
+    clearTimeout(saveTimeout);
+    saveTimeout = null;
+    saveCurrentNote();
+  }
+}
+
 const handleInput = (syncFn) => {
   syncFn();
   clearTimeout(saveTimeout);
@@ -228,12 +237,116 @@ txtEncrypted.addEventListener('input', () => {
   if (document.activeElement === txtEncrypted) handleInput(syncFromTime);
 });
 
-const noteTagInput = document.getElementById('note-tag-input');
-if(noteTagInput) {
-  noteTagInput.addEventListener('input', () => {
+const tagsContainer = document.getElementById('note-tags-container');
+const newTagInput = document.getElementById('new-tag-input');
+const btnAddTag = document.getElementById('btn-add-tag');
+const tagsDatalist = document.getElementById('all-tags-datalist');
+
+function renderNoteTags() {
+  if(!tagsContainer) return;
+  tagsContainer.innerHTML = '';
+  currentNoteTags.forEach(tag => {
+    const pill = document.createElement('div');
+    pill.className = 'cyber-btn-small';
+    pill.style.display = 'inline-flex';
+    pill.style.alignItems = 'center';
+    pill.style.gap = '5px';
+    pill.style.padding = '2px 8px';
+    pill.style.textTransform = 'none';
+    
+    const tagText = document.createElement('span');
+    tagText.textContent = tag;
+    
+    const rmBtn = document.createElement('span');
+    rmBtn.textContent = '×';
+    rmBtn.style.cursor = 'pointer';
+    rmBtn.style.color = '#ff5555';
+    rmBtn.style.fontWeight = 'bold';
+    rmBtn.onclick = () => {
+      currentNoteTags = currentNoteTags.filter(t => t !== tag);
+      renderNoteTags();
+      if(saveTimeout) clearTimeout(saveTimeout);
+      saveCurrentNote();
+    };
+    
+    pill.appendChild(tagText);
+    pill.appendChild(rmBtn);
+    tagsContainer.appendChild(pill);
+  });
+}
+
+function updateTagsDatalist() {
+  if(!tagsDatalist) return;
+  const allTags = new Set();
+  notesDB.forEach(n => {
+    if(n.tags) n.tags.forEach(t => allTags.add(t));
+  });
+  tagsDatalist.innerHTML = '';
+  allTags.forEach(t => {
+    const opt = document.createElement('option');
+    opt.value = t;
+    tagsDatalist.appendChild(opt);
+  });
+}
+
+if(btnAddTag && newTagInput) {
+  const doAdd = () => {
+    const val = newTagInput.value.trim();
+    if(val && !currentNoteTags.includes(val)) {
+      currentNoteTags.push(val);
+      newTagInput.value = '';
+      renderNoteTags();
+      if(saveTimeout) clearTimeout(saveTimeout);
+      saveCurrentNote();
+    }
+  };
+  btnAddTag.addEventListener('click', doAdd);
+  newTagInput.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter') { e.preventDefault(); doAdd(); }
+  });
+}
+
+const selLinkedNote = document.getElementById('sel-linked-note');
+const btnOpenLink = document.getElementById('btn-open-link');
+const btnLinkPrev = document.getElementById('btn-link-prev');
+
+if(selLinkedNote) {
+  selLinkedNote.addEventListener('change', () => {
+    if(btnOpenLink) btnOpenLink.style.display = selLinkedNote.value ? 'inline-block' : 'none';
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(saveCurrentNote, 1000);
   });
+}
+if(btnOpenLink) {
+  btnOpenLink.addEventListener('click', () => {
+    if(selLinkedNote && selLinkedNote.value) loadNote(selLinkedNote.value);
+  });
+}
+if(btnLinkPrev) {
+  btnLinkPrev.addEventListener('click', () => {
+    if(selLinkedNote && selLinkedNote.options.length > 1) {
+      selLinkedNote.selectedIndex = 1; // 0 is "-- No Link --", 1 is the most recent
+      selLinkedNote.dispatchEvent(new Event('change'));
+    }
+  });
+}
+
+function renderLinkedNoteSelect() {
+  if(!selLinkedNote) return;
+  const currentVal = selLinkedNote.value;
+  selLinkedNote.innerHTML = '<option value="">-- No Link --</option>';
+  notesDB.forEach(n => {
+    if(n.id !== currentNoteId && !n.isArchived) {
+      const opt = document.createElement('option');
+      opt.value = n.id;
+      const displayTag = n.tags && n.tags.length > 0 ? n.tags[0] : null;
+      opt.textContent = displayTag ? displayTag : n.content.substring(0, 20) + '...';
+      selLinkedNote.appendChild(opt);
+    }
+  });
+  if(notesDB.find(n => n.id === currentVal && n.id !== currentNoteId)) {
+    selLinkedNote.value = currentVal;
+  }
 }
 
 if(txtCompressed) {
@@ -306,7 +419,16 @@ setupClearCopy(btnCopyCompressed, btnClearCompressed, txtCompressed);
 
 // --- NOTE APP LOGIC ---
 let notesDB = JSON.parse(localStorage.getItem('timecypher_notes') || '[]');
+notesDB.forEach(note => {
+  if (note.tag && !note.tags) {
+    note.tags = [note.tag];
+  } else if (!note.tags) {
+    note.tags = [];
+  }
+});
+
 let currentNoteId = null;
+let currentNoteTags = [];
 let currentTab = 'active'; // 'active' or 'archive'
 
 const btnNewNote = document.getElementById('btn-new-note');
@@ -317,30 +439,41 @@ const tabBtns = document.querySelectorAll('.tab-btn');
 const btnArchiveNote = document.getElementById('btn-archive-note');
 const btnDeleteNote = document.getElementById('btn-delete-note');
 
-if (btnPlayground) {
-  btnPlayground.addEventListener('click', () => {
-    currentNoteId = 'playground';
-    txtDecrypted.value = '';
-    txtEncrypted.value = '';
-    if(txtCompressed) txtCompressed.value = '';
-    if(noteTagInput) noteTagInput.value = '';
-    renderBreakdown([]);
-    document.querySelectorAll('.note-item').forEach(i => i.classList.remove('active'));
+function enterSandboxMode(silent = false) {
+  currentNoteId = 'playground';
+  txtDecrypted.value = '';
+  txtEncrypted.value = '';
+  if(txtCompressed) txtCompressed.value = '';
+  currentNoteTags = [];
+  renderNoteTags();
+  if(newTagInput) newTagInput.value = '';
+  renderBreakdown([]);
+  document.querySelectorAll('.note-item').forEach(i => i.classList.remove('active'));
+  if (!silent) {
     alert("Đã vào chế độ SANDBOX (Nháp). Mọi thứ bạn gõ ở đây sẽ KHÔNG BỊ LƯU LẠI.");
-  });
+  }
+}
+
+if (btnPlayground) {
+  btnPlayground.addEventListener('click', () => enterSandboxMode(false));
 }
 
 function saveCurrentNote() {
   if (currentNoteId === 'playground') return; // Sandbox mode, do not save
-  if(!txtCompressed || txtCompressed.value.trim() === '') return;
-  const base60Data = txtCompressed.value.replace(/[⇧⇪]/g, '').trim();
-  const tagData = noteTagInput ? noteTagInput.value.trim() : '';
+  
+  const base60Data = txtCompressed ? txtCompressed.value.replace(/[⇧⇪]/g, '').trim() : '';
+  const hasTags = currentNoteTags && currentNoteTags.length > 0;
+  
+  if(base60Data === '' && !hasTags) return;
+  
+  const linkData = selLinkedNote ? selLinkedNote.value : '';
   
   if (!currentNoteId) {
     currentNoteId = 'note_' + Date.now();
     const newNote = {
       id: currentNoteId,
-      tag: tagData,
+      tags: [...currentNoteTags],
+      linkedNoteId: linkData,
       content: base60Data,
       isArchived: false,
       updatedAt: Date.now()
@@ -349,7 +482,8 @@ function saveCurrentNote() {
   } else {
     const note = notesDB.find(n => n.id === currentNoteId);
     if (note) {
-      note.tag = tagData;
+      note.tags = [...currentNoteTags];
+      note.linkedNoteId = linkData;
       note.content = base60Data;
       note.updatedAt = Date.now();
       // Move to top
@@ -358,28 +492,114 @@ function saveCurrentNote() {
     }
   }
   localStorage.setItem('timecypher_notes', JSON.stringify(notesDB));
+  if(typeof updateTagsDatalist === 'function') updateTagsDatalist();
   renderNotesSidebar();
 }
 
+const backlinksContainer = document.getElementById('backlinks-container');
+const backlinksList = document.getElementById('backlinks-list');
+
+function renderBacklinks(id) {
+  if(!backlinksContainer || !backlinksList) return;
+  if(!id || id === 'playground') {
+    backlinksContainer.style.display = 'none';
+    return;
+  }
+  const backlinks = notesDB.filter(n => n.linkedNoteId === id && !n.isArchived);
+  if(backlinks.length > 0) {
+    backlinksList.innerHTML = '';
+    backlinks.forEach(bl => {
+      // Decode content from Base60
+      const text = bl.content.replace(/[⇧⇪]/g, '');
+      const tokens = text.split(TOKEN_REGEX);
+      let decryptedParts = [];
+      tokens.forEach(token => {
+        if (!token) return;
+        if (token.match(/^[a-zA-Z0-9À-ỹ_]+$/)) {
+          const timeCode = base60ToTime(token);
+          decryptedParts.push(decodeWord(timeCode));
+        } else if (token.startsWith('"') && token.endsWith('"')) {
+          decryptedParts.push(token.substring(1, token.length - 1));
+        } else if (token.startsWith('[') && token.endsWith(']')) {
+          decryptedParts.push(token);
+        } else {
+          decryptedParts.push(token);
+        }
+      });
+      const decodedText = decryptedParts.join('');
+
+      const box = document.createElement('div');
+      box.style.background = 'rgba(255, 234, 0, 0.15)';
+      box.style.border = '1px solid #ffea00';
+      box.style.color = '#ffea00';
+      box.style.padding = '12px';
+      box.style.borderRadius = '3px';
+      box.style.marginBottom = '10px';
+      box.style.width = '100%';
+      box.style.boxSizing = 'border-box';
+
+      const tagTitle = document.createElement('div');
+      tagTitle.style.fontWeight = 'bold';
+      tagTitle.style.marginBottom = '8px';
+      tagTitle.style.textTransform = 'uppercase';
+      tagTitle.style.borderBottom = '1px dashed #ffea00';
+      tagTitle.style.paddingBottom = '5px';
+      const blTag = bl.tags && bl.tags.length > 0 ? bl.tags[0] : '';
+      tagTitle.textContent = `⚡ LINKED NOTE${blTag ? ': ' + blTag : ''}`;
+      
+      const contentDiv = document.createElement('div');
+      contentDiv.style.fontFamily = 'var(--font-mono)';
+      contentDiv.style.whiteSpace = 'pre-wrap';
+      contentDiv.style.lineHeight = '1.4';
+      contentDiv.textContent = decodedText;
+
+      box.appendChild(tagTitle);
+      box.appendChild(contentDiv);
+      backlinksList.appendChild(box);
+    });
+    backlinksContainer.style.display = 'block';
+  } else {
+    backlinksContainer.style.display = 'none';
+  }
+}
+
 function loadNote(id) {
+  forceSave();
   const note = notesDB.find(n => n.id === id);
   if (!note) return;
   currentNoteId = id;
   if(txtCompressed) {
     txtCompressed.value = note.content;
-    if(noteTagInput) noteTagInput.value = note.tag || '';
+    currentNoteTags = [...(note.tags || [])];
+    renderNoteTags();
+    
+    if(selLinkedNote) {
+      selLinkedNote.value = note.linkedNoteId || '';
+      if(btnOpenLink) btnOpenLink.style.display = selLinkedNote.value ? 'inline-block' : 'none';
+    }
     syncFromCompressed();
   }
+  renderLinkedNoteSelect();
+  renderBacklinks(id);
   renderNotesSidebar();
   updateActionButtons();
 }
 
 function createNewNote() {
+  forceSave();
   currentNoteId = null;
   txtDecrypted.value = '';
   txtEncrypted.value = '';
   if(txtCompressed) txtCompressed.value = '';
-  if(noteTagInput) noteTagInput.value = '';
+  currentNoteTags = [];
+  renderNoteTags();
+  if(newTagInput) newTagInput.value = '';
+  if(selLinkedNote) {
+    selLinkedNote.value = '';
+    if(btnOpenLink) btnOpenLink.style.display = 'none';
+  }
+  renderLinkedNoteSelect();
+  renderBacklinks(null);
   renderBreakdown([]);
   renderNotesSidebar();
   updateActionButtons();
@@ -408,8 +628,19 @@ function renderNotesSidebar() {
   notesList.innerHTML = '';
   let filtered = notesDB.filter(n => (currentTab === 'archive' ? n.isArchived : !n.isArchived));
   
-  if (filterStr) {
-    filtered = filtered.filter(n => n.content.includes(filterStr));
+  if (query) {
+    filtered = filtered.filter(n => {
+      const matchContent = n.content.includes(filterStr);
+      const matchTag = n.tags && n.tags.some(t => t.toLowerCase().includes(query.toLowerCase()));
+      return matchContent || matchTag;
+    });
+  }
+
+  function highlight(text, keyword) {
+    if(!keyword || !text) return text;
+    const safeWord = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(`(${safeWord})`, 'gi');
+    return text.replace(regex, '<span style="background: #ffea00; color: #000; font-weight: bold; border-radius: 2px; padding: 0 2px;">$1</span>');
   }
 
   filtered.forEach(n => {
@@ -418,11 +649,25 @@ function renderNotesSidebar() {
     el.onclick = () => loadNote(n.id);
     
     const d = new Date(n.updatedAt);
-    const preview = n.content.substring(0, 20) + (n.content.length > 20 ? '...' : '');
-    const tagDisplay = n.tag ? `<div style="color:var(--neon-green); font-weight:bold; margin-bottom:3px;">${n.tag}</div>` : '';
+    let preview = n.content.substring(0, 25) + (n.content.length > 25 ? '...' : '');
+
+    let tagsHtml = '';
+    if (n.tags && n.tags.length > 0) {
+      tagsHtml = '<div style="display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 5px;">';
+      n.tags.forEach(t => {
+        let displayT = t;
+        if (query) displayT = highlight(t, query);
+        tagsHtml += `<span style="background: rgba(0, 255, 0, 0.1); border: 1px solid var(--neon-green); color: var(--neon-green); font-size: 0.75rem; padding: 1px 4px; border-radius: 2px;">${displayT}</span>`;
+      });
+      tagsHtml += '</div>';
+    }
+
+    if (query) {
+      preview = highlight(preview, filterStr);
+    }
     
     el.innerHTML = `
-      ${tagDisplay}
+      ${tagsHtml}
       <div class="note-time">${d.toLocaleDateString()} ${d.toLocaleTimeString()}</div>
       <div class="note-preview">${preview || '[Empty]'}</div>
     `;
@@ -435,6 +680,7 @@ if(searchNote) searchNote.addEventListener('input', renderNotesSidebar);
 
 tabBtns.forEach(btn => {
   btn.addEventListener('click', (e) => {
+    forceSave();
     tabBtns.forEach(b => b.classList.remove('active'));
     e.target.classList.add('active');
     currentTab = e.target.getAttribute('data-tab');
@@ -530,8 +776,7 @@ if(btnImport && fileInput) {
 }
 
 renderNotesSidebar();
-if (notesDB.length > 0) loadNote(notesDB[0].id);
-else createNewNote();
+enterSandboxMode(true);
 
 // --- FULLSCREEN LOGIC ---
 window.toggleFullscreen = (btn) => {
@@ -656,3 +901,8 @@ if (selConsonant && selRhyme) {
   });
   renderConsonants();
 }
+
+// Init Link Select on startup
+updateTagsDatalist();
+renderLinkedNoteSelect();
+renderNotesSidebar();

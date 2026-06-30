@@ -5,7 +5,7 @@ import {
 } from './data.js';
 
 // --- PHONETICS ENGINE ---
-const removeVietnameseTones = (str) => {
+export const removeVietnameseTones = (str) => {
   let tone = 0;
   const nfd = str.normalize('NFD');
   if (nfd.includes('\u0301')) tone = 1;      // sắc
@@ -170,7 +170,7 @@ export const decodeWord = (code) => {
   const s1 = parseInt(code.substring(4,5), 10);
   const s2 = parseInt(code.substring(5,6), 10);
   
-  if (isNaN(hh) || isNaN(mm) || isNaN(s1) || isNaN(s2)) return code;
+  if (isNaN(hh) || isNaN(mm) || isNaN(s1) || isNaN(s2)) return '[ERR:FORMAT]';
   
   if (s2 >= 6 && s2 <= 9) {
     const engIndex = (s2 - 6) * 1440 + (hh * 60) + mm;
