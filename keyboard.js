@@ -2,6 +2,32 @@ import { timeToBase60, base60ToTime, encodeWord, decodeWord } from './vcomp.js';
 import { removeVietnameseTones } from './vcomp.js';
 import { BASE60_MAPPING } from './data.js';
 
+const NEXT_WORD_PREDICTIONS = {
+  'chiến': ['tranh', 'đấu', 'lược', 'sĩ', 'thuật', 'tuyến'],
+  'công': ['nghệ', 'ty', 'nhân', 'tác', 'lý', 'an', 'cộng', 'chúng'],
+  'cộng': ['đồng', 'hòa', 'sản', 'tác'],
+  'tạm': ['thời', 'biệt', 'dừng', 'nghỉ', 'ứng'],
+  'đuôi': ['chuột', 'cáo', 'ngựa'],
+  'bàn': ['phím', 'bạc', 'giao', 'chải', 'luận', 'cờ'],
+  'làm': ['việc', 'quen', 'sao', 'ơn', 'bạn', 'phiền'],
+  'xin': ['chào', 'lỗi', 'cảm', 'phép', 'chữ'],
+  'cảm': ['ơn', 'thấy', 'giác', 'xúc', 'tạ', 'tình'],
+  'ngôn': ['ngữ', 'từ', 'luận', 'tình'],
+  'quản': ['lý', 'trị', 'gia', 'đốc'],
+  'hệ': ['thống', 'điều', 'quả', 'sinh', 'trọng'],
+  'thông': ['tin', 'báo', 'minh', 'qua', 'thường', 'số'],
+  'nhân': ['viên', 'sự', 'vật', 'loại', 'cách', 'chứng'],
+  'phát': ['triển', 'hiện', 'minh', 'ngôn', 'sóng', 'động'],
+  'máy': ['tính', 'móc', 'bay', 'ảnh', 'chủ'],
+  'việt': ['nam', 'kiều', 'ngữ', 'dã'],
+  'hôm': ['nay', 'qua', 'kia'],
+  'ngày': ['mai', 'kia', 'tháng', 'nào'],
+  'bây': ['giờ'],
+  'bao': ['giờ', 'lâu', 'nhiêu', 'gồm', 'bọc'],
+  'trang': ['web', 'chủ', 'phục', 'trí'],
+  '_default': ['và', 'là', 'của', 'có', 'không', 'những', 'để', 'một', 'được', 'với', 'cho', 'trong', 'đã', 'này']
+};
+
 let dictionary = new Map();
 let validVietnameseWords = new Set();
 
@@ -33,6 +59,19 @@ class SwipeKeyboard {
     this.swipePath = [];
     this.currentKeys = [];
     this.keyRects = [];
+    
+    const savedState = localStorage.getItem('vk_state');
+    if (savedState) {
+       try {
+          this.savedPos = JSON.parse(savedState);
+          this.hasBeenDragged = true;
+       } catch (e) {
+          this.hasBeenDragged = false;
+       }
+    } else {
+       this.hasBeenDragged = false;
+    }
+    
     this.buildUI();
     this.setupEvents();
     this.setupTargetListeners();
@@ -45,6 +84,29 @@ class SwipeKeyboard {
 
     this.suggestionsBar = document.createElement('div');
     this.suggestionsBar.id = 'vk-suggestions';
+    
+    // Swipe-to-scroll logic
+    this.isDraggingSugg = false;
+    this.startXSugg = 0;
+    this.scrollLeftSugg = 0;
+    this.hasScrolledSugg = false;
+    
+    this.suggestionsBar.addEventListener('pointerdown', (e) => {
+       this.isDraggingSugg = true;
+       this.hasScrolledSugg = false;
+       this.startXSugg = e.pageX - this.suggestionsBar.offsetLeft;
+       this.scrollLeftSugg = this.suggestionsBar.scrollLeft;
+    });
+    this.suggestionsBar.addEventListener('pointerleave', () => this.isDraggingSugg = false);
+    this.suggestionsBar.addEventListener('pointerup', () => this.isDraggingSugg = false);
+    this.suggestionsBar.addEventListener('pointermove', (e) => {
+       if (!this.isDraggingSugg) return;
+       const x = e.pageX - this.suggestionsBar.offsetLeft;
+       const walk = (x - this.startXSugg) * 1.5;
+       if (Math.abs(walk) > 5) this.hasScrolledSugg = true;
+       this.suggestionsBar.scrollLeft = this.scrollLeftSugg - walk;
+    });
+    
     this.container.appendChild(this.suggestionsBar);
 
     this.keysContainer = document.createElement('div');
@@ -72,15 +134,73 @@ class SwipeKeyboard {
       this.keysContainer.appendChild(rowEl);
     });
     
-    // Add a header/toolbar to the keyboard
+    // Add a header/toolbar to the keyboard (and make it a drag handle)
     const toolbar = document.createElement('div');
     toolbar.className = 'vk-toolbar';
     toolbar.style.display = 'flex';
     toolbar.style.justifyContent = 'space-between';
-    toolbar.style.padding = '0px 10px 10px 10px';
+    toolbar.style.padding = '5px 10px 10px 10px';
+    toolbar.style.cursor = 'move'; // Indicate draggable
+    toolbar.style.userSelect = 'none'; // Prevent text selection while dragging
+    toolbar.style.flexShrink = '0';
+    
+    // Dragging logic
+    let isDragging = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let initialLeft = 0;
+    let initialTop = 0;
+
+    toolbar.addEventListener('pointerdown', (e) => {
+      if (e.target.tagName === 'BUTTON') return;
+      isDragging = true;
+      this.hasBeenDragged = true;
+      dragStartX = e.clientX;
+      dragStartY = e.clientY;
+      const rect = this.container.getBoundingClientRect();
+      initialLeft = rect.left;
+      initialTop = rect.top;
+      
+      // Remove transform so we can position absolutely using left/top safely
+      this.container.style.transform = 'none';
+      this.container.style.bottom = 'auto';
+      this.container.style.left = `${initialLeft}px`;
+      this.container.style.top = `${initialTop}px`;
+      
+      this.container.style.transition = 'none'; // disable smooth transition if any
+      e.preventDefault();
+    });
+
+    document.addEventListener('pointermove', (e) => {
+      if (!isDragging) return;
+      const dx = e.clientX - dragStartX;
+      const dy = e.clientY - dragStartY;
+      this.container.style.left = `${initialLeft + dx}px`;
+      this.container.style.top = `${initialTop + dy}px`;
+    });
+
+    document.addEventListener('pointerup', () => {
+      if (isDragging) {
+         isDragging = false;
+         this.container.style.transition = '';
+         this.saveState();
+      }
+    });
+
+    // Label for toolbar
+    const dragLabel = document.createElement('span');
+    dragLabel.textContent = '≡ KÉO THẢ';
+    dragLabel.style.fontSize = '12px';
+    dragLabel.style.color = '#55ff55';
+    dragLabel.style.display = 'flex';
+    dragLabel.style.alignItems = 'center';
+
+    const rightControls = document.createElement('div');
+    rightControls.style.display = 'flex';
+    rightControls.style.gap = '10px';
     
     const disableBtn = document.createElement('button');
-    disableBtn.textContent = 'Tắt bàn phím (Mở lại: Click đúp)';
+    disableBtn.textContent = 'Tắt (Mở: Click đúp)';
     disableBtn.className = 'cyber-btn';
     disableBtn.style.padding = '4px 10px';
     disableBtn.style.fontSize = '12px';
@@ -100,8 +220,10 @@ class SwipeKeyboard {
        this.hide();
     };
     
-    toolbar.appendChild(disableBtn);
-    toolbar.appendChild(closeBtn);
+    rightControls.appendChild(disableBtn);
+    rightControls.appendChild(closeBtn);
+    toolbar.appendChild(dragLabel);
+    toolbar.appendChild(rightControls);
     this.container.appendChild(toolbar);
 
     // Add space, enter and backspace
@@ -137,6 +259,7 @@ class SwipeKeyboard {
   setupTargetListeners() {
     const txtDecrypted = document.getElementById('text-input');
     const txtCompressed = document.getElementById('compressed-input');
+    const txtTime = document.getElementById('time-input');
     
     const showKB = (e) => {
       if (this.isDisabled) return;
@@ -160,6 +283,11 @@ class SwipeKeyboard {
       txtCompressed.addEventListener('click', showKB);
       txtCompressed.addEventListener('dblclick', forceShowKB);
     }
+    if(txtTime) {
+      txtTime.addEventListener('focus', showKB);
+      txtTime.addEventListener('click', showKB);
+      txtTime.addEventListener('dblclick', forceShowKB);
+    }
     
     // Hide keyboard if clicked outside
     document.addEventListener('pointerdown', (e) => {
@@ -174,15 +302,28 @@ class SwipeKeyboard {
   show() {
     if (!this.activeTarget || this.isDisabled) return;
     this.container.style.display = 'flex';
+    this.predictNextWords();
     
     // Vị trí cố định (fixed) ở dưới cùng màn hình thay vì absolute để không bị tràn màn hình
-    this.container.style.position = 'fixed';
-    this.container.style.bottom = '20px';
-    this.container.style.top = 'auto';
-    this.container.style.left = '50%';
-    this.container.style.transform = 'translateX(-50%)';
-    this.container.style.width = '90%';
-    this.container.style.maxWidth = '800px';
+    // Chỉ reset vị trí mặc định nếu bàn phím chưa từng bị người dùng kéo thả
+    if (!this.hasBeenDragged) {
+      this.container.style.position = 'fixed';
+      this.container.style.bottom = '20px';
+      this.container.style.top = 'auto';
+      this.container.style.left = '50%';
+      this.container.style.transform = 'translateX(-50%)';
+      this.container.style.width = '90%';
+      this.container.style.maxWidth = '800px';
+    } else if (this.savedPos) {
+      this.container.style.position = 'fixed';
+      this.container.style.transform = 'none';
+      if (this.savedPos.left) this.container.style.left = this.savedPos.left;
+      if (this.savedPos.top) this.container.style.top = this.savedPos.top;
+      if (this.savedPos.bottom) this.container.style.bottom = this.savedPos.bottom;
+      if (this.savedPos.width) this.container.style.width = this.savedPos.width;
+      if (this.savedPos.height) this.container.style.height = this.savedPos.height;
+      this.savedPos = null; // Apply once
+    }
     
     // Auto-scroll target into view so it's not obscured by keyboard
     setTimeout(() => {
@@ -191,7 +332,22 @@ class SwipeKeyboard {
        }
     }, 100);
     
-    // Setup canvas size
+    // Setup canvas size observer
+      if (!this.resizeObserver) {
+        this.resizeObserver = new ResizeObserver(() => {
+          if (this.canvas && this.keysContainer.clientWidth > 0) {
+            this.canvas.width = this.keysContainer.clientWidth;
+            this.canvas.height = this.keysContainer.clientHeight;
+            this.updateKeyRects();
+            
+            if (this.hasBeenDragged && this.container.style.display !== 'none') {
+                this.saveState();
+            }
+          }
+        });
+        this.resizeObserver.observe(this.keysContainer);
+      }
+    
     setTimeout(() => {
       this.canvas.width = this.keysContainer.clientWidth;
       this.canvas.height = this.keysContainer.clientHeight;
@@ -215,6 +371,18 @@ class SwipeKeyboard {
         y: rect.top + rect.height / 2
       });
     });
+  }
+
+  saveState() {
+     if (!this.container) return;
+     const state = {
+        left: this.container.style.left,
+        top: this.container.style.top,
+        bottom: this.container.style.bottom,
+        width: this.container.style.width,
+        height: this.container.style.height
+     };
+     localStorage.setItem('vk_state', JSON.stringify(state));
   }
 
   hide() {
@@ -306,7 +474,16 @@ class SwipeKeyboard {
     if (!this.isSwiping) return;
     this.isSwiping = false;
     this.keysContainer.releasePointerCapture(e.pointerId);
-    this.processSwipe();
+    
+    if (this.currentKeys.length === 1) {
+       const key = this.currentKeys[0];
+       if (key !== ' ' && key !== 'Enter' && key !== 'Backspace') {
+          this.insertText(key);
+          this.clearSuggestions();
+       }
+    } else {
+       this.processSwipe();
+    }
     
     // Clear highlights and trail
     this.keyElements.forEach(el => el.classList.remove('active'));
@@ -436,8 +613,10 @@ class SwipeKeyboard {
            } catch(e) {}
         }
       });
-    } else {
-      // 4+ keys -> Vietnamese dictionary match (Fuzzy Subsequence)
+    }
+    
+    // Always check Vietnamese dictionary for length >= 2 (so 'da' shows 'đã')
+    if (str.length >= 2) {
       let matchedBases = [];
       const normalizedStr = this.normalizeForSwipe(str);
       for (const [base, words] of dictionary.entries()) {
@@ -454,25 +633,35 @@ class SwipeKeyboard {
          }
       }
       
-      // Sort matches: Exact ends match first, then shorter words
+      // Sort matches: Exact geoWord > Exact swipe > Ends match > Length closer to swipe
       matchedBases.sort((a, b) => {
          const normA = this.normalizeForSwipe(a);
          const normB = this.normalizeForSwipe(b);
+         
+         const isAGeo = normA === geoWord;
+         const isBGeo = normB === geoWord;
+         if (isAGeo && !isBGeo) return -1;
+         if (!isAGeo && isBGeo) return 1;
+         
+         const isAExact = normA === normalizedStr;
+         const isBExact = normB === normalizedStr;
+         if (isAExact && !isBExact) return -1;
+         if (!isAExact && isBExact) return 1;
+         
          const aEnd = normA[normA.length - 1] === normalizedStr[normalizedStr.length - 1] ? 0 : 1;
          const bEnd = normB[normB.length - 1] === normalizedStr[normalizedStr.length - 1] ? 0 : 1;
          if (aEnd !== bEnd) return aEnd - bEnd;
+         
          return Math.abs(normA.length - normalizedStr.length) - Math.abs(normB.length - normalizedStr.length);
       });
       
       matchedBases.slice(0, 8).forEach(b => {
-        if (!suggestions.find(x => x.text === b)) {
-           dictionary.get(b).forEach(w => suggestions.push({ text: w, type: 'vi' }));
-        }
+         dictionary.get(b).forEach(w => suggestions.push({ text: w, type: 'vi' }));
       });
-      
-      if (suggestions.length === 0) {
-        suggestions.push({ text: str, type: 'raw' });
-      }
+    }
+    
+    if (suggestions.length === 0) {
+      suggestions.push({ text: str, type: 'raw' });
     }
     
     // Remove duplicates
@@ -606,19 +795,53 @@ class SwipeKeyboard {
       
       btn.innerHTML = displayText;
       
-      // We use pointerdown instead of click so that it fires before focus is lost
-      btn.addEventListener('pointerdown', (e) => {
-        e.preventDefault(); 
-        this.insertText(insertText + ' ');
-        this.clearSuggestions();
+      // We use pointerup so we can differentiate between a tap and a scroll drag
+      btn.addEventListener('pointerup', (e) => {
+        if (!this.hasScrolledSugg) {
+           e.preventDefault(); 
+           this.insertText(insertText + ' ');
+           // Delay clear so global pointerdown doesn't hide keyboard
+           setTimeout(() => this.clearSuggestions(), 10);
+        }
       });
+      // Prevent focus loss during drag or tap
+      btn.addEventListener('pointerdown', (e) => e.preventDefault());
       this.suggestionsBar.appendChild(btn);
     });
   }
   
-  clearSuggestions() {
-    this.suggestionsBar.innerHTML = '';
-  }
+    clearSuggestions() {
+      this.suggestionsBar.innerHTML = '';
+      this.predictNextWords();
+    }
+    
+    predictNextWords() {
+      if (!this.activeTarget) {
+         this.renderSuggestions(NEXT_WORD_PREDICTIONS['_default'].map(w => ({ text: w, type: 'vi' })));
+         return;
+      }
+      const val = this.activeTarget.value;
+      const start = this.activeTarget.selectionStart;
+      const beforeCursor = val.substring(0, start).trim();
+      const match = beforeCursor.match(/([a-zA-ZàáảãạăằắẳẵặâầấẩẫậèéẻẽẹêềếểễệìíỉĩịòóỏõọôồốổỗộơờớởỡợùúủũụưừứửữựỳýỷỹỵđĐ]+)$/i);
+      let suggestions = [];
+      if (match) {
+         const lastWord = match[1].toLowerCase();
+         if (NEXT_WORD_PREDICTIONS[lastWord]) {
+            suggestions = NEXT_WORD_PREDICTIONS[lastWord].map(w => ({ text: w, type: 'vi' }));
+         }
+      }
+      
+      if (suggestions.length === 0) {
+         suggestions = NEXT_WORD_PREDICTIONS['_default'].map(w => ({ text: w, type: 'vi' }));
+      }
+      
+      suggestions.push({ text: ',', type: 'raw' });
+      suggestions.push({ text: '.', type: 'raw' });
+      suggestions.push({ text: '?', type: 'raw' });
+      
+      this.renderSuggestions(suggestions);
+    }
   
   insertText(text) {
     if (!this.activeTarget) return;

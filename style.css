@@ -631,6 +631,10 @@ textarea::placeholder {
   display: flex;
   flex-direction: column;
   backdrop-filter: blur(5px);
+  resize: both;
+  overflow: hidden;
+  min-width: 320px;
+  min-height: 200px;
   user-select: none;
 }
 
@@ -641,10 +645,19 @@ textarea::placeholder {
   padding-bottom: 5px;
   margin-bottom: 10px;
   border-bottom: 1px dashed var(--neon-green);
+  flex-shrink: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: grab;
+  user-select: none;
+  min-height: 35px;
 }
 
-#vk-suggestions::-webkit-scrollbar { height: 4px; }
-#vk-suggestions::-webkit-scrollbar-thumb { background: var(--neon-green); border-radius: 2px; }
+#vk-suggestions:active {
+  cursor: grabbing;
+}
+
+#vk-suggestions::-webkit-scrollbar { display: none; }
 
 .vk-suggestion-btn {
   background: rgba(0, 20, 0, 0.8);
