@@ -72,20 +72,29 @@ class SwipeKeyboard {
       this.keysContainer.appendChild(rowEl);
     });
     
-    // Add space and backspace
+    // Add space, enter and backspace
     const bottomRow = document.createElement('div');
     bottomRow.className = 'vk-row';
     const spaceKey = document.createElement('div');
     spaceKey.className = 'vk-key vk-key-space';
     spaceKey.textContent = 'SPACE';
     spaceKey.dataset.key = ' ';
+    
+    const enterKey = document.createElement('div');
+    enterKey.className = 'vk-key vk-key-action';
+    enterKey.innerHTML = '&crarr;';
+    enterKey.dataset.key = 'Enter';
+    
     const bkspKey = document.createElement('div');
     bkspKey.className = 'vk-key vk-key-action';
     bkspKey.innerHTML = '&larr;';
     bkspKey.dataset.key = 'Backspace';
+    
     bottomRow.appendChild(spaceKey);
+    bottomRow.appendChild(enterKey);
     bottomRow.appendChild(bkspKey);
     this.keyElements.set(' ', spaceKey);
+    this.keyElements.set('Enter', enterKey);
     this.keyElements.set('Backspace', bkspKey);
     this.keysContainer.appendChild(bottomRow);
 
@@ -139,6 +148,13 @@ class SwipeKeyboard {
       this.canvas.width = this.keysContainer.clientWidth;
       this.canvas.height = this.keysContainer.clientHeight;
       this.updateKeyRects();
+      
+      // Tự động cuộn trang để không che khuất textarea
+      const kbRect = this.container.getBoundingClientRect();
+      const targetRect = this.activeTarget.getBoundingClientRect();
+      if (targetRect.bottom > kbRect.top - 10) {
+        window.scrollBy({ top: (targetRect.bottom - kbRect.top) + 20, behavior: 'smooth' });
+      }
     }, 50);
   }
 
@@ -205,10 +221,10 @@ class SwipeKeyboard {
     this.highlightKey(key);
     this.drawTrail();
     
-    // Immediate action for Space and Backspace
-    if (key === ' ' || key === 'Backspace') {
+    // Immediate action for Space, Enter and Backspace
+    if (key === ' ' || key === 'Enter' || key === 'Backspace') {
        this.handleImmediateKey(key);
-       this.isSwiping = false; // Don't swipe on space/bksp
+       this.isSwiping = false; // Don't swipe on space/enter/bksp
     }
   }
 
@@ -225,7 +241,7 @@ class SwipeKeyboard {
     this.swipePath.push({x: cx, y: cy});
     
     const key = this.getKeyFromPoint(cx, cy);
-    if (key && key !== ' ' && key !== 'Backspace') {
+    if (key && key !== ' ' && key !== 'Enter' && key !== 'Backspace') {
       const lastKey = this.currentKeys[this.currentKeys.length - 1];
       
       // Chỉ làm sáng (highlight) phím hiện tại đang chạm, tắt các phím cũ
@@ -266,6 +282,8 @@ class SwipeKeyboard {
        target.setRangeText('', start, end, 'end');
     } else if (key === ' ') {
        target.setRangeText(' ', start, end, 'end');
+    } else if (key === 'Enter') {
+       target.setRangeText('\n', start, end, 'end');
     }
     
     target.dispatchEvent(new Event('input'));
@@ -313,7 +331,7 @@ class SwipeKeyboard {
     const geoKeys = [];
     corners.forEach(p => {
        const k = this.getKeyFromPoint(p.x, p.y);
-       if (k && k !== ' ' && k !== 'Backspace') {
+       if (k && k !== ' ' && k !== 'Enter' && k !== 'Backspace') {
           if (geoKeys.length === 0 || geoKeys[geoKeys.length - 1] !== k) {
              geoKeys.push(k);
           }
