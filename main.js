@@ -100,7 +100,7 @@ function syncFromDecrypted() {
 
   tokens.forEach(token => {
     if (!token) return;
-    if (token.match(/^[a-zA-Z0-9À-ỹ_]+$/)) {
+    if (token.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
       const timeCode = encodeWord(token);
       const b60Code = timeToBase60(timeCode);
       encryptedParts.push(timeCode);
@@ -141,7 +141,7 @@ function syncFromTime() {
 
   tokens.forEach(token => {
     if (!token) return;
-    if (token.match(/^[a-zA-Z0-9À-ỹ_]+$/)) {
+    if (token.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
       const b60Code = timeToBase60(token);
       const decoded = decodeWord(token);
       decryptedParts.push(decoded);
@@ -170,7 +170,7 @@ function syncFromTime() {
 
 function syncFromCompressed() {
   if(!txtCompressed) return;
-  const text = txtCompressed.value.replace(/[⇧⇪]/g, '');
+  const text = txtCompressed.value.replace(/[â‡§â‡ª]/g, '');
   if (!text.trim()) {
     txtDecrypted.value = '';
     txtEncrypted.value = '';
@@ -184,7 +184,7 @@ function syncFromCompressed() {
 
   tokens.forEach(token => {
     if (!token) return;
-    if (token.match(/^[a-zA-Z0-9À-ỹ_]+$/)) {
+    if (token.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
       const timeCode = base60ToTime(token);
       const decoded = decodeWord(timeCode);
       timeParts.push(timeCode);
@@ -258,7 +258,7 @@ function renderNoteTags() {
     tagText.textContent = tag;
     
     const rmBtn = document.createElement('span');
-    rmBtn.textContent = '×';
+    rmBtn.textContent = 'Ã—';
     rmBtn.style.cursor = 'pointer';
     rmBtn.style.color = '#ff5555';
     rmBtn.style.fontWeight = 'bold';
@@ -360,28 +360,28 @@ if(txtCompressed) {
       let temp = '';
       while (temp !== val) {
         temp = val;
-        val = val.replace(/⇧f/gi, '⇪');
-        val = val.replace(/⇪f/gi, '');
-        val = val.replace(/ff/gi, '⇪');
+        val = val.replace(/â‡§f/gi, 'â‡ª');
+        val = val.replace(/â‡ªf/gi, '');
+        val = val.replace(/ff/gi, 'â‡ª');
       }
-      val = val.replace(/f/gi, '⇧');
+      val = val.replace(/f/gi, 'â‡§');
       cursor -= (oldLen - val.length);
     }
 
     // 2. Capitalize the typed character based on cursor state
     if (cursor >= 2) {
       const prev2 = val.substring(cursor - 2, cursor);
-      if (prev2.match(/⇧[a-z]/i)) {
+      if (prev2.match(/â‡§[a-z]/i)) {
         const upper = prev2[1].toUpperCase();
         val = val.substring(0, cursor - 2) + upper + val.substring(cursor);
-        cursor = cursor - 1; // ⇧ is consumed
-      } else if (prev2.match(/⇪[a-z]/i)) {
+        cursor = cursor - 1; // â‡§ is consumed
+      } else if (prev2.match(/â‡ª[a-z]/i)) {
         const upper = prev2[1].toUpperCase();
-        val = val.substring(0, cursor - 2) + upper + '⇪' + val.substring(cursor);
-        // ⇪ stays after the typed character, cursor stays same
-      } else if (prev2.match(/⇪[^a-zA-Z⇧⇪]/i)) {
-        val = val.substring(0, cursor - 2) + prev2[1] + '⇪' + val.substring(cursor);
-        // ⇪ jumps past spaces/symbols
+        val = val.substring(0, cursor - 2) + upper + 'â‡ª' + val.substring(cursor);
+        // â‡ª stays after the typed character, cursor stays same
+      } else if (prev2.match(/â‡ª[^a-zA-Zâ‡§â‡ª]/i)) {
+        val = val.substring(0, cursor - 2) + prev2[1] + 'â‡ª' + val.substring(cursor);
+        // â‡ª jumps past spaces/symbols
       }
     }
     
@@ -450,7 +450,7 @@ function enterSandboxMode(silent = false) {
   renderBreakdown([]);
   document.querySelectorAll('.note-item').forEach(i => i.classList.remove('active'));
   if (!silent) {
-    alert("Đã vào chế độ SANDBOX (Nháp). Mọi thứ bạn gõ ở đây sẽ KHÔNG BỊ LƯU LẠI.");
+    alert("ÄÃ£ vÃ o cháº¿ Ä‘á»™ SANDBOX (NhÃ¡p). Má»i thá»© báº¡n gÃµ á»Ÿ Ä‘Ã¢y sáº½ KHÃ”NG Bá»Š LÆ¯U Láº I.");
   }
 }
 
@@ -461,7 +461,7 @@ if (btnPlayground) {
 function saveCurrentNote() {
   if (currentNoteId === 'playground') return; // Sandbox mode, do not save
   
-  const base60Data = txtCompressed ? txtCompressed.value.replace(/[⇧⇪]/g, '').trim() : '';
+  const base60Data = txtCompressed ? txtCompressed.value.replace(/[â‡§â‡ª]/g, '').trim() : '';
   const hasTags = currentNoteTags && currentNoteTags.length > 0;
   
   if(base60Data === '' && !hasTags) return;
@@ -510,12 +510,12 @@ function renderBacklinks(id) {
     backlinksList.innerHTML = '';
     backlinks.forEach(bl => {
       // Decode content from Base60
-      const text = bl.content.replace(/[⇧⇪]/g, '');
+      const text = bl.content.replace(/[â‡§â‡ª]/g, '');
       const tokens = text.split(TOKEN_REGEX);
       let decryptedParts = [];
       tokens.forEach(token => {
         if (!token) return;
-        if (token.match(/^[a-zA-Z0-9À-ỹ_]+$/)) {
+        if (token.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
           const timeCode = base60ToTime(token);
           decryptedParts.push(decodeWord(timeCode));
         } else if (token.startsWith('"') && token.endsWith('"')) {
@@ -545,7 +545,7 @@ function renderBacklinks(id) {
       tagTitle.style.borderBottom = '1px dashed #ffea00';
       tagTitle.style.paddingBottom = '5px';
       const blTag = bl.tags && bl.tags.length > 0 ? bl.tags[0] : '';
-      tagTitle.textContent = `⚡ LINKED NOTE${blTag ? ': ' + blTag : ''}`;
+      tagTitle.textContent = `âš¡ LINKED NOTE${blTag ? ': ' + blTag : ''}`;
       
       const contentDiv = document.createElement('div');
       contentDiv.style.fontFamily = 'var(--font-mono)';
@@ -619,8 +619,8 @@ function renderNotesSidebar() {
   const query = (searchNote.value || '').trim();
   let filterStr = query;
   
-  // REVERSE SEARCH: Nếu nhập Tiếng Việt, mã hóa thành Base60 để search
-  if(query && query.match(/[^\w\s]/)) { // Nếu có dấu tiếng Việt
+  // REVERSE SEARCH: Náº¿u nháº­p Tiáº¿ng Viá»‡t, mÃ£ hÃ³a thÃ nh Base60 Ä‘á»ƒ search
+  if(query && query.match(/[^\w\s]/)) { // Náº¿u cÃ³ dáº¥u tiáº¿ng Viá»‡t
     const words = query.replace(/[.,!?()[\]{}"']/g, ' ').split(/\s+/).filter(w => w.length > 0);
     filterStr = words.map(w => timeToBase60(encodeWord(w))).join(' ');
   }
@@ -705,7 +705,7 @@ if(btnArchiveNote) {
 if(btnDeleteNote) {
   btnDeleteNote.addEventListener('click', () => {
     if(!currentNoteId) return;
-    if(confirm('Bạn có chắc chắn muốn xóa vĩnh viễn Note này?')) {
+    if(confirm('Báº¡n cÃ³ cháº¯c cháº¯n muá»‘n xÃ³a vÄ©nh viá»…n Note nÃ y?')) {
       notesDB = notesDB.filter(n => n.id !== currentNoteId);
       localStorage.setItem('timecypher_notes', JSON.stringify(notesDB));
       createNewNote();
@@ -713,7 +713,7 @@ if(btnDeleteNote) {
   });
 }
 
-// Khởi tạo load
+// Khá»Ÿi táº¡o load
 // --- IMPORT / EXPORT LOGIC ---
 const btnExport = document.getElementById('btn-export-json');
 const btnImport = document.getElementById('btn-import-json');
@@ -722,7 +722,7 @@ const fileInput = document.getElementById('import-file');
 if(btnExport) {
   btnExport.addEventListener('click', () => {
     if (notesDB.length === 0) {
-      alert("Không có dữ liệu để Export!");
+      alert("KhÃ´ng cÃ³ dá»¯ liá»‡u Ä‘á»ƒ Export!");
       return;
     }
     const dataStr = JSON.stringify(notesDB, null, 2);
@@ -762,12 +762,12 @@ if(btnImport && fileInput) {
           notesDB.sort((a,b) => b.updatedAt - a.updatedAt);
           localStorage.setItem('timecypher_notes', JSON.stringify(notesDB));
           renderNotesSidebar();
-          alert(`Import thành công! Đã thêm ${added} ghi chú mới.`);
+          alert(`Import thÃ nh cÃ´ng! ÄÃ£ thÃªm ${added} ghi chÃº má»›i.`);
         } else {
-          alert("File JSON không đúng định dạng của TimeCypher.");
+          alert("File JSON khÃ´ng Ä‘Ãºng Ä‘á»‹nh dáº¡ng cá»§a TimeCypher.");
         }
       } catch (err) {
-        alert("Lỗi đọc file: " + err.message);
+        alert("Lá»—i Ä‘á»c file: " + err.message);
       }
       fileInput.value = ''; // Reset
     };
@@ -827,7 +827,7 @@ function renderConsonants() {
     if (c === null || c === undefined) return;
     const btn = document.createElement('button');
     btn.className = 'cons-btn';
-    btn.textContent = `[${idx.toString().padStart(2, '0')}] ${c === '' ? 'Ø' : c}`;
+    btn.textContent = `[${idx.toString().padStart(2, '0')}] ${c === '' ? 'Ã˜' : c}`;
     btn.onclick = (e) => renderRhymeMatrix(idx, c, e.target);
     consonantGrid.appendChild(btn);
   });
@@ -866,7 +866,7 @@ function renderRhymeMatrix(consIdx, consonant, clickedBtn) {
     const mm = rIdx.toString().padStart(2, '0');
     
     let displayWord = consonant + r;
-    if (consonant === 'gi' && r.startsWith('iê')) {
+    if (consonant === 'gi' && r.startsWith('iÃª')) {
        displayWord = 'gi' + r.substring(1);
     } else if (consonant === 'gi' && r.startsWith('i')) {
        displayWord = 'g' + r;
@@ -906,3 +906,14 @@ if (selConsonant && selRhyme) {
 updateTagsDatalist();
 renderLinkedNoteSelect();
 renderNotesSidebar();
+
+// Chrome Extension: Reset Tooltip
+document.getElementById('btn-reset-tooltip')?.addEventListener('click', () => {
+  if (window.chrome && chrome.storage && chrome.storage.local) {
+    chrome.storage.local.set({ disabledDomains: [], globalDisable: false }, () => {
+      alert('Ðã khôi ph?c Tooltip trên t?t c? các trang web!');
+    });
+  } else {
+    alert('Tính nang này ch? ho?t d?ng khi ch?y du?i d?ng Chrome Extension.');
+  }
+});
