@@ -102,7 +102,7 @@ class SwipeKeyboard {
     
     toolbar.appendChild(disableBtn);
     toolbar.appendChild(closeBtn);
-    this.container.insertBefore(toolbar, this.keysContainer);
+    this.container.appendChild(toolbar);
 
     // Add space, enter and backspace
     const bottomRow = document.createElement('div');
