@@ -72,6 +72,38 @@ class SwipeKeyboard {
       this.keysContainer.appendChild(rowEl);
     });
     
+    // Add a header/toolbar to the keyboard
+    const toolbar = document.createElement('div');
+    toolbar.className = 'vk-toolbar';
+    toolbar.style.display = 'flex';
+    toolbar.style.justifyContent = 'space-between';
+    toolbar.style.padding = '0px 10px 10px 10px';
+    
+    const disableBtn = document.createElement('button');
+    disableBtn.textContent = 'Tắt bàn phím (Mở lại: Click đúp)';
+    disableBtn.className = 'cyber-btn';
+    disableBtn.style.padding = '4px 10px';
+    disableBtn.style.fontSize = '12px';
+    disableBtn.onclick = (e) => {
+       e.stopPropagation();
+       this.isDisabled = true;
+       this.hide();
+    };
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = 'ĐÓNG ✕';
+    closeBtn.className = 'cyber-btn';
+    closeBtn.style.padding = '4px 10px';
+    closeBtn.style.fontSize = '12px';
+    closeBtn.onclick = (e) => {
+       e.stopPropagation();
+       this.hide();
+    };
+    
+    toolbar.appendChild(disableBtn);
+    toolbar.appendChild(closeBtn);
+    this.container.insertBefore(toolbar, this.keysContainer);
+
     // Add space, enter and backspace
     const bottomRow = document.createElement('div');
     bottomRow.className = 'vk-row';
@@ -107,6 +139,13 @@ class SwipeKeyboard {
     const txtCompressed = document.getElementById('compressed-input');
     
     const showKB = (e) => {
+      if (this.isDisabled) return;
+      this.activeTarget = e.target;
+      this.show();
+    };
+
+    const forceShowKB = (e) => {
+      this.isDisabled = false;
       this.activeTarget = e.target;
       this.show();
     };
@@ -114,10 +153,12 @@ class SwipeKeyboard {
     if(txtDecrypted) {
       txtDecrypted.addEventListener('focus', showKB);
       txtDecrypted.addEventListener('click', showKB);
+      txtDecrypted.addEventListener('dblclick', forceShowKB);
     }
     if(txtCompressed) {
       txtCompressed.addEventListener('focus', showKB);
       txtCompressed.addEventListener('click', showKB);
+      txtCompressed.addEventListener('dblclick', forceShowKB);
     }
     
     // Hide keyboard if clicked outside
@@ -131,7 +172,7 @@ class SwipeKeyboard {
   }
 
   show() {
-    if (!this.activeTarget) return;
+    if (!this.activeTarget || this.isDisabled) return;
     this.container.style.display = 'flex';
     
     // Vị trí cố định (fixed) ở dưới cùng màn hình thay vì absolute để không bị tràn màn hình
@@ -143,12 +184,18 @@ class SwipeKeyboard {
     this.container.style.width = '90%';
     this.container.style.maxWidth = '800px';
     
+    // Auto-scroll target into view so it's not obscured by keyboard
+    setTimeout(() => {
+       if (this.activeTarget) {
+           this.activeTarget.scrollIntoView({ behavior: 'smooth', block: 'center' });
+       }
+    }, 100);
+    
     // Setup canvas size
     setTimeout(() => {
       this.canvas.width = this.keysContainer.clientWidth;
       this.canvas.height = this.keysContainer.clientHeight;
       this.updateKeyRects();
-      
       // Tự động cuộn trang để không che khuất textarea
       const kbRect = this.container.getBoundingClientRect();
       const targetRect = this.activeTarget.getBoundingClientRect();
