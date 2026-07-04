@@ -153,6 +153,7 @@ class SwipeKeyboard {
 
     toolbar.addEventListener('pointerdown', (e) => {
       if (e.target.tagName === 'BUTTON') return;
+      if (window.innerWidth <= 768) return; // Disable drag on mobile
       isDragging = true;
       this.hasBeenDragged = true;
       dragStartX = e.clientX;
@@ -303,6 +304,19 @@ class SwipeKeyboard {
     if (!this.activeTarget || this.isDisabled) return;
     this.container.style.display = 'flex';
     this.predictNextWords();
+    
+    const isMobile = window.innerWidth <= 768;
+    if (isMobile) {
+      this.container.style.position = 'absolute';
+      const rect = this.activeTarget.getBoundingClientRect();
+      this.container.style.top = (rect.bottom + window.scrollY + 5) + 'px';
+      this.container.style.left = '50%';
+      this.container.style.bottom = 'auto';
+      this.container.style.transform = 'translateX(-50%)';
+      this.container.style.width = '95%';
+      this.container.style.maxWidth = 'none';
+      return;
+    }
     
     // Vị trí cố định (fixed) ở dưới cùng màn hình thay vì absolute để không bị tràn màn hình
     // Chỉ reset vị trí mặc định nếu bàn phím chưa từng bị người dùng kéo thả
