@@ -49,7 +49,7 @@ const LAYOUT = [
   ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'],
   ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
   ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l'],
-  ['z', 'x', 'c', 'v', 'b', 'n', 'm']
+  ['Mode', 'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.']
 ];
 
 class SwipeKeyboard {
@@ -59,6 +59,9 @@ class SwipeKeyboard {
     this.swipePath = [];
     this.currentKeys = [];
     this.keyRects = [];
+    this.typingMode = 'normal';
+    this.pauseTimer = null;
+    this.hoveredKey = null;
     
     const savedState = localStorage.getItem('vk_state');
     if (savedState) {
@@ -111,6 +114,11 @@ class SwipeKeyboard {
 
     this.keysContainer = document.createElement('div');
     this.keysContainer.id = 'vk-keys-container';
+    this.keysContainer.style.position = 'relative';
+
+    this.bubble = document.createElement('div');
+    this.bubble.className = 'vk-bubble';
+    this.keysContainer.appendChild(this.bubble);
     
     // Canvas for drawing swipe trail
     this.canvas = document.createElement('canvas');
@@ -126,7 +134,7 @@ class SwipeKeyboard {
       row.forEach(key => {
         const keyEl = document.createElement('div');
         keyEl.className = 'vk-key';
-        keyEl.textContent = key;
+        keyEl.textContent = key === 'Mode' ? '🎯' : key;
         keyEl.dataset.key = key;
         this.keyElements.set(key, keyEl);
         rowEl.appendChild(keyEl);
@@ -315,28 +323,27 @@ class SwipeKeyboard {
       this.container.style.transform = 'translateX(-50%)';
       this.container.style.width = '95%';
       this.container.style.maxWidth = 'none';
-      return;
-    }
-    
-    // Vị trí cố định (fixed) ở dưới cùng màn hình thay vì absolute để không bị tràn màn hình
-    // Chỉ reset vị trí mặc định nếu bàn phím chưa từng bị người dùng kéo thả
-    if (!this.hasBeenDragged) {
-      this.container.style.position = 'fixed';
-      this.container.style.bottom = '20px';
-      this.container.style.top = 'auto';
-      this.container.style.left = '50%';
-      this.container.style.transform = 'translateX(-50%)';
-      this.container.style.width = '90%';
-      this.container.style.maxWidth = '800px';
-    } else if (this.savedPos) {
-      this.container.style.position = 'fixed';
-      this.container.style.transform = 'none';
-      if (this.savedPos.left) this.container.style.left = this.savedPos.left;
-      if (this.savedPos.top) this.container.style.top = this.savedPos.top;
-      if (this.savedPos.bottom) this.container.style.bottom = this.savedPos.bottom;
-      if (this.savedPos.width) this.container.style.width = this.savedPos.width;
-      if (this.savedPos.height) this.container.style.height = this.savedPos.height;
-      this.savedPos = null; // Apply once
+    } else {
+      // Vị trí cố định (fixed) ở dưới cùng màn hình thay vì absolute để không bị tràn màn hình
+      // Chỉ reset vị trí mặc định nếu bàn phím chưa từng bị người dùng kéo thả
+      if (!this.hasBeenDragged) {
+        this.container.style.position = 'fixed';
+        this.container.style.bottom = '20px';
+        this.container.style.top = 'auto';
+        this.container.style.left = '50%';
+        this.container.style.transform = 'translateX(-50%)';
+        this.container.style.width = '90%';
+        this.container.style.maxWidth = '800px';
+      } else if (this.savedPos) {
+        this.container.style.position = 'fixed';
+        this.container.style.transform = 'none';
+        if (this.savedPos.left) this.container.style.left = this.savedPos.left;
+        if (this.savedPos.top) this.container.style.top = this.savedPos.top;
+        if (this.savedPos.bottom) this.container.style.bottom = this.savedPos.bottom;
+        if (this.savedPos.width) this.container.style.width = this.savedPos.width;
+        if (this.savedPos.height) this.container.style.height = this.savedPos.height;
+        this.savedPos = null; // Apply once
+      }
     }
     
     // Auto-scroll target into view so it's not obscured by keyboard
@@ -377,12 +384,14 @@ class SwipeKeyboard {
 
   updateKeyRects() {
     this.keyRects = [];
+    if (!this.keysContainer) return;
+    const containerRect = this.keysContainer.getBoundingClientRect();
     this.keyElements.forEach((el, key) => {
       const rect = el.getBoundingClientRect();
       this.keyRects.push({
         key,
-        x: rect.left + rect.width / 2,
-        y: rect.top + rect.height / 2
+        x: (rect.left - containerRect.left) + rect.width / 2,
+        y: (rect.top - containerRect.top) + rect.height / 2
       });
     });
   }
@@ -439,6 +448,10 @@ class SwipeKeyboard {
       cy = e.touches[0].clientY;
     }
 
+    const containerRect = this.keysContainer.getBoundingClientRect();
+    cx = cx - containerRect.left;
+    cy = cy - containerRect.top;
+
     const key = this.getKeyFromPoint(cx, cy);
     if (!key) return;
     
@@ -451,7 +464,7 @@ class SwipeKeyboard {
     this.drawTrail();
     
     // Immediate action for Space, Enter and Backspace
-    if (key === ' ' || key === 'Enter' || key === 'Backspace') {
+    if (key === ' ' || key === 'Enter' || key === 'Backspace' || key === 'Mode' || key === ',' || key === '.') {
        this.handleImmediateKey(key);
        this.isSwiping = false; // Don't swipe on space/enter/bksp
     }
@@ -467,19 +480,45 @@ class SwipeKeyboard {
       cy = e.touches[0].clientY;
     }
 
+    const containerRect = this.keysContainer.getBoundingClientRect();
+    cx = cx - containerRect.left;
+    cy = cy - containerRect.top;
+
     this.swipePath.push({x: cx, y: cy});
     
     const key = this.getKeyFromPoint(cx, cy);
-    if (key && key !== ' ' && key !== 'Enter' && key !== 'Backspace') {
-      const lastKey = this.currentKeys[this.currentKeys.length - 1];
+    const isSpecial = key === ' ' || key === 'Enter' || key === 'Backspace' || key === 'Mode' || key === ',' || key === '.';
+    
+    if (key && !isSpecial) {
+      if (this.typingMode === 'normal') {
+         if (key !== this.hoveredKey) {
+            this.hoveredKey = key;
+            this.bubble.classList.remove('show');
+            if (this.pauseTimer) clearTimeout(this.pauseTimer);
+            
+            this.pauseTimer = setTimeout(() => {
+               const lastKey = this.currentKeys[this.currentKeys.length - 1];
+               if (key !== lastKey) {
+                  this.currentKeys.push(key);
+               }
+               const kRect = this.keyRects.find(r => r.key === key);
+               if (kRect) {
+                  this.bubble.textContent = key;
+                  this.bubble.style.left = kRect.x + 'px';
+                  this.bubble.style.top = (kRect.y - 140) + 'px';
+                  this.bubble.classList.add('show');
+               }
+            }, 150);
+         }
+      } else {
+         const lastKey = this.currentKeys[this.currentKeys.length - 1];
+         if (key !== lastKey) {
+           this.currentKeys.push(key);
+         }
+      }
       
-      // Chỉ làm sáng (highlight) phím hiện tại đang chạm, tắt các phím cũ
       this.keyElements.forEach(el => el.classList.remove('active'));
       this.highlightKey(key);
-
-      if (key !== lastKey) {
-        this.currentKeys.push(key);
-      }
     }
     this.drawTrail();
   }
@@ -489,9 +528,14 @@ class SwipeKeyboard {
     this.isSwiping = false;
     this.keysContainer.releasePointerCapture(e.pointerId);
     
+    if (this.pauseTimer) clearTimeout(this.pauseTimer);
+    if (this.bubble) this.bubble.classList.remove('show');
+    this.hoveredKey = null;
+    
     if (this.currentKeys.length === 1) {
        const key = this.currentKeys[0];
-       if (key !== ' ' && key !== 'Enter' && key !== 'Backspace') {
+       const isSpecial = key === ' ' || key === 'Enter' || key === 'Backspace' || key === 'Mode' || key === ',' || key === '.';
+       if (!isSpecial) {
           this.insertText(key);
           this.clearSuggestions();
        }
@@ -507,7 +551,17 @@ class SwipeKeyboard {
   }
   
   handleImmediateKey(key) {
+    if (key === 'Mode') {
+      this.typingMode = this.typingMode === 'normal' ? 'speed' : 'normal';
+      const modeEl = this.keyElements.get('Mode');
+      if (modeEl) modeEl.textContent = this.typingMode === 'normal' ? '🎯' : '⚡';
+      return;
+    }
     if (!this.activeTarget) return;
+    if (key === ',' || key === '.') {
+      this.insertText(key);
+      return;
+    }
     const target = this.activeTarget;
     let val = target.value;
     let start = target.selectionStart;
@@ -538,8 +592,6 @@ class SwipeKeyboard {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     if (this.swipePath.length < 2) return;
     
-    const rect = this.keysContainer.getBoundingClientRect();
-    
     this.ctx.beginPath();
     this.ctx.lineWidth = 4;
     this.ctx.strokeStyle = '#0f0';
@@ -549,12 +601,11 @@ class SwipeKeyboard {
     this.ctx.shadowColor = '#0f0';
 
     this.swipePath.forEach((p, i) => {
-      const x = p.x - rect.left;
-      const y = p.y - rect.top;
+      const x = p.x;
+      const y = p.y;
       if (i === 0) this.ctx.moveTo(x, y);
       else this.ctx.lineTo(x, y);
     });
-    
     this.ctx.stroke();
   }
 
@@ -564,17 +615,24 @@ class SwipeKeyboard {
     
     let suggestions = [];
     
-    // --- GEOMETRIC WORD EXTRACTION (Douglas-Peucker) ---
-    const corners = this.simplifyPath(this.swipePath, 25); // 25px epsilon
-    const geoKeys = [];
-    corners.forEach(p => {
-       const k = this.getKeyFromPoint(p.x, p.y);
-       if (k && k !== ' ' && k !== 'Enter' && k !== 'Backspace') {
-          if (geoKeys.length === 0 || geoKeys[geoKeys.length - 1] !== k) {
-             geoKeys.push(k);
+    let geoKeys = [];
+    if (this.typingMode === 'speed') {
+       // --- GEOMETRIC WORD EXTRACTION (Douglas-Peucker) ---
+       const corners = this.simplifyPath(this.swipePath, 25); // 25px epsilon
+       corners.forEach(p => {
+          const k = this.getKeyFromPoint(p.x, p.y);
+          const isSpecial = k === ' ' || k === 'Enter' || k === 'Backspace' || k === 'Mode' || k === ',' || k === '.';
+          if (k && !isSpecial) {
+             if (geoKeys.length === 0 || geoKeys[geoKeys.length - 1] !== k) {
+                geoKeys.push(k);
+             }
           }
-       }
-    });
+       });
+    } else {
+       // Normal mode: trust user pauses entirely, no simplification
+       geoKeys = [...this.currentKeys];
+    }
+    
     const geoWord = geoKeys.join('');
     
     // If we extracted a short geometric word (like je0), add its permutations if valid Base60

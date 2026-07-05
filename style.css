@@ -15,6 +15,22 @@
   padding: 0;
 }
 
+/* GLOBAL SCROLLBAR */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: rgba(0, 20, 0, 0.5);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--neon-green);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-corner {
+  background: rgba(0, 20, 0, 0.5);
+}
+
 body {
   font-family: var(--font-mono);
   background-color: var(--dark-bg);
@@ -447,6 +463,7 @@ textarea::placeholder {
   border-radius: 2px;
   position: relative;
   transition: all 0.2s;
+  cursor: pointer;
 }
 .word-cell:hover {
   background: rgba(0, 30, 0, 1);
@@ -454,6 +471,42 @@ textarea::placeholder {
 }
 
 .word-cell .time-code {
+  font-size: 0.8rem;
+  color: #5a5;
+  margin-bottom: 5px;
+}
+
+.tone-variant-cell {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 40, 0, 0.95);
+  border: 1px solid var(--neon-green);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 15px #0a0;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 10px;
+  box-sizing: border-box;
+}
+.tone-variant-cell:hover {
+  background: rgba(0, 60, 0, 1);
+  box-shadow: 0 0 20px #0f0;
+}
+
+.popup-open {
+  z-index: 20;
+  border-color: #ff0 !important;
+  box-shadow: 0 0 15px rgba(255, 255, 0, 0.5);
+  background: rgba(50, 50, 0, 0.8) !important;
+}
+
+.tone-variant-cell .time-code {
   font-size: 0.8rem;
   color: #5a5;
   margin-bottom: 5px;
@@ -735,5 +788,37 @@ textarea::placeholder {
   background: #f55;
   color: #000;
   box-shadow: 0 0 15px #f55;
+}
+
+.vk-bubble {
+  position: absolute;
+  background: #fff;
+  color: #000;
+  font-size: 4rem;
+  font-weight: bold;
+  border-radius: 12px;
+  padding: 10px 25px;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.1s;
+  text-transform: uppercase;
+}
+.vk-bubble.show {
+  opacity: 1;
+}
+.vk-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px 10px 0;
+  border-style: solid;
+  border-color: #fff transparent transparent transparent;
 }
 

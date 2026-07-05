@@ -1,3 +1,4 @@
+const btnLinkPrev = document.getElementById('btn-link-prev');
 import {
   CONSONANTS_BASE, CONSONANTS_EXTRA,
   RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2,
@@ -306,22 +307,11 @@ if(btnAddTag && newTagInput) {
   });
 }
 
-const selLinkedNote = document.getElementById('sel-linked-note');
-const btnOpenLink = document.getElementById('btn-open-link');
-const btnLinkPrev = document.getElementById('btn-link-prev');
+// selLinkedNote removed
+// btnOpenLink removed
 
-if(selLinkedNote) {
-  selLinkedNote.addEventListener('change', () => {
-    if(btnOpenLink) btnOpenLink.style.display = selLinkedNote.value ? 'inline-block' : 'none';
-    clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(saveCurrentNote, 1000);
-  });
-}
-if(btnOpenLink) {
-  btnOpenLink.addEventListener('click', () => {
-    if(selLinkedNote && selLinkedNote.value) loadNote(selLinkedNote.value);
-  });
-}
+// selLinkedNote events removed
+// btnOpenLink events removed
 if(btnLinkPrev) {
   btnLinkPrev.addEventListener('click', () => {
     if(selLinkedNote && selLinkedNote.options.length > 1) {
@@ -419,6 +409,14 @@ setupClearCopy(btnCopyCompressed, btnClearCompressed, txtCompressed);
 
 // --- NOTE APP LOGIC ---
 let notesDB = JSON.parse(localStorage.getItem('timecypher_notes') || '[]');
+notesDB.forEach(n => {
+  if (n.linkedNoteId) {
+    if (!n.relations) n.relations = [];
+    n.relations.push({ targetId: n.linkedNoteId, type: 'Liên kết' });
+    delete n.linkedNoteId;
+  }
+  if (!n.relations) n.relations = [];
+});
 notesDB.forEach(note => {
   if (note.tag && !note.tags) {
     note.tags = [note.tag];
@@ -466,14 +464,14 @@ function saveCurrentNote() {
   
   if(base60Data === '' && !hasTags) return;
   
-  const linkData = selLinkedNote ? selLinkedNote.value : '';
+  // linkData removed
   
   if (!currentNoteId) {
     currentNoteId = 'note_' + Date.now();
     const newNote = {
       id: currentNoteId,
       tags: [...currentNoteTags],
-      linkedNoteId: linkData,
+      relations: JSON.parse(JSON.stringify(currentNoteRelations)),
       content: base60Data,
       isArchived: false,
       updatedAt: Date.now()
@@ -483,7 +481,7 @@ function saveCurrentNote() {
     const note = notesDB.find(n => n.id === currentNoteId);
     if (note) {
       note.tags = [...currentNoteTags];
-      note.linkedNoteId = linkData;
+      note.relations = JSON.parse(JSON.stringify(currentNoteRelations));
       note.content = base60Data;
       note.updatedAt = Date.now();
       // Move to top
@@ -917,3 +915,114 @@ document.getElementById('btn-reset-tooltip')?.addEventListener('click', () => {
     alert('Tính nang này ch? ho?t d?ng khi ch?y du?i d?ng Chrome Extension.');
   }
 });
+
+// --- CLONE & RELATIONS LOGIC ---
+const btnCloneNote = document.getElementById('btn-clone-note');
+if (btnCloneNote) {
+  btnCloneNote.addEventListener('click', () => {
+    if (!currentNoteId || currentNoteId === 'playground') return;
+    const base60Data = txtCompressed ? txtCompressed.value.replace(/[\s\n\r]/g, '').trim() : '';
+    const newId = 'note_' + Date.now();
+    const newNote = {
+      id: newId,
+      tags: [...currentNoteTags],
+      counters: { ...currentNoteCounters },
+      relations: JSON.parse(JSON.stringify(currentNoteRelations)),
+      content: base60Data,
+      isArchived: false,
+      updatedAt: Date.now()
+    };
+    notesDB.unshift(newNote);
+    localStorage.setItem('timecypher_notes', JSON.stringify(notesDB));
+    loadNote(newId);
+    renderNotesSidebar();
+  });
+}
+
+const relationsContainer = document.getElementById('note-relations-container');
+const btnAddRelation = document.getElementById('btn-add-relation');
+const selTargetNote = document.getElementById('sel-target-note');
+const inputRelationType = document.getElementById('relation-type-input');
+
+function renderNoteRelations() {
+  if (!relationsContainer) return;
+  relationsContainer.innerHTML = '';
+  currentNoteRelations.forEach((rel, index) => {
+    const targetNote = notesDB.find(n => n.id === rel.targetId);
+    if (!targetNote) return;
+    
+    const badge = document.createElement('div');
+    badge.className = 'cyber-btn-small';
+    badge.style.display = 'inline-flex';
+    badge.style.alignItems = 'center';
+    badge.style.padding = '2px 8px';
+    badge.style.textTransform = 'none';
+    badge.style.justifyContent = 'space-between';
+    badge.style.color = '#0ff';
+    badge.style.borderColor = '#0ff';
+    
+    const textSpan = document.createElement('span');
+    textSpan.style.cursor = 'pointer';
+    textSpan.textContent = `🔗 ${rel.type}: ${targetNote.tags && targetNote.tags.length > 0 ? targetNote.tags[0] : rel.targetId.substring(0, 10)}`;
+    textSpan.onclick = () => loadNote(rel.targetId);
+    
+    const rmBtn = document.createElement('span');
+    rmBtn.textContent = '×';
+    rmBtn.style.color = '#f00';
+    rmBtn.style.marginLeft = '10px';
+    rmBtn.style.cursor = 'pointer';
+    rmBtn.style.fontWeight = 'bold';
+    rmBtn.onclick = (e) => {
+      e.stopPropagation();
+      currentNoteRelations.splice(index, 1);
+      renderNoteRelations();
+      if(saveTimeout) clearTimeout(saveTimeout);
+      saveCurrentNote();
+    };
+    
+    badge.appendChild(textSpan);
+    badge.appendChild(rmBtn);
+    relationsContainer.appendChild(badge);
+  });
+  
+  if (selTargetNote) {
+    const currentVal = selTargetNote.value;
+    selTargetNote.innerHTML = '<option value="">-- Target Note --</option>';
+    notesDB.forEach(n => {
+      if(n.id !== currentNoteId && n.id !== 'playground') {
+        const opt = document.createElement('option');
+        opt.value = n.id;
+        const displayTag = n.tags && n.tags.length > 0 ? n.tags[0] : n.id.substring(0,10);
+        opt.textContent = displayTag;
+        selTargetNote.appendChild(opt);
+      }
+    });
+    if(notesDB.find(n => n.id === currentVal && n.id !== currentNoteId)) {
+      selTargetNote.value = currentVal;
+    }
+  }
+}
+
+if (btnAddRelation && selTargetNote && inputRelationType) {
+  btnAddRelation.addEventListener('click', () => {
+    const targetId = selTargetNote.value;
+    const type = inputRelationType.value.trim() || 'Liên kết';
+    if (targetId && !currentNoteRelations.find(r => r.targetId === targetId)) {
+      currentNoteRelations.push({ targetId, type });
+      renderNoteRelations();
+      selTargetNote.value = '';
+      if(saveTimeout) clearTimeout(saveTimeout);
+      saveCurrentNote();
+    }
+  });
+}
+
+if (btnLinkPrev) {
+  btnLinkPrev.addEventListener('click', () => {
+    if (lastOpenedNoteId && lastOpenedNoteId !== currentNoteId && selTargetNote) {
+      if(notesDB.find(n => n.id === lastOpenedNoteId)) {
+        selTargetNote.value = lastOpenedNoteId;
+      }
+    }
+  });
+}

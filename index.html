@@ -13,16 +13,18 @@
   <canvas id="matrix-canvas"></canvas>
     </div>
     <div class="app-container">
-      <header>
-        <h1 class="glitch" data-text="TIMECYPHER">TIMECYPHER</h1>
-        <p class="subtitle">Secure Vietnamese-to-Time Encoding Protocol</p>
+      <header style="display: flex; justify-content: space-between; align-items: center;">
+        <div class="logo-container">
+          <h1 class="glitch" data-text="TIMECYPHER">TIMECYPHER</h1>
+          <p class="subtitle">Secure Vietnamese-to-Time Encoding Protocol</p>
+        </div>
       </header>
 
       <div class="layout-split">
         <!-- CỘT 1: SIDEBAR GHI CHÚ -->
         <aside class="notes-sidebar">
           <div class="sidebar-header">
-            <h2>/// CIPHER NOTES ///</h2>
+            <h2>CIPHER NOTES</h2>
             <div style="display: flex; gap: 5px;">
               <button id="btn-new-note" class="cyber-btn-small">+ NEW</button>
               <button id="btn-playground" class="cyber-btn-small" style="background: #110; color: #ff0; border-color: #880;">SANDBOX</button>
@@ -35,10 +37,14 @@
             <button class="tab-btn active" data-tab="active">ACTIVE</button>
             <button class="tab-btn" data-tab="archive">ARCHIVE</button>
           </div>
-          <!-- Note Actions -->
-          <div class="note-actions">
-            <button id="btn-archive-note" class="cyber-btn-small">ARCHIVE</button>
+          <div class="note-actions" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+            <button id="btn-archive-note" class="cyber-btn-small">ARCHIVE NOTE</button>
+            <button id="btn-clone-note" class="cyber-btn-small" style="color: #ffa500; border-color: #ffa500;">CLONE</button>
             <button id="btn-delete-note" class="cyber-btn-small danger">DELETE</button>
+            <select id="sel-create-prompt" class="cyber-btn-small" style="background: #000; color: var(--neon-green); border: 1px solid var(--neon-green); cursor: pointer; padding: 2px 5px; flex: 1; min-width: 100px;">
+              <option value="" disabled selected>✨ PROMPT</option>
+              <option value="square_quote">Make Square Quote</option>
+            </select>
           </div>
           <div class="sync-actions" style="display: flex; gap: 5px; margin-bottom: 15px;">
             <button id="btn-export-json" class="cyber-btn-small" style="flex:1; background: #000; border-color: #555; color: #aaa;">[EXPORT]</button>
@@ -52,31 +58,54 @@
 
         <!-- CỘT 2: EDITOR (3 TEXTAREAS + KEYBOARD) -->
         <main class="converter-box editor-box">
-          <!-- Note Tags -->
-          <div class="input-group" style="margin-bottom: 10px;">
-            <div class="label-row">
-              <label style="color: #ff0;">TAGS (OPTIONAL)</label>
+            <div class="input-group" style="margin-bottom: 10px;">
+              <div class="label-row">
+                <label style="color: #ff0;">TAGS & COUNTERS</label>
+              </div>
+              <div id="note-tags-container" style="display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 5px; min-height: 24px;"></div>
+              <div style="display: flex; gap: 5px; flex-wrap: wrap;">
+                <select id="tag-icon-preset" class="cyber-input" style="width: 50px; padding: 2px; flex-shrink: 0;">
+                  <option value="">-</option>
+                  <option value="✅">✅</option>
+                  <option value="❌">❌</option>
+                  <option value="[ ]">[ ]</option>
+                  <option value="🚲">🚲</option>
+                  <option value="🎯">🎯</option>
+                  <option value="🔥">🔥</option>
+                </select>
+                <input type="text" id="new-tag-input" list="all-tags-datalist" placeholder="Add tag..." spellcheck="false" style="flex: 1; min-width: 120px;" />
+                <button id="btn-add-tag" class="cyber-btn-small" style="padding: 0 10px; flex-shrink: 0;" title="Add normal tag">TAG</button>
+                <button id="btn-add-counter" class="cyber-btn-small" style="padding: 0 10px; color: #0f0; border-color: #0f0; flex-shrink: 0;" title="Add countable tag">COUNT</button>
+              </div>
+              <datalist id="all-tags-datalist"></datalist>
             </div>
-            <div id="note-tags-container" style="display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 5px; min-height: 24px;"></div>
-            <div style="display: flex; gap: 5px;">
-              <input type="text" id="new-tag-input" list="all-tags-datalist" placeholder="Add a tag..." spellcheck="false" style="flex: 1;" />
-              <button id="btn-add-tag" class="cyber-btn-small" style="padding: 0 15px;">ADD</button>
-            </div>
-            <datalist id="all-tags-datalist"></datalist>
-          </div>
 
-          <!-- Linked Note -->
-          <div class="input-group" style="margin-bottom: 5px; display: flex; gap: 10px; align-items: center;">
-            <label style="margin-bottom: 0; white-space: nowrap;">LINK TO:</label>
-            <button id="btn-link-prev" class="cyber-btn-small" title="Quick link to previous note" style="padding: 2px 5px;">[PREV]</button>
-            <select id="sel-linked-note" class="cyber-select" style="flex: 1;">
-              <option value="">-- No Link --</option>
-            </select>
-            <button id="btn-open-link" class="cyber-btn-small" style="display: none;">OPEN &rarr;</button>
-          </div>
-          <div id="backlinks-container" style="display: none; margin-bottom: 15px;">
-            <div id="backlinks-list"></div>
-          </div>
+            <!-- Relations -->
+            <div class="input-group" style="margin-bottom: 5px;">
+              <div class="label-row" style="margin-bottom: 5px;">
+                <label style="color: #0ff;">RELATIONS</label>
+              </div>
+              <div id="note-relations-container" style="display: flex; flex-direction: column; gap: 5px; margin-bottom: 5px;"></div>
+              
+              <div style="display: flex; gap: 5px; flex-wrap: wrap; align-items: center;">
+                <input type="text" id="relation-type-input" list="relation-types-datalist" placeholder="Type..." class="cyber-input" style="width: 80px; padding: 2px; flex-shrink: 0; height: 24px;" />
+                <datalist id="relation-types-datalist">
+                  <option value="Giải thích"></option>
+                  <option value="Ví dụ"></option>
+                  <option value="Nâng cấp từ"></option>
+                  <option value="Liên quan"></option>
+                </datalist>
+                
+                <button id="btn-link-prev" class="cyber-btn-small" title="Link to previous note" style="padding: 0 5px; height: 24px; flex-shrink: 0;">[PREV]</button>
+                <select id="sel-target-note" class="cyber-select" style="flex: 1; min-width: 100px; height: 24px; padding: 0 5px;">
+                  <option value="">-- Target Note --</option>
+                </select>
+                <button id="btn-add-relation" class="cyber-btn-small" style="padding: 0 10px; color: #0ff; border-color: #0ff; height: 24px; flex-shrink: 0;">ADD</button>
+              </div>
+            </div>
+            <div id="backlinks-container" style="display: none; margin-bottom: 15px;">
+              <div id="backlinks-list"></div>
+            </div>
 
           <!-- Text Decrypted -->
           <div class="input-group">
@@ -165,3 +194,4 @@
     <script type="module" src="/keyboard.js"></script>
   </body>
 </html>
+
