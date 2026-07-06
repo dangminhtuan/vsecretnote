@@ -440,6 +440,8 @@ let currentNoteId = null;
 const selLinkedNote = null;
 const btnOpenLink = null;
 let currentNoteTags = [];
+let currentNoteRelations = [];
+let lastOpenedNoteId = null;
 let currentNoteCounters = {};
 let currentTab = 'active'; // 'active' or 'archive'
 
