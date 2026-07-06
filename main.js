@@ -171,7 +171,7 @@ function syncFromTime() {
 
 function syncFromCompressed() {
   if(!txtCompressed) return;
-  const text = txtCompressed.value.replace(/[â‡§â‡ª]/g, '');
+  const text = txtCompressed.value.replace(/[\n\r]/g, '');
   if (!text.trim()) {
     txtDecrypted.value = '';
     txtEncrypted.value = '';
@@ -947,7 +947,7 @@ const btnCloneNote = document.getElementById('btn-clone-note');
 if (btnCloneNote) {
   btnCloneNote.addEventListener('click', () => {
     if (!currentNoteId || currentNoteId === 'playground') return;
-    const base60Data = txtCompressed ? txtCompressed.value.replace(/[\s\n\r]/g, '').trim() : '';
+    const base60Data = txtCompressed ? txtCompressed.value.replace(/[\n\r]/g, '').trim() : '';
     const newId = 'note_' + Date.now();
     const newNote = {
       id: newId,
