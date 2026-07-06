@@ -1151,3 +1151,60 @@ document.addEventListener('click', (e) => {
     tooltip.style.display = 'none';
   }
 });
+
+
+// --- PROMPT DROPDOWN LOGIC ---
+const selPrompt = document.getElementById('sel-create-prompt');
+if (selPrompt) {
+  selPrompt.addEventListener('change', (e) => {
+    if (e.target.value === 'square_quote') {
+      const compressed = txtCompressed.value;
+      if (!compressed || !compressed.trim()) {
+        cyberAlert("Không có dữ liệu Base60 để xuất Prompt!");
+        selPrompt.value = '';
+        return;
+      }
+      
+      const origText = txtInput.value;
+      if (!origText.trim()) {
+        cyberAlert("Không có dữ liệu để xuất Prompt!");
+        selPrompt.value = '';
+        return;
+      }
+      
+      const origWords = origText.replace(/[.,!?()[\]{}"']/g, ' ').split(/\s+/).filter(w => w.length > 0);
+      let annotations = [];
+      let base60Text = [];
+      
+      origWords.forEach(w => {
+        if (w.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
+          const tc = encodeWord(w);
+          const b60 = timeToBase60(tc);
+          base60Text.push(b60);
+          annotations.push(`- ${b60} (Code: ${tc}, Meaning: ${removeAccents(w)})`);
+        } else {
+          base60Text.push(w);
+        }
+      });
+      
+      const promptText = `Create a visually stunning image with a beautiful, cinematic cyberpunk background. In the center, design a stylish square-shaped text block (a "square quote"). The main text is a futuristic compressed language. Under each word of the compressed language, display its numeric code and its original meaning as a smaller annotation.
+
+Here is the data to display:
+Main Compressed Text: ${base60Text.join(' ')}
+
+Annotations to place under each word:
+${annotations.join('\n')}
+
+The typography should be modern, glowing, and highly legible. The design should look like a futuristic cipher being decoded.`;
+
+      navigator.clipboard.writeText(promptText).then(() => {
+        cyberAlert("Đã chép Prompt vào Clipboard thành công!");
+      }).catch(err => {
+        console.error("Lỗi copy clipboard:", err);
+        cyberAlert("Không thể copy vào Clipboard!");
+      });
+    }
+    // Reset
+    selPrompt.value = '';
+  });
+}
