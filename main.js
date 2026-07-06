@@ -1070,32 +1070,42 @@ let currentConfirmCallback = null;
 
 function showCyberModal(msg, isConfirm, callback) {
   if (!modalOverlay) return;
-  const noAccentMsg = removeAccents(msg);
+  const interactiveContainer = document.getElementById('cyber-modal-interactive-b60');
   
-  // Transform to Base60 and Time
-  const origWords = msg.replace(/[.,!?()[\]{}"']/g, ' ').split(/\s+/).filter(w => w.length > 0);
-  const b60Arr = [];
-  const timeArr = [];
-  origWords.forEach(w => {
-    if (w.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
-      const tc = encodeWord(w);
-      timeArr.push(tc);
-      b60Arr.push(timeToBase60(tc));
-    } else {
-      timeArr.push(w);
-      b60Arr.push(w);
-    }
-  });
-  
-  modalText.textContent = noAccentMsg;
-  modalB60.textContent = b60Arr.join(' ');
-  modalTime.textContent = timeArr.join(' ');
-  
+  if (interactiveContainer) {
+    interactiveContainer.innerHTML = '';
+    const tokens = msg.split(TOKEN_REGEX);
+    
+    tokens.forEach(token => {
+      if (!token) return;
+      if (token.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
+        const tc = encodeWord(token);
+        const b60 = timeToBase60(tc);
+        
+        const span = document.createElement('span');
+        span.className = 'interactive-b60-word';
+        span.textContent = b60;
+        span.dataset.text = removeAccents(token);
+        span.dataset.time = tc;
+        
+        span.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showTooltip(e.target);
+        });
+        interactiveContainer.appendChild(span);
+      } else {
+        if (token.length > 0) {
+          interactiveContainer.appendChild(document.createTextNode(token));
+        }
+      }
+    });
+  }
+
   if (isConfirm) {
-    modalBtnNo.style.display = 'inline-block';
+    if (modalBtnNo) modalBtnNo.style.display = 'inline-block';
     currentConfirmCallback = callback;
   } else {
-    modalBtnNo.style.display = 'none';
+    if (modalBtnNo) modalBtnNo.style.display = 'none';
     currentConfirmCallback = null;
   }
   
@@ -1122,3 +1132,22 @@ function cyberAlert(msg) {
 function cyberConfirm(msg, callback) {
   showCyberModal(msg, true, callback);
 }
+
+function showTooltip(target) {
+  let tooltip = document.getElementById('cyber-modal-word-tooltip');
+  if (!tooltip) return;
+  
+  const rect = target.getBoundingClientRect();
+  tooltip.innerHTML = `<span class="tooltip-time">${target.dataset.time}</span>|<span class="tooltip-text"> ${target.dataset.text}</span>`;
+  tooltip.style.display = 'block';
+  tooltip.style.left = (rect.left + rect.width/2) + 'px';
+  tooltip.style.top = (rect.top - 5) + 'px'; // slightly above
+}
+
+// Close tooltip when clicking anywhere
+document.addEventListener('click', (e) => {
+  const tooltip = document.getElementById('cyber-modal-word-tooltip');
+  if (tooltip && e.target.className !== 'interactive-b60-word') {
+    tooltip.style.display = 'none';
+  }
+});

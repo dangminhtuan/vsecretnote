@@ -822,3 +822,131 @@ textarea::placeholder {
   border-color: #fff transparent transparent transparent;
 }
 
+
+/* CYBER MODAL SYSTEM */
+.cyber-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.cyber-modal-box {
+  background: var(--bg-color);
+  border: 1px solid var(--neon-green);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  padding: 15px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cyber-modal-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: var(--neon-green);
+  animation: scanline 2s linear infinite;
+  opacity: 0.5;
+}
+
+.cyber-modal-header {
+  color: var(--neon-green);
+  font-weight: bold;
+  border-bottom: 1px solid #333;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.cyber-modal-content {
+  margin-bottom: 20px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.cyber-modal-line {
+  margin-bottom: 8px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.modal-label {
+  color: #888;
+  font-size: 0.8rem;
+  display: inline-block;
+  width: 50px;
+}
+
+.modal-value-b60 {
+  color: #ffea00;
+}
+
+.modal-value-time {
+  color: #0ff;
+}
+
+.cyber-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+/* Modal Interactive Styles */
+.modal-interactive-container {
+  font-family: 'Space Mono', monospace;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--neon-green);
+  text-align: center;
+  margin: 20px 0;
+  word-wrap: break-word;
+}
+
+.interactive-b60-word {
+  cursor: pointer;
+  border-bottom: 1px dashed var(--neon-green);
+  padding: 0 2px;
+  transition: all 0.2s;
+  display: inline-block;
+}
+
+.interactive-b60-word:hover {
+  background: rgba(0, 255, 0, 0.2);
+  color: #fff;
+}
+
+.cyber-tooltip {
+  position: fixed;
+  background: rgba(0, 20, 0, 0.95);
+  border: 1px solid var(--neon-green);
+  color: #fff;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: 'Space Mono', monospace;
+  pointer-events: none;
+  z-index: 10000;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  transform: translate(-50%, -100%);
+  margin-top: -10px;
+  white-space: nowrap;
+}
+
+.cyber-tooltip .tooltip-time {
+  color: #0f0;
+  margin-right: 8px;
+}
+.cyber-tooltip .tooltip-text {
+  color: #fff;
+}
