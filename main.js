@@ -1073,11 +1073,11 @@ function showCyberModal(msg, isConfirm, callback) {
   const noAccentMsg = removeAccents(msg);
   
   // Transform to Base60 and Time
-  const words = noAccentMsg.replace(/[.,!?()[\]{}"']/g, ' ').split(/\s+/).filter(w => w.length > 0);
+  const origWords = msg.replace(/[.,!?()[\]{}"']/g, ' ').split(/\s+/).filter(w => w.length > 0);
   const b60Arr = [];
   const timeArr = [];
-  words.forEach(w => {
-    if (w.match(/^[a-zA-Z0-9_]+$/)) {
+  origWords.forEach(w => {
+    if (w.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
       const tc = encodeWord(w);
       timeArr.push(tc);
       b60Arr.push(timeToBase60(tc));
