@@ -903,14 +903,11 @@ function renderRhymeMatrix(consIdx, consonant, clickedBtn) {
     
     const cell = document.createElement('div');
     cell.className = 'word-cell';
-    cell.dataset.toneIndex = '0';
+    let isExpanded = false;
+    let variantCells = [];
     
-    const renderCell = () => {
-      const toneIdx = parseInt(cell.dataset.toneIndex, 10);
-      const currentTone = validTones[toneIdx];
-      const displayWord = applyTone(baseWord, currentTone);
-      
-      const s1 = currentTone;
+    const renderContent = (targetCell, s1, isVariant) => {
+      let displayWord = applyTone(baseWord, s1);
       let b60 = '';
       if (s1 === 0 && s2 === 0) {
         b60 = BASE60_MAPPING[parseInt(hh)] + BASE60_MAPPING[parseInt(mm)];
@@ -920,26 +917,44 @@ function renderRhymeMatrix(consIdx, consonant, clickedBtn) {
       
       const timeCode = `${hh}:${mm}`;
       
-      cell.innerHTML = `
+      targetCell.innerHTML = `
         <div class="time-code">${timeCode} <span style="color:#0f0;font-weight:bold;margin-left:5px;">${b60}</span></div>
         <div class="word-text" style="margin-top:2px; font-size:1.1em; cursor:pointer;">${displayWord || '-'}</div>
         <div style="font-size:0.7em; color:#555; margin-top:2px;">S1=${s1}, S2=${s2}</div>
       `;
       
-      if (hh === mm) {
-        cell.classList.add('highlight-repeat');
-      } else if (hh[0] === mm[1] && hh[1] === mm[0]) {
-        cell.classList.add('highlight-palindrome');
+      if (!isVariant) {
+        if (hh === mm) {
+          targetCell.classList.add('highlight-repeat');
+        } else if (hh[0] === mm[1] && hh[1] === mm[0]) {
+          targetCell.classList.add('highlight-palindrome');
+        }
+      } else {
+        targetCell.style.border = '1px dashed var(--neon-green)';
+        targetCell.style.background = 'rgba(0, 40, 0, 0.9)';
       }
     };
     
-    renderCell();
+    // Default tone is the first valid tone
+    renderContent(cell, validTones[0], false);
     
     cell.onclick = () => {
-       let tIdx = parseInt(cell.dataset.toneIndex, 10);
-       tIdx = (tIdx + 1) % validTones.length;
-       cell.dataset.toneIndex = tIdx;
-       renderCell();
+      if (!isExpanded) {
+        isExpanded = true;
+        let insertRef = cell;
+        for (let i = 1; i < validTones.length; i++) {
+          const vCell = document.createElement('div');
+          vCell.className = 'word-cell variant-cell';
+          renderContent(vCell, validTones[i], true);
+          insertRef.after(vCell);
+          insertRef = vCell;
+          variantCells.push(vCell);
+        }
+      } else {
+        isExpanded = false;
+        variantCells.forEach(vc => vc.remove());
+        variantCells = [];
+      }
     };
     
     rhymeMatrix.appendChild(cell);
