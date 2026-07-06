@@ -467,7 +467,7 @@ function enterSandboxMode(silent = false) {
   renderBreakdown([]);
   document.querySelectorAll('.note-item').forEach(i => i.classList.remove('active'));
   if (!silent) {
-    alert("Đã vào chế độ SANDBOX (Nháp). Mọi thứ bạn gõ ở đây sẽ KHÔNG BỊ LƯU LẠI.");
+    cyberAlert("Đã vào chế độ SANDBOX (Nháp). Mọi thứ bạn gõ ở đây sẽ KHÔNG BỊ LƯU LẠI.");
   }
 }
 
@@ -943,7 +943,7 @@ document.getElementById('btn-reset-tooltip')?.addEventListener('click', () => {
 });
 
 // --- CLONE & RELATIONS LOGIC ---
-const btnCloneNote = document.getElementById('btn-clone-note');
+var btnCloneNote = document.getElementById('btn-clone-note');
 if (btnCloneNote) {
   btnCloneNote.addEventListener('click', () => {
     if (!currentNoteId || currentNoteId === 'playground') return;
@@ -965,10 +965,10 @@ if (btnCloneNote) {
   });
 }
 
-const relationsContainer = document.getElementById('note-relations-container');
-const btnAddRelation = document.getElementById('btn-add-relation');
-const selTargetNote = document.getElementById('sel-target-note');
-const inputRelationType = document.getElementById('relation-type-input');
+var relationsContainer = document.getElementById('note-relations-container');
+var btnAddRelation = document.getElementById('btn-add-relation');
+var selTargetNote = document.getElementById('sel-target-note');
+var inputRelationType = document.getElementById('relation-type-input');
 
 function renderNoteRelations() {
   if (!relationsContainer) return;
@@ -1059,12 +1059,12 @@ function removeAccents(str) {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
 }
 
-const modalOverlay = document.getElementById('cyber-modal');
-const modalText = document.getElementById('cyber-modal-text');
-const modalB60 = document.getElementById('cyber-modal-b60');
-const modalTime = document.getElementById('cyber-modal-time');
-const modalBtnYes = document.getElementById('cyber-modal-btn-yes');
-const modalBtnNo = document.getElementById('cyber-modal-btn-no');
+var modalOverlay = document.getElementById('cyber-modal');
+var modalText = document.getElementById('cyber-modal-text');
+var modalB60 = document.getElementById('cyber-modal-b60');
+var modalTime = document.getElementById('cyber-modal-time');
+var modalBtnYes = document.getElementById('cyber-modal-btn-yes');
+var modalBtnNo = document.getElementById('cyber-modal-btn-no');
 
 let currentConfirmCallback = null;
 
