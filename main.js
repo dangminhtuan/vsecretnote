@@ -1427,19 +1427,33 @@ if (lookupInput) {
       <div style="margin-bottom: 10px;">
         <span style="color: #fff;">Trạng thái:</span> <strong style="color: ${type === 'Từ thường' ? '#aaa' : '#ff0'}">${type}</strong>
       </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-        <div style="border: 1px solid #444; padding: 10px;">
-          <div style="color: #888; font-size: 12px; margin-bottom: 5px;">MÃ THEO QUY LUẬT CŨ</div>
-          <div>Mã số: <strong>${oldNumeric}</strong></div>
-          <div>Mã nén: <strong style="color: #f00;">${oldBase60}</strong> (${oldBase60.length} ký tự)</div>
-        </div>
-        <div style="border: 1px solid var(--neon-green); padding: 10px;">
-          <div style="color: var(--neon-green); font-size: 12px; margin-bottom: 5px;">MÃ ÁP DỤNG HIỆN TẠI</div>
-          <div>Mã số: <strong>${newNumeric}</strong></div>
-          <div>Mã nén: <strong style="color: #0f0;">${newBase60}</strong> (${newBase60.length} ký tự)</div>
-        </div>
-      </div>
     `;
+    
+    if (oldNumeric === newNumeric) {
+      html += `
+        <div style="border: 1px solid var(--neon-green); padding: 10px; margin-bottom: 20px; max-width: 400px; margin-left: auto; margin-right: auto;">
+          <div style="color: var(--neon-green); font-size: 12px; margin-bottom: 5px; text-align: center;">MÃ TỪ ĐIỂN</div>
+          <div style="text-align: center;">Mã số: <strong>${newNumeric}</strong></div>
+          <div style="text-align: center;">Mã nén: <strong style="color: #0f0;">${newBase60}</strong> (${newBase60.length} ký tự)</div>
+        </div>
+      `;
+    } else {
+      html += `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+          <div style="border: 1px solid #444; padding: 10px;">
+            <div style="color: #888; font-size: 12px; margin-bottom: 5px;">MÃ THEO QUY LUẬT CŨ</div>
+            <div>Mã số: <strong>${oldNumeric}</strong></div>
+            <div>Mã nén: <strong style="color: #f00;">${oldBase60}</strong> (${oldBase60.length} ký tự)</div>
+          </div>
+          <div style="border: 1px solid var(--neon-green); padding: 10px;">
+            <div style="color: var(--neon-green); font-size: 12px; margin-bottom: 5px;">MÃ ÁP DỤNG HIỆN TẠI</div>
+            <div>Mã số: <strong>${newNumeric}</strong></div>
+            <div>Mã nén: <strong style="color: #0f0;">${newBase60}</strong> (${newBase60.length} ký tự)</div>
+          </div>
+        </div>
+      `;
+    }
+
     
     if (exceptionArray && exceptionIndex !== -1) {
       const start = Math.max(0, exceptionIndex - 5);
