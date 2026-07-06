@@ -255,16 +255,27 @@ function renderNoteTags() {
     pill.style.padding = '2px 8px';
     pill.style.textTransform = 'none';
     
+    const count = currentNoteCounters[tag] || 0;
+    
     const tagText = document.createElement('span');
-    tagText.textContent = tag;
+    tagText.textContent = tag + (count > 0 ? ` (${count})` : '');
+    tagText.style.cursor = 'pointer';
+    tagText.onclick = () => {
+      currentNoteCounters[tag] = (currentNoteCounters[tag] || 0) + 1;
+      renderNoteTags();
+      if(saveTimeout) clearTimeout(saveTimeout);
+      saveCurrentNote();
+    };
     
     const rmBtn = document.createElement('span');
-    rmBtn.textContent = 'Ã—';
+    rmBtn.textContent = '×';
     rmBtn.style.cursor = 'pointer';
     rmBtn.style.color = '#ff5555';
     rmBtn.style.fontWeight = 'bold';
-    rmBtn.onclick = () => {
+    rmBtn.onclick = (e) => {
+      e.stopPropagation();
       currentNoteTags = currentNoteTags.filter(t => t !== tag);
+      delete currentNoteCounters[tag];
       renderNoteTags();
       if(saveTimeout) clearTimeout(saveTimeout);
       saveCurrentNote();
@@ -426,7 +437,10 @@ notesDB.forEach(note => {
 });
 
 let currentNoteId = null;
+const selLinkedNote = null;
+const btnOpenLink = null;
 let currentNoteTags = [];
+let currentNoteCounters = {};
 let currentTab = 'active'; // 'active' or 'archive'
 
 const btnNewNote = document.getElementById('btn-new-note');
@@ -443,12 +457,15 @@ function enterSandboxMode(silent = false) {
   txtEncrypted.value = '';
   if(txtCompressed) txtCompressed.value = '';
   currentNoteTags = [];
+  currentNoteCounters = {};
+  currentNoteRelations = [];
   renderNoteTags();
+  renderNoteRelations();
   if(newTagInput) newTagInput.value = '';
   renderBreakdown([]);
   document.querySelectorAll('.note-item').forEach(i => i.classList.remove('active'));
   if (!silent) {
-    alert("ÄÃ£ vÃ o cháº¿ Ä‘á»™ SANDBOX (NhÃ¡p). Má»i thá»© báº¡n gÃµ á»Ÿ Ä‘Ã¢y sáº½ KHÃ”NG Bá»Š LÆ¯U Láº I.");
+    alert("Đã vào chế độ SANDBOX (Nháp). Mọi thứ bạn gõ ở đây sẽ KHÔNG BỊ LƯU LẠI.");
   }
 }
 
@@ -569,6 +586,9 @@ function loadNote(id) {
   if(txtCompressed) {
     txtCompressed.value = note.content;
     currentNoteTags = [...(note.tags || [])];
+    currentNoteCounters = { ...(note.counters || {}) };
+    currentNoteRelations = JSON.parse(JSON.stringify(note.relations || []));
+    if (lastOpenedNoteId !== id) lastOpenedNoteId = currentNoteId;
     renderNoteTags();
     
     if(selLinkedNote) {
@@ -576,6 +596,7 @@ function loadNote(id) {
       if(btnOpenLink) btnOpenLink.style.display = selLinkedNote.value ? 'inline-block' : 'none';
     }
     syncFromCompressed();
+    renderNoteRelations();
   }
   renderLinkedNoteSelect();
   renderBacklinks(id);
@@ -590,6 +611,8 @@ function createNewNote() {
   txtEncrypted.value = '';
   if(txtCompressed) txtCompressed.value = '';
   currentNoteTags = [];
+  currentNoteCounters = {};
+  currentNoteRelations = [];
   renderNoteTags();
   if(newTagInput) newTagInput.value = '';
   if(selLinkedNote) {
@@ -598,6 +621,7 @@ function createNewNote() {
   }
   renderLinkedNoteSelect();
   renderBacklinks(null);
+  renderNoteRelations();
   renderBreakdown([]);
   renderNotesSidebar();
   updateActionButtons();
