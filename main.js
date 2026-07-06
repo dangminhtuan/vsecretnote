@@ -7,7 +7,7 @@ import {
 
 import {
   encodeWord, decodeWord, timeToBase60, base60ToTime, TOKEN_REGEX
-} from './vcomp.js';
+, applyTone} from './vcomp.js';
 
 // --- UI MATRIX EFFECT ---
 const canvas = document.getElementById('matrix-canvas');
@@ -851,7 +851,7 @@ function renderConsonants() {
     if (c === null || c === undefined) return;
     const btn = document.createElement('button');
     btn.className = 'cons-btn';
-    btn.textContent = `[${idx.toString().padStart(2, '0')}] ${c === '' ? 'Ã˜' : c}`;
+    btn.textContent = `[${idx.toString().padStart(2, '0')}] ${c === '' ? 'Ø' : c}`;
     btn.onclick = (e) => renderRhymeMatrix(idx, c, e.target);
     consonantGrid.appendChild(btn);
   });
@@ -889,29 +889,59 @@ function renderRhymeMatrix(consIdx, consonant, clickedBtn) {
     const hh = consIdx.toString().padStart(2, '0');
     const mm = rIdx.toString().padStart(2, '0');
     
-    let displayWord = consonant + r;
-    if (consonant === 'gi' && r.startsWith('iÃª')) {
-       displayWord = 'gi' + r.substring(1);
+    let baseWord = consonant + r;
+    if (consonant === 'gi' && r.startsWith('iê')) {
+       baseWord = 'gi' + r.substring(1);
     } else if (consonant === 'gi' && r.startsWith('i')) {
-       displayWord = 'g' + r;
+       baseWord = 'g' + r;
     }
     
-    const b60 = BASE60_MAPPING[parseInt(hh)] + BASE60_MAPPING[parseInt(mm)] + BASE60_MAPPING[s2];
+    let validTones = [0, 1, 2, 3, 4, 5];
+    if (/[cpt]$|ch$/.test(r)) {
+       validTones = [1, 5];
+    }
     
     const cell = document.createElement('div');
     cell.className = 'word-cell';
+    cell.dataset.toneIndex = '0';
     
-    if (hh === mm) {
-      cell.classList.add('highlight-repeat');
-    } else if (hh[0] === mm[1] && hh[1] === mm[0]) {
-      cell.classList.add('highlight-palindrome');
-    }
+    const renderCell = () => {
+      const toneIdx = parseInt(cell.dataset.toneIndex, 10);
+      const currentTone = validTones[toneIdx];
+      const displayWord = applyTone(baseWord, currentTone);
+      
+      const s1 = currentTone;
+      let b60 = '';
+      if (s1 === 0 && s2 === 0) {
+        b60 = BASE60_MAPPING[parseInt(hh)] + BASE60_MAPPING[parseInt(mm)];
+      } else {
+        b60 = BASE60_MAPPING[parseInt(hh)] + BASE60_MAPPING[parseInt(mm)] + BASE60_MAPPING[s1] + BASE60_MAPPING[s2];
+      }
+      
+      const timeCode = `${hh}:${mm}`;
+      
+      cell.innerHTML = `
+        <div class="time-code">${timeCode} <span style="color:#0f0;font-weight:bold;margin-left:5px;">${b60}</span></div>
+        <div class="word-text" style="margin-top:2px; font-size:1.1em; cursor:pointer;">${displayWord || '-'}</div>
+        <div style="font-size:0.7em; color:#555; margin-top:2px;">S1=${s1}, S2=${s2}</div>
+      `;
+      
+      if (hh === mm) {
+        cell.classList.add('highlight-repeat');
+      } else if (hh[0] === mm[1] && hh[1] === mm[0]) {
+        cell.classList.add('highlight-palindrome');
+      }
+    };
     
-    cell.innerHTML = `
-      <div class="time-code">${hh}:${mm} <span style="color:#0f0;font-weight:bold;margin-left:5px;">${b60}</span></div>
-      <div class="word-text" style="margin-top:2px; font-size:1.1em;">${displayWord || '-'}</div>
-      <div style="font-size:0.7em; color:#555; margin-top:2px;">S2=${s2}</div>
-    `;
+    renderCell();
+    
+    cell.onclick = () => {
+       let tIdx = parseInt(cell.dataset.toneIndex, 10);
+       tIdx = (tIdx + 1) % validTones.length;
+       cell.dataset.toneIndex = tIdx;
+       renderCell();
+    };
+    
     rhymeMatrix.appendChild(cell);
   });
 }
