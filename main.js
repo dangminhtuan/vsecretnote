@@ -729,11 +729,11 @@ if(btnArchiveNote) {
 if(btnDeleteNote) {
   btnDeleteNote.addEventListener('click', () => {
     if(!currentNoteId) return;
-    if(confirm('Báº¡n cÃ³ cháº¯c cháº¯n muá»‘n xÃ³a vÄ©nh viá»…n Note nÃ y?')) {
+    cyberConfirm('Bạn có chắc chắn muốn xóa vĩnh viễn Note này?', () => {
       notesDB = notesDB.filter(n => n.id !== currentNoteId);
       localStorage.setItem('timecypher_notes', JSON.stringify(notesDB));
       createNewNote();
-    }
+    });
   });
 }
 
@@ -746,7 +746,7 @@ const fileInput = document.getElementById('import-file');
 if(btnExport) {
   btnExport.addEventListener('click', () => {
     if (notesDB.length === 0) {
-      alert("KhÃ´ng cÃ³ dá»¯ liá»‡u Ä‘á»ƒ Export!");
+      cyberAlert("Không có dữ liệu để Export!");
       return;
     }
     const dataStr = JSON.stringify(notesDB, null, 2);
@@ -938,7 +938,7 @@ document.getElementById('btn-reset-tooltip')?.addEventListener('click', () => {
       alert('Ðã khôi ph?c Tooltip trên t?t c? các trang web!');
     });
   } else {
-    alert('Tính nang này ch? ho?t d?ng khi ch?y du?i d?ng Chrome Extension.');
+    cyberAlert('Tính năng này chỉ hoạt động khi chạy dưới dạng Chrome Extension.');
   }
 });
 
@@ -1051,4 +1051,74 @@ if (btnLinkPrev) {
       }
     }
   });
+}
+
+
+// --- CYBER MODAL SYSTEM ---
+function removeAccents(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+}
+
+const modalOverlay = document.getElementById('cyber-modal');
+const modalText = document.getElementById('cyber-modal-text');
+const modalB60 = document.getElementById('cyber-modal-b60');
+const modalTime = document.getElementById('cyber-modal-time');
+const modalBtnYes = document.getElementById('cyber-modal-btn-yes');
+const modalBtnNo = document.getElementById('cyber-modal-btn-no');
+
+let currentConfirmCallback = null;
+
+function showCyberModal(msg, isConfirm, callback) {
+  if (!modalOverlay) return;
+  const noAccentMsg = removeAccents(msg);
+  
+  // Transform to Base60 and Time
+  const words = noAccentMsg.replace(/[.,!?()[\]{}"']/g, ' ').split(/\s+/).filter(w => w.length > 0);
+  const b60Arr = [];
+  const timeArr = [];
+  words.forEach(w => {
+    if (w.match(/^[a-zA-Z0-9_]+$/)) {
+      const tc = encodeWord(w);
+      timeArr.push(tc);
+      b60Arr.push(timeToBase60(tc));
+    } else {
+      timeArr.push(w);
+      b60Arr.push(w);
+    }
+  });
+  
+  modalText.textContent = noAccentMsg;
+  modalB60.textContent = b60Arr.join(' ');
+  modalTime.textContent = timeArr.join(' ');
+  
+  if (isConfirm) {
+    modalBtnNo.style.display = 'inline-block';
+    currentConfirmCallback = callback;
+  } else {
+    modalBtnNo.style.display = 'none';
+    currentConfirmCallback = null;
+  }
+  
+  modalOverlay.style.display = 'flex';
+}
+
+if (modalBtnNo) {
+  modalBtnNo.addEventListener('click', () => {
+    modalOverlay.style.display = 'none';
+  });
+}
+
+if (modalBtnYes) {
+  modalBtnYes.addEventListener('click', () => {
+    modalOverlay.style.display = 'none';
+    if (currentConfirmCallback) currentConfirmCallback();
+  });
+}
+
+function cyberAlert(msg) {
+  showCyberModal(msg, false);
+}
+
+function cyberConfirm(msg, callback) {
+  showCyberModal(msg, true, callback);
 }

@@ -192,6 +192,22 @@
     </div>
     <script type="module" src="/main.js"></script>
     <script type="module" src="/keyboard.js"></script>
+
+    <!-- CYBER MODAL SYSTEM -->
+    <div id="cyber-modal" class="cyber-modal-overlay" style="display: none;">
+      <div class="cyber-modal-box">
+        <div class="cyber-modal-header">[ SYSTEM MESSAGE ]</div>
+        <div id="cyber-modal-content" class="cyber-modal-content">
+          <div class="cyber-modal-line"><span class="modal-label">TEXT :</span> <span id="cyber-modal-text"></span></div>
+          <div class="cyber-modal-line"><span class="modal-label">BASE60:</span> <span id="cyber-modal-b60" class="modal-value-b60"></span></div>
+          <div class="cyber-modal-line"><span class="modal-label">TIME :</span> <span id="cyber-modal-time" class="modal-value-time"></span></div>
+        </div>
+        <div class="cyber-modal-actions">
+          <button id="cyber-modal-btn-no" class="cyber-btn-small" style="display: none; border-color: #ff5555; color: #ff5555;">[ CANCEL ]</button>
+          <button id="cyber-modal-btn-yes" class="cyber-btn-small" style="background: #0f0; color: #000;">[ OK ]</button>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
 
