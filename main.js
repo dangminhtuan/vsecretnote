@@ -1319,3 +1319,103 @@ The typography should be modern, glowing, and highly legible. The design should 
     selPrompt.value = '';
   });
 }
+
+
+// --- DICTIONARY LOOKUP LOGIC ---
+const btnSearchDict = document.getElementById('btn-search-dict');
+const lookupModal = document.getElementById('lookup-modal');
+const closeLookup = document.getElementById('close-lookup');
+const lookupInput = document.getElementById('lookup-input');
+const lookupResults = document.getElementById('lookup-results');
+
+if (btnSearchDict) {
+  btnSearchDict.addEventListener('click', () => {
+    lookupModal.style.display = 'block';
+    lookupInput.focus();
+  });
+}
+
+if (closeLookup) {
+  closeLookup.addEventListener('click', () => {
+    lookupModal.style.display = 'none';
+  });
+}
+
+if (lookupInput) {
+  lookupInput.addEventListener('input', () => {
+    const word = lookupInput.value.trim().toLowerCase();
+    if (!word) {
+      lookupResults.innerHTML = '';
+      return;
+    }
+    
+    // Evaluate word
+    let type = 'Từ thường';
+    let exceptionArray = null;
+    let exceptionIndex = -1;
+    
+    if (SHORT_WORDS.includes(word)) {
+      type = 'Từ siêu ngắn (Ngoại lệ)';
+      exceptionArray = SHORT_WORDS;
+      exceptionIndex = SHORT_WORDS.indexOf(word);
+    } else if (TWO_DIGIT_WORDS.includes(word)) {
+      type = 'Từ 2 số (Ngoại lệ)';
+      exceptionArray = TWO_DIGIT_WORDS;
+      exceptionIndex = TWO_DIGIT_WORDS.indexOf(word);
+    } else if (ENGLISH_DICT.includes(word)) {
+      type = 'Từ Tiếng Anh';
+      exceptionArray = ENGLISH_DICT;
+      exceptionIndex = ENGLISH_DICT.indexOf(word);
+    } else if (SHORTCUT_WORDS.includes(word)) {
+      type = 'Phím tắt (Ngoại lệ)';
+      exceptionArray = SHORTCUT_WORDS;
+      exceptionIndex = SHORTCUT_WORDS.indexOf(word);
+    }
+    
+    const oldNumeric = encodeWord(word, true);
+    const oldBase60 = timeToBase60(oldNumeric);
+    
+    const newNumeric = encodeWord(word, false);
+    const newBase60 = timeToBase60(newNumeric);
+    
+    let html = `
+      <div style="margin-bottom: 10px;">
+        <span style="color: #fff;">Trạng thái:</span> <strong style="color: ${type === 'Từ thường' ? '#aaa' : '#ff0'}">${type}</strong>
+      </div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+        <div style="border: 1px solid #444; padding: 10px;">
+          <div style="color: #888; font-size: 12px; margin-bottom: 5px;">MÃ THEO QUY LUẬT CŨ</div>
+          <div>Mã số: <strong>${oldNumeric}</strong></div>
+          <div>Mã nén: <strong style="color: #f00;">${oldBase60}</strong> (${oldBase60.length} ký tự)</div>
+        </div>
+        <div style="border: 1px solid var(--neon-green); padding: 10px;">
+          <div style="color: var(--neon-green); font-size: 12px; margin-bottom: 5px;">MÃ ÁP DỤNG HIỆN TẠI</div>
+          <div>Mã số: <strong>${newNumeric}</strong></div>
+          <div>Mã nén: <strong style="color: #0f0;">${newBase60}</strong> (${newBase60.length} ký tự)</div>
+        </div>
+      </div>
+    `;
+    
+    if (exceptionArray && exceptionIndex !== -1) {
+      const start = Math.max(0, exceptionIndex - 5);
+      const end = Math.min(exceptionArray.length, exceptionIndex + 6);
+      const neighbors = exceptionArray.slice(start, end);
+      
+      html += `
+        <div style="border-top: 1px solid #333; padding-top: 10px;">
+          <div style="color: #888; margin-bottom: 10px;">CÁC TỪ LÂN CẬN TRONG TỪ ĐIỂN:</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+      `;
+      
+      neighbors.forEach(n => {
+        if (!n) return;
+        const isTarget = (n === word);
+        html += `<span style="padding: 3px 8px; border: 1px solid ${isTarget ? 'var(--neon-green)' : '#444'}; color: ${isTarget ? '#fff' : '#888'}; background: ${isTarget ? '#003300' : 'transparent'};">${n}</span>`;
+      });
+      
+      html += `</div></div>`;
+    }
+    
+    lookupResults.innerHTML = html;
+  });
+}

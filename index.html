@@ -46,7 +46,11 @@
               <option value="square_quote">Make Square Quote</option>
             </select>
           </div>
+          
           <div class="sync-actions" style="display: flex; gap: 5px; margin-bottom: 15px;">
+            <button id="btn-search-dict" class="cyber-btn-small" style="background: #000; color: var(--neon-green); border: 1px solid var(--neon-green); cursor: pointer; padding: 5px; flex: 1;">
+              🔍 TRA TỪ
+            </button>
             <button id="btn-export-json" class="cyber-btn-small" style="flex:1; background: #000; border-color: #555; color: #aaa;">[EXPORT]</button>
             <button id="btn-import-json" class="cyber-btn-small" style="flex:1; background: #000; border-color: #555; color: #aaa;">[IMPORT]</button>
             <input type="file" id="import-file" style="display:none;" accept=".json" />
@@ -217,6 +221,22 @@
         </div>
       </div>
     </div>
-  </body>
+  
+  <div id="lookup-modal" class="cyber-modal" style="display: none;">
+    <div class="modal-content" style="max-width: 500px; margin: 50px auto; border: 2px solid var(--neon-green); background: #050505; color: var(--neon-green); font-family: 'Fira Code', monospace; box-shadow: 0 0 15px var(--neon-green); position: relative;">
+      <span id="close-lookup" class="close-btn" style="position: absolute; right: 10px; top: 10px; cursor: pointer; font-size: 20px;">&times;</span>
+      <h2 style="text-align: center; margin-top: 20px; border-bottom: 1px solid var(--neon-green); padding-bottom: 10px;">TRA CỨU TỪ ĐIỂN</h2>
+      
+      <div style="padding: 20px;">
+        <input type="text" id="lookup-input" class="cyber-input" placeholder="Nhập từ cần tra (vd: đá)..." style="width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 15px; font-size: 16px; border: 1px solid var(--neon-green); background: #000; color: #fff;">
+        
+        <div id="lookup-results" style="min-height: 200px;">
+          <!-- Results injected here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
 </html>
 
