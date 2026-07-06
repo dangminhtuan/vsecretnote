@@ -2,7 +2,7 @@ const btnLinkPrev = document.getElementById('btn-link-prev');
 import {
   CONSONANTS_BASE, CONSONANTS_EXTRA,
   RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2,
-  BASE60_MAPPING
+  BASE60_MAPPING, SHORT_WORDS, TWO_DIGIT_WORDS, ENGLISH_DICT, SHORTCUT_WORDS
 } from './data.js';
 
 import {
