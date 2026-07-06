@@ -918,7 +918,118 @@ function renderRhymeMatrix(consIdx, consonant, clickedBtn) {
 
 if (selConsonant && selRhyme) {
   selConsonant.addEventListener('change', renderConsonants);
-  selRhyme.addEventListener('change', () => {
+  
+const selDictMode = document.getElementById('sel-dict-mode');
+const selShortBlock = document.getElementById('sel-short-block');
+
+selDictMode.addEventListener('change', () => {
+  const mode = selDictMode.value;
+  if (mode === 'base') {
+    selConsonant.style.display = 'inline-block';
+    selRhyme.style.display = 'inline-block';
+    selShortBlock.style.display = 'none';
+    renderConsonants();
+    rhymeMatrix.innerHTML = '<div class="matrix-placeholder">SELECT A CONSONANT TO INITIALIZE MATRIX...</div>';
+  } else if (mode === 'short-words') {
+    selConsonant.style.display = 'none';
+    selRhyme.style.display = 'none';
+    selShortBlock.style.display = 'inline-block';
+    populateShortBlocks();
+    renderShortWordsGrid();
+  } else if (mode === 'two-digit') {
+    selConsonant.style.display = 'none';
+    selRhyme.style.display = 'none';
+    selShortBlock.style.display = 'none';
+    renderTwoDigitGrid();
+  } else if (mode === 'english') {
+    selConsonant.style.display = 'none';
+    selRhyme.style.display = 'none';
+    selShortBlock.style.display = 'none';
+    renderEnglishGrid();
+  }
+});
+
+function populateShortBlocks() {
+  if (selShortBlock.children.length > 0) return;
+  for (let hh = 32; hh <= 59; hh++) {
+    const opt = document.createElement('option');
+    opt.value = hh;
+    opt.textContent = `Block ${hh}`;
+    selShortBlock.appendChild(opt);
+  }
+  selShortBlock.addEventListener('change', renderShortWordsGrid);
+}
+
+function renderShortWordsGrid() {
+  const hh = parseInt(selShortBlock.value || 32);
+  const startIndex = (hh - 32) * 60;
+  
+  consonantGrid.innerHTML = '';
+  rhymeMatrix.innerHTML = '';
+  
+  for (let i = 0; i < 60; i++) {
+    const wordIdx = startIndex + i;
+    if (wordIdx >= SHORT_WORDS.length) break;
+    const word = SHORT_WORDS[wordIdx];
+    
+    const mm = i;
+    const b60Code = `${hh.toString().padStart(2,'0')}${mm.toString().padStart(2,'0')}`;
+    const mapped = timeToBase60(b60Code);
+    
+    const item = document.createElement('div');
+    item.className = 'rhyme-item valid';
+    item.innerHTML = `<div class="code-val">${mapped}</div><div class="code-idx">[${b60Code}] ${word}</div>`;
+    rhymeMatrix.appendChild(item);
+  }
+}
+
+function renderTwoDigitGrid() {
+  consonantGrid.innerHTML = '';
+  rhymeMatrix.innerHTML = '';
+  TWO_DIGIT_WORDS.forEach((word, idx) => {
+    if (!word) return;
+    const codeStr = idx.toString().padStart(2, '0');
+    const mapped = timeToBase60(codeStr);
+    const item = document.createElement('div');
+    item.className = 'rhyme-item valid';
+    item.innerHTML = `<div class="code-val">${mapped}</div><div class="code-idx">[${codeStr}] ${word}</div>`;
+    rhymeMatrix.appendChild(item);
+  });
+}
+
+function renderEnglishGrid() {
+  consonantGrid.innerHTML = '';
+  rhymeMatrix.innerHTML = '';
+  
+  ENGLISH_DICT.forEach((word, idx) => {
+    const s2State = Math.floor(idx / 1440) + 6;
+    const remainder = idx % 1440;
+    const hh = Math.floor(remainder / 60);
+    const mm = remainder % 60;
+    const b60Code = `${hh.toString().padStart(2,'0')}${mm.toString().padStart(2,'0')}0${s2State}`;
+    const mapped = timeToBase60(b60Code);
+    
+    const item = document.createElement('div');
+    item.className = 'rhyme-item valid';
+    item.innerHTML = `<div class="code-val">${mapped}</div><div class="code-idx">[${b60Code}] ${word}</div>`;
+    rhymeMatrix.appendChild(item);
+  });
+  
+  // Also render SHORTCUT_WORDS
+  SHORTCUT_WORDS.forEach((word, idx) => {
+    const hh = 32 + Math.floor(idx / 60);
+    const mm = idx % 60;
+    const b60Code = `${hh.toString().padStart(2,'0')}${mm.toString().padStart(2,'0')}`;
+    const mapped = timeToBase60(b60Code);
+    
+    const item = document.createElement('div');
+    item.className = 'rhyme-item valid';
+    item.innerHTML = `<div class="code-val">${mapped}</div><div class="code-idx">[${b60Code}] ${word}</div>`;
+    rhymeMatrix.appendChild(item);
+  });
+}
+
+selRhyme.addEventListener('change', () => {
     const activeBtn = consonantGrid.querySelector('.active');
     if (activeBtn) activeBtn.click();
     else if (consonantGrid.children.length > 0) consonantGrid.children[0].click();

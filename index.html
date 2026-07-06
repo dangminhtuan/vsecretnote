@@ -165,7 +165,14 @@
         <section class="dictionary-box">
           <div style="display:flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
              <h2 class="dict-title" style="margin-bottom:0;">DICTIONARY MATRIX</h2>
-             <div class="dict-controls" style="display:flex; flex-wrap: wrap; gap: 10px;">
+             <div class="dict-controls" style="display:flex; flex-direction: column; gap: 10px;">
+               <select id="sel-dict-mode" class="cyber-select" style="width: 100%;">
+                 <option value="base">Chế độ: Phụ âm & Vần</option>
+                 <option value="two-digit">Chế độ: Từ 2 số (00-99)</option>
+                 <option value="short-words">Chế độ: Từ siêu ngắn (Ngoại lệ)</option>
+                 <option value="english">Chế độ: Tiếng Anh & Phím tắt</option>
+               </select>
+               <div id="dict-sub-controls" style="display:flex; flex-wrap: wrap; gap: 10px;">
                <select id="sel-consonant" class="cyber-select">
                  <option value="base">Phụ âm: CƠ BẢN (24)</option>
                  <option value="extra">Phụ âm: MỞ RỘNG (8)</option>
