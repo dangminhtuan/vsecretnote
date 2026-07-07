@@ -2,7 +2,8 @@ const btnLinkPrev = document.getElementById('btn-link-prev');
 import {
   CONSONANTS_BASE, CONSONANTS_EXTRA,
   RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2,
-  BASE60_MAPPING, SHORT_WORDS, TWO_DIGIT_WORDS, ENGLISH_DICT, SHORTCUT_WORDS
+  BASE60_MAPPING, SHORT_WORDS, TWO_DIGIT_WORDS, ENGLISH_DICT, SHORTCUT_WORDS,
+  REAL_VIETNAMESE_WORDS
 } from './data.js';
 
 import {
@@ -1516,6 +1517,15 @@ if (lookupInput) {
 
     
     if (codeVariants.length > 0) {
+      // Sort variants: REAL words first, then others
+      codeVariants.sort((a, b) => {
+         const aValid = REAL_VIETNAMESE_WORDS.includes(a.word) || SHORT_WORDS.includes(a.word) || TWO_DIGIT_WORDS.includes(a.word) || ENGLISH_DICT.includes(a.word);
+         const bValid = REAL_VIETNAMESE_WORDS.includes(b.word) || SHORT_WORDS.includes(b.word) || TWO_DIGIT_WORDS.includes(b.word) || ENGLISH_DICT.includes(b.word);
+         if (aValid && !bValid) return -1;
+         if (!aValid && bValid) return 1;
+         return 0;
+      });
+
       html += `
         <div style="border-top: 1px solid #333; padding-top: 10px; margin-bottom: 10px;">
           <div style="color: #888; margin-bottom: 10px;">CÁC BIẾN THỂ TỪ MÃ NÉN:</div>
@@ -1523,7 +1533,16 @@ if (lookupInput) {
       `;
       codeVariants.forEach(cv => {
         const isTarget = (cv.word.toLowerCase() === word);
-        html += `<span class="neighbor-word" data-word="${cv.code}" style="padding: 3px 8px; border: 1px solid ${isTarget ? '#ff0' : '#444'}; color: ${isTarget ? '#000' : '#ff0'}; background: ${isTarget ? '#ff0' : 'transparent'}; cursor: pointer;">${cv.code} <small style="color: #888;">(${cv.word})</small></span>`;
+        const isValid = REAL_VIETNAMESE_WORDS.includes(cv.word) || SHORT_WORDS.includes(cv.word) || TWO_DIGIT_WORDS.includes(cv.word) || ENGLISH_DICT.includes(cv.word);
+        
+        // Emphasize real words, fade out fake phonetic words
+        const bgColor = isTarget ? '#ff0' : 'transparent';
+        const borderColor = isTarget ? '#ff0' : (isValid ? '#0f0' : '#444');
+        const textColor = isTarget ? '#000' : (isValid ? '#0f0' : '#888');
+        const opacity = isValid ? '1' : '0.5';
+        const fontWeight = isValid ? 'bold' : 'normal';
+
+        html += `<span class="neighbor-word" data-word="${cv.code}" style="padding: 3px 8px; border: 1px solid ${borderColor}; color: ${textColor}; background: ${bgColor}; cursor: pointer; opacity: ${opacity}; font-weight: ${fontWeight};">${cv.code} <small style="color: ${isTarget ? '#000' : '#888'}; font-weight: normal;">(${cv.word})</small>${isValid && !isTarget ? ' ✓' : ''}</span>`;
       });
       html += `</div></div>`;
     }
