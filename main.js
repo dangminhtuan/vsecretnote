@@ -108,14 +108,11 @@ function syncFromDecrypted() {
       encryptedParts.push(timeCode);
       compressedParts.push(b60Code);
       breakdownPairs.push({ word: token, time: timeCode, base60: b60Code });
-    } else if (token.startsWith('"') && token.endsWith('"')) {
-      encryptedParts.push(token);
-      compressedParts.push(token);
-      breakdownPairs.push({ word: token.substring(1, token.length - 1), time: token, base60: token });
+    
     } else if (token.startsWith('[') && token.endsWith(']')) {
       encryptedParts.push(token);
       compressedParts.push(token);
-      breakdownPairs.push({ word: token, time: token, base60: token });
+      breakdownPairs.push({ word: token.substring(1, token.length - 1), time: token, base60: token });
     } else {
       encryptedParts.push(token);
       compressedParts.push(token);
@@ -149,15 +146,11 @@ function syncFromTime() {
       decryptedParts.push(decoded);
       compressedParts.push(b60Code);
       breakdownPairs.push({ time: token, word: decoded, base60: b60Code });
-    } else if (token.startsWith('"') && token.endsWith('"')) {
-      const inner = token.substring(1, token.length - 1);
-      decryptedParts.push(inner);
-      compressedParts.push(token);
-      breakdownPairs.push({ time: token, word: inner, base60: token });
+    
     } else if (token.startsWith('[') && token.endsWith(']')) {
       decryptedParts.push(token);
       compressedParts.push(token);
-      breakdownPairs.push({ time: token, word: token, base60: token });
+      breakdownPairs.push({ time: token, word: token.substring(1, token.length - 1), base60: token });
     } else {
       decryptedParts.push(token);
       compressedParts.push(token);
@@ -192,15 +185,11 @@ function syncFromCompressed() {
       timeParts.push(timeCode);
       decryptedParts.push(decoded);
       breakdownPairs.push({ base60: token, time: timeCode, word: decoded });
-    } else if (token.startsWith('"') && token.endsWith('"')) {
-      const inner = token.substring(1, token.length - 1);
-      timeParts.push(token);
-      decryptedParts.push(inner);
-      breakdownPairs.push({ base60: token, time: token, word: inner });
+    
     } else if (token.startsWith('[') && token.endsWith(']')) {
       timeParts.push(token);
       decryptedParts.push(token);
-      breakdownPairs.push({ base60: token, time: token, word: token });
+      breakdownPairs.push({ base60: token, time: token, word: token.substring(1, token.length - 1) });
     } else {
       timeParts.push(token);
       decryptedParts.push(token);

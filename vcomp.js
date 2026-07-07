@@ -1,6 +1,6 @@
 import {
   TONES, CONSONANTS_BASE, CONSONANTS_EXTRA,
-  RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2, ENGLISH_DICT, SHORTCUT_WORDS, TWO_DIGIT_WORDS,
+  RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2, ENGLISH_DICT, SHORTCUT_WORDS, TWO_DIGIT_WORDS, SHORT_WORDS,
   BASE60_MAPPING
 } from './data.js';
 
@@ -49,7 +49,7 @@ const extractPhonetics = (word) => {
   return { consonant, rhyme, tone };
 };
 
-const applyTone = (rhyme, tone) => {
+export const applyTone = (rhyme, tone) => {
   if (tone === 0 || !rhyme) return rhyme;
   const marks = ['', '\u0301', '\u0300', '\u0309', '\u0303', '\u0323'];
   const m = marks[tone];
@@ -74,6 +74,13 @@ export const encodeWord = (word, bypassShortcut = false) => {
     const twoDigitIndex = TWO_DIGIT_WORDS.indexOf(word);
     if (twoDigitIndex !== -1) {
       return twoDigitIndex.toString().padStart(2, '0');
+    }
+    
+    const shortWordIndex = SHORT_WORDS.indexOf(word);
+    if (shortWordIndex !== -1) {
+      const hh = 32 + Math.floor(shortWordIndex / 60);
+      const mm = shortWordIndex % 60;
+      return `${hh.toString().padStart(2,'0')}${mm.toString().padStart(2,'0')}`;
     }
   }
 
@@ -110,6 +117,10 @@ export const encodeWord = (word, bypassShortcut = false) => {
   let s1 = tone;
   let s2 = 0;
 
+  if (/[cpt]$|ch$/.test(rhyme)) {
+    if (s1 === 1) s1 = 0;
+  }
+  
   if (cBaseIdx !== -1) {
     hh = cBaseIdx;
     if (rBaseIdx !== -1) { mm = rBaseIdx; s2 = 0; }
@@ -123,7 +134,7 @@ export const encodeWord = (word, bypassShortcut = false) => {
   }
   
   if (hh === -1 || mm === -1) {
-    return `"${word}"`;
+    return `[${word}]`;
   }
   
   const fullCode = `${hh.toString().padStart(2,'0')}${mm.toString().padStart(2,'0')}${s1}${s2}`;
@@ -161,6 +172,12 @@ export const decodeWord = (code) => {
 
   if (code.length === 4) {
     if (shortcutDecodeMap[code]) return shortcutDecodeMap[code];
+    const hh = parseInt(code.substring(0,2), 10);
+    const mm = parseInt(code.substring(2,4), 10);
+    if (hh >= 32 && !isNaN(mm)) {
+      const shortIdx = (hh - 32) * 60 + mm;
+      if (shortIdx >= 0 && shortIdx < SHORT_WORDS.length) return SHORT_WORDS[shortIdx];
+    }
     code = code + '00';
   }
 
@@ -196,18 +213,23 @@ export const decodeWord = (code) => {
   else if (s2 === 2 || s2 === 5) rhyme = RHYMES_EXTRA_2[mm] || '';
   
   if (!rhyme && consonant === '') return '[ERR:RHYME]';
+  
+  let decodedS1 = s1;
+  if (/[cpt]$|ch$/.test(rhyme)) {
+    if (decodedS1 === 0) decodedS1 = 1;
+  }
 
   if (consonant === 'gi' && rhyme.startsWith('iê')) {
     rhyme = rhyme.substring(1);
   }
 
-  const tonedRhyme = applyTone(rhyme, s1);
+  const tonedRhyme = applyTone(rhyme, decodedS1);
   return consonant + tonedRhyme;
 };
 
 // --- BASE60 COMPRESSION ENGINE ---
 export function timeToBase60(timeStr) {
-  if (timeStr.includes('?') || timeStr.includes('"') || timeStr.startsWith('[')) return timeStr;
+  if (timeStr.includes('?') || timeStr.startsWith('[')) return timeStr;
   
   if (timeStr.length === 2) {
     const hh = parseInt(timeStr, 10);
@@ -244,4 +266,4 @@ export function base60ToTime(base60Str) {
   return base60Str;
 }
 
-export const TOKEN_REGEX = /("[^"]+"|\[[^\]]+\]|[a-zA-Z0-9À-ỹ_]+)/;
+export const TOKEN_REGEX = /("[^"]+"|<[^>]+>|\[[^\]]+\]|[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+)/;
