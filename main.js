@@ -1473,42 +1473,62 @@ if (lookupInput) {
     const newNumeric = encodeWord(word, false);
     const newBase60 = timeToBase60(newNumeric);
     
+    const isInvalid = newNumeric.startsWith('"') || newNumeric.startsWith('[');
+    if (isInvalid) {
+       type = 'Không tồn tại';
+    }
+    
     let html = `
-      <div style="font-size: 28px; color: var(--neon-green); text-align: center; margin-bottom: 5px; font-weight: bold; text-transform: uppercase;">
+      <div style="font-size: 28px; color: ${isInvalid ? '#f00' : 'var(--neon-green)'}; text-align: center; margin-bottom: 5px; font-weight: bold; text-transform: uppercase;">
         ${word}
       </div>
       <div style="margin-bottom: 10px; text-align: center;">
-        <span style="color: #fff;">Trạng thái:</span> <strong style="color: ${type === 'Từ thường' ? '#aaa' : '#ff0'}">${type}</strong>
+        <span style="color: #fff;">Trạng thái:</span> <strong style="color: ${isInvalid ? '#f00' : (type === 'Từ thường' ? '#aaa' : '#ff0')}">${type}</strong>
       </div>
     `;
     
-    if (oldNumeric === newNumeric) {
-      html += `
-        <div style="border: 1px solid var(--neon-green); padding: 10px; margin-bottom: 20px; max-width: 400px; margin-left: auto; margin-right: auto;">
-          <div style="color: var(--neon-green); font-size: 12px; margin-bottom: 5px; text-align: center;">MÃ TỪ ĐIỂN</div>
-          <div style="text-align: center;">Mã số: <strong>${newNumeric}</strong></div>
-          <div style="text-align: center;">Mã nén: <strong style="color: #0f0;">${newBase60}</strong> (${newBase60.length} ký tự)</div>
-        </div>
-      `;
-    } else {
-      html += `
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
-          <div style="border: 1px solid #444; padding: 10px;">
-            <div style="color: #888; font-size: 12px; margin-bottom: 5px;">MÃ THEO QUY LUẬT CŨ</div>
-            <div>Mã số: <strong>${oldNumeric}</strong></div>
-            <div>Mã nén: <strong style="color: #f00;">${oldBase60}</strong> (${oldBase60.length} ký tự)</div>
+    if (!isInvalid) {
+      if (oldNumeric === newNumeric) {
+        html += `
+          <div style="border: 1px solid var(--neon-green); padding: 10px; margin-bottom: 20px; max-width: 400px; margin-left: auto; margin-right: auto;">
+            <div style="color: var(--neon-green); font-size: 12px; margin-bottom: 5px; text-align: center;">MÃ TỪ ĐIỂN</div>
+            <div style="text-align: center;">Mã số: <strong>${newNumeric}</strong></div>
+            <div style="text-align: center;">Mã nén: <strong style="color: #0f0;">${newBase60}</strong> (${newBase60.length} ký tự)</div>
           </div>
-          <div style="border: 1px solid var(--neon-green); padding: 10px;">
-            <div style="color: var(--neon-green); font-size: 12px; margin-bottom: 5px;">MÃ ÁP DỤNG HIỆN TẠI</div>
-            <div>Mã số: <strong>${newNumeric}</strong></div>
-            <div>Mã nén: <strong style="color: #0f0;">${newBase60}</strong> (${newBase60.length} ký tự)</div>
+        `;
+      } else {
+        html += `
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px;">
+            <div style="border: 1px solid #444; padding: 10px;">
+              <div style="color: #888; font-size: 12px; margin-bottom: 5px;">MÃ THEO QUY LUẬT CŨ</div>
+              <div>Mã số: <strong>${oldNumeric}</strong></div>
+              <div>Mã nén: <strong style="color: #f00;">${oldBase60}</strong> (${oldBase60.length} ký tự)</div>
+            </div>
+            <div style="border: 1px solid var(--neon-green); padding: 10px;">
+              <div style="color: var(--neon-green); font-size: 12px; margin-bottom: 5px;">MÃ ÁP DỤNG HIỆN TẠI</div>
+              <div>Mã số: <strong>${newNumeric}</strong></div>
+              <div>Mã nén: <strong style="color: #0f0;">${newBase60}</strong> (${newBase60.length} ký tự)</div>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
     }
 
     
-    if (exceptionArray && exceptionIndex !== -1) {
+    if (codeVariants.length > 0) {
+      html += `
+        <div style="border-top: 1px solid #333; padding-top: 10px; margin-bottom: 10px;">
+          <div style="color: #888; margin-bottom: 10px;">CÁC BIẾN THỂ TỪ MÃ NÉN:</div>
+          <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+      `;
+      codeVariants.forEach(cv => {
+        const isTarget = (cv.word.toLowerCase() === word);
+        html += `<span class="neighbor-word" data-word="${cv.code}" style="padding: 3px 8px; border: 1px solid ${isTarget ? '#ff0' : '#444'}; color: ${isTarget ? '#000' : '#ff0'}; background: ${isTarget ? '#ff0' : 'transparent'}; cursor: pointer;">${cv.code} <small style="color: #888;">(${cv.word})</small></span>`;
+      });
+      html += `</div></div>`;
+    }
+    
+    if (exceptionArray && exceptionIndex !== -1 && !isInvalid) {
       const start = Math.max(0, exceptionIndex - 5);
       const end = Math.min(exceptionArray.length, exceptionIndex + 6);
       const neighbors = exceptionArray.slice(start, end);
