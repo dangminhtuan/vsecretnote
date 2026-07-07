@@ -1396,7 +1396,32 @@ if (lookupInput) {
     
     let word = rawWord.toLowerCase();
     
-    // Smart detection: Try to decode if it's a numeric code or base60 code
+    // Smart detection & Variants
+    let codeVariants = [];
+    if (/^[a-zA-Z0-9]{1,3}$/.test(rawWord)) {
+      function getCaseVariants(str) {
+        if (!str) return [''];
+        let first = str[0];
+        let rest = getCaseVariants(str.slice(1));
+        let variants = [];
+        rest.forEach(r => {
+          variants.push(first.toLowerCase() + r);
+          variants.push(first.toUpperCase() + r);
+        });
+        return [...new Set(variants)];
+      }
+      let allVariants = getCaseVariants(rawWord);
+      allVariants.forEach(v => {
+        let n = base60ToTime(v);
+        if (/^\d{2,6}$/.test(n)) {
+          let dec = decodeWord(n);
+          if (!dec.startsWith('[ERR') && !dec.startsWith('[EN-')) {
+             codeVariants.push({ code: v, word: dec });
+          }
+        }
+      });
+    }
+
     if (/^\d{2,6}$/.test(rawWord)) {
       let decodedWord = decodeWord(rawWord);
       if (!decodedWord.startsWith('[ERR') && !decodedWord.startsWith('[EN-')) {
