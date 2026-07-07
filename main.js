@@ -1388,10 +1388,35 @@ if (closeLookup) {
 
 if (lookupInput) {
   lookupInput.addEventListener('input', () => {
-    const word = lookupInput.value.trim().toLowerCase();
-    if (!word) {
+    let rawWord = lookupInput.value.trim();
+    if (!rawWord) {
       lookupResults.innerHTML = '';
       return;
+    }
+    
+    let word = rawWord.toLowerCase();
+    
+    // Smart detection: Try to decode if it's a numeric code or base60 code
+    if (/^\d{2,6}$/.test(rawWord)) {
+      let decodedWord = decodeWord(rawWord);
+      if (!decodedWord.startsWith('[ERR') && !decodedWord.startsWith('[EN-')) {
+        word = decodedWord.toLowerCase();
+      }
+    } else if (/^[a-zA-Z0-9]{1,3}$/.test(rawWord)) {
+      let num = base60ToTime(rawWord);
+      if (/^\d{2,6}$/.test(num)) {
+        let possibleWord = decodeWord(num);
+        if (!possibleWord.startsWith('[ERR') && !possibleWord.startsWith('[EN-')) {
+          // Confirm it matches the exact encoding
+          let testNum = encodeWord(possibleWord, false);
+          let testBase60 = timeToBase60(testNum);
+          let testNumOld = encodeWord(possibleWord, true);
+          let testBase60Old = timeToBase60(testNumOld);
+          if (rawWord === testBase60 || rawWord === testBase60Old) {
+             word = possibleWord.toLowerCase();
+          }
+        }
+      }
     }
     
     // Evaluate word
@@ -1424,7 +1449,10 @@ if (lookupInput) {
     const newBase60 = timeToBase60(newNumeric);
     
     let html = `
-      <div style="margin-bottom: 10px;">
+      <div style="font-size: 28px; color: var(--neon-green); text-align: center; margin-bottom: 5px; font-weight: bold; text-transform: uppercase;">
+        ${word}
+      </div>
+      <div style="margin-bottom: 10px; text-align: center;">
         <span style="color: #fff;">Trạng thái:</span> <strong style="color: ${type === 'Từ thường' ? '#aaa' : '#ff0'}">${type}</strong>
       </div>
     `;
@@ -1469,12 +1497,19 @@ if (lookupInput) {
       neighbors.forEach(n => {
         if (!n) return;
         const isTarget = (n === word);
-        html += `<span style="padding: 3px 8px; border: 1px solid ${isTarget ? 'var(--neon-green)' : '#444'}; color: ${isTarget ? '#fff' : '#888'}; background: ${isTarget ? '#003300' : 'transparent'};">${n}</span>`;
+        html += `<span class="neighbor-word" data-word="${n}" style="padding: 3px 8px; border: 1px solid ${isTarget ? 'var(--neon-green)' : '#444'}; color: ${isTarget ? '#fff' : '#888'}; background: ${isTarget ? '#003300' : 'transparent'}; cursor: pointer;">${n}</span>`;
       });
       
       html += `</div></div>`;
     }
     
     lookupResults.innerHTML = html;
+    
+    lookupResults.querySelectorAll('.neighbor-word').forEach(span => {
+      span.addEventListener('click', () => {
+        lookupInput.value = span.dataset.word;
+        lookupInput.dispatchEvent(new Event('input'));
+      });
+    });
   });
 }
