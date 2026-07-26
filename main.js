@@ -391,6 +391,7 @@ const setupClearCopy = (btnCopy, btnClear, txtInput) => {
       if(txtInput === txtDecrypted) syncFromDecrypted();
       else if(txtInput === txtEncrypted) syncFromTime();
       else if(txtInput === txtCompressed) syncFromCompressed();
+      txtInput.focus();
     });
   }
   if(btnCopy) {
@@ -444,6 +445,7 @@ const btnArchiveNote = document.getElementById('btn-archive-note');
 const btnDeleteNote = document.getElementById('btn-delete-note');
 
 function enterSandboxMode(silent = false) {
+  document.body.classList.add('sandbox-mode');
   currentNoteId = 'playground';
   txtDecrypted.value = '';
   txtEncrypted.value = '';
@@ -572,6 +574,7 @@ function renderBacklinks(id) {
 
 function loadNote(id) {
   forceSave();
+  document.body.classList.remove('sandbox-mode');
   const note = notesDB.find(n => n.id === id);
   if (!note) return;
   currentNoteId = id;
@@ -841,8 +844,8 @@ function renderConsonants() {
     if (c === null || c === undefined) return;
     const btn = document.createElement('button');
     btn.className = 'cons-btn';
-    btn.textContent = `[${idx.toString().padStart(2, '0')}] ${c === '' ? 'Ø' : c}`;
-    btn.onclick = (e) => renderRhymeMatrix(idx, c, e.target);
+    btn.innerHTML = `<span style="font-size:0.8em;opacity:0.6;margin-right:4px;">${idx.toString().padStart(2, '0')}</span><span style="color:var(--neon-green);margin-right:4px;">${BASE60_MAPPING[idx]}</span>${c === '' ? 'Ø' : c}`;
+    btn.onclick = (e) => renderRhymeMatrix(idx, c, e.currentTarget);
     consonantGrid.appendChild(btn);
   });
   
@@ -902,7 +905,8 @@ function renderRhymeMatrix(consIdx, consonant, clickedBtn) {
       if (s1 === 0 && s2 === 0) {
         b60 = BASE60_MAPPING[parseInt(hh)] + BASE60_MAPPING[parseInt(mm)];
       } else {
-        b60 = BASE60_MAPPING[parseInt(hh)] + BASE60_MAPPING[parseInt(mm)] + BASE60_MAPPING[s1] + BASE60_MAPPING[s2];
+        const s1s2 = s1 * 10 + s2;
+        b60 = BASE60_MAPPING[parseInt(hh)] + BASE60_MAPPING[parseInt(mm)] + BASE60_MAPPING[s1s2];
       }
       
       const timeCode = `${hh}:${mm}`;
@@ -910,7 +914,7 @@ function renderRhymeMatrix(consIdx, consonant, clickedBtn) {
       targetCell.innerHTML = `
         <div class="time-code">${timeCode} <span style="color:#0f0;font-weight:bold;margin-left:5px;">${b60}</span></div>
         <div class="word-text" style="margin-top:2px; font-size:1.1em; cursor:pointer;">${displayWord || '-'}</div>
-        <div style="font-size:0.7em; color:#555; margin-top:2px;">S1=${s1}, S2=${s2}</div>
+        <div style="font-size:0.7em; color:#555; margin-top:2px;" title="S1 (Thanh điệu): 0=Ngang, 1=Sắc, 2=Huyền, 3=Hỏi, 4=Ngã, 5=Nặng&#10;S2 (Bảng vần/Trạng thái): 0=Cơ bản, 1=MR1, 2=MR2 (với phụ âm cơ bản)">S1=${s1}, S2=${s2}</div>
       `;
       
       if (!isVariant) {
@@ -1013,7 +1017,7 @@ function renderShortWordsGrid() {
     
     const item = document.createElement('div');
     item.className = 'rhyme-item valid';
-    item.innerHTML = `<div class="code-val">${mapped}</div><div class="code-idx">[${b60Code}] ${word}</div>`;
+    item.innerHTML = `<div class="code-val">${mapped}</div><div class="code-idx">${b60Code} ${word}</div>`;
     rhymeMatrix.appendChild(item);
   }
 }
@@ -1027,7 +1031,7 @@ function renderTwoDigitGrid() {
     const mapped = timeToBase60(codeStr);
     const item = document.createElement('div');
     item.className = 'rhyme-item valid';
-    item.innerHTML = `<div class="code-val">${mapped}</div><div class="code-idx">[${codeStr}] ${word}</div>`;
+    item.innerHTML = `<div class="code-val">${mapped}</div><div class="code-idx">${codeStr} ${word}</div>`;
     rhymeMatrix.appendChild(item);
   });
 }
@@ -1046,7 +1050,7 @@ function renderEnglishGrid() {
     
     const item = document.createElement('div');
     item.className = 'rhyme-item valid';
-    item.innerHTML = `<div class="code-val">${mapped}</div><div class="code-idx">[${b60Code}] ${word}</div>`;
+    item.innerHTML = `<div class="code-val">${mapped}</div><div class="code-idx">${b60Code} ${word}</div>`;
     rhymeMatrix.appendChild(item);
   });
   
@@ -1059,7 +1063,7 @@ function renderEnglishGrid() {
     
     const item = document.createElement('div');
     item.className = 'rhyme-item valid';
-    item.innerHTML = `<div class="code-val">${mapped}</div><div class="code-idx">[${b60Code}] ${word}</div>`;
+    item.innerHTML = `<div class="code-val">${mapped}</div><div class="code-idx">${b60Code} ${word}</div>`;
     rhymeMatrix.appendChild(item);
   });
 }
@@ -1311,7 +1315,7 @@ if (selPrompt) {
         return;
       }
       
-      const origText = txtInput.value;
+      const origText = txtDecrypted.value;
       if (!origText.trim()) {
         cyberAlert("Không có dữ liệu để xuất Prompt!");
         selPrompt.value = '';
@@ -1566,3 +1570,88 @@ if (lookupInput) {
     });
   });
 }
+
+document.getElementById('btn-exit-sandbox')?.addEventListener('click', () => {
+  document.body.classList.remove('sandbox-mode');
+});
+
+document.getElementById('btn-copy-debug')?.addEventListener('click', (e) => {
+  const log = document.getElementById('sandbox-debug-log');
+  if (log && log.value) {
+    try {
+      log.select();
+      document.execCommand('copy');
+      
+      const btn = e.target;
+      const originalText = btn.textContent;
+      btn.textContent = 'COPIED!';
+      btn.style.color = '#fff';
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.style.color = '#f0f';
+      }, 2000);
+      
+      // Clear selection
+      window.getSelection().removeAllRanges();
+    } catch(err) {
+      console.error('Copy failed:', err);
+    }
+  }
+});
+
+
+document.getElementById('btn-sandbox-clear')?.addEventListener('click', () => {
+  const active = document.activeElement;
+  if (txtDecrypted) txtDecrypted.value = '';
+  if (txtEncrypted) txtEncrypted.value = '';
+  if (txtCompressed) txtCompressed.value = '';
+  if (active && (active === txtDecrypted || active === txtEncrypted || active === txtCompressed)) {
+    active.focus();
+  } else {
+    txtDecrypted?.focus();
+  }
+});
+
+
+document.addEventListener('keydown', (e) => {
+  if (document.body.classList.contains('sandbox-mode')) {
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      document.getElementById('btn-exit-sandbox')?.click();
+    } else if (e.key === 'Delete') {
+      e.preventDefault();
+      document.getElementById('btn-sandbox-clear')?.click();
+    }
+  }
+});
+
+document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => {
+  const txt = document.getElementById('text-input');
+  if (!txt) return;
+  const word = txt.value.trim();
+  if (!word) return;
+  
+  const capWord = word.charAt(0).toUpperCase() + word.slice(1);
+  const unaccented = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').replace(/\s/g, '').toLowerCase();
+  
+  const words = word.split(/\s+/);
+  let b60Parts = [];
+  if (typeof encodeWord === 'function' && typeof timeToBase60 === 'function') {
+      for (let w of words) {
+          try {
+              let encoded = timeToBase60(encodeWord(w));
+              if (encoded) b60Parts.push(encoded);
+          } catch(e) {}
+      }
+  }
+  
+  const finalStr = `${capWord} #${unaccented}ondmt ${b60Parts.join(' ')}`;
+  
+  navigator.clipboard.writeText(finalStr).then(() => {
+      if (typeof cyberAlert === 'function') {
+          cyberAlert("Đã copy: " + finalStr);
+      } else {
+          alert("Đã copy: " + finalStr);
+      }
+  });
+});

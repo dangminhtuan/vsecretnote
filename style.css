@@ -888,16 +888,29 @@ body.sandbox-mode .layout-split {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding-top: 10px;
+  padding-top: 0;
   height: 100vh;
 }
 
+body.sandbox-mode {
+  padding: 0 !important;
+}
+
+body.sandbox-mode .app-container {
+  padding: 0 !important;
+  border: none !important;
+  width: 100% !important;
+  max-width: none !important;
+}
+
 body.sandbox-mode .editor-box {
-  width: 95%;
-  max-width: 600px;
+  width: 100%;
+  max-width: none;
   background: transparent;
   border: 1px solid #333;
-  border-radius: 8px;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
   box-shadow: none;
   margin-top: 50px;
   padding: 0 !important;
@@ -950,7 +963,7 @@ body.sandbox-mode .vk-row {
   margin-bottom: 2px !important;
 }
 body.sandbox-mode #swipe-keyboard {
-  padding: 5px !important;
+  padding: 2px !important;
   margin-top: 2px !important;
 }
 body.sandbox-mode #vk-suggestions {
@@ -958,8 +971,9 @@ body.sandbox-mode #vk-suggestions {
   min-height: 25px !important;
 }
 
-body.sandbox-mode #sandbox-actions {
-  display: flex !important;
+body.sandbox-mode #sandbox-actions,
+body.sandbox-mode #btn-sandbox-hashtag {
+    display: flex !important;
 }
 
 body.sandbox-mode #sandbox-debug-container {
