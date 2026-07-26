@@ -1,0 +1,14 @@
+{
+  "id": "dict_zh",
+  "name": "Từ điển Việt - Trung",
+  "priority": 7,
+  "data": {
+    "shortcuts": {
+      "xd": ["xây dựng", "建设", "jiànshè"],
+      "ht": ["hệ thống", "系统", "xìtǒng"],
+      "kn": ["khả năng", "能力", "nénglì"],
+      "pt": ["phát triển", "发展", "fāzhǎn"],
+      "nihao": ["xin chào", "你好"]
+    }
+  }
+}

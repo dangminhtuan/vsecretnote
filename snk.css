@@ -1,0 +1,732 @@
+/* Secret Note Keyboard (SNK) Core Styles */
+#swipe-keyboard {
+    background: rgba(10, 20, 10, 0.95);
+    border: 1px solid var(--neon-green);
+    border-radius: 4px;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    backdrop-filter: blur(5px);
+    width: 100%;
+    margin-top: 10px;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+#vk-suggestions {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed var(--neon-green);
+  flex-shrink: 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: grab;
+  user-select: none;
+  min-height: 35px;
+}
+
+#vk-suggestions:active {
+  cursor: grabbing;
+}
+
+#vk-suggestions::-webkit-scrollbar { display: none; }
+
+.vk-suggestion-btn {
+  background: rgba(0, 20, 0, 0.8);
+  border: 1px solid #1a1;
+  color: #fff;
+  padding: 5px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.vk-suggestion-btn:hover {
+  background: var(--neon-green);
+  color: #000;
+  border-color: var(--neon-green);
+}
+.vk-suggestion-btn:hover span {
+  color: #000 !important;
+}
+
+#vk-keys-container {
+  position: relative;
+  touch-action: none; /* Important for swipe to not scroll page */
+}
+
+#vk-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none; /* Let pointer events pass through to keys */
+  z-index: 2;
+}
+
+.vk-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.vk-key {
+  background: rgba(0, 30, 0, 0.8);
+  border: 1px solid #2a2;
+  color: #8f8;
+  width: 35px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 3px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: crosshair;
+  transition: all 0.1s;
+  text-transform: uppercase;
+}
+
+.vk-key.active, .vk-key:active {
+  background: var(--neon-green);
+  color: #0f0;
+  transform: scale(1.1);
+  box-shadow: 0 0 15px var(--neon-green);
+  z-index: 3;
+}
+
+.vk-key-space {
+  width: 150px;
+}
+.vk-key-action {
+  width: 60px;
+  background: rgba(30, 0, 0, 0.8);
+  border-color: #522;
+  color: #f55;
+}
+.vk-key-action:active {
+  background: #f55;
+  color: #0f0;
+  box-shadow: 0 0 15px #f55;
+}
+
+.vk-bubble {
+  position: absolute;
+  background: #fff;
+  color: #0f0;
+  font-size: 4rem;
+  font-weight: bold;
+  border-radius: 12px;
+  padding: 10px 25px;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  z-index: 100;
+  opacity: 0;
+  transition: opacity 0.1s;
+  text-transform: uppercase;
+}
+.vk-bubble.show {
+  opacity: 1;
+}
+.vk-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 10px 10px 0;
+  border-style: solid;
+  border-color: #fff transparent transparent transparent;
+}
+
+
+/* CYBER MODAL SYSTEM */
+.cyber-modal-overlay {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(5px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.cyber-modal-box {
+  background: var(--bg-color);
+  border: 1px solid var(--neon-green);
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+  width: 90%;
+  max-width: 400px;
+  padding: 15px;
+  position: relative;
+  overflow: hidden;
+}
+
+.cyber-modal-box::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 2px;
+  background: var(--neon-green);
+  animation: scanline 2s linear infinite;
+  opacity: 0.5;
+}
+
+.cyber-modal-header {
+  color: var(--neon-green);
+  font-weight: bold;
+  border-bottom: 1px solid #333;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.cyber-modal-content {
+  margin-bottom: 20px;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.cyber-modal-line {
+  margin-bottom: 8px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.modal-label {
+  color: #888;
+  font-size: 0.8rem;
+  display: inline-block;
+  width: 50px;
+}
+
+.modal-value-b60 {
+  color: #ffea00;
+}
+
+.modal-value-time {
+  color: #0ff;
+}
+
+.cyber-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+
+/* Modal Interactive Styles */
+.modal-interactive-container {
+  font-family: 'Space Mono', monospace;
+  font-size: 16px;
+  line-height: 1.8;
+  color: var(--neon-green);
+  text-align: center;
+  margin: 20px 0;
+  word-wrap: break-word;
+}
+
+.interactive-b60-word {
+  cursor: pointer;
+  border-bottom: 1px dashed var(--neon-green);
+  padding: 0 2px;
+  transition: all 0.2s;
+  display: inline-block;
+}
+
+.interactive-b60-word:hover {
+  background: rgba(0, 255, 0, 0.2);
+  color: #fff;
+}
+
+.cyber-tooltip {
+  position: fixed;
+  background: rgba(0, 20, 0, 0.95);
+  border: 1px solid var(--neon-green);
+  color: #fff;
+  padding: 8px 12px;
+  font-size: 13px;
+  font-family: 'Space Mono', monospace;
+  pointer-events: none;
+  z-index: 10000;
+  box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+  transform: translate(-50%, -100%);
+  margin-top: -10px;
+  white-space: nowrap;
+}
+
+.cyber-tooltip .tooltip-time {
+  color: #0f0;
+  margin-right: 8px;
+}
+.cyber-tooltip .tooltip-text {
+  color: #fff;
+}
+
+/* Gboard Styles */
+.gboard-wrapper {
+    background-color: rgba(0, 20, 0, 0.9);
+    border: 1px solid #0f0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.gb-sugg {
+    flex-grow: 1;
+    text-align: center;
+    font-size: 16px;
+    color: #0f0;
+    font-weight: 500;
+    border-right: 1px dashed #0f0;
+}
+
+.gb-sugg:nth-last-child(2) {
+    border-right: none;
+}
+
+.gb-action-btn {
+    padding: 5px 15px;
+    font-size: 18px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    margin-left: 10px;
+    background-color: rgba(0, 50, 0, 0.8); border: 1px solid #0f0; color: #0f0;
+    border-radius: 20px;
+}
+
+.gb-keys {
+    padding: 8px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.gb-row {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+}
+
+.gb-row-padding-1 {
+    padding: 0 16px;
+}
+
+.gb-key {
+    background-color: rgba(0, 30, 0, 0.8); border: 1px solid #2a2; color: #8f8;
+    border: none;
+    border-radius: 6px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.2);
+    color: #0f0;
+    font-size: 22px;
+    font-weight: 400;
+    padding: 2px 0;
+    flex-grow: 1;
+    flex-basis: 0;
+    cursor: pointer;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    user-select: none;
+}
+
+.gb-key:active {
+    background-color: rgba(0, 80, 0, 0.8);
+}
+
+.gb-special {
+    background-color: rgba(30, 0, 0, 0.8); border: 1px solid #522; color: #f55;
+    font-size: 18px;
+}
+
+.gb-special:active {
+    background-color: rgba(0, 30, 0, 0.8); border: 1px solid #2a2; color: #8f8;
+}
+
+.gb-space {
+    flex-grow: 4;
+    font-size: 14px;
+    color: #383;
+}
+
+.gb-enter {
+    background-color: #1A73E8;
+    color: #FFF;
+}
+.gb-enter:active {
+    background-color: #1557B0;
+}
+
+.gb-w-medium {
+    flex-grow: 1.5;
+}
+
+
+
+/* Theme: Android / Light */
+.theme-android {
+    background-color: #E2E5E9 !important;
+    border: none !important;
+    box-shadow: 0 -2px 10px rgba(0,0,0,0.05) !important;
+    padding: 6px 4px 20px !important;
+}
+
+
+.theme-android .gb-sugg:last-child {
+    border-right: none !important;
+}
+.theme-android .gb-sugg-word {
+    color: #111 !important;
+}
+.theme-android .gb-sugg-word.selected-sugg {
+    color: #007AFF !important;
+    background: rgba(0, 122, 255, 0.1);
+    border-radius: 12px;
+}
+.theme-android .gb-sugg-hint {
+    color: #8E8E93 !important;
+}
+
+
+
+.theme-android .gb-key:active, .theme-android .gb-key.active {
+    background-color: #B4B8C1 !important;
+}
+
+.theme-android .gb-key-action {
+    background-color: #B4B8C1 !important;
+    color: #000 !important;
+    font-size: 16px !important;
+}
+
+.theme-android .gb-key-action:active {
+    background-color: #FFFFFF !important;
+}
+
+.theme-android .gb-action-btn {
+    background: #007AFF !important;
+    border: none !important;
+    color: white !important;
+    border-radius: 14px !important;
+}
+.theme-android .gb-action-btn:active {
+    background: #0056B3 !important;
+    transform: scale(0.95);
+}
+
+.theme-android .vk-toast {
+    background: rgba(0,0,0,0.8) !important;
+    color: white !important;
+}
+
+/* Robust Android Theme Overrides */
+.theme-android.gboard-wrapper {
+    background-color: #E2E5E9 !important;
+    padding-bottom: 8px !important;
+}
+
+.theme-android .gb-keys {
+    padding: 4px 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 5px !important;
+}
+
+.theme-android .gb-row {
+    display: flex !important;
+    justify-content: center !important;
+    gap: 4px !important; /* Small gap between keys */
+    width: 100% !important;
+    padding: 0 4px !important;
+    box-sizing: border-box !important;
+}
+
+.theme-android .gb-key {
+    background-color: #FFFFFF !important;
+    border: none !important;
+    color: #000 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.2) !important;
+    font-weight: 400 !important;
+    font-size: 20px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: 1 1 0% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    height: 38px !important; /* Fixed height for consistent look */
+    min-width: 0 !important; /* Allow shrinking if needed */
+    box-sizing: border-box !important;
+}
+
+.theme-android .gb-key:active {
+    background-color: #D1D3D8 !important;
+}
+
+.theme-android .gb-special {
+    background-color: #B4B8C1 !important;
+}
+
+.theme-android .gb-special:active {
+    background-color: #FFFFFF !important;
+}
+
+.theme-android .gb-space {
+    flex: 4 1 0% !important; /* Spacebar is wider */
+}
+
+.theme-android .gb-enter {
+    background-color: #1A73E8 !important;
+    color: #FFFFFF !important;
+}
+
+.theme-android .gb-suggestion-bar {
+    background-color: #E2E5E9 !important;
+    border-bottom: 1px solid #D1D3D8 !important;
+}
+
+.theme-android .gb-sugg {
+    padding: 10px 15px !important;
+    font-size: 16px !important;
+    color: #000 !important;
+    background: transparent !important;
+    border: none !important;
+    border-right: 1px solid #D1D3D8 !important;
+    cursor: pointer !important;
+    white-space: nowrap !important;
+}
+
+.theme-android .gb-key.swipe-suggest-key,
+.gb-key.swipe-suggest-key {
+    font-size: 12px !important;
+    text-transform: none !important;
+    white-space: normal !important;
+    word-break: break-all !important;
+    line-height: 1.1 !important;
+    letter-spacing: -0.5px !important;
+    padding: 2px !important;
+}
+
+/* Clipboard View Base (Dark Theme) */
+.vk-clipboard-view {
+    position: absolute;
+    top: 40px; /* Below suggestion bar */
+    left: 0; right: 0; bottom: 0;
+    background: rgba(0, 20, 0, 0.95);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+}
+
+.vk-clipboard-topbar {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(0, 50, 0, 0.9);
+    border-bottom: 1px solid #0f0;
+    color: #0f0;
+}
+
+.vk-cb-back-btn, .vk-cb-toggle-btn {
+    background: transparent;
+    border: none;
+    color: #0f0;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.vk-cb-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+.vk-clipboard-grid {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 12px;
+    align-content: start;
+}
+
+.vk-clip-card {
+    background: rgba(0, 40, 0, 0.8);
+    border: 1px solid #0a0;
+    border-radius: 8px;
+    padding: 10px;
+    color: #0f0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.vk-clip-header {
+    font-size: 12px;
+    border-bottom: 1px dashed #0a0;
+    padding-bottom: 6px;
+}
+
+.vk-clip-content {
+    font-size: 16px;
+    word-break: break-word;
+    display: block;
+    max-height: 120px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Clipboard Android Theme Overrides */
+.theme-android .vk-clipboard-view {
+    background: #E2E5E9;
+}
+.theme-android .vk-clipboard-topbar {
+    background: #FFFFFF;
+    border-bottom: 1px solid #D1D3D8;
+    color: #000;
+}
+.theme-android .vk-cb-back-btn, .theme-android .vk-cb-toggle-btn {
+    color: #007AFF;
+}
+.theme-android .vk-cb-toggle-btn span {
+    color: #007AFF !important;
+}
+.theme-android .vk-clip-card {
+    background: #FFFFFF;
+    border: 1px solid #D1D3D8;
+    color: #000;
+}
+.theme-android .vk-clip-header {
+    border-bottom: 1px solid #E2E5E9;
+}
+
+/* Clipboard Menu Styles (Bottom Sheet) */
+.vk-clip-menu {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(15, 15, 15, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(0, 255, 0, 0.4);
+    border-radius: 20px 20px 0 0;
+    padding: 35px 15px 30px 15px;
+    z-index: 10000;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 15px 10px; /* Tăng khoảng cách dòng */
+    box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.8);
+    box-sizing: border-box;
+    animation: slide-up 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.2) forwards;
+}
+
+@keyframes slide-up {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slide-down {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(100%); opacity: 0; }
+}
+
+.vk-clip-menu button {
+    width: 100%;
+    max-width: 52px;
+    margin: 0 auto;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(40, 40, 40, 0.6);
+    color: #fff;
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.vk-clip-menu button:hover, .vk-clip-menu button:active {
+    background: rgba(0, 255, 0, 0.2);
+    border-color: #0f0;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 255, 0, 0.2);
+}
+
+.vk-clip-menu .vk-clip-close-btn {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    width: 30px;
+    height: 30px;
+    margin: 0;
+    aspect-ratio: auto;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #ccc;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: none;
+}
+.vk-clip-menu .vk-clip-close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    transform: none;
+    box-shadow: none;
+}
+
+.vk-clip-help-text {
+    grid-column: 1 / -1;
+    background: rgba(0, 255, 0, 0.1);
+    color: #0f0;
+    border: 1px dashed rgba(0, 255, 0, 0.3);
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: center;
+    margin-bottom: 5px;
+    animation: fade-in 0.2s ease-in forwards;
+}
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.vk-clip-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    z-index: 9999;
+    display: none;
+    animation: overlay-fade 0.2s forwards;
+}
+@keyframes overlay-fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+

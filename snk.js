@@ -564,7 +564,8 @@ class SecretNoteKeyboard {
               }
               if (this.lastSwipeRes) {
                   const dpLog = this.lastSwipeRes.suggestions.slice(0, 30).map((s, i) => `${i+1}. [${s.type}] ${s.text} (score: ${s.score || 0})`).join('\n');
-                  logData += `GeoFull: ${this.lastSwipeRes.geoWord}\nGeoCorners: ${this.lastSwipeRes.geoWordCorners || 'N/A'}\nTotal: ${this.lastSwipeRes.suggestions.length}\n---\n${dpLog}`;
+                  const pW = this.lastCommittedWord ? this.lastCommittedWord.trim().toLowerCase() : 'null';
+                  logData += `GeoFull: ${this.lastSwipeRes.geoWord}\nGeoCorners: ${this.lastSwipeRes.geoWordCorners || 'N/A'}\nTotal: ${this.lastSwipeRes.suggestions.length}\nPrevWord: ${pW}\n---\n${dpLog}`;
               }
               debugLog.value = logData;
           }
@@ -1389,6 +1390,9 @@ class SecretNoteKeyboard {
   }
 
   insertText(text) {
+      if (!this.activeTarget) {
+          this.activeTarget = document.getElementById('text-input');
+      }
       if (!this.activeTarget) return;
       this._vkIsInserting = true;
       const target = this.activeTarget;
@@ -1484,6 +1488,9 @@ class SecretNoteKeyboard {
 
   predictNextWords() {
       if (!this.activeTarget) {
+          this.activeTarget = document.getElementById('text-input');
+      }
+      if (!this.activeTarget) {
           if (typeof NEXT_WORD_PREDICTIONS !== 'undefined' && NEXT_WORD_PREDICTIONS['_default']) {
               this.renderSuggestions(NEXT_WORD_PREDICTIONS['_default'].map(w => ({ text: w, type: 'vi' })));
           }
@@ -1494,7 +1501,12 @@ class SecretNoteKeyboard {
       const beforeCursor = val.substring(0, start).trim();
       
       const words = beforeCursor.split(/\s+/);
-      const lastWord = words.length > 0 ? words[words.length - 1].toLowerCase() : '';
+      const lastWord = words.length > 0 ? words[words.length - 1].toLowerCase().normalize('NFC') : '';
+      
+      if (document.getElementById('sandbox-debug-log')) {
+          let oldLog = document.getElementById('sandbox-debug-log').value;
+          document.getElementById('sandbox-debug-log').value = oldLog + '\n[DEBUG] predictNextWords() -> val: "' + val + '", lastWord: "' + lastWord + '"\n';
+      }
       
       let suggestions = [];
       if (typeof NEXT_WORD_PREDICTIONS !== 'undefined') {
@@ -1786,12 +1798,20 @@ class SecretNoteKeyboard {
          if (words.some(w => HIGH_FREQ_SWIPE.has(w))) {
              score += 20;
          }
+         
+         const prevWord = this.lastCommittedWord ? this.lastCommittedWord.trim().toLowerCase().normalize('NFC') : null;
+         if (prevWord && NEXT_WORD_PREDICTIONS[prevWord]) {
+             if (words.some(w => NEXT_WORD_PREDICTIONS[prevWord].includes(w.normalize('NFC')))) {
+                 score += 50;
+             }
+         }
+         
          return score;
       };
 
       matchedBases.sort((a, b) => getScore(b) - getScore(a));
       
-      const prevWord = this.lastCommittedWord ? this.lastCommittedWord.trim().toLowerCase() : null;
+      const prevWord = this.lastCommittedWord ? this.lastCommittedWord.trim().toLowerCase().normalize('NFC') : null;
       
       const topBases = matchedBases.slice(0, 8).map(b => {
           let words = [...(allEntries.get(b) || [])];
@@ -1800,14 +1820,27 @@ class SecretNoteKeyboard {
               let score2 = HIGH_FREQ_SWIPE.has(w2) ? 20 : (SHORT_WORDS.includes(w2) ? 10 : 0);
               
               if (prevWord && NEXT_WORD_PREDICTIONS[prevWord]) {
-                  if (NEXT_WORD_PREDICTIONS[prevWord].includes(w1)) score1 += 50;
-                  if (NEXT_WORD_PREDICTIONS[prevWord].includes(w2)) score2 += 50;
+                  if (NEXT_WORD_PREDICTIONS[prevWord].includes(w1.normalize('NFC'))) score1 += 50;
+                  if (NEXT_WORD_PREDICTIONS[prevWord].includes(w2.normalize('NFC'))) score2 += 50;
               }
               
               return score2 - score1;
           });
           return { base: b, score: getScore(b), words };
       });
+
+      if (this.sandboxDebugLog) {
+          const logMsg = `---
+GeoFull: ${geoWord}
+GeoCorners: ${geoWordCorners}
+Total: ${matchedBases.length}
+PrevWord: ${prevWord}
+---
+${topBases.slice(0,30).map((b, i) => `${i+1}. [${b.words[0] === b.base ? 'raw' : 'vi'}] ${b.words[0]} (score: ${b.score})`).join('\n')}
+`;
+          this.sandboxDebugLog.value = logMsg + '\n\n' + this.sandboxDebugLog.value;
+      }
+
       let maxLen = Math.max(...topBases.map(obj => obj.words.length), 0);
       for (let i = 0; i < maxLen; i++) {
          for (let obj of topBases) {

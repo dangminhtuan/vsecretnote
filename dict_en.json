@@ -1,0 +1,14 @@
+{
+  "id": "dict_en",
+  "name": "Từ điển Việt - Anh",
+  "priority": 8,
+  "data": {
+    "shortcuts": {
+      "xd": ["xây dựng", "build", "determine"],
+      "ht": ["hệ thống", "system", "complete"],
+      "kn": ["khả năng", "ability", "connect"],
+      "pt": ["phát triển", "develop", "analyze"],
+      "hello": ["xin chào", "chào bạn"]
+    }
+  }
+}
