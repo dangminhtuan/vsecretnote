@@ -37,6 +37,7 @@ const NEXT_WORD_PREDICTIONS = {
   'ăn': ['cơm', 'uống', 'sáng', 'trưa', 'tối', 'món', 'gì'],
   'rất': ['nhiều', 'vui', 'tốt', 'hay', 'đẹp', 'thích', 'nhanh'],
   'quá': ['đáng', 'nhiều', 'trời', 'tuyệt', 'hay', 'đẹp', 'lớn', 'nhỏ'],
+  'buồn': ['chán', 'bã', 'cười', 'tẻ', 'ngủ', 'bực', 'nôn', 'phiền', 'tình', 'bã', 'so', 'thảm'],
   '_default': ['và', 'là', 'của', 'có', 'không', 'những', 'để', 'một', 'được', 'với', 'cho', 'trong', 'đã', 'này']
 };
 
