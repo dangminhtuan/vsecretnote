@@ -553,6 +553,23 @@ class SecretNoteKeyboard {
       }
   }
 
+  updateDebugLog() {
+      if (document.body.classList.contains('sandbox-mode')) {
+          const debugLog = document.getElementById('sandbox-debug-log');
+          if (debugLog) {
+              let logData = '';
+              if (this.lastUiSuggestions && this.lastUiSuggestions.length > 0) {
+                  logData += `UI Suggestions: ${this.lastUiSuggestions.join(' | ')}\n---\n`;
+              }
+              if (this.lastSwipeRes) {
+                  const dpLog = this.lastSwipeRes.suggestions.slice(0, 30).map((s, i) => `${i+1}. [${s.type}] ${s.text} (score: ${s.score || 0})`).join('\n');
+                  logData += `GeoFull: ${this.lastSwipeRes.geoWord}\nGeoCorners: ${this.lastSwipeRes.geoWordCorners || 'N/A'}\nTotal: ${this.lastSwipeRes.suggestions.length}\n---\n${dpLog}`;
+              }
+              debugLog.value = logData;
+          }
+      }
+  }
+
   initGlobalCopyListener() {
       document.addEventListener('copy', (e) => {
           let text = window.getSelection().toString();
@@ -1034,6 +1051,9 @@ class SecretNoteKeyboard {
                  } else {
                      this.renderSuggestions([]); // Show nothing if no meaning found yet
                  }
+                 
+                 this.lastSwipeRes = res;
+                 this.updateDebugLog();
              }
          }
          
@@ -1624,7 +1644,7 @@ class SecretNoteKeyboard {
         // Bỏ push type: 'raw'
         
 
-        return { geoWord, suggestions };
+        return { geoWord, geoWordCorners, suggestions };
     }
 
     if (geoWordCorners.length > 0 && geoWordCorners.length <= 3) {
@@ -1689,12 +1709,7 @@ class SecretNoteKeyboard {
               allEntries.get(k).push(...v);
           }
       }
-      if (typeof base60Dictionary !== 'undefined') {
-          for (const [k, v] of base60Dictionary.entries()) {
-              if (!allEntries.has(k)) allEntries.set(k, []);
-              allEntries.get(k).push(...v);
-          }
-      }
+
 
       for (const [base, words] of allEntries.entries()) {
          const normalizedBase = this.normalizeForSwipe(base);
@@ -1709,31 +1724,36 @@ class SecretNoteKeyboard {
             }
             if (!hasAllForced) continue;
 
-            let memo = Array(normalizedBase.length).fill().map(() => Array(normalizedStr.length).fill(-1));
+            let memo = Array(normalizedBase.length).fill().map(() => Array(normalizedStr.length).fill(-9999));
             
             function findMax(i, j) {
-                if (i === normalizedBase.length) return 0;
-                if (j === normalizedStr.length) return -999;
-                if (memo[i][j] !== -1) return memo[i][j];
+                if (i === normalizedBase.length) {
+                    return -(normalizedStr.length - j) * 1; 
+                }
+                if (j === normalizedStr.length) {
+                    return -(normalizedBase.length - i) * 10;
+                }
+                if (memo[i][j] !== -9999) return memo[i][j];
                 
                 const target = normalizedBase[i];
                 const current = normalizedStr[j];
                 
-                let ans = findMax(i, j + 1);
+                let ans = -1 + findMax(i, j + 1);
+                
                 if (current === target) {
-                    ans = Math.max(ans, 1 + findMax(i + 1, j + 1));
+                    ans = Math.max(ans, 15 + findMax(i + 1, j + 1));
                 } else if (ADJACENT_KEYS[target] && ADJACENT_KEYS[target].includes(current)) {
-                    ans = Math.max(ans, 0 + findMax(i + 1, j + 1));
+                    ans = Math.max(ans, 5 + findMax(i + 1, j + 1));
                 }
                 
                 memo[i][j] = ans;
                 return ans;
             }
             
-            let exactMatches = findMax(0, 0);
-            if (exactMatches >= 0) {
+            let dpScore = findMax(0, 0);
+            if (dpScore > -50) { // filter out completely terrible matches
                matchedBases.push(base);
-               exactMatchCount[base] = exactMatches;
+               exactMatchCount[base] = dpScore;
             }
          }
       }
@@ -1742,41 +1762,56 @@ class SecretNoteKeyboard {
       const getScore = (b) => {
          const normB = this.normalizeForSwipe(b);
          
-         // 20 điểm cho mỗi ký tự khớp chính xác
-         let score = (exactMatchCount[b] || 0) * 20; 
+         let score = exactMatchCount[b] || 0; 
+         
+         let cornerMatch = 0;
+         let cIdx = 0;
+         for (let i = 0; i < normB.length && cIdx < geoWordCorners.length; i++) {
+             if (normB[i] === geoWordCorners[cIdx]) {
+                 cornerMatch++;
+                 cIdx++;
+             }
+         }
+         
+         score += cornerMatch * 15;
+         
+         if (normB === geoWordCorners) score += 50;
          
          if (normB === geoWord) score += 100;
          else if (normB === normalizedStr) score += 90;
          
-         // Phạt nhẹ nếu lướt qua nhiều phím thừa (tự nhiên khi lướt)
-         score -= Math.max(0, normalizedStr.length - normB.length) * 2;
-         // Phạt nặng nếu lướt thiếu phím của từ
-         score -= Math.max(0, normB.length - normalizedStr.length) * 10;
-         
          // Language Model Check
          const words = allEntries.get(b) || [];
          if (words.some(w => HIGH_FREQ_SWIPE.has(w))) {
-             score += 60;
+             score += 20;
          }
          return score;
       };
 
       matchedBases.sort((a, b) => getScore(b) - getScore(a));
       
+      const prevWord = this.lastCommittedWord ? this.lastCommittedWord.trim().toLowerCase() : null;
+      
       const topBases = matchedBases.slice(0, 8).map(b => {
           let words = [...(allEntries.get(b) || [])];
           words.sort((w1, w2) => {
-              const score1 = HIGH_FREQ_SWIPE.has(w1) ? 2 : (SHORT_WORDS.includes(w1) ? 1 : 0);
-              const score2 = HIGH_FREQ_SWIPE.has(w2) ? 2 : (SHORT_WORDS.includes(w2) ? 1 : 0);
+              let score1 = HIGH_FREQ_SWIPE.has(w1) ? 20 : (SHORT_WORDS.includes(w1) ? 10 : 0);
+              let score2 = HIGH_FREQ_SWIPE.has(w2) ? 20 : (SHORT_WORDS.includes(w2) ? 10 : 0);
+              
+              if (prevWord && NEXT_WORD_PREDICTIONS[prevWord]) {
+                  if (NEXT_WORD_PREDICTIONS[prevWord].includes(w1)) score1 += 50;
+                  if (NEXT_WORD_PREDICTIONS[prevWord].includes(w2)) score2 += 50;
+              }
+              
               return score2 - score1;
           });
-          return words;
+          return { base: b, score: getScore(b), words };
       });
-      let maxLen = Math.max(...topBases.map(arr => arr.length), 0);
+      let maxLen = Math.max(...topBases.map(obj => obj.words.length), 0);
       for (let i = 0; i < maxLen; i++) {
-         for (let arr of topBases) {
-            if (i < arr.length) {
-               suggestions.push({ text: arr[i], type: 'vi' });
+         for (let obj of topBases) {
+            if (i < obj.words.length) {
+               suggestions.push({ text: obj.words[i], type: 'vi', score: obj.score });
             }
          }
       }
@@ -1823,10 +1858,10 @@ class SecretNoteKeyboard {
                });
            }
        });
-       return { geoWord, suggestions: finalSuggestions };
+       return { geoWord, geoWordCorners, suggestions: finalSuggestions };
     }
     
-    return { geoWord, suggestions: uniqueSuggestions };
+    return { geoWord, geoWordCorners, suggestions: uniqueSuggestions };
 }
 
   processSwipe() {
@@ -1933,6 +1968,8 @@ class SecretNoteKeyboard {
     if (suggestions.length === 0) return;
     
     const isCompressedTarget = this.activeTarget && this.activeTarget.id === 'compressed-input';
+    
+    const uiLog = [];
     
     suggestions.slice(0, 25).forEach(item => {
       const s = item.text;
@@ -2067,7 +2104,12 @@ class SecretNoteKeyboard {
         }
       });
       this.suggestionContainer.appendChild(btn);
+      
+      uiLog.push(displayText.replace(/<[^>]*>?/gm, ''));
     });
+    
+    this.lastUiSuggestions = uiLog;
+    this.updateDebugLog();
   }
 
   loadNotes() {
