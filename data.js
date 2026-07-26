@@ -1917,3 +1917,9 @@ export const O_EXCEPTIONS = {
   "gho": "gho",
   "ok": "ok",
 };
+
+export const VOWEL_KEY_MAPPING = {
+  a: "a", z: "ă", x: "â", e: "e", r: "ê", i: "i", o: "o", p: "ô", l: "ơ", u: "u", w: "ư",
+  g: "ia", k: "iê", c: "ua", q: "uô", m: "ưa", s: "ươ", h: "oa", n: "oă", v: "oe", d: "uâ", f: "uê", b: "uơ", y: "uy", j: "uya", t: "uyê"
+};
+// Note: y maps to i phonetically in medials, uy mapping can just replace the nucleus if we consider the medial separately.

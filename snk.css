@@ -730,3 +730,35 @@
     to { opacity: 1; }
 }
 
+
+
+/* Hint Mode Styles */
+#vk-keys-container.hint-mode-active .gb-key[data-hint] {
+    color: transparent;
+    position: relative;
+}
+#vk-keys-container.hint-mode-active .gb-key[data-hint]::after {
+    content: attr(data-hint);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+    color: #4facfe;
+    font-weight: bold;
+}
+#vk-keys-container.hint-mode-active .gb-key[data-key="6"]::after,
+#vk-keys-container.hint-mode-active .gb-key[data-key="7"]::after {
+    text-decoration: line-through;
+    text-decoration-color: #ff4d4f;
+    text-decoration-thickness: 2px;
+}
+#vk-keys-container.hint-mode-active .gb-key[data-hint]::before {
+    content: attr(data-key);
+    position: absolute;
+    top: 2px;
+    right: 4px;
+    font-size: 9px;
+    color: var(--text-color);
+    opacity: 0.4;
+}

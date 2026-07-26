@@ -1,6 +1,6 @@
 import { timeToBase60, base60ToTime, encodeWord, decodeWord } from './vcomp.js';
-import { removeVietnameseTones } from './vcomp.js';
-import { BASE60_MAPPING, SHORT_WORDS, TWO_DIGIT_WORDS, REAL_VIETNAMESE_WORDS } from './data.js';
+import { removeVietnameseTones, extractPhonetics, applyTone, splitPhonetics, smartCodaFixer } from './vcomp.js';
+import { BASE60_MAPPING, SHORT_WORDS, TWO_DIGIT_WORDS, REAL_VIETNAMESE_WORDS, VOWEL_KEY_MAPPING } from './data.js';
 
 const NEXT_WORD_PREDICTIONS = {
   'chiến': ['tranh', 'đấu', 'lược', 'sĩ', 'thuật', 'tuyến'],
@@ -502,6 +502,12 @@ class SecretNoteKeyboard {
             keyEl.innerHTML = '<span style="font-size: 14px;">\u21B5</span>';
         } else {
             keyEl.textContent = key;
+            if (key >= '1' && key <= '9') {
+                const numHints = { '1': 'Sắc', '2': 'Huyền', '3': 'Hỏi', '4': 'Ngã', '5': 'Nặng', '6': 'dấu', '7': 'móc', '8': '•━•', '9': '⌫1' };
+                keyEl.dataset.hint = numHints[key] || '';
+            } else if (VOWEL_KEY_MAPPING[key]) {
+                keyEl.dataset.hint = VOWEL_KEY_MAPPING[key];
+            }
         }
 
         this.keyElements.set(key, keyEl);
@@ -1344,11 +1350,16 @@ class SecretNoteKeyboard {
   }
 
   handleImmediateKey(key) {
+    if (this.keysContainer && this.keysContainer.classList.contains('hint-mode-active') && key !== '0') {
+        this.keysContainer.classList.remove('hint-mode-active');
+    }
+
+    if (!this.activeTarget) return;
+
     if (key === '?!=') {
        this.toggleSmartShift({ clientX: 0, clientY: 0 }); 
        return;
     }
-    if (!this.activeTarget) return;
     if (key === ',' || key === '.') {
       this.insertText(key);
       return;
@@ -1363,7 +1374,13 @@ class SecretNoteKeyboard {
     
     if (key === 'Backspace') {
        if (start > 0 && start === end) {
-          target.setRangeText('', start - 1, end, 'end');
+          const textBefore = target.value.substring(0, start);
+          if (this.lastCommittedWord && textBefore.endsWith(this.lastCommittedWord) && !textBefore.endsWith(' ')) {
+              target.setRangeText('', start - this.lastCommittedWord.length, end, 'end');
+              this.lastCommittedWord = ''; // Clear so next backspace deletes 1 char
+          } else {
+              target.setRangeText('', start - 1, end, 'end');
+          }
        } else if (start !== end) {
           target.setRangeText('', start, end, 'end');
        }
@@ -1371,14 +1388,165 @@ class SecretNoteKeyboard {
        target.setRangeText(' ', start, end, 'end');
     } else if (key === 'Enter') {
        target.setRangeText('\n', start, end, 'end');
+    } else if (key === '0') {
+       if (this.keysContainer) {
+           this.keysContainer.classList.toggle('hint-mode-active');
+       }
+       return;
+    } else if (key === '8') {
+        if (this.lastCommittedWord && start === end && this.lastGeoWord && this.lastGeoWord.length >= 2) {
+            const textBefore = target.value.substring(0, start);
+            if (textBefore.endsWith(this.lastCommittedWord) && !textBefore.endsWith(' ')) {
+                const rawWord = this.lastGeoWord[0] + this.lastGeoWord[this.lastGeoWord.length - 1];
+                target.setRangeText(rawWord, start - this.lastCommittedWord.length, start, 'end');
+                this.lastCommittedWord = rawWord;
+                target.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        }
+        return;
+    } else if (key === '9') {
+        // Single character backspace fallback
+        if (start > 0) {
+            target.setRangeText('', start - 1, end, 'end');
+            target.dispatchEvent(new Event('input', { bubbles: true }));
+            if (this.lastCommittedWord && start === end) {
+                const textBefore = target.value.substring(0, start);
+                if (textBefore.endsWith(this.lastCommittedWord) && !textBefore.endsWith(' ')) {
+                    this.lastCommittedWord = this.lastCommittedWord.slice(0, -1);
+                }
+            }
+        }
+        return;
     } else if (key === 'Shift') {
-       // handled in pointerDown
+       // TONE CORRECTION INTERCEPT FOR CAPITALIZATION
+       if (this.lastCommittedWord && start === end) {
+           const textBefore = target.value.substring(0, start);
+           if (textBefore.endsWith(this.lastCommittedWord) && !textBefore.endsWith(' ')) {
+               const newWord = this.changeToneVNI(this.lastCommittedWord, 'Shift');
+               if (newWord !== this.lastCommittedWord) {
+                   target.setRangeText(newWord, start - this.lastCommittedWord.length, start, 'end');
+                   this.lastCommittedWord = newWord;
+                   target.dispatchEvent(new Event('input', { bubbles: true }));
+                   // Also reset shift state because we used it for capping word
+                   this.isShiftActive = false;
+                   this.keyElements.forEach((el, k) => {
+                       if (k.length === 1 && /[a-z]/i.test(k)) {
+                           el.textContent = k.toLowerCase();
+                       }
+                   });
+                   return;
+               }
+           }
+       }
+       // normal shift logic is handled in pointerDown
     } else {
+       // TONE CORRECTION & VOWEL SWAP INTERCEPT
+       if (((key >= '0' && key <= '9') || (key.length === 1 && /[a-zA-Z]/.test(key))) && this.lastCommittedWord && start === end) {
+           const textBefore = target.value.substring(0, start);
+           if (textBefore.endsWith(this.lastCommittedWord) && !textBefore.endsWith(' ')) {
+               let newWord = this.lastCommittedWord;
+               if (key >= '0' && key <= '9') {
+                   newWord = this.changeToneVNI(this.lastCommittedWord, key);
+               } else if (VOWEL_KEY_MAPPING[key.toLowerCase()]) {
+                   newWord = this.applyVowelSwap(this.lastCommittedWord, key);
+               }
+               
+               if (newWord !== this.lastCommittedWord) {
+                   target.setRangeText(newWord, start - this.lastCommittedWord.length, start, 'end');
+                   this.lastCommittedWord = newWord;
+                   target.dispatchEvent(new Event('input', { bubbles: true }));
+                   return;
+               } else if ((key >= '0' && key <= '9') || VOWEL_KEY_MAPPING[key.toLowerCase()]) {
+                   // If they pressed a modifier key but it didn't change the word, we just return to avoid typing the key
+                   return;
+               }
+           }
+       }
+
        const toInsert = this.isShiftActive ? key.toUpperCase() : key;
        target.setRangeText(toInsert, start, end, 'end');
     }
     
     target.dispatchEvent(new Event('input', { bubbles: true }));
+  }
+
+  applyVowelSwap(word, key) {
+      if (!word) return word;
+      const lowerKey = key.toLowerCase();
+      if (!VOWEL_KEY_MAPPING[lowerKey]) return word;
+      
+      const newVowel = VOWEL_KEY_MAPPING[lowerKey];
+      const { consonant, vowel, coda, tone } = splitPhonetics(word);
+      
+      if (!vowel) return word;
+      
+      let newWord = smartCodaFixer(consonant, newVowel, coda, tone);
+      
+      if (word === word.toUpperCase()) return newWord.toUpperCase();
+      if (word[0] === word[0].toUpperCase()) return newWord.charAt(0).toUpperCase() + newWord.slice(1);
+      return newWord;
+  }
+
+  changeToneVNI(word, key) {
+      if (!word) return word;
+      
+      if (key === 'Shift') {
+          if (word === word.toUpperCase()) return word.toLowerCase();
+          if (word[0] === word[0].toUpperCase() && word.length > 1 && word[1] === word[1].toLowerCase()) return word.toUpperCase();
+          return word.charAt(0).toUpperCase() + word.slice(1);
+      }
+      
+      if (key === '8') return word + '?';
+      if (key === '9') return word + '!';
+      
+      const { consonant, rhyme, tone } = extractPhonetics(word);
+      if (!rhyme) {
+          if (key === '7') {
+              let clean = word;
+              clean = clean.replace(/đ/g, 'd').replace(/Đ/g, 'D');
+              return clean;
+          }
+          return word;
+      }
+      
+      let currentTone = tone;
+      let currentRhyme = rhyme;
+      let currentConsonant = consonant;
+
+      if (key >= '1' && key <= '6') {
+          const toneMap = {'1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 0};
+          currentTone = toneMap[key];
+      }
+      
+      if (key === '7') {
+          const removeHat = (str) => {
+              return str.replace(/[ươâêôă]/g, m => {
+                  switch(m) {
+                      case 'ư': return 'u';
+                      case 'ơ': return 'o';
+                      case 'â': return 'a';
+                      case 'ê': return 'e';
+                      case 'ô': return 'o';
+                      case 'ă': return 'a';
+                      default: return m;
+                  }
+              }).replace(/[ƯƠÂÊÔĂ]/g, m => {
+                  switch(m) {
+                      case 'Ư': return 'U';
+                      case 'Ơ': return 'O';
+                      case 'Â': return 'A';
+                      case 'Ê': return 'E';
+                      case 'Ô': return 'O';
+                      case 'Ă': return 'A';
+                      default: return m;
+                  }
+              });
+          };
+          currentRhyme = removeHat(currentRhyme);
+          currentConsonant = currentConsonant.replace(/đ/g, 'd').replace(/Đ/g, 'D');
+      }
+      
+      return currentConsonant + applyTone(currentRhyme, currentTone);
   }
 
   handleLongPress(key, x, y) {
@@ -1687,7 +1855,9 @@ class SecretNoteKeyboard {
                  const dec = decodeWord(timeStr);
                  if (dec && !dec.includes('?') && !dec.startsWith('[')) {
                     if (validVietnameseWords.has(dec)) {
-                       suggestions.push({ text: dec, type: 'b60' });
+                       let score = (s.length / geoWordCorners.length) * 100;
+                       if (s === geoWordCorners) score += 50;
+                       suggestions.push({ text: dec, type: 'b60', score: Math.round(score) });
                     }
                  }
               }
@@ -1887,14 +2057,16 @@ ${topBases.slice(0,30).map((b, i) => `${i+1}. [${b.words[0] === b.base ? 'raw' :
                    const compoundText = targetWord + ' ' + w2;
                    if (!seen.has(compoundText)) {
                        seen.add(compoundText);
-                       finalSuggestions.push({ text: compoundText, type: 'vi' });
+                       finalSuggestions.push({ text: compoundText, type: 'vi', score: (item.score || 0) - 1 });
                    }
                });
            }
        });
+       finalSuggestions.sort((a, b) => (b.score || 0) - (a.score || 0));
        return { geoWord, geoWordCorners, suggestions: finalSuggestions };
     }
     
+    uniqueSuggestions.sort((a, b) => (b.score || 0) - (a.score || 0));
     return { geoWord, geoWordCorners, suggestions: uniqueSuggestions };
 }
 
@@ -1931,8 +2103,16 @@ ${topBases.slice(0,30).map((b, i) => `${i+1}. [${b.words[0] === b.base ? 'raw' :
 
                let textToInsert = bestMatch.text;
                
-               this.insertText(textToInsert + ' ');
-               this.lastCommittedWord = textToInsert + ' ';
+               let prefix = '';
+               if (this.activeTarget) {
+                   const textBefore = this.activeTarget.value.substring(0, this.activeTarget.selectionStart);
+                   if (textBefore.length > 0 && !textBefore.endsWith(' ') && !textBefore.endsWith('\n')) {
+                       prefix = ' ';
+                   }
+               }
+               
+               this.insertText(prefix + textToInsert);
+               this.lastCommittedWord = textToInsert;
                
                // Render top 5 alternatives in the bar
                this.renderSuggestions(res.suggestions.slice(0, 5));
@@ -2115,8 +2295,15 @@ ${topBases.slice(0,30).map((b, i) => `${i+1}. [${b.words[0] === b.base ? 'raw' :
                }
            }
            
-           this.insertText(insertText + ' ');
-           this.lastCommittedWord = insertText + ' '; 
+           let prefix = '';
+           if (this.activeTarget) {
+               const textBefore = this.activeTarget.value.substring(0, this.activeTarget.selectionStart);
+               if (textBefore.length > 0 && !textBefore.endsWith(' ') && !textBefore.endsWith('\n')) {
+                   prefix = ' ';
+               }
+           }
+           this.insertText(prefix + insertText);
+           this.lastCommittedWord = insertText; 
            
            // Tracking
            const realWord = insertText.trim();
