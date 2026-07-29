@@ -165,40 +165,48 @@ function syncFromTime() {
 
 function syncFromCompressed() {
   if(!txtCompressed) return;
-  const text = txtCompressed.value.replace(/[\n\r]/g, '');
-  if (!text.trim()) {
+  const rawText = txtCompressed.value;
+  if (!rawText.trim()) {
     txtDecrypted.value = '';
     txtEncrypted.value = '';
     renderBreakdown([]);
     return;
   }
-  const tokens = text.split(TOKEN_REGEX);
-  let timeParts = [];
-  let decryptedParts = [];
-  let breakdownPairs = [];
 
-  tokens.forEach(token => {
-    if (!token) return;
-    if (token.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
-      const timeCode = base60ToTime(token);
-      const decoded = decodeWord(timeCode);
-      timeParts.push(timeCode);
-      decryptedParts.push(decoded);
-      breakdownPairs.push({ base60: token, time: timeCode, word: decoded });
-    
-    } else if (token.startsWith('[') && token.endsWith(']')) {
-      timeParts.push(token);
-      decryptedParts.push(token);
-      breakdownPairs.push({ base60: token, time: token, word: token.substring(1, token.length - 1) });
-    } else {
-      timeParts.push(token);
-      decryptedParts.push(token);
+  // Xu ly tung dong rieng de bao toan ky tu xuong dong
+  const lines = rawText.split(/\r?\n/);
+  const allTimeParts = [];
+  const allDecryptedParts = [];
+  const allBreakdownPairs = [];
+
+  lines.forEach((line, lineIdx) => {
+    if (lineIdx > 0) {
+      allTimeParts.push('\n');
+      allDecryptedParts.push('\n');
     }
+    const tokens = line.split(TOKEN_REGEX);
+    tokens.forEach(token => {
+      if (!token) return;
+      if (token.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
+        const timeCode = base60ToTime(token);
+        const decoded = decodeWord(timeCode);
+        allTimeParts.push(timeCode);
+        allDecryptedParts.push(decoded);
+        allBreakdownPairs.push({ base60: token, time: timeCode, word: decoded });
+      } else if (token.startsWith('[') && token.endsWith(']')) {
+        allTimeParts.push(token);
+        allDecryptedParts.push(token);
+        allBreakdownPairs.push({ base60: token, time: token, word: token.substring(1, token.length - 1) });
+      } else {
+        allTimeParts.push(token);
+        allDecryptedParts.push(token);
+      }
+    });
   });
 
-  txtEncrypted.value = timeParts.join('');
-  txtDecrypted.value = decryptedParts.join('');
-  renderBreakdown(breakdownPairs);
+  txtEncrypted.value = allTimeParts.join('');
+  txtDecrypted.value = allDecryptedParts.join('');
+  renderBreakdown(allBreakdownPairs);
   saveCurrentNote();
 }
 
@@ -1621,9 +1629,43 @@ document.addEventListener('keydown', (e) => {
     } else if (e.key === 'Delete') {
       e.preventDefault();
       document.getElementById('btn-sandbox-clear')?.click();
+    } else if (e.key === 'c' && e.ctrlKey) {
+      // Chỉ intercept nếu không có text được bôi đen
+      const sel = window.getSelection()?.toString();
+      if (!sel) {
+        e.preventDefault();
+        copyBase60ToClipboard();
+      }
     }
   }
 });
+
+function copyBase60ToClipboard() {
+  const b60Val = txtCompressed?.value?.trim();
+  if (!b60Val) return;
+  navigator.clipboard.writeText(b60Val).then(() => {
+    const btn = document.getElementById('btn-copy-b60');
+    if (!btn) return;
+    const spans = btn.querySelectorAll('span');
+    if (spans.length >= 2) {
+      const origTop = spans[0].textContent;
+      const origBot = spans[1].textContent;
+      spans[0].textContent = '[✓]';
+      spans[1].textContent = 'COPIED';
+      btn.style.color = '#ff0';
+      btn.style.borderColor = '#ff0';
+      setTimeout(() => {
+        spans[0].textContent = origTop;
+        spans[1].textContent = origBot;
+        btn.style.color = '#0f0';
+        btn.style.borderColor = '#0f0';
+      }, 1500);
+    }
+  });
+}
+
+document.getElementById('btn-copy-b60')?.addEventListener('click', copyBase60ToClipboard);
+
 
 document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => {
   const txt = document.getElementById('text-input');
@@ -1655,3 +1697,269 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
       }
   });
 });
+
+// ===== ⏰ SPECIAL TIME FEATURE =====
+(function() {
+  const LOOKAHEAD_MINUTES = 3; // Dò trước 3 phút
+
+  function isSpecialTime(h, m) {
+    const hh = String(h).padStart(2, '0');
+    const mm = String(m).padStart(2, '0');
+
+    // Lặp đôi: 07:07, 11:11, 13:13 (hh === mm)
+    if (hh === mm) return { type: 'lặp', label: `${hh}:${mm}` };
+
+    // Lặp chéo: 11:22, 11:33, 22:11 (mỗi nhóm tự có chữ số lặp đôi)
+    if (hh[0] === hh[1] && mm[0] === mm[1]) return { type: 'lặp', label: `${hh}:${mm}` };
+
+    // Đảo: 13:31, 12:21
+    if (hh === mm.split('').reverse().join('')) return { type: 'đảo', label: `${hh}:${mm}` };
+
+    // Tiến: 01:23, 12:34
+    const digits = [hh[0], hh[1], mm[0], mm[1]].map(Number);
+    if (digits[1] === digits[0]+1 && digits[2] === digits[0]+2 && digits[3] === digits[0]+3) return { type: 'tiến', label: `${hh}:${mm}` };
+
+    return null;
+  }
+
+  function findNextSpecialTime() {
+    const now = new Date();
+    const results = [];
+    for (let i = 0; i <= LOOKAHEAD_MINUTES; i++) {
+      const d = new Date(now.getTime() + i * 60000);
+      const h = d.getHours();
+      const m = d.getMinutes();
+      const info = isSpecialTime(h, m);
+      if (info) {
+        // Tính giây còn lại đến đầu phút đó
+        const targetMs = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, m, 0, 0).getTime();
+        const diffMs = targetMs - now.getTime();
+        results.push({ ...info, h, m, diffMs });
+      }
+    }
+    // Kiểm tra đã qua: phút trước
+    for (let i = 1; i <= LOOKAHEAD_MINUTES; i++) {
+      const d = new Date(now.getTime() - i * 60000);
+      const h = d.getHours();
+      const m = d.getMinutes();
+      const info = isSpecialTime(h, m);
+      if (info) {
+        const targetMs = new Date(d.getFullYear(), d.getMonth(), d.getDate(), h, m, 59, 999).getTime();
+        if (targetMs < now.getTime()) {
+          results.push({ ...info, h, m, diffMs: targetMs - now.getTime(), past: true });
+        }
+      }
+    }
+    return results;
+  }
+
+  function autoFillSpecialTime(h, m) {
+    if (!txtEncrypted) return;
+    const hh = String(h).padStart(2, '0');
+    const mm = String(m).padStart(2, '0');
+    const timeStr = `${hh}${mm}`; // 0202, không có dấu ':'
+    txtEncrypted.value = timeStr;
+    syncFromTime();
+  }
+
+  let lastAutoFilledTime = null;
+  let specialTimeInterval = null;
+  const display = document.getElementById('special-time-display');
+  let currentIsPast = false; // track trạng thái để click handler biết
+
+  if (display) {
+    display.style.cursor = 'pointer';
+    display.addEventListener('click', () => {
+      const code = display.dataset.timecode;
+      if (!code) return;
+
+      if (currentIsPast) {
+        // Trạng thái 😢: click → điền đủ 3 ô
+        const hStr = code.slice(0, 2);
+        const mStr = code.slice(2, 4);
+        autoFillSpecialTime(parseInt(hStr, 10), parseInt(mStr, 10));
+        // Flash toàn bộ input xanh để user thấy
+        [txtDecrypted, txtEncrypted, txtCompressed].forEach(el => {
+          if (!el) return;
+          const prev = el.style.outline;
+          el.style.outline = '2px solid #0f0';
+          setTimeout(() => { el.style.outline = prev; }, 900);
+        });
+      } else {
+        // Trạng thái ⏳/⚡/🤍: click → copy số (mã thời gian) + mã nén tương ứng vào clipboard
+        const b60 = display.dataset.b60 || '';
+        const copyText = b60 ? `${code} ${b60}` : code;
+        navigator.clipboard.writeText(copyText).then(() => {
+          const prev = display.innerHTML;
+          const prevBorder = display.style.borderColor;
+          display.style.borderColor = '#fff';
+          display.innerHTML = `<span style="font-size:11px;color:#fff;font-weight:bold">✓ ${copyText}</span>`;
+          setTimeout(() => {
+            display.innerHTML = prev;
+            display.style.borderColor = prevBorder;
+          }, 1200);
+        });
+      }
+    });
+  }
+
+  function getSpecialTimeInfo(fh, fm) {
+    const hh2 = String(fh).padStart(2, '0');
+    const mm2 = String(fm).padStart(2, '0');
+    const timeCode = `${hh2}${mm2}`;
+    let decodedWord = '', b60 = '';
+    try { decodedWord = decodeWord(timeCode) || ''; } catch(e) {}
+    try { b60 = timeToBase60(timeCode) || ''; } catch(e) {}
+    const validWord = decodedWord && !decodedWord.includes('?') && !decodedWord.startsWith('[');
+    return { timeCode, decodedWord: validWord ? decodedWord : '', b60 };
+  }
+
+  function isUserTyping() {
+    // Coi là "đang gõ" nếu ô văn bản có nội dung không phải do auto-fill
+    const val = (txtDecrypted?.value || '').trim();
+    const enc = (txtEncrypted?.value || '').trim();
+    if (!val && !enc) return false;
+    // Nếu giá trị khớp với bất kỳ lastAutoFilledTime nào thì không phải user gõ
+    if (lastAutoFilledTime) {
+      const hParts = lastAutoFilledTime.split(':');
+      if (hParts.length === 2) {
+        const code = hParts[0] + hParts[1];
+        if (enc === code) return false;
+      }
+    }
+    return true;
+  }
+
+  function tickSpecialTime() {
+    if (!document.body.classList.contains('sandbox-mode') || !display) return;
+
+    const now = new Date();
+    const h = now.getHours();
+    const m = now.getMinutes();
+
+    // Tìm giờ đặc biệt trong cửa sổ [-3, +3] phút
+    let foundSpecial = null;
+    let diffMs = 0;
+    let isPast = false;
+
+    // Kiểm tra phút HIỆN TẠI trước
+    const curSpecial = isSpecialTime(h, m);
+    if (curSpecial) {
+      foundSpecial = curSpecial;
+      foundSpecial.fh = h; foundSpecial.fm = m;
+      diffMs = 0; isPast = false;
+    }
+
+    // Tìm trong 3 phút tới
+    if (!foundSpecial) {
+      for (let i = 1; i <= LOOKAHEAD_MINUTES; i++) {
+        const d = new Date(now.getTime() + i * 60000);
+        const fh = d.getHours(), fm = d.getMinutes();
+        const info = isSpecialTime(fh, fm);
+        if (info) {
+          const targetMs = new Date(d.getFullYear(), d.getMonth(), d.getDate(), fh, fm, 0, 0).getTime();
+          foundSpecial = info;
+          foundSpecial.fh = fh; foundSpecial.fm = fm;
+          diffMs = targetMs - now.getTime();
+          break;
+        }
+      }
+    }
+
+    // Tìm trong 3 phút qua (đã qua)
+    if (!foundSpecial) {
+      for (let i = 1; i <= LOOKAHEAD_MINUTES; i++) {
+        const d = new Date(now.getTime() - i * 60000);
+        const ph = d.getHours(), pm = d.getMinutes();
+        const info = isSpecialTime(ph, pm);
+        if (info) {
+          foundSpecial = info;
+          foundSpecial.fh = ph; foundSpecial.fm = pm;
+          diffMs = -i * 60000;
+          isPast = true;
+          break;
+        }
+      }
+    }
+
+    if (!foundSpecial) {
+      // Không có giờ đặc biệt nào trong cửa sổ ±3 phút → hiện trái tim
+      currentIsPast = false;
+      display.dataset.timecode = '';
+      display.dataset.b60 = '';
+      display.style.display = 'flex';
+      display.style.borderColor = '#333';
+      display.style.color = '#555';
+      display.innerHTML = `<span style="font-size:22px">🤍</span>`;
+      return;
+    }
+
+    const { timeCode, decodedWord, b60 } = getSpecialTimeInfo(foundSpecial.fh, foundSpecial.fm);
+    display.dataset.timecode = timeCode; // dùng khi click để copy
+    display.dataset.b60 = b60 || '';
+    const b60Line = b60 ? `<span style="font-size:11px;font-weight:bold;color:#88ff88">${b60}</span>` : '';
+
+    if (isPast) {
+      // Đã qua: 😢 + base60 ngang hàng
+      currentIsPast = true;
+      display.style.display = 'flex';
+      display.style.borderColor = '#555';
+      display.style.color = '#888';
+      display.dataset.state = 'past';
+      display.innerHTML = `<span style="font-size:14px">😢</span>${b60Line}`;
+      return;
+    }
+
+    // Chưa qua: auto-fill nếu ô trống, VÀ LUÔN hiện countdown trên box
+    currentIsPast = false;
+    const label = foundSpecial.label;
+    const shouldAutoFill = !isUserTyping();
+
+    if (shouldAutoFill && lastAutoFilledTime !== label) {
+      lastAutoFilledTime = label;
+      autoFillSpecialTime(foundSpecial.fh, foundSpecial.fm);
+    }
+
+    // Luôn hiện box countdown cạnh #
+    display.style.display = 'flex';
+    if (diffMs <= 0) {
+      // Đang trong phút thiêng ⚡
+      display.style.borderColor = '#ff0';
+      display.style.color = '#ff0';
+      display.innerHTML = `<span style="font-size:11px;font-weight:bold">⚡ ${foundSpecial.label}</span>${b60Line}`;
+    } else {
+      const totalSec = Math.ceil(diffMs / 1000);
+      const mmStr = String(Math.floor(totalSec / 60)).padStart(2, '0');
+      const ssStr = String(totalSec % 60).padStart(2, '0');
+      display.style.borderColor = '#0f0';
+      display.style.color = '#0f0';
+      display.innerHTML = `<span style="font-size:12px;font-weight:bold">⏳ ${mmStr}:${ssStr}</span>${b60Line}`;
+    }
+  }
+
+  // Khởi động khi vào Sandbox, dừng khi thoát
+  const origEnterSandbox = window.enterSandboxMode;
+  document.addEventListener('DOMContentLoaded', () => {});
+
+  // Watch for sandbox-mode class changes
+  const observer = new MutationObserver(() => {
+    if (document.body.classList.contains('sandbox-mode')) {
+      if (!specialTimeInterval) {
+        specialTimeInterval = setInterval(tickSpecialTime, 1000);
+        tickSpecialTime();
+      }
+    } else {
+      if (specialTimeInterval) {
+        clearInterval(specialTimeInterval);
+        specialTimeInterval = null;
+      }
+      if (display) display.style.display = 'none';
+    }
+  });
+  observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  // Also start immediately if already in sandbox
+  if (document.body.classList.contains('sandbox-mode')) {
+    specialTimeInterval = setInterval(tickSpecialTime, 1000);
+    tickSpecialTime();
+  }
+})();

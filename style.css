@@ -972,7 +972,7 @@ body.sandbox-mode #vk-suggestions {
 }
 
 body.sandbox-mode #sandbox-actions,
-body.sandbox-mode #btn-sandbox-hashtag {
+body.sandbox-mode #sandbox-top-left {
     display: flex !important;
 }
 
