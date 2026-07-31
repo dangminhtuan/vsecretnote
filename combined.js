@@ -1924,6 +1924,11 @@ const VOWEL_KEY_MAPPING = {
 };
 // Note: y maps to i phonetically in medials, uy mapping can just replace the nucleus if we consider the medial separately.
 
+import {
+  TONES, CONSONANTS_BASE, CONSONANTS_EXTRA,
+  RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2, ENGLISH_DICT, SHORTCUT_WORDS, TWO_DIGIT_WORDS, SHORT_WORDS,
+  BASE60_MAPPING, O_EXCEPTIONS, REAL_VIETNAMESE_WORDS
+} from './data.js';
 
 // --- PHONETICS ENGINE ---
 const removeVietnameseTones = (str) => {
@@ -2046,8 +2051,8 @@ const applyTone = (rhyme, tone) => {
 // --- ENCODER ---
 let shortcutDecodeMap = null;
 
-const encodeWord = (word, bypassShortcut = false) => {
-  word = word.toLowerCase();
+const encodeWord = (originalWord, bypassShortcut = false) => {
+  const word = originalWord.toLowerCase();
   
   if (!bypassShortcut) {
     for (const [key, val] of Object.entries(O_EXCEPTIONS)) {
@@ -2116,7 +2121,24 @@ const encodeWord = (word, bypassShortcut = false) => {
   }
   
   if (hh === -1 || mm === -1) {
-    return `[${word}]`;
+    let needsBrackets = false;
+    
+    if ((originalWord.length === 2 || originalWord.length === 4 || originalWord.length === 6) && /^\d+$/.test(originalWord)) {
+      needsBrackets = true;
+    }
+    
+    if (originalWord.length >= 1 && originalWord.length <= 3) {
+      let isAllBase60 = true;
+      for (let i = 0; i < originalWord.length; i++) {
+        if (!BASE60_MAPPING.includes(originalWord[i])) {
+          isAllBase60 = false;
+          break;
+        }
+      }
+      if (isAllBase60) needsBrackets = true;
+    }
+    
+    return needsBrackets ? `[${originalWord}]` : originalWord;
   }
   
   const fullCode = `${hh.toString().padStart(2,'0')}${mm.toString().padStart(2,'0')}${s1}${s2}`;
@@ -2147,25 +2169,34 @@ const decodeWord = (code) => {
   if (O_EXCEPTIONS[code]) return O_EXCEPTIONS[code];
 
   if (code.length === 2) {
-    const idx = parseInt(code, 10);
-    if (!isNaN(idx) && idx >= 0 && idx < TWO_DIGIT_WORDS.length) {
-      return TWO_DIGIT_WORDS[idx];
+    if (/^\d+$/.test(code)) {
+      const idx = parseInt(code, 10);
+      if (idx >= 0 && idx < TWO_DIGIT_WORDS.length) {
+        return TWO_DIGIT_WORDS[idx];
+      }
+      return '[ERR:2D]';
+    } else {
+      return code;
     }
-    return '[ERR:2D]';
   }
 
   if (code.length === 4) {
     if (shortcutDecodeMap[code]) return shortcutDecodeMap[code];
-    const hh = parseInt(code.substring(0,2), 10);
-    const mm = parseInt(code.substring(2,4), 10);
-    if (hh >= 32 && !isNaN(mm)) {
-      const shortIdx = (hh - 32) * 60 + mm;
-      if (shortIdx >= 0 && shortIdx < SHORT_WORDS.length) return SHORT_WORDS[shortIdx];
+    if (/^\d+$/.test(code)) {
+      const hh = parseInt(code.substring(0,2), 10);
+      const mm = parseInt(code.substring(2,4), 10);
+      if (hh >= 32 && !isNaN(mm)) {
+        const shortIdx = (hh - 32) * 60 + mm;
+        if (shortIdx >= 0 && shortIdx < SHORT_WORDS.length) return SHORT_WORDS[shortIdx];
+      }
+      code = code + '00';
+    } else {
+      return code;
     }
-    code = code + '00';
   }
 
   if (code.length !== 6) return code;
+  if (!/^\d+$/.test(code)) return code;
   const hh = parseInt(code.substring(0,2), 10);
   const mm = parseInt(code.substring(2,4), 10);
   const s1 = parseInt(code.substring(4,5), 10);
@@ -2215,6 +2246,8 @@ const decodeWord = (code) => {
 function timeToBase60(timeStr) {
   if (timeStr.includes('?') || timeStr.startsWith('[')) return timeStr;
   
+  if (!/^\d+$/.test(timeStr)) return timeStr;
+
   if (timeStr.length === 2) {
     const hh = parseInt(timeStr, 10);
     if (!isNaN(hh)) return BASE60_MAPPING[hh];
@@ -2251,6 +2284,9 @@ function base60ToTime(base60Str) {
 }
 
 const TOKEN_REGEX = /(<[^>]+>|\[[^\]]+\]|[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+)/;
+
+
+
 
 
 const NEXT_WORD_PREDICTIONS = {
@@ -3971,7 +4007,7 @@ class SecretNoteKeyboard {
     
     let corners = [];
     segments.forEach((seg, i) => {
-        let simplified = this.simplifyPath(seg, 18);
+        let simplified = this.simplifyPath(seg, 30); // Tăng epsilon lên 30 để tránh đường thẳng bị gãy vì tay người dùng hơi run (sẽ bỏ qua những phím nhiễu như y, j khi vuốt m-h-r)
         if (i > 0) simplified.shift(); 
         corners = corners.concat(simplified);
     });
@@ -4131,6 +4167,16 @@ class SecretNoteKeyboard {
                        
                        if (s.length >= dec.length) score -= 100;
                        if (validVietnameseWords.has(s.toLowerCase()) && s.toLowerCase() !== dec.toLowerCase()) score -= 50;
+                       
+                       // Phạt nặng các từ base60 không có trong từ điển gốc (ví dụ 'luya') để nhường chỗ cho từ ghép/thông dụng
+                       if (typeof REAL_VIETNAMESE_WORDS !== 'undefined') {
+                           const hasCoreWord = REAL_VIETNAMESE_WORDS.includes(dec.toLowerCase()) || 
+                                               SHORT_WORDS.includes(dec.toLowerCase()) || 
+                                               TWO_DIGIT_WORDS.includes(dec.toLowerCase());
+                           if (!hasCoreWord) {
+                               score -= 60;
+                           }
+                       }
                        
                        if (score > 0) {
                            suggestions.push({ text: dec, type: 'b60', score: Math.round(score) });
@@ -4697,7 +4743,7 @@ ${topBases.slice(0,30).map((b, i) => `${i+1}. [${b.words[0] === b.base ? 'raw' :
                       alert('Import thành công!');
                   }
               } catch (e) {
-                  alert('Lỗi import file!');
+                  alert('Lỗi 
               }
           };
           reader.readAsText(file);
@@ -5483,7 +5529,3 @@ if (typeof document !== 'undefined') {
     initSNK();
   }
 }
-
-
-global.SwipeKeyboard = typeof SwipeKeyboard !== 'undefined' ? SwipeKeyboard : null;
-global.validVietnameseWords = typeof validVietnameseWords !== 'undefined' ? validVietnameseWords : null;
