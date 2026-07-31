@@ -1676,33 +1676,20 @@ document.getElementById('btn-copy-b60')?.addEventListener('click', copyBase60ToC
 
 document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => {
   const txt = document.getElementById('text-input');
-  if (!txt) return;
+  const txtEnc = document.getElementById('time-input');
+  if (!txt || !txtEnc) return;
+  
   const word = txt.value.trim();
+  const b60Str = txtEnc.value.trim();
+  
   if (!word) return;
   
   const capWord = word.charAt(0).toUpperCase() + word.slice(1);
-  const unaccented = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').replace(/\s/g, '').toLowerCase();
+  const unaccented = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().replace(/[^a-z0-9]/g, '');
   
-  const words = word.split(/\s+/);
-  let b60Parts = [];
-  if (typeof encodeWord === 'function' && typeof timeToBase60 === 'function') {
-      for (let w of words) {
-          try {
-              let encoded = timeToBase60(encodeWord(w));
-              if (encoded) b60Parts.push(encoded);
-          } catch(e) {}
-      }
-  }
+  const finalStr = `${capWord} #${unaccented}ondmt ${b60Str}`;
   
-  const finalStr = `${capWord} #${unaccented}ondmt ${b60Parts.join(' ')}`;
-  
-  navigator.clipboard.writeText(finalStr).then(() => {
-      if (typeof cyberAlert === 'function') {
-          cyberAlert("Đã copy: " + finalStr);
-      } else {
-          alert("Đã copy: " + finalStr);
-      }
-  });
+  navigator.clipboard.writeText(finalStr);
 });
 
 // ===== ⏰ SPECIAL TIME FEATURE =====
