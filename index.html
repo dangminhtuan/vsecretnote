@@ -175,6 +175,109 @@
 
         </main>
 
+        <!-- CỘT GAME DASHBOARD & EXP HUB -->
+        <section id="game-dashboard" class="game-dashboard-box">
+          <div class="game-dashboard-header">
+            <div class="player-rank-info">
+              <button id="btn-toggle-game-panel" class="cyber-btn-small" style="background:#000;color:#ff0;border-color:#ff0;padding:2px 6px;margin-right:4px;" title="Thu nhỏ / Mở rộng Game Panel">🎮 ▼</button>
+              <span class="level-badge" id="game-level-badge">LVL 1</span>
+              <div class="rank-details">
+                <span class="rank-name" id="game-rank-name">Tân Thủ Base60</span>
+                <div class="exp-bar-bg">
+                  <div class="exp-bar-fill" id="game-exp-fill" style="width: 0%;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="stats-mini-summary">
+              <div class="stat-pill" title="Tổng EXP"><span style="color:#ff0">⚡</span> <span id="game-stat-exp">0</span></div>
+              <div class="stat-pill" title="Chuỗi Combo"><span style="color:#f0f">🔥</span> <span id="game-stat-combo">x0</span></div>
+              <div class="stat-pill" title="Số phím tiết kiệm"><span style="color:#0f0">🎯</span> <span id="game-stat-saved">0</span></div>
+            </div>
+          </div>
+
+          <!-- Game Tabs Navigation -->
+          <div class="game-tabs-nav">
+            <button class="game-tab-btn active" data-gametab="stats">📊 THỐNG KÊ & QUEST</button>
+            <button class="game-tab-btn" data-gametab="quiz">🎯 TRẮC NGHIỆM</button>
+            <button class="game-tab-btn" data-gametab="speed">⚡ TIME ATTACK 60S</button>
+          </div>
+
+          <!-- Tab 1: Stats & Quests -->
+          <div class="game-tab-content active" id="gametab-stats">
+            <div class="quest-section">
+              <h3 style="font-size:12px;color:#888;margin:5px 0;">NHIỆM VỤ HÀNG NGÀY & TỰ ĐỘNG GHI ĐIỂM</h3>
+              <p style="font-size:11px;color:#aaa;line-height:1.4;margin-bottom:10px;">
+                💡 <strong>Cách tích điểm EXP:</strong> Mở bàn phím gõ mã Base60 bất kỳ. Nếu từ đó giữ nguyên (không bị xóa trong 3s), bạn nhận ngay <strong>+10 EXP</strong> & tăng Combo!
+              </p>
+              <div class="quest-list" id="game-quest-list">
+                <div class="quest-item">
+                  <span id="quest-1-text">🎯 Gõ 5 từ bằng mã Base60</span>
+                  <span class="quest-progress" id="quest-1-prog">0/5</span>
+                </div>
+                <div class="quest-item">
+                  <span>🔥 Đạt Combo x3 liên tiếp</span>
+                  <span class="quest-progress" id="quest-2-prog">0/1</span>
+                </div>
+                <div class="quest-item">
+                  <span>⏳ Mã hóa đúng 1 mốc giờ thiêng</span>
+                  <span class="quest-progress" id="quest-3-prog">0/1</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab 2: Flash Quiz -->
+          <div class="game-tab-content" id="gametab-quiz">
+            <div class="quiz-container">
+              <div class="quiz-header">
+                <span>TỪ TIẾNG VIỆT NÀY CÓ MÃ BASE60 NÀO?</span>
+                <span class="quiz-streak" id="quiz-streak-count" style="color:#ff0;font-weight:bold;">🔥 Streak: 0</span>
+              </div>
+              <div class="quiz-question-word" id="quiz-target-word">không</div>
+              <div class="quiz-options-grid" id="quiz-options-grid">
+                <!-- 4 Options injected by JS -->
+              </div>
+              <div id="quiz-feedback" style="margin-top:12px;font-size:13px;font-weight:bold;min-height:20px;"></div>
+            </div>
+          </div>
+
+          <!-- Tab 3: Time Attack 60s Speed Test -->
+          <div class="game-tab-content" id="gametab-speed">
+            <div class="speed-test-container">
+              <div class="speed-test-controls">
+                <select id="sel-speed-preset" class="cyber-select" style="flex:1;">
+                  <option value="cadao">Ca Dao Tục Ngữ</option>
+                  <option value="thongdung">Từ Thông Dụng Base60</option>
+                  <option value="thanhngu">Thành Ngữ Viết Tắt</option>
+                </select>
+                <button id="btn-speed-start" class="cyber-btn-small" style="background:#0f0;color:#000;font-weight:bold;">⚡ BẮT ĐẦU (60S)</button>
+              </div>
+
+              <div class="speed-timer-bar">
+                <span id="speed-timer-text" style="font-size:16px;font-weight:bold;color:#ff0;">⏳ 60s</span>
+                <span id="speed-live-wpm" style="color:#0ff;font-weight:bold;">0 WPM</span>
+              </div>
+
+              <div class="speed-prompt-box" id="speed-prompt-box">
+                Nhấn Bắt Đầu để thử thách tốc độ gõ nén!
+              </div>
+              <input type="text" id="speed-input" class="cyber-input" style="width:100%; margin-top:10px; display:none; text-align:center; font-size:18px; font-weight:bold; letter-spacing:2px;" placeholder="Gõ mã Base60 tại đây..." autocomplete="off">
+
+              <div class="speed-result-modal" id="speed-result-box" style="display:none;margin-top:10px;padding:10px;border:1px solid #0f0;background:#000;text-align:center;">
+                <h3 style="color:#0f0;margin-top:0;">🏆 KẾT QUẢ THỬ THÁCH</h3>
+                <div style="display:flex;justify-content:space-around;font-size:14px;margin-top:10px;">
+                  <div><strong id="res-wpm" style="color:#ff0;font-size:18px;">0</strong><br/><small style="color:#888;">WPM</small></div>
+                  <div><strong id="res-acc" style="color:#0ff;font-size:18px;">0%</strong><br/><small style="color:#888;">Độ chính xác</small></div>
+                  <div><strong id="res-saved" style="color:#0f0;font-size:18px;">0%</strong><br/><small style="color:#888;">Tiết kiệm phím</small></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- EXP Toast Container -->
+        <div id="exp-toast-container" class="exp-toast-container"></div>
+
         <!-- CỘT 3: BREAKDOWN LOG -->
         <section class="breakdown-box">
           <h2 class="dict-title">TRANSLATION LOG</h2>

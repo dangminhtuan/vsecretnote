@@ -1607,6 +1607,13 @@ document.getElementById('btn-copy-debug')?.addEventListener('click', (e) => {
   }
 });
 
+document.addEventListener('keydown', (e) => {
+  // Alt + C to copy debug log
+  if (e.altKey && (e.key === 'c' || e.key === 'C')) {
+    e.preventDefault();
+    document.getElementById('btn-copy-debug')?.click();
+  }
+});
 
 document.getElementById('btn-sandbox-clear')?.addEventListener('click', () => {
   const active = document.activeElement;
@@ -1963,3 +1970,427 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     tickSpecialTime();
   }
 })();
+
+/* ==========================================================================
+   GAME ENGINE & GAMIFICATION MODULE (SecretNoteKeyboard Academy)
+   ========================================================================== */
+(function initGameEngine() {
+  // Game State
+  const gameState = {
+    exp: parseInt(localStorage.getItem('snk_game_exp') || '0', 10),
+    combo: 1,
+    savedKeys: parseInt(localStorage.getItem('snk_game_saved_keys') || '0', 10),
+    quizStreak: 0,
+    quests: {
+      b60Typed: parseInt(localStorage.getItem('snk_quest_typed') || '0', 10),
+      comboMax: parseInt(localStorage.getItem('snk_quest_combo') || '0', 10),
+      specialTimes: parseInt(localStorage.getItem('snk_quest_special') || '0', 10)
+    }
+  };
+
+  // Rank Names
+  const ranks = [
+    { minLvl: 1, name: 'Tân Thủ Base60' },
+    { minLvl: 3, name: 'Tập Sự Tốc Ký' },
+    { minLvl: 5, name: 'Mật Mã Viên Base60' },
+    { minLvl: 8, name: 'Chuyên Gia Tốc Ký' },
+    { minLvl: 12, name: 'Đại Sư Base60' },
+    { minLvl: 20, name: 'Huyền Thoại TimeCypher' }
+  ];
+
+  function getLevel(exp) {
+    return Math.floor(Math.sqrt(exp / 20)) + 1;
+  }
+
+  function getRankName(lvl) {
+    let current = ranks[0].name;
+    for (let r of ranks) {
+      if (lvl >= r.minLvl) current = r.name;
+    }
+    return current;
+  }
+
+  function updateGameUI() {
+    const lvl = getLevel(gameState.exp);
+    const rankName = getRankName(lvl);
+    const expForCurrentLvl = (lvl - 1) * (lvl - 1) * 20;
+    const expForNextLvl = lvl * lvl * 20;
+    const progress = Math.min(100, Math.max(0, ((gameState.exp - expForCurrentLvl) / (expForNextLvl - expForCurrentLvl)) * 100));
+
+    const badgeEl = document.getElementById('game-level-badge');
+    const rankEl = document.getElementById('game-rank-name');
+    const expFillEl = document.getElementById('game-exp-fill');
+    const statExpEl = document.getElementById('game-stat-exp');
+    const statComboEl = document.getElementById('game-stat-combo');
+    const statSavedEl = document.getElementById('game-stat-saved');
+
+    if (badgeEl) badgeEl.textContent = `LVL ${lvl}`;
+    if (rankEl) rankEl.textContent = rankName;
+    if (expFillEl) expFillEl.style.width = `${progress}%`;
+    if (statExpEl) statExpEl.textContent = gameState.exp;
+    if (statComboEl) statComboEl.textContent = `x${gameState.combo}`;
+    if (statSavedEl) statSavedEl.textContent = gameState.savedKeys;
+
+    // Quest UI
+    const reqWords = Math.min(5, Math.max(1, lvl));
+    const q1Text = document.getElementById('quest-1-text');
+    if (q1Text) q1Text.textContent = `🎯 Gõ ${reqWords} từ bằng mã Base60`;
+
+    const q1 = document.getElementById('quest-1-prog');
+    const q2 = document.getElementById('quest-2-prog');
+    const q3 = document.getElementById('quest-3-prog');
+    if (q1) q1.textContent = `${Math.min(reqWords, gameState.quests.b60Typed)}/${reqWords}`;
+    if (q2) q2.textContent = `${Math.min(1, gameState.quests.comboMax >= 3 ? 1 : 0)}/1`;
+    if (q3) q3.textContent = `${Math.min(1, gameState.quests.specialTimes)}/1`;
+  }
+
+  function saveGameState() {
+    localStorage.setItem('snk_game_exp', gameState.exp);
+    localStorage.setItem('snk_game_saved_keys', gameState.savedKeys);
+    localStorage.setItem('snk_quest_typed', gameState.quests.b60Typed);
+    localStorage.setItem('snk_quest_combo', gameState.quests.comboMax);
+    localStorage.setItem('snk_quest_special', gameState.quests.specialTimes);
+  }
+
+  function addEXP(amount, reason = '') {
+    gameState.exp += amount;
+    saveGameState();
+    updateGameUI();
+    showEXPToast(`+${amount} EXP ${reason}`);
+  }
+
+  function showEXPToast(msg) {
+    const container = document.getElementById('exp-toast-container');
+    if (!container) return;
+    const toast = document.createElement('div');
+    toast.className = 'exp-toast';
+    toast.textContent = msg;
+    container.appendChild(toast);
+    setTimeout(() => { toast.remove(); }, 1600);
+  }
+
+  // --- Real-Usage Tracking ---
+  let pendingWordTimers = new Map();
+
+  function onBase60WordTyped(word, savedKeyCount) {
+    const lvl = getLevel(gameState.exp);
+    const reqWords = Math.min(5, Math.max(1, lvl));
+    const wasCompleted = gameState.quests.b60Typed >= reqWords;
+    
+    gameState.quests.b60Typed++;
+    
+    if (!wasCompleted && gameState.quests.b60Typed >= reqWords) {
+        addEXP(50, `🎁 Hoàn thành Quest: Gõ ${reqWords} từ`);
+    }
+    if (pendingWordTimers.has(word)) {
+      clearTimeout(pendingWordTimers.get(word));
+    }
+    const timer = setTimeout(() => {
+      // Confirmed real usage!
+      const gainExp = 10 * gameState.combo;
+      gameState.savedKeys += (savedKeyCount || 3);
+      if (gameState.combo > gameState.quests.comboMax) {
+        gameState.quests.comboMax = gameState.combo;
+      }
+      addEXP(gainExp, `🔥 x${gameState.combo}`);
+      gameState.combo = Math.min(5, gameState.combo + 1);
+      pendingWordTimers.delete(word);
+    }, 2500);
+
+    pendingWordTimers.set(word, timer);
+  }
+
+  window.triggerBase60TypedEvent = function(word, savedKeys) {
+    onBase60WordTyped(word, savedKeys);
+  };
+
+  // --- Tab Navigation ---
+  document.addEventListener('DOMContentLoaded', () => {
+    updateGameUI();
+
+    const tabBtns = document.querySelectorAll('.game-tab-btn');
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.dataset.gametab;
+        tabBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        document.querySelectorAll('.game-tab-content').forEach(c => c.classList.remove('active'));
+        const activeContent = document.getElementById(`gametab-${targetTab}`);
+        if (activeContent) activeContent.classList.add('active');
+
+        if (targetTab === 'quiz') initQuizRound();
+      });
+    });
+
+    const btnToggle = document.getElementById('btn-toggle-game-panel');
+    const gameBox = document.getElementById('game-dashboard');
+    if (btnToggle && gameBox) {
+      btnToggle.addEventListener('click', () => {
+        gameBox.classList.toggle('collapsed');
+        btnToggle.textContent = gameBox.classList.contains('collapsed') ? '🎮 ▲' : '🎮 ▼';
+      });
+    }
+
+    initQuizModule();
+    initSpeedTestModule();
+  });
+
+  // --- FLASH QUIZ MODULE ---
+  const sampleQuizPairs = [
+    { word: 'không', b60: 'ko' },
+    { word: 'tôi', b60: '8' },
+    { word: 'được', b60: '0' },
+    { word: 'là', b60: '8e' },
+    { word: 'của', b60: 'cU0' },
+    { word: 'có', b60: 'c' },
+    { word: 'những', b60: 'yn9' },
+    { word: 'để', b60: '2r' },
+    { word: 'một', b60: '1' },
+    { word: 'với', b60: 'vhC' },
+    { word: 'cho', b60: 'cho' },
+    { word: 'trong', b60: 'k5j' },
+    { word: 'đã', b60: '1E' },
+    { word: 'này', b60: 'nTN' }
+  ];
+
+  let currentQuizTarget = null;
+
+  function initQuizModule() {
+    initQuizRound();
+  }
+
+  function initQuizRound() {
+    const wordEl = document.getElementById('quiz-target-word');
+    const gridEl = document.getElementById('quiz-options-grid');
+    const feedbackEl = document.getElementById('quiz-feedback');
+    const streakEl = document.getElementById('quiz-streak-count');
+    if (!wordEl || !gridEl) return;
+
+    if (feedbackEl) feedbackEl.textContent = '';
+    if (streakEl) streakEl.textContent = `🔥 Streak: ${gameState.quizStreak}`;
+
+    const targetIndex = Math.floor(Math.random() * sampleQuizPairs.length);
+    currentQuizTarget = sampleQuizPairs[targetIndex];
+    wordEl.textContent = `"${currentQuizTarget.word}"`;
+
+    // Pick 3 distractors
+    const options = [currentQuizTarget.b60];
+    while (options.length < 4) {
+      const rand = sampleQuizPairs[Math.floor(Math.random() * sampleQuizPairs.length)].b60;
+      if (!options.includes(rand)) options.push(rand);
+    }
+    // Shuffle options
+    options.sort(() => Math.random() - 0.5);
+
+    gridEl.innerHTML = '';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'quiz-opt-btn';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => handleQuizAnswer(opt, btn));
+      gridEl.appendChild(btn);
+    });
+  }
+
+  function handleQuizAnswer(selectedB60, btnEl) {
+    const feedbackEl = document.getElementById('quiz-feedback');
+    const allBtns = document.querySelectorAll('.quiz-opt-btn');
+
+    if (selectedB60 === currentQuizTarget.b60) {
+      btnEl.classList.add('correct');
+      gameState.quizStreak++;
+      addEXP(15, `🎯 Streak x${gameState.quizStreak}`);
+      if (feedbackEl) {
+        feedbackEl.style.color = '#0f0';
+        feedbackEl.textContent = 'CHÍNH XÁC! +15 EXP';
+      }
+      setTimeout(initQuizRound, 1000);
+    } else {
+      btnEl.classList.add('wrong');
+      gameState.quizStreak = 0;
+      updateGameUI();
+      allBtns.forEach(b => {
+        if (b.textContent === currentQuizTarget.b60) b.classList.add('correct');
+      });
+      if (feedbackEl) {
+        feedbackEl.style.color = '#f00';
+        feedbackEl.textContent = `SAI RỒI! Mã đúng là [${currentQuizTarget.b60}]`;
+      }
+      setTimeout(initQuizRound, 1800);
+    }
+  }
+
+  // --- TIME ATTACK 60S MODULE ---
+  const presetTexts = {
+    cadao: "Công cha như núi Thái Sơn nghĩa mẹ như nước trong nguồn chảy ra Một lòng thờ mẹ kính cha cho tròn chữ hiếu mới là đạo con",
+    thongdung: "tôi không được là của có những để một với cho trong đã này người các ra được đến thành vcomp",
+    thanhngu: "Có công mài sắt có ngày nên kim Đi một ngày đàng học một sàng khôn Ăn quả nhớ kẻ trồng cây Uống nước nhớ nguồn"
+  };
+
+  let speedTimer = null;
+  let speedHintTimer = null;
+  let speedTimeLeft = 60;
+  let speedActive = false;
+  let speedWords = [];
+  let speedCurrentIndex = 0;
+  let speedCorrectChars = 0;
+  let speedTotalB60Keys = 0;
+  let speedTotalNormalKeys = 0;
+
+  function initSpeedTestModule() {
+    const btnStart = document.getElementById('btn-speed-start');
+    const selPreset = document.getElementById('sel-speed-preset');
+    const speedInput = document.getElementById('speed-input');
+    
+    if (!btnStart || !selPreset) return;
+
+    btnStart.addEventListener('click', startSpeedTest);
+    selPreset.addEventListener('change', () => {
+      const box = document.getElementById('speed-prompt-box');
+      if (box && !speedActive) {
+        box.textContent = presetTexts[selPreset.value] || presetTexts.cadao;
+      }
+    });
+
+    if (speedInput) {
+      speedInput.addEventListener('keydown', (e) => {
+        if (!speedActive) return;
+        if (e.key === ' ' || e.code === 'Space') {
+          e.preventDefault();
+          checkSpeedInput(speedInput.value.trim().toLowerCase());
+        }
+      });
+    }
+  }
+
+  function startSpeedTest() {
+    if (speedActive) return;
+    speedActive = true;
+    speedTimeLeft = 60;
+    speedCurrentIndex = 0;
+    speedCorrectChars = 0;
+    speedTotalB60Keys = 0;
+    speedTotalNormalKeys = 0;
+
+    const selPreset = document.getElementById('sel-speed-preset');
+    const textPrompt = presetTexts[selPreset?.value || 'cadao'];
+    const promptBox = document.getElementById('speed-prompt-box');
+    const timerText = document.getElementById('speed-timer-text');
+    const resultBox = document.getElementById('speed-result-box');
+    const speedInput = document.getElementById('speed-input');
+
+    if (resultBox) resultBox.style.display = 'none';
+    
+    // Process words
+    const rawWords = textPrompt.trim().split(/\s+/);
+    speedWords = rawWords.map(w => {
+      const b60 = timeToBase60(encodeWord(w));
+      return { word: w, b60: b60 };
+    });
+
+    if (promptBox) {
+      promptBox.innerHTML = speedWords.map((item, idx) => 
+        `<span class="speed-word ${idx === 0 ? 'active' : ''}" id="speed-word-${idx}" data-b60="${item.b60}">${item.word}</span>`
+      ).join('');
+    }
+
+    if (speedInput) {
+      speedInput.style.display = 'block';
+      speedInput.value = '';
+      speedInput.focus();
+    }
+
+    if (timerText) timerText.textContent = '⏳ 60s';
+
+    resetHintTimer();
+
+    speedTimer = setInterval(() => {
+      speedTimeLeft--;
+      if (timerText) timerText.textContent = `⏳ ${speedTimeLeft}s`;
+
+      if (speedTimeLeft <= 0) {
+        endSpeedTest();
+      }
+    }, 1000);
+  }
+
+  function resetHintTimer() {
+    clearTimeout(speedHintTimer);
+    if (!speedActive || speedCurrentIndex >= speedWords.length) return;
+    
+    const currentSpan = document.getElementById(`speed-word-${speedCurrentIndex}`);
+    if (currentSpan) {
+      currentSpan.classList.remove('show-hint');
+      speedHintTimer = setTimeout(() => {
+        currentSpan.classList.add('show-hint');
+      }, 2000);
+    }
+  }
+
+  function checkSpeedInput(inputValue) {
+    if (speedCurrentIndex >= speedWords.length) return;
+    const target = speedWords[speedCurrentIndex];
+    const speedInput = document.getElementById('speed-input');
+    const currentSpan = document.getElementById(`speed-word-${speedCurrentIndex}`);
+    
+    if (inputValue === target.b60.toLowerCase()) {
+      // Correct!
+      speedCorrectChars += target.word.length + 1; // +1 for space
+      speedTotalB60Keys += target.b60.length;
+      speedTotalNormalKeys += target.word.length;
+      
+      currentSpan.classList.remove('active', 'show-hint');
+      currentSpan.classList.add('correct');
+      
+      speedCurrentIndex++;
+      speedInput.value = '';
+      
+      if (speedCurrentIndex >= speedWords.length) {
+        endSpeedTest();
+      } else {
+        const nextSpan = document.getElementById(`speed-word-${speedCurrentIndex}`);
+        if (nextSpan) nextSpan.classList.add('active');
+        resetHintTimer();
+      }
+    } else {
+      // Wrong! Flash red.
+      speedInput.style.backgroundColor = '#500';
+      setTimeout(() => speedInput.style.backgroundColor = '', 200);
+    }
+  }
+
+  function endSpeedTest() {
+    clearInterval(speedTimer);
+    clearTimeout(speedHintTimer);
+    speedActive = false;
+
+    const timerText = document.getElementById('speed-timer-text');
+    const resultBox = document.getElementById('speed-result-box');
+    const speedInput = document.getElementById('speed-input');
+    const resWpm = document.getElementById('res-wpm');
+    const resAcc = document.getElementById('res-acc');
+    const resSaved = document.getElementById('res-saved');
+
+    if (speedInput) speedInput.style.display = 'none';
+    if (timerText) timerText.textContent = '⏱️ HẾT GIỜ!';
+    
+    const timeElapsed = 60 - speedTimeLeft;
+    const mins = timeElapsed > 0 ? timeElapsed / 60 : 1/60;
+    
+    const calculatedWpm = Math.round((speedCorrectChars / 5) / mins);
+    const calculatedSaved = speedTotalNormalKeys > 0 ? Math.round(100 - (speedTotalB60Keys / speedTotalNormalKeys) * 100) : 0;
+    const calculatedAcc = 100; // Simplified for now since we only allow moving forward on correct
+
+    if (resWpm) resWpm.textContent = calculatedWpm;
+    if (resAcc) resAcc.textContent = `${calculatedAcc}%`;
+    if (resSaved) resSaved.textContent = `${calculatedSaved}%`;
+
+    if (resultBox) resultBox.style.display = 'block';
+    
+    if (speedCurrentIndex > 0) {
+      addEXP(Math.min(100, speedCurrentIndex * 5), '⚡ Hoàn thành Speed Test!');
+    }
+  }
+})();
+

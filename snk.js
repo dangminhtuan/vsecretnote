@@ -36,6 +36,7 @@ const NEXT_WORD_PREDICTIONS = {
   'đi': ['chơi', 'làm', 'học', 'ngủ', 'ăn', 'dạo', 'đâu', 'về', 'hỏi'],
   'ăn': ['cơm', 'uống', 'sáng', 'trưa', 'tối', 'món', 'gì'],
   'rất': ['nhiều', 'vui', 'tốt', 'hay', 'đẹp', 'thích', 'nhanh'],
+  'vui': ['vẻ', 'tươi', 'nhộn', 'chơi'],
   'quá': ['đáng', 'nhiều', 'trời', 'tuyệt', 'hay', 'đẹp', 'lớn', 'nhỏ'],
   'buồn': ['chán', 'bã', 'cười', 'tẻ', 'ngủ', 'bực', 'nôn', 'phiền', 'tình', 'bã', 'so', 'thảm'],
   '_default': ['và', 'là', 'của', 'có', 'không', 'những', 'để', 'một', 'được', 'với', 'cho', 'trong', 'đã', 'này']
@@ -571,7 +572,7 @@ class SecretNoteKeyboard {
               if (this.lastSwipeRes) {
                   const dpLog = this.lastSwipeRes.suggestions.slice(0, 30).map((s, i) => `${i+1}. [${s.type}] ${s.text} (score: ${s.score || 0})`).join('\n');
                   const pW = this.lastCommittedWord ? this.lastCommittedWord.trim().toLowerCase() : 'null';
-                  logData += `GeoFull: ${this.lastSwipeRes.geoWord}\nGeoCorners: ${this.lastSwipeRes.geoWordCorners || 'N/A'}\nTotal: ${this.lastSwipeRes.suggestions.length}\nPrevWord: ${pW}\n---\n${dpLog}`;
+                  logData += `GeoFull: ${this.lastSwipeRes.geoWord}\nGeoCorners: ${this.lastSwipeRes.geoWordCorners || 'N/A'}\nForcedKeys: ${this.lastSwipeRes.forcedKeysStr || 'none'}\nTotal: ${this.lastSwipeRes.suggestions.length}\nPrevWord: ${pW}\n---\n${dpLog}`;
               }
               debugLog.value = logData;
           }
@@ -654,8 +655,8 @@ class SecretNoteKeyboard {
     // Hide keyboard if clicked outside
     document.addEventListener('pointerdown', (e) => {
       if (this.container.style.display !== 'none') {
-        // Prevent hiding if clicking the chat input area (like the Send button)
-        if (e.target.closest && e.target.closest('.chat-input-area')) return;
+        // Prevent hiding if clicking the chat input area (like the Send button) or copy log button
+        if (e.target.closest && (e.target.closest('.chat-input-area') || e.target.closest('#btn-copy-debug'))) return;
         
         if (!this.container.contains(e.target) && e.target !== this.activeTarget) {
           this.hide();
@@ -1017,8 +1018,6 @@ class SecretNoteKeyboard {
       if (!this.isSwiping) return;
       if (this.activePointerId !== null && e.pointerId !== this.activePointerId) return;
       
-      if (this.pauseTimer) clearTimeout(this.pauseTimer);
-      
       const containerRect = this.keysContainer.getBoundingClientRect();
       const cx = e.clientX - containerRect.left;
       const cy = e.clientY - containerRect.top;
@@ -1038,9 +1037,14 @@ class SecretNoteKeyboard {
              }
          }
          
-         if (key && key !== this.currentBubbleKey) {
-             this.showBubble(key);
-         }
+          if (key && key !== this.currentBubbleKey) {
+              if (!this.isSwiping) {
+                  this.showBubble(key);
+              } else if (this.bubble) {
+                  this.bubble.classList.remove('show');
+                  // Do NOT set currentBubbleKey = null, so that we don't re-trigger this block constantly while hovering on the same key during a swipe.
+              }
+          }
          
          // REAL-TIME SUGGESTION PREVIEW
          if (this.swipePath.length >= 3) {
@@ -1065,32 +1069,34 @@ class SecretNoteKeyboard {
              }
          }
          
-         if (!this.pauseStartPoint) {
-             this.pauseStartPoint = { x: cx, y: cy };
-             this.startPauseTimer(key);
-         } else if (Math.hypot(cx - this.pauseStartPoint.x, cy - this.pauseStartPoint.y) > 20) {
-             if (this.pauseTimer) clearTimeout(this.pauseTimer);
-             this.pauseStartPoint = { x: cx, y: cy };
-             this.startPauseTimer(key);
-         }
+         if (!this.pauseStartPoint || key !== this.lastPauseKey) {
+              this.lastPauseKey = key;
+              this.pauseStartPoint = { x: cx, y: cy };
+              this.startPauseTimer(key);
+          } else if (Math.hypot(cx - this.pauseStartPoint.x, cy - this.pauseStartPoint.y) > 50) {
+              this.pauseStartPoint = { x: cx, y: cy };
+              this.startPauseTimer(key);
+          }
       }
   }
 
   startPauseTimer(key) {
+      if (this.pauseTimer) clearTimeout(this.pauseTimer);
       this.pauseTimer = setTimeout(() => {
           if (!this.isSwiping) return;
           if (this.swipeSuggestions && this.swipeSuggestions.isFull) return;
           
           const idx = this.swipePath.length - 1;
-          if (!this.forcedIndices.includes(idx)) {
+          if (idx >= 0 && !this.forcedIndices.includes(idx)) {
               this.forcedIndices.push(idx);
           }
-          if (this.swipePath.length > 0) {
+          if (this.swipePath.length > 0 && idx >= 0) {
               const currentP = this.swipePath[idx];
               currentP.isPause = true;
               currentP.key = key;
+              this.showBubble(key);
           }
-      }, 300);
+      }, 80);
   }
 
   onPointerCancel(e) {
@@ -1289,9 +1295,10 @@ class SecretNoteKeyboard {
       
       const getScore = (w) => {
           if (commonOverrides.has(w)) return 4;
-          if (TWO_DIGIT_WORDS.includes(w)) return 3;
-          if (SHORT_WORDS.includes(w)) return 2;
-          return 0;
+          if (typeof TWO_DIGIT_WORDS !== 'undefined' && TWO_DIGIT_WORDS.includes(w)) return 3;
+          if (typeof SHORT_WORDS !== 'undefined' && SHORT_WORDS.includes(w)) return 2;
+          if (typeof REAL_VIETNAMESE_WORDS !== 'undefined' && REAL_VIETNAMESE_WORDS.includes(w)) return 1;
+          return 0; // Rare words from syllables.json get lower priority
       };
       
       matches.sort((a, b) => {
@@ -1713,10 +1720,23 @@ class SecretNoteKeyboard {
     
     let corners = [];
     segments.forEach((seg, i) => {
-        let simplified = this.simplifyPath(seg, 40);
+        let simplified = this.simplifyPath(seg, 30); // Tăng epsilon lên 30 để tránh đường thẳng bị gãy vì tay người dùng hơi run (sẽ bỏ qua những phím nhiễu như y, j khi vuốt m-h-r)
         if (i > 0) simplified.shift(); 
         corners = corners.concat(simplified);
     });
+
+    // Cần đảm bảo tất cả các điểm nhấn giữ (forced/pause indices) đều bắt buộc nằm trong corners
+    localForced.forEach(idx => {
+        if (idx < path.length) {
+            const pt = path[idx];
+            if (!corners.includes(pt)) {
+                corners.push(pt);
+            }
+        }
+    });
+
+    // Sắp xếp lại corners theo thứ tự thời gian trong path
+    corners.sort((a, b) => path.indexOf(a) - path.indexOf(b));
 
     let cornerKeys = [];
     corners.forEach(p => {
@@ -1857,7 +1877,23 @@ class SecretNoteKeyboard {
                     if (validVietnameseWords.has(dec)) {
                        let score = (s.length / geoWordCorners.length) * 100;
                        if (s === geoWordCorners) score += 50;
-                       suggestions.push({ text: dec, type: 'b60', score: Math.round(score) });
+                       
+                       if (s.length >= dec.length) score -= 100;
+                       if (validVietnameseWords.has(s.toLowerCase()) && s.toLowerCase() !== dec.toLowerCase()) score -= 50;
+                       
+                       // Phạt nặng các từ base60 không có trong từ điển gốc (ví dụ 'luya') để nhường chỗ cho từ ghép/thông dụng
+                       if (typeof REAL_VIETNAMESE_WORDS !== 'undefined') {
+                           const hasCoreWord = REAL_VIETNAMESE_WORDS.includes(dec.toLowerCase()) || 
+                                               SHORT_WORDS.includes(dec.toLowerCase()) || 
+                                               TWO_DIGIT_WORDS.includes(dec.toLowerCase());
+                           if (!hasCoreWord) {
+                               score -= 60;
+                           }
+                       }
+                       
+                       if (score > 0) {
+                           suggestions.push({ text: dec, type: 'b60', score: Math.round(score) });
+                       }
                     }
                  }
               }
@@ -1969,7 +2005,24 @@ class SecretNoteKeyboard {
              score += 20;
          }
          
-         const prevWord = this.lastCommittedWord ? this.lastCommittedWord.trim().toLowerCase().normalize('NFC') : null;
+         // Penalty for rare words (from full dictionary) that are not in core dictionary
+         if (words.length > 0 && typeof REAL_VIETNAMESE_WORDS !== 'undefined') {
+             const hasCoreWord = words.some(w => REAL_VIETNAMESE_WORDS.includes(w.toLowerCase()) || SHORT_WORDS.includes(w.toLowerCase()) || TWO_DIGIT_WORDS.includes(w.toLowerCase()));
+             if (!hasCoreWord) {
+                 score -= 60; // Heavy penalty for non-core words like 'luya'
+             }
+         }
+         
+         let prevWord = null;
+         if (this.activeTarget) {
+             const textBefore = this.activeTarget.value.substring(0, this.activeTarget.selectionStart);
+             const match = textBefore.match(/([a-zA-ZáàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđĐ]+)[\s]*$/);
+             if (match) prevWord = match[1].toLowerCase().normalize('NFC');
+         }
+         if (!prevWord && this.lastCommittedWord) {
+             prevWord = this.lastCommittedWord.trim().toLowerCase().normalize('NFC');
+         }
+         
          if (prevWord && NEXT_WORD_PREDICTIONS[prevWord]) {
              if (words.some(w => NEXT_WORD_PREDICTIONS[prevWord].includes(w.normalize('NFC')))) {
                  score += 50;
@@ -1981,7 +2034,15 @@ class SecretNoteKeyboard {
 
       matchedBases.sort((a, b) => getScore(b) - getScore(a));
       
-      const prevWord = this.lastCommittedWord ? this.lastCommittedWord.trim().toLowerCase().normalize('NFC') : null;
+      let prevWordContext = null;
+      if (this.activeTarget) {
+          const textBefore = this.activeTarget.value.substring(0, this.activeTarget.selectionStart);
+          const match = textBefore.match(/([a-zA-ZáàảãạăắằẳẵặâấầẩẫậéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵđĐ]+)[\s]*$/);
+          if (match) prevWordContext = match[1].toLowerCase().normalize('NFC');
+      }
+      if (!prevWordContext && this.lastCommittedWord) {
+          prevWordContext = this.lastCommittedWord.trim().toLowerCase().normalize('NFC');
+      }
       
       const topBases = matchedBases.slice(0, 8).map(b => {
           let words = [...(allEntries.get(b) || [])];
@@ -1989,9 +2050,9 @@ class SecretNoteKeyboard {
               let score1 = HIGH_FREQ_SWIPE.has(w1) ? 20 : (SHORT_WORDS.includes(w1) ? 10 : 0);
               let score2 = HIGH_FREQ_SWIPE.has(w2) ? 20 : (SHORT_WORDS.includes(w2) ? 10 : 0);
               
-              if (prevWord && NEXT_WORD_PREDICTIONS[prevWord]) {
-                  if (NEXT_WORD_PREDICTIONS[prevWord].includes(w1.normalize('NFC'))) score1 += 50;
-                  if (NEXT_WORD_PREDICTIONS[prevWord].includes(w2.normalize('NFC'))) score2 += 50;
+              if (prevWordContext && NEXT_WORD_PREDICTIONS[prevWordContext]) {
+                  if (NEXT_WORD_PREDICTIONS[prevWordContext].includes(w1.normalize('NFC'))) score1 += 50;
+                  if (NEXT_WORD_PREDICTIONS[prevWordContext].includes(w2.normalize('NFC'))) score2 += 50;
               }
               
               return score2 - score1;
@@ -2003,8 +2064,9 @@ class SecretNoteKeyboard {
           const logMsg = `---
 GeoFull: ${geoWord}
 GeoCorners: ${geoWordCorners}
+ForcedKeys: ${Array.from(forcedNormKeys).join('') || 'none'}
 Total: ${matchedBases.length}
-PrevWord: ${prevWord}
+PrevWord: ${prevWordContext}
 ---
 ${topBases.slice(0,30).map((b, i) => `${i+1}. [${b.words[0] === b.base ? 'raw' : 'vi'}] ${b.words[0]} (score: ${b.score})`).join('\n')}
 `;
@@ -2067,7 +2129,7 @@ ${topBases.slice(0,30).map((b, i) => `${i+1}. [${b.words[0] === b.base ? 'raw' :
     }
     
     uniqueSuggestions.sort((a, b) => (b.score || 0) - (a.score || 0));
-    return { geoWord, geoWordCorners, suggestions: uniqueSuggestions };
+    return { geoWord, geoWordCorners, suggestions: uniqueSuggestions, forcedKeysStr: Array.from(forcedNormKeys).join('') };
 }
 
   processSwipe() {
@@ -2122,6 +2184,22 @@ ${topBases.slice(0,30).map((b, i) => `${i+1}. [${b.words[0] === b.base ? 'raw' :
   
   simplifyPath(points, epsilon) {
     if (points.length <= 2) return points;
+    
+    // Mọi phím được người dùng nhấn giữ/dừng tay (Dwell/Pause Key) bắt buộc phải là phím mỏ neo trong GeoCorners.
+    // Thuật toán hình học không bao giờ được phép tự ý lọc bỏ.
+    let pauseIndex = -1;
+    for (let i = 1; i < points.length - 1; i++) {
+        if (points[i].isPause) {
+            pauseIndex = i;
+            break; // Split at the first pause point we find
+        }
+    }
+    if (pauseIndex !== -1) {
+        const left = this.simplifyPath(points.slice(0, pauseIndex + 1), epsilon);
+        const right = this.simplifyPath(points.slice(pauseIndex), epsilon);
+        return left.slice(0, -1).concat(right);
+    }
+    
     let maxDist = 0;
     let index = 0;
     const start = points[0];
@@ -2307,7 +2385,7 @@ ${topBases.slice(0,30).map((b, i) => `${i+1}. [${b.words[0] === b.base ? 'raw' :
            
            // Tracking
            const realWord = insertText.trim();
-           if (realWord) {
+           if (realWord && typeof validVietnameseWords !== 'undefined' && validVietnameseWords.has(realWord.toLowerCase())) {
                try {
                    let stats = JSON.parse(localStorage.getItem('vk_word_stats') || '{}');
                    stats[realWord] = (stats[realWord] || 0) + 1;

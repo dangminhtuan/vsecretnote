@@ -1,38 +1,44 @@
-# VSecretNote (TimeCypher)
-**Ứng dụng Ghi chú Bí mật chuẩn mã hóa Tiếng Việt (Vietnamese Secret Note)**
+# VSecretNote (TimeCypher) & SecretNote Keyboard
+**Ứng dụng Ghi chú Bảo mật chuẩn Mã hóa Tiếng Việt (VCOMP) tích hợp Bàn phím Ảo Thế Hệ Mới**
 
-VSecretNote không phải là một ứng dụng ghi chú bình thường. Nó là một cỗ máy bảo mật cá nhân, sử dụng thuật toán nén và mã hóa ngữ nghĩa tiếng Việt độc quyền (VCOMP) để biến những bí mật của bạn thành các đoạn mã vô nghĩa trong mắt người ngoài, nhưng lại dịch ngược hoàn hảo khi bạn cần.
+VSecretNote không chỉ là một ứng dụng ghi chú bảo mật. Nó là một **Hệ sinh thái Giáo dục & Bảo mật**, sử dụng thuật toán nén và mã hóa ngữ nghĩa tiếng Việt độc quyền (VCOMP) để biến những bí mật của bạn thành các đoạn mã vô nghĩa trong mắt người ngoài, nhưng lại dịch ngược hoàn hảo khi bạn cần.
 
-## 🚀 Live Demo
+## 🌟 Trải nghiệm Live Demo
 **Trải nghiệm trực tiếp tại:** [https://mat-ma-thoi-gian.pages.dev/](https://mat-ma-thoi-gian.pages.dev/)
 
-## 🌟 Tính năng nổi bật
-- **Mã hóa VCOMP (Base60):** Mọi từ tiếng Việt được nén chặt thành 3 ký tự (Ví dụ: `tuyệt mật` -> `hX9 kA4`). Nếu không có bộ từ điển giải mã, dữ liệu hoàn toàn vô dụng với hacker.
-- **Offline 100%:** Ứng dụng hoạt động hoàn toàn trên trình duyệt của bạn (Client-side). Không có cơ sở dữ liệu đám mây, không gửi API về server. Dữ liệu được lưu trong `LocalStorage` của trình duyệt. Bí mật của bạn chỉ nằm trên máy của bạn.
-- **Giao diện Ma trận (Matrix UI):** Trải nghiệm gõ phím mang đậm phong cách Hacker/Cyberpunk.
-- **Phím tắt ẩn (Virtual Shift - phím `f`):** Tối ưu hóa việc viết hoa mà không cần dùng phím Shift thật, giúp thao tác gõ mã hóa cực nhanh.
-- **Chế độ Học tập (Sandbox):** Tự do vọc vạch từ điển Base60 mà không sợ làm hỏng dữ liệu gốc.
+---
 
-## 🛠 Cài đặt & Chạy ứng dụng
+## 🔥 Tính năng Nổi bật (Bản Cập Nhật Mới)
 
-Vì đây là một ứng dụng thuần Frontend (HTML/JS/CSS), bạn chỉ cần:
-1. Tải toàn bộ mã nguồn về máy.
-2. Mở file `index.html` bằng bất kỳ trình duyệt nào (Chrome, Firefox, Edge).
-3. Bắt đầu gõ và trải nghiệm!
+### 1. Bàn phím SecretNote Keyboard (SNK) - Mô hình Widget Độc lập
+Đây là một cuộc cách mạng so với phiên bản trước. Bàn phím ảo SNK giờ đây hoạt động như một Widget độc lập, có thể nhúng vào bất kỳ trang web hoặc dự án nào:
+- **Đa giao diện (Multi-theme):** Chuyển đổi mượt mà giữa các giao diện `Android`, `iOS`, và `Web` (Ma trận/Hacker) chỉ với một cú click.
+- **Cơ chế kéo thả (Drag & Drop):** Tự do di chuyển bàn phím khắp màn hình để không che khuất tầm nhìn.
 
-*(Nếu bạn muốn chạy môi trường dev, có thể sử dụng Vite: `npm install` -> `npm run dev`)*
+### 2. Công cụ Học tập (Edu-Typing) & Nhập liệu Thông minh
+Không chỉ để gõ nhanh, SNK là người thầy dạy bạn thuộc lòng hệ thống mã hóa Base60:
+- **Vuốt phím (Swipe-to-Type):** Vuốt để nhập liệu với tốc độ cực nhanh, từ vựng được tự động nội suy và chèn vào văn bản.
+- **Gợi ý Thông minh theo Ngữ cảnh (Contextual Next-Word):** AI của bàn phím tự động dự đoán các từ tiếp theo dựa trên từ bạn vừa gõ (ví dụ: gõ "muốn" sẽ gợi ý "đi, làm, hỏi...").
+- **Tra cứu chéo Base60:** Hỗ trợ gõ trực tiếp mã Base60 (không phân biệt hoa/thường, ví dụ gõ `chd`) để bàn phím tự động dịch ra từ Tiếng Việt tương ứng (`chơi [CHd]`) ngay trên thanh gợi ý.
 
-## 🧠 Cấu trúc thư mục
-- `index.html`: Khung giao diện chính.
-- `style.css`: Giao diện Cyberpunk, Matrix rain effect.
-- `main.js`: Xử lý DOM, sự kiện gõ phím, lưu trữ LocalStorage.
-- `vcomp.js` & `data.js`: Lõi thuật toán nén tiếng Việt VCOMP (Vietnamese Compression Protocol).
-
-## 🔒 Triết lý bảo mật
-Chúng tôi tin rằng quyền riêng tư là tuyệt đối. Bằng việc Mở Mã Nguồn (Open Source) dự án này, chúng tôi mời mọi lập trình viên vào xem xét code để chứng minh rằng: **Không có bất kỳ một dòng code gián điệp nào được chèn vào đây.**
-
-## 🤝 Giấy phép
-Dự án được phân phối dưới giấy phép **MIT**. Mọi người tự do sử dụng, chỉnh sửa và phân phối lại.
+### 3. Bảo mật Tuyệt đối & Ngoại tuyến (Offline 100%)
+- **Mã hóa VCOMP (Base60):** Mỗi từ tiếng Việt được nén chặt thành 2-3 ký tự (Ví dụ: `tuyệt mật` -> `Gza m9U`). Không có từ điển giải mã, dữ liệu hoàn toàn vô dụng với hacker.
+- **Không Máy Chủ (Serverless):** Ứng dụng hoạt động hoàn toàn trên trình duyệt của bạn (Client-side). Không có cơ sở dữ liệu đám mây, không gửi API về server. Bí mật của bạn chỉ nằm trên máy của bạn.
 
 ---
-*Tác giả: Minh Tuấn*
+
+## 🚀 Cài đặt & Chạy Ứng dụng
+Đây là một ứng dụng thuần Frontend (HTML/JS/CSS/Vite).
+
+### Chạy môi trường phát triển (Dev)
+```bash
+npm install
+npm run dev
+```
+
+### Xây dựng bản phân phối (Build)
+```bash
+npm run build
+```
+
+*Sản phẩm được phát triển nhằm mục tiêu tối ưu hóa tốc độ nhập liệu và bảo mật thông tin cá nhân bằng ngôn ngữ Tiếng Việt.*
