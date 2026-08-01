@@ -350,44 +350,6 @@ function renderLinkedNoteSelect() {
 
 if(txtCompressed) {
   txtCompressed.addEventListener('input', (e) => {
-    let val = txtCompressed.value;
-    let cursor = txtCompressed.selectionStart;
-    
-    // 1. Cycle state when 'f' is typed
-    if (val.toLowerCase().includes('f')) {
-      let oldLen = val.length;
-      let temp = '';
-      while (temp !== val) {
-        temp = val;
-        val = val.replace(/â‡§f/gi, 'â‡ª');
-        val = val.replace(/â‡ªf/gi, '');
-        val = val.replace(/ff/gi, 'â‡ª');
-      }
-      val = val.replace(/f/gi, 'â‡§');
-      cursor -= (oldLen - val.length);
-    }
-
-    // 2. Capitalize the typed character based on cursor state
-    if (cursor >= 2) {
-      const prev2 = val.substring(cursor - 2, cursor);
-      if (prev2.match(/â‡§[a-z]/i)) {
-        const upper = prev2[1].toUpperCase();
-        val = val.substring(0, cursor - 2) + upper + val.substring(cursor);
-        cursor = cursor - 1; // â‡§ is consumed
-      } else if (prev2.match(/â‡ª[a-z]/i)) {
-        const upper = prev2[1].toUpperCase();
-        val = val.substring(0, cursor - 2) + upper + 'â‡ª' + val.substring(cursor);
-        // â‡ª stays after the typed character, cursor stays same
-      } else if (prev2.match(/â‡ª[^a-zA-Zâ‡§â‡ª]/i)) {
-        val = val.substring(0, cursor - 2) + prev2[1] + 'â‡ª' + val.substring(cursor);
-        // â‡ª jumps past spaces/symbols
-      }
-    }
-    
-    if (txtCompressed.value !== val) {
-      txtCompressed.value = val;
-      txtCompressed.selectionStart = txtCompressed.selectionEnd = Math.max(0, cursor);
-    }
     if (document.activeElement === txtCompressed) handleInput(syncFromCompressed);
   });
 }
@@ -478,7 +440,7 @@ if (btnPlayground) {
 function saveCurrentNote() {
   if (currentNoteId === 'playground') return; // Sandbox mode, do not save
   
-  const base60Data = txtCompressed ? txtCompressed.value.replace(/[â‡§â‡ª]/g, '').trim() : '';
+  const base60Data = txtCompressed ? txtCompressed.value.replace(/[⇧⇪]/g, '').trim() : '';
   const hasTags = currentNoteTags && currentNoteTags.length > 0;
   
   if(base60Data === '' && !hasTags) return;
@@ -527,7 +489,7 @@ function renderBacklinks(id) {
     backlinksList.innerHTML = '';
     backlinks.forEach(bl => {
       // Decode content from Base60
-      const text = bl.content.replace(/[â‡§â‡ª]/g, '');
+      const text = bl.content.replace(/[⇧⇪]/g, '');
       const tokens = text.split(TOKEN_REGEX);
       let decryptedParts = [];
       tokens.forEach(token => {
@@ -1636,13 +1598,6 @@ document.addEventListener('keydown', (e) => {
     } else if (e.key === 'Delete') {
       e.preventDefault();
       document.getElementById('btn-sandbox-clear')?.click();
-    } else if (e.key === 'c' && e.ctrlKey) {
-      // Chỉ intercept nếu không có text được bôi đen
-      const sel = window.getSelection()?.toString();
-      if (!sel) {
-        e.preventDefault();
-        copyBase60ToClipboard();
-      }
     }
   }
 });
@@ -1676,18 +1631,24 @@ document.getElementById('btn-copy-b60')?.addEventListener('click', copyBase60ToC
 
 document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => {
   const txt = document.getElementById('text-input');
-  const txtEnc = document.getElementById('time-input');
-  if (!txt || !txtEnc) return;
+  const txtEnc = document.getElementById('compressed-input');
+  const txtTime = document.getElementById('time-input');
+  if (!txt || !txtEnc || !txtTime) return;
   
   const word = txt.value.trim();
   const b60Str = txtEnc.value.trim();
+  const timeCodeStr = txtTime.value.trim();
   
   if (!word) return;
   
+  const wordCount = word.split(/\s+/).filter(x => x).length;
   const capWord = word.charAt(0).toUpperCase() + word.slice(1);
   const unaccented = word.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase().replace(/[^a-z0-9]/g, '');
   
-  const finalStr = `${capWord} #${unaccented}ondmt ${b60Str}`;
+  let finalStr = `${capWord} #${unaccented}ondmt ${b60Str}`;
+  if (wordCount < 3) {
+      finalStr += ` ${timeCodeStr}`;
+  }
   
   navigator.clipboard.writeText(finalStr);
 });
