@@ -1,5 +1,6 @@
 import { timeToBase60, base60ToTime, encodeWord, decodeWord } from './vcomp.js';
-import { removeVietnameseTones, extractPhonetics, applyTone, splitPhonetics, smartCodaFixer } from './vcomp.js';
+import { removeVietnameseTones, applyTone } from './vcomp.js';
+
 import { BASE60_MAPPING, SHORT_WORDS, TWO_DIGIT_WORDS, REAL_VIETNAMESE_WORDS, VOWEL_KEY_MAPPING } from './data.js';
 
 const NEXT_WORD_PREDICTIONS = {
@@ -232,6 +233,7 @@ class SecretNoteKeyboard {
   constructor(config = {}) {
     this.config = Object.assign({ theme: 'web' }, config);
     this.activeTarget = null;
+    this.isDisabled = true; // Hidden by default; toggled by ⌨️ button
     this.isSwiping = false;
     this.swipeSuggestions = null;
     this.swipePath = [];

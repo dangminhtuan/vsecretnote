@@ -43,6 +43,8 @@ window.addEventListener('resize', () => {
 const txtDecrypted = document.getElementById('text-input');
 const txtEncrypted = document.getElementById('time-input');
 const txtCompressed = document.getElementById('compressed-input');
+const txtFakeViet = document.getElementById('fake-viet-input');
+const txtTime5 = document.getElementById('time-5-input');
 
 const btnEncode = document.getElementById('btn-encode');
 const btnDecode = document.getElementById('btn-decode');
@@ -121,6 +123,10 @@ function syncFromDecrypted() {
 
   txtEncrypted.value = encryptedParts.join('');
   if(txtCompressed) txtCompressed.value = compressedParts.join('');
+  
+  if(txtFakeViet) txtFakeViet.value = toFakeViet(text);
+  if(txtTime5) txtTime5.value = timeTo5Digit(encryptedParts.join(''));
+
   renderBreakdown(breakdownPairs);
   saveCurrentNote();
 }
@@ -159,6 +165,10 @@ function syncFromTime() {
 
   txtDecrypted.value = decryptedParts.join('');
   if(txtCompressed) txtCompressed.value = compressedParts.join('');
+
+  if(txtFakeViet) txtFakeViet.value = toFakeViet(txtDecrypted.value);
+  if(txtTime5) txtTime5.value = timeTo5Digit(text);
+
   renderBreakdown(breakdownPairs);
   saveCurrentNote();
 }
@@ -206,12 +216,106 @@ function syncFromCompressed() {
 
   txtEncrypted.value = allTimeParts.join('');
   txtDecrypted.value = allDecryptedParts.join('');
+
+  if(txtFakeViet) txtFakeViet.value = toFakeViet(txtDecrypted.value);
+  if(txtTime5) txtTime5.value = timeTo5Digit(txtEncrypted.value);
+
   renderBreakdown(allBreakdownPairs);
   saveCurrentNote();
 }
 
-btnEncode.addEventListener('click', syncFromDecrypted);
-btnDecode.addEventListener('click', syncFromTime);
+// ===== FAKE VIETNAMESE & 5 DIGITS LOGIC =====
+const FAKE_VIET_MAP = {
+  'A': '卂', 'B': '乃', 'C': '匚', 'D': 'ᗪ', 'E': '乇', 'F': '₣', 'G': 'Ꮆ',
+  'H': '卄', 'I': '工', 'J': 'ﾌ', 'K': 'Ꮶ', 'L': 'ㄥ', 'M': '爪', 'N': '几',
+  'O': 'ㄖ', 'P': '卩', 'Q': 'Ɋ', 'R': '尺', 'S': '丂', 'T': 'ㄒ', 'U': 'ㄩ',
+  'V': 'ᐯ', 'W': 'ᗯ', 'X': '乂', 'Y': 'ㄚ', 'Z': '乙'
+};
+const REV_FAKE_VIET_MAP = Object.fromEntries(Object.entries(FAKE_VIET_MAP).map(([k,v])=>[v,k]));
+
+function removeAccentsStr(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+}
+
+function toFakeViet(text) {
+  if (!text) return '';
+  let noTone = removeAccentsStr(text).toUpperCase();
+  let mapped = [...noTone].map(c => {
+    if (c === ' ') return '-';
+    return FAKE_VIET_MAP[c] || c;
+  }).join('');
+  return `♰${mapped}♰`;
+}
+
+function fromFakeViet(fakeText) {
+  if (!fakeText) return '';
+  let clean = fakeText.replace(/♰/g, '');
+  return [...clean].map(c => {
+    if (c === '-') return ' ';
+    return REV_FAKE_VIET_MAP[c] || c;
+  }).join('');
+}
+
+function timeTo5Digit(timeStr) {
+  if (!timeStr) return '';
+  return timeStr.replace(/[0-9]+/g, (match) => {
+    let str = match;
+    let h=0, m=0, s=0;
+    if (str.length === 2) {
+      s = parseInt(str, 10);
+    } else if (str.length === 4) {
+      m = parseInt(str.substring(0,2), 10);
+      s = parseInt(str.substring(2,4), 10);
+    } else if (str.length === 6) {
+      h = parseInt(str.substring(0,2), 10);
+      m = parseInt(str.substring(2,4), 10);
+      s = parseInt(str.substring(4,6), 10);
+    } else {
+      return match;
+    }
+    let total = h * 3600 + m * 60 + s;
+    return total.toString().padStart(5, '0');
+  });
+}
+
+function from5Digit(str5) {
+  if (!str5) return '';
+  return str5.replace(/[0-9]+/g, (match) => {
+    let total = parseInt(match, 10);
+    if (isNaN(total)) return match;
+    let h = Math.floor(total / 3600);
+    let rem = total % 3600;
+    let m = Math.floor(rem / 60);
+    let s = rem % 60;
+    
+    // Nếu không có giờ, trả về dạng 4 số (Phút:Giây)
+    if (h === 0) {
+      return `${m.toString().padStart(2,'0')}${s.toString().padStart(2,'0')}`;
+    }
+    // Ngược lại trả về đủ 6 số
+    return `${h.toString().padStart(2,'0')}${m.toString().padStart(2,'0')}${s.toString().padStart(2,'0')}`;
+  });
+}
+
+function syncFromFakeViet() {
+  if(!txtFakeViet) return;
+  const decoded = fromFakeViet(txtFakeViet.value);
+  txtDecrypted.value = decoded;
+  syncFromDecrypted();
+}
+
+function syncFromTime5() {
+  if(!txtTime5) return;
+  const t6 = from5Digit(txtTime5.value);
+  txtEncrypted.value = t6;
+  syncFromTime();
+}
+
+if (txtDecrypted) txtDecrypted.addEventListener('input', syncFromDecrypted);
+if (txtEncrypted) txtEncrypted.addEventListener('input', syncFromTime);
+if (txtCompressed) txtCompressed.addEventListener('input', syncFromCompressed);
+if (txtFakeViet) txtFakeViet.addEventListener('input', syncFromFakeViet);
+if (txtTime5) txtTime5.addEventListener('input', syncFromTime5);
 
 let saveTimeout = null;
 
@@ -228,13 +332,6 @@ const handleInput = (syncFn) => {
   clearTimeout(saveTimeout);
   saveTimeout = setTimeout(saveCurrentNote, 1000);
 };
-
-txtDecrypted.addEventListener('input', () => {
-  if (document.activeElement === txtDecrypted) handleInput(syncFromDecrypted);
-});
-txtEncrypted.addEventListener('input', () => {
-  if (document.activeElement === txtEncrypted) handleInput(syncFromTime);
-});
 
 const tagsContainer = document.getElementById('note-tags-container');
 const newTagInput = document.getElementById('new-tag-input');
@@ -348,36 +445,39 @@ function renderLinkedNoteSelect() {
   }
 }
 
-if(txtCompressed) {
-  txtCompressed.addEventListener('input', (e) => {
-    if (document.activeElement === txtCompressed) handleInput(syncFromCompressed);
-  });
+function setupCopyClear(idBtn, idClear, targetInput) {
+  const btn = document.getElementById(idBtn);
+  const clear = document.getElementById(idClear);
+  if (btn && targetInput) {
+    btn.addEventListener('click', () => {
+      targetInput.select();
+      document.execCommand('copy');
+      const orig = btn.innerText;
+      btn.innerText = 'COPIED!';
+      btn.style.color = '#ff0';
+      setTimeout(() => {
+        btn.innerText = orig;
+        btn.style.color = '';
+      }, 1500);
+    });
+  }
+  if (clear && targetInput) {
+    clear.addEventListener('click', () => {
+      targetInput.value = '';
+      if (targetInput === txtDecrypted) syncFromDecrypted();
+      else if (targetInput === txtEncrypted) syncFromTime();
+      else if (targetInput === txtCompressed) syncFromCompressed();
+      else if (targetInput === txtFakeViet) syncFromFakeViet();
+      else if (targetInput === txtTime5) syncFromTime5();
+    });
+  }
 }
 
-const setupClearCopy = (btnCopy, btnClear, txtInput) => {
-  if(btnClear) {
-    btnClear.addEventListener('click', () => {
-      txtInput.value = '';
-      if(txtInput === txtDecrypted) syncFromDecrypted();
-      else if(txtInput === txtEncrypted) syncFromTime();
-      else if(txtInput === txtCompressed) syncFromCompressed();
-      txtInput.focus();
-    });
-  }
-  if(btnCopy) {
-    btnCopy.addEventListener('click', () => {
-      navigator.clipboard.writeText(txtInput.value).then(() => {
-        const orig = btnCopy.textContent;
-        btnCopy.textContent = 'COPIED!';
-        setTimeout(() => btnCopy.textContent = orig, 2000);
-      });
-    });
-  }
-};
-
-setupClearCopy(btnCopyText, btnClearText, txtDecrypted);
-setupClearCopy(btnCopyTime, btnClearTime, txtEncrypted);
-setupClearCopy(btnCopyCompressed, btnClearCompressed, txtCompressed);
+setupCopyClear('btn-copy-text', 'btn-clear-text', txtDecrypted);
+setupCopyClear('btn-copy-time', 'btn-clear-time', txtEncrypted);
+setupCopyClear('btn-copy-compressed', 'btn-clear-compressed', txtCompressed);
+setupCopyClear('btn-copy-fake', 'btn-clear-fake', txtFakeViet);
+setupCopyClear('btn-copy-time5', 'btn-clear-time5', txtTime5);
 
 // --- NOTE APP LOGIC ---
 let notesDB = JSON.parse(localStorage.getItem('timecypher_notes') || '[]');
@@ -407,6 +507,83 @@ let currentNoteCounters = {};
 let currentTab = 'active'; // 'active' or 'archive'
 
 const btnNewNote = document.getElementById('btn-new-note');
+
+// ===== 📊 ACTIVITY LOG =====
+const ACTIVITY_LOG_KEY = 'snk_activity_log';
+function logActivity(entry) {
+  try {
+    const log = JSON.parse(localStorage.getItem(ACTIVITY_LOG_KEY) || '[]');
+    log.push({ ...entry, ts: Date.now() });
+    if (log.length > 2000) log.splice(0, log.length - 2000);
+    localStorage.setItem(ACTIVITY_LOG_KEY, JSON.stringify(log));
+  } catch(e) {}
+}
+function getActivityLog() {
+  try { return JSON.parse(localStorage.getItem(ACTIVITY_LOG_KEY) || '[]'); } catch(e) { return []; }
+}
+function renderActivityLog() {
+  const content = document.getElementById('activity-log-content');
+  if (!content) return;
+  const log = getActivityLog();
+  const now = new Date();
+  const today = now.toDateString();
+  const dayNames = ['CN','T2','T3','T4','T5','T6','T7'];
+  const dayMap = {};
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date(now); d.setDate(now.getDate() - i);
+    const key = d.toDateString();
+    dayMap[key] = { visits: 0, quizTotal: 0, quizCorrect: 0, label: dayNames[d.getDay()], date: d, key };
+  }
+  log.forEach(entry => {
+    const key = new Date(entry.ts).toDateString();
+    if (!dayMap[key]) return;
+    if (entry.type === 'visit') dayMap[key].visits++;
+    else if (entry.type === 'quiz') { dayMap[key].quizTotal++; if (entry.correct) dayMap[key].quizCorrect++; }
+  });
+  const days = Object.values(dayMap);
+  const totalVisits = days.reduce((s,d)=>s+d.visits,0);
+  const totalQuiz = days.reduce((s,d)=>s+d.quizTotal,0);
+  const correctQuiz = days.reduce((s,d)=>s+d.quizCorrect,0);
+  const accuracy = totalQuiz > 0 ? Math.round(correctQuiz/totalQuiz*100) : 0;
+  let html = `<div style="padding:8px;border:1px solid #0a0;border-radius:4px;margin-bottom:12px;background:rgba(0,255,0,0.03);"><div style="font-size:10px;color:#666;margin-bottom:6px;letter-spacing:1px;">TỔNG 7 NGÀY QUA</div><div style="margin-bottom:3px;">📅 <strong>${totalVisits}</strong> lần truy cập</div><div>🎯 <strong>${correctQuiz}/${totalQuiz}</strong> quiz${accuracy > 0 ? ` <span style="color:${accuracy>=70?'#0f0':'#f80'}">(${accuracy}%)</span>` : ''}</div></div><div style="font-size:10px;color:#666;margin-bottom:8px;letter-spacing:1px;">THEO NGÀY</div>`;
+  days.forEach(stat => {
+    const isToday = stat.key === today;
+    const acc = stat.quizTotal > 0 ? Math.round(stat.quizCorrect/stat.quizTotal*100) : null;
+    html += `<div data-date="${stat.key}" class="activity-day-row" style="display:flex;justify-content:space-between;align-items:center;padding:6px 8px;margin-bottom:4px;border:1px solid ${isToday?'#0f0':'#222'};border-radius:3px;cursor:pointer;background:${isToday?'rgba(0,255,0,0.04)':'transparent'};"><span style="font-weight:bold;color:${isToday?'#0f0':'#666'}">${stat.label}${isToday?' ◄':''}</span><div style="display:flex;gap:8px;font-size:11px;">${stat.visits>0?`<span style="color:#0a9">📅${stat.visits}</span>`:''}${stat.quizTotal>0?`<span style="color:${acc>=70?'#0f0':acc>=50?'#f80':'#f55'}">🎯${stat.quizCorrect}/${stat.quizTotal}</span>`:''}${stat.visits===0&&stat.quizTotal===0?`<span style="color:#333">—</span>`:''}</div></div>`;
+  });
+  content.innerHTML = html;
+  content.querySelectorAll('.activity-day-row').forEach(row => {
+    row.addEventListener('click', () => showDayDetail(row.dataset.date, log));
+  });
+}
+function showDayDetail(dateKey, log) {
+  const content = document.getElementById('activity-log-content');
+  if (!content) return;
+  const dayEntries = log.filter(e => new Date(e.ts).toDateString() === dateKey);
+  const d = new Date(dateKey);
+  const dayNamesLong = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'];
+  let html = `<div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;"><button id="btn-back-activity" style="background:transparent;color:#0f0;border:1px solid #0f0;padding:2px 8px;cursor:pointer;border-radius:3px;font-size:12px;font-family:monospace;">← Trở lại</button><span style="font-size:12px;color:#888">${dayNamesLong[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}</span></div>`;
+  if (dayEntries.length === 0) {
+    html += `<div style="color:#555;text-align:center;padding:20px;">Không có hoạt động</div>`;
+  } else {
+    const visits = dayEntries.filter(e=>e.type==='visit');
+    const quizzes = dayEntries.filter(e=>e.type==='quiz');
+    const correct = quizzes.filter(e=>e.correct).length;
+    if (visits.length) {
+      html += `<div style="margin-bottom:10px;padding:8px;border:1px solid #0a0;border-radius:4px;"><div style="font-size:10px;color:#666;margin-bottom:4px;">TRUY CỬP</div>`;
+      visits.forEach(v => { const t=new Date(v.ts); html+=`<div style="font-size:11px;color:#0a9;">${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} – Mở ứng dụng</div>`; });
+      html += `</div>`;
+    }
+    if (quizzes.length) {
+      html += `<div style="margin-bottom:10px;padding:8px;border:1px solid #0a0;border-radius:4px;"><div style="font-size:10px;color:#666;margin-bottom:4px;">QUIZ (${correct}/${quizzes.length} đúng)</div>`;
+      quizzes.forEach(q => { const t=new Date(q.ts); const hh=q.time?q.time.slice(0,2):'?'; const mm=q.time?q.time.slice(2,4):'?'; html+=`<div style="font-size:11px;color:${q.correct?'#0f0':'#f55'}">${String(t.getHours()).padStart(2,'0')}:${String(t.getMinutes()).padStart(2,'0')} ${q.correct?'✓':'✗'} ${hh}:${mm}</div>`; });
+      html += `</div>`;
+    }
+  }
+  content.innerHTML = html;
+  content.querySelector('#btn-back-activity')?.addEventListener('click', () => renderActivityLog());
+}
+
 const btnPlayground = document.getElementById('btn-playground');
 const searchNote = document.getElementById('search-note');
 const notesList = document.getElementById('notes-list');
@@ -749,12 +926,12 @@ if(btnImport && fileInput) {
           notesDB.sort((a,b) => b.updatedAt - a.updatedAt);
           localStorage.setItem('timecypher_notes', JSON.stringify(notesDB));
           renderNotesSidebar();
-          alert(`Import thÃ nh cÃ´ng! ÄÃ£ thÃªm ${added} ghi chÃº má»›i.`);
+          alert(`Import thÃ nh cÃ´ng! Ä Ã£ thÃªm ${added} ghi chÃº má»›i.`);
         } else {
           alert("File JSON khÃ´ng Ä‘Ãºng Ä‘á»‹nh dáº¡ng cá»§a TimeCypher.");
         }
       } catch (err) {
-        alert("Lá»—i Ä‘á»c file: " + err.message);
+        alert("Lá»—i Ä‘á» c file: " + err.message);
       }
       fileInput.value = ''; // Reset
     };
@@ -764,6 +941,7 @@ if(btnImport && fileInput) {
 
 renderNotesSidebar();
 enterSandboxMode(true);
+logActivity({ type: 'visit' });
 
 // --- FULLSCREEN LOGIC ---
 window.toggleFullscreen = (btn) => {
@@ -1628,6 +1806,59 @@ function copyBase60ToClipboard() {
 
 document.getElementById('btn-copy-b60')?.addEventListener('click', copyBase60ToClipboard);
 
+// ===== ⌨️ TOGGLE VIRTUAL KEYBOARD =====
+document.getElementById('btn-toggle-vk')?.addEventListener('click', () => {
+  if (!window.snk) return;
+  const btn = document.getElementById('btn-toggle-vk');
+  if (window.snk.isDisabled) {
+    window.snk.isDisabled = false;
+    const active = document.activeElement;
+    if (active && (active === txtDecrypted || active === txtEncrypted || active === txtCompressed)) {
+      window.snk.activeTarget = active;
+      window.snk.show();
+    }
+    if (btn) { btn.style.opacity = '1'; btn.title = 'Tắt bàn phím'; }
+  } else {
+    window.snk.isDisabled = true;
+    if (window.snk.hide) window.snk.hide();
+    if (btn) { btn.style.opacity = '0.4'; btn.title = 'Bật bàn phím'; }
+  }
+});
+
+// ===== 🔗 SHARE LINK =====
+document.getElementById('btn-share-link')?.addEventListener('click', () => {
+  const b60Val = txtCompressed?.value?.trim();
+  if (!b60Val) { if (typeof cyberAlert === 'function') cyberAlert('Chưa có mã Base60 để chia sẻ!'); return; }
+  const encoded = b60Val.replace(/\n/g, 'o').replace(/ /g, 'O');
+  const url = `${location.origin}${location.pathname}#${encoded}`;
+  const btn = document.getElementById('btn-share-link');
+  const copyFn = (text) => {
+    const fallback = () => { const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); };
+    if (navigator.clipboard?.writeText) navigator.clipboard.writeText(text).catch(fallback);
+    else fallback();
+  };
+  copyFn(url);
+  if (btn) {
+    const orig = btn.innerHTML;
+    btn.innerHTML = '✔'; btn.style.color = '#ff0'; btn.style.borderColor = '#ff0';
+    setTimeout(() => { btn.innerHTML = orig; btn.style.color = ''; btn.style.borderColor = ''; }, 1500);
+  }
+});
+
+// ===== 📊 ACTIVITY LOG TOGGLE =====
+document.getElementById('btn-activity-log')?.addEventListener('click', () => {
+  const panel = document.getElementById('activity-log-panel');
+  if (!panel) return;
+  if (panel.style.display === 'none' || !panel.style.display) {
+    panel.style.display = 'flex'; renderActivityLog();
+  } else {
+    panel.style.display = 'none';
+  }
+});
+document.getElementById('btn-close-activity-log')?.addEventListener('click', () => {
+  const panel = document.getElementById('activity-log-panel');
+  if (panel) panel.style.display = 'none';
+});
 
 document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => {
   const txt = document.getElementById('text-input');
@@ -1770,11 +2001,9 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
   }
 
   function isUserTyping() {
-    // Coi là "đang gõ" nếu ô văn bản có nội dung không phải do auto-fill
     const val = (txtDecrypted?.value || '').trim();
     const enc = (txtEncrypted?.value || '').trim();
     if (!val && !enc) return false;
-    // Nếu giá trị khớp với bất kỳ lastAutoFilledTime nào thì không phải user gõ
     if (lastAutoFilledTime) {
       const hParts = lastAutoFilledTime.split(':');
       if (hParts.length === 2) {
@@ -1783,6 +2012,68 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
       }
     }
     return true;
+  }
+
+  // ===== QUIZ STATE =====
+  const quizChoices = document.getElementById('quiz-choices');
+  let quizAnswered = false;
+  let currentQuizTimeCode = null;
+
+  function generateWrongAnswers(correctB60) {
+    const pool = ['0000','1111','2222','0101','1212','2323','0202','0303','0404','0505','0606','0707','0808','0909','1010','1313','1414','1515','1616','1717','1818','1919','2020','2121','0123','1234'];
+    const wrong = [];
+    for (const code of pool.sort(() => Math.random() - 0.5)) {
+      try { const b = timeToBase60(code); if (b && b !== correctB60 && !wrong.includes(b)) { wrong.push(b); if (wrong.length >= 2) break; } } catch(e) {}
+    }
+    while (wrong.length < 2) wrong.push(wrong.length === 0 ? '??' : '!!');
+    return wrong;
+  }
+
+  function showQuiz(timeCode, correctB60, label) {
+    if (!quizChoices) return;
+    if (currentQuizTimeCode === timeCode && (quizAnswered || quizChoices.style.display !== 'none')) return;
+    quizAnswered = false;
+    currentQuizTimeCode = timeCode;
+    const wrongAnswers = generateWrongAnswers(correctB60);
+    const options = [correctB60, ...wrongAnswers].sort(() => Math.random() - 0.5);
+    quizChoices.innerHTML = `<span style="font-size:10px;color:#888;align-self:center;white-space:nowrap;">${label}=?</span>`;
+    quizChoices.style.display = 'flex';
+    quizChoices.style.alignItems = 'center';
+    quizChoices.style.gap = '6px';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'cyber-btn';
+      btn.textContent = opt;
+      btn.style.cssText = 'padding:3px 12px;font-size:13px;font-weight:bold;cursor:pointer;border:1px solid #0f0;color:#0f0;background:#000;border-radius:4px;font-family:monospace;transition:all 0.15s;';
+      btn.addEventListener('pointerdown', (e) => {
+        e.stopPropagation(); e.preventDefault();
+        if (quizAnswered) return;
+        quizAnswered = true;
+        const isCorrect = opt === correctB60;
+        if (typeof logActivity === 'function') logActivity({ type: 'quiz', time: timeCode, correct: isCorrect });
+        if (isCorrect) {
+          btn.style.background = '#003300'; btn.style.color = '#0f0';
+          const hStr = timeCode.slice(0,2), mStr = timeCode.slice(2,4);
+          autoFillSpecialTime(parseInt(hStr,10), parseInt(mStr,10));
+          setTimeout(() => { if(quizChoices){quizChoices.style.display='none';quizChoices.innerHTML='';} }, 1200);
+        } else {
+          btn.style.background = '#220000'; btn.style.color = '#f55'; btn.style.borderColor = '#f55';
+          quizChoices.querySelectorAll('button').forEach(b => { if(b.textContent===correctB60){b.style.background='#003300';b.style.borderColor='#0f0';b.style.color='#0f0';} });
+          setTimeout(() => { if(quizChoices){quizChoices.style.display='none';quizChoices.innerHTML='';} }, 2500);
+        }
+        const panel = document.getElementById('activity-log-panel');
+        if (panel && panel.style.display !== 'none' && typeof renderActivityLog === 'function') renderActivityLog();
+      });
+      quizChoices.appendChild(btn);
+    });
+  }
+
+  function hideQuiz() {
+    if (!quizChoices) return;
+    quizChoices.style.display = 'none';
+    quizChoices.innerHTML = '';
+    quizAnswered = false;
+    currentQuizTimeCode = null;
   }
 
   function tickSpecialTime() {
@@ -1838,7 +2129,6 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     }
 
     if (!foundSpecial) {
-      // Không có giờ đặc biệt nào trong cửa sổ ±3 phút → hiện trái tim
       currentIsPast = false;
       display.dataset.timecode = '';
       display.dataset.b60 = '';
@@ -1846,26 +2136,26 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
       display.style.borderColor = '#333';
       display.style.color = '#555';
       display.innerHTML = `<span style="font-size:22px">🤍</span>`;
+      hideQuiz();
       return;
     }
 
     const { timeCode, decodedWord, b60 } = getSpecialTimeInfo(foundSpecial.fh, foundSpecial.fm);
-    display.dataset.timecode = timeCode; // dùng khi click để copy
+    display.dataset.timecode = timeCode;
     display.dataset.b60 = b60 || '';
-    const b60Line = b60 ? `<span style="font-size:11px;font-weight:bold;color:#88ff88">${b60}</span>` : '';
 
     if (isPast) {
-      // Đã qua: 😢 + base60 ngang hàng
       currentIsPast = true;
       display.style.display = 'flex';
       display.style.borderColor = '#555';
       display.style.color = '#888';
       display.dataset.state = 'past';
-      display.innerHTML = `<span style="font-size:14px">😢</span>${b60Line}`;
+      display.innerHTML = `<span style="font-size:14px">😢</span><span style="font-size:10px;color:#666;margin-left:4px">${foundSpecial.label}</span>`;
+      hideQuiz();
       return;
     }
 
-    // Chưa qua: auto-fill nếu ô trống, VÀ LUÔN hiện countdown trên box
+    // Chưa qua: auto-fill nếu ô trống
     currentIsPast = false;
     const label = foundSpecial.label;
     const shouldAutoFill = !isUserTyping();
@@ -1875,20 +2165,19 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
       autoFillSpecialTime(foundSpecial.fh, foundSpecial.fm);
     }
 
-    // Luôn hiện box countdown cạnh #
     display.style.display = 'flex';
     if (diffMs <= 0) {
       // Đang trong phút thiêng ⚡
       display.style.borderColor = '#ff0';
       display.style.color = '#ff0';
-      display.innerHTML = `<span style="font-size:11px;font-weight:bold">⚡ ${foundSpecial.label}</span>${b60Line}`;
+      display.innerHTML = `<span style="font-size:13px;font-weight:bold">⚡ ${foundSpecial.label}</span>`;
+      hideQuiz();
     } else {
-      const totalSec = Math.ceil(diffMs / 1000);
-      const mmStr = String(Math.floor(totalSec / 60)).padStart(2, '0');
-      const ssStr = String(totalSec % 60).padStart(2, '0');
+      // Đếm ngược → hiện quiz
       display.style.borderColor = '#0f0';
       display.style.color = '#0f0';
-      display.innerHTML = `<span style="font-size:12px;font-weight:bold">⏳ ${mmStr}:${ssStr}</span>${b60Line}`;
+      display.innerHTML = `<span style="font-size:12px;font-weight:bold">⏳ ${foundSpecial.label}</span>`;
+      if (b60) showQuiz(timeCode, b60, foundSpecial.label);
     }
   }
 
