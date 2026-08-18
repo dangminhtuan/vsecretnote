@@ -2,7 +2,7 @@ const btnLinkPrev = document.getElementById('btn-link-prev');
 import {
   CONSONANTS_BASE, CONSONANTS_EXTRA,
   RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2,
-  BASE60_MAPPING, SHORT_WORDS, TWO_DIGIT_WORDS, ENGLISH_DICT, SHORTCUT_WORDS,
+  BASE60_MAPPING, ENGLISH_DICT,
   REAL_VIETNAMESE_WORDS
 } from './data.js';
 
@@ -1829,7 +1829,7 @@ document.getElementById('btn-toggle-vk')?.addEventListener('click', () => {
 document.getElementById('btn-share-link')?.addEventListener('click', () => {
   const b60Val = txtCompressed?.value?.trim();
   if (!b60Val) { if (typeof cyberAlert === 'function') cyberAlert('Chưa có mã Base60 để chia sẻ!'); return; }
-  const encoded = b60Val.replace(/\n/g, 'o').replace(/ /g, 'O');
+  const encoded = b60Val.replace(/\n/g, '-').replace(/ /g, '');
   const url = `${location.origin}${location.pathname}#${encoded}`;
   const btn = document.getElementById('btn-share-link');
   const copyFn = (text) => {
@@ -1939,12 +1939,10 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     return results;
   }
 
-  function autoFillSpecialTime(h, m) {
+  function autoFillSpecialTime(timeStr) {
     if (!txtEncrypted) return;
-    const hh = String(h).padStart(2, '0');
-    const mm = String(m).padStart(2, '0');
-    const timeStr = `${hh}${mm}`; // 0202, không có dấu ':'
     txtEncrypted.value = timeStr;
+    lastAutoFilledTime = timeStr;
     syncFromTime();
   }
 
@@ -1961,9 +1959,8 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
 
       if (currentIsPast) {
         // Trạng thái 😢: click → điền đủ 3 ô
-        const hStr = code.slice(0, 2);
-        const mStr = code.slice(2, 4);
-        autoFillSpecialTime(parseInt(hStr, 10), parseInt(mStr, 10));
+        const fullTimeStr = typeof HOLY_HOUR_CODES !== 'undefined' && HOLY_HOUR_CODES[code] ? HOLY_HOUR_CODES[code] : code + '00';
+        autoFillSpecialTime(fullTimeStr);
         // Flash toàn bộ input xanh để user thấy
         [txtDecrypted, txtEncrypted, txtCompressed].forEach(el => {
           if (!el) return;
@@ -1989,6 +1986,17 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     });
   }
 
+  
+  const HOLY_HOUR_CODES = {
+    '0101': '010123', '0202': '020202', '0303': '030319', '0404': '040419',
+    '0505': '050505', '0606': '060627', '0707': '070714', '0808': '080808',
+    '0909': '090909', '1010': '101010', '1111': '111111', '1212': '121212',
+    '1313': '131313', '1414': '141414', '1515': '151515', '1616': '161616',
+    '1717': '171717', '1818': '181818', '1919': '191919', '2020': '202020',
+    '2121': '212121', '2222': '222222', '2323': '023235',
+    '0123': '012330', '0234': '023419', '0345': '034519', '0456': '045619'
+  };
+
   function getSpecialTimeInfo(fh, fm) {
     const hh2 = String(fh).padStart(2, '0');
     const mm2 = String(fm).padStart(2, '0');
@@ -2004,12 +2012,8 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     const val = (txtDecrypted?.value || '').trim();
     const enc = (txtEncrypted?.value || '').trim();
     if (!val && !enc) return false;
-    if (lastAutoFilledTime) {
-      const hParts = lastAutoFilledTime.split(':');
-      if (hParts.length === 2) {
-        const code = hParts[0] + hParts[1];
-        if (enc === code) return false;
-      }
+    if (lastAutoFilledTime && enc === lastAutoFilledTime) {
+      return false;
     }
     return true;
   }
@@ -2044,17 +2048,23 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
       const btn = document.createElement('button');
       btn.className = 'cyber-btn';
       btn.textContent = opt;
-      btn.style.cssText = 'padding:3px 12px;font-size:13px;font-weight:bold;cursor:pointer;border:1px solid #0f0;color:#0f0;background:#000;border-radius:4px;font-family:monospace;transition:all 0.15s;';
+      btn.style.cssText = 'padding:3px 12px;font-size:13px;font-weight:bold;cursor:pointer;border:1px solid #0f0;color:#0f0;background:#000;border-radius:4px;font-family:monospace;transition:all 0.15s;text-transform:none;';
       btn.addEventListener('pointerdown', (e) => {
         e.stopPropagation(); e.preventDefault();
         if (quizAnswered) return;
         quizAnswered = true;
         const isCorrect = opt === correctB60;
         if (typeof logActivity === 'function') logActivity({ type: 'quiz', time: timeCode, correct: isCorrect });
+        
+        if (typeof txtCompressed !== 'undefined' && txtCompressed) {
+          txtCompressed.value = opt;
+          if (typeof syncFromCompressed === 'function') syncFromCompressed();
+          const fullTimeStr = typeof HOLY_HOUR_CODES !== 'undefined' && HOLY_HOUR_CODES[timeCode] ? HOLY_HOUR_CODES[timeCode] : timeCode + '00';
+          lastAutoFilledTime = fullTimeStr;
+        }
+
         if (isCorrect) {
           btn.style.background = '#003300'; btn.style.color = '#0f0';
-          const hStr = timeCode.slice(0,2), mStr = timeCode.slice(2,4);
-          autoFillSpecialTime(parseInt(hStr,10), parseInt(mStr,10));
           setTimeout(() => { if(quizChoices){quizChoices.style.display='none';quizChoices.innerHTML='';} }, 1200);
         } else {
           btn.style.background = '#220000'; btn.style.color = '#f55'; btn.style.borderColor = '#f55';
@@ -2155,15 +2165,9 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
       return;
     }
 
-    // Chưa qua: auto-fill nếu ô trống
+    // Chưa qua
     currentIsPast = false;
     const label = foundSpecial.label;
-    const shouldAutoFill = !isUserTyping();
-
-    if (shouldAutoFill && lastAutoFilledTime !== label) {
-      lastAutoFilledTime = label;
-      autoFillSpecialTime(foundSpecial.fh, foundSpecial.fm);
-    }
 
     display.style.display = 'flex';
     if (diffMs <= 0) {
@@ -2631,3 +2635,46 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
   }
 })();
 
+
+function decodeShareHash(hash) {
+  let str = decodeURIComponent(hash.replace(/^#/, ''));
+  str = str.replace(/-/g, '\n');
+  const b60Chars = "cdgGjkKhvDmCrsnblQSzNyLWpfqtTRx0123456789ABEFHIJMPUVXYZaeiuw";
+  let unpacked = '';
+  let i = 0;
+  while (i < str.length) {
+    if (str[i] === '\n') {
+      unpacked += '\n';
+      i++;
+    } else if (str[i] === '[') {
+      let end = str.indexOf(']', i);
+      if (end === -1) end = str.length - 1;
+      unpacked += str.slice(i, end + 1) + ' ';
+      i = end + 1;
+    } else {
+      let isB60 = true;
+      for (let j = 0; j < 3; j++) {
+        if (i+j >= str.length || !b60Chars.includes(str[i+j])) {
+          isB60 = false; break;
+        }
+      }
+      if (isB60) {
+        unpacked += str.slice(i, i+3) + ' ';
+        i += 3;
+      } else {
+        unpacked += str[i];
+        i++;
+      }
+    }
+  }
+  return unpacked.replace(/ \n/g, '\n').trim();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (location.hash && location.hash.length > 1 && typeof txtCompressed !== 'undefined') {
+    setTimeout(() => {
+      txtCompressed.value = decodeShareHash(location.hash);
+      if (typeof syncFromCompressed === 'function') syncFromCompressed();
+    }, 100);
+  }
+});

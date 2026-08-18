@@ -64,9 +64,21 @@ export const applyTone = (rhyme, tone) => {
   return rhyme + m;
 };
 
+export const HOLY_HOUR_EXCEPTIONS = {
+  '0000': 'cặc', '1111': 'chịch', '2222': 'lồn', '0101': 'đụ', '1212': 'rên', '2323': 'ngành',
+  '0202': 'gái', '0303': 'gạ', '0404': 'giăm', '0505': 'kẹt', '0606': 'khỏa', '0707': 'hôn',
+  '0808': 'vú', '0909': 'dâm', '1010': 'mút', '1313': 'sướng', '1414': 'nứng', '1515': 'bướm',
+  '1616': 'liếm', '1717': 'chim', '1818': 'sờ', '1919': 'ôm', '2020': 'ngực', '2121': 'nhấp',
+  '0123': 'đĩ', '1234': 'râm', '2345': 'xoạc', '2332': 'phò'
+};
+
 // --- ENCODER ---
 export const encodeWord = (word, bypassShortcut = false) => {
   word = word.toLowerCase();
+
+  for (const [timeStr, dirtyWord] of Object.entries(HOLY_HOUR_EXCEPTIONS)) {
+    if (word === dirtyWord) return timeStr + '00';
+  }
 
   const engIndex = ENGLISH_DICT.indexOf(word);
   if (engIndex !== -1) {
@@ -130,11 +142,23 @@ export const encodeWord = (word, bypassShortcut = false) => {
 
 // --- DECODER ---
 export const decodeWord = (code) => {
-  if (code.length !== 6) return code;
+  let processCode = code;
+  if (processCode.length === 4 && !isNaN(processCode)) {
+      processCode += '00';
+  }
   
-  const hh = parseInt(code.substring(0,2), 10);
-  const mm = parseInt(code.substring(2,4), 10);
-  const ss = parseInt(code.substring(4,6), 10);
+  if (processCode.length !== 6) return code;
+  
+  if (processCode.endsWith('00')) {
+      const prefix4 = processCode.substring(0, 4);
+      if (HOLY_HOUR_EXCEPTIONS[prefix4]) {
+          return HOLY_HOUR_EXCEPTIONS[prefix4];
+      }
+  }
+  
+  const hh = parseInt(processCode.substring(0,2), 10);
+  const mm = parseInt(processCode.substring(2,4), 10);
+  const ss = parseInt(processCode.substring(4,6), 10);
   
   if (isNaN(hh) || isNaN(mm) || isNaN(ss)) return '[ERR:FORMAT]';
   

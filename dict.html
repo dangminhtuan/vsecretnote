@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TimeCypher Dictionary</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/snk.css" />
+  <style>
+    body { padding: 20px; font-family: monospace; background: #000; color: #0f0; }
+    .dict-container { max-width: 1200px; margin: 0 auto; }
+    
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed; }
+    td { border: 1px solid #333; padding: 8px; text-align: left; overflow: hidden; text-overflow: ellipsis; }
+    th { border: 1px solid #333; padding: 8px; text-align: left; background: #111; color: #aaa; vertical-align: top; }
+    .th-title { cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px; }
+    .th-title:hover { color: #fff; }
+    
+    .col-filter { width: 100%; box-sizing: border-box; background: #000; color: #0f0; border: 1px solid #0f0; padding: 4px; font-family: monospace; font-size: 12px; }
+    .col-filter::placeholder { color: #050; }
+    .sort-icon { font-size: 10px; color: #ff0; }
+    
+    .pagination { display: flex; justify-content: space-between; align-items: center; }
+    .pagination button { background: #000; color: #0f0; border: 1px solid #0f0; padding: 5px 15px; cursor: pointer; font-family: monospace; }
+    .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .stat-bar { color: #888; margin-bottom: 10px; font-size: 14px; }
+    
+    /* Multi-select styles */
+    .ms-container { position: relative; width: 100%; }
+    .ms-header { background: #000; color: #0f0; border: 1px solid #0f0; padding: 4px; font-size: 12px; cursor: pointer; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; user-select: none; }
+    .ms-dropdown { display: none; position: absolute; top: 100%; left: 0; right: 0; background: #111; border: 1px solid #0f0; z-index: 10; max-height: 250px; padding: 5px; box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
+    .ms-options { max-height: 180px; overflow-y: auto; }
+    .ms-container.open .ms-dropdown { display: flex; flex-direction: column; }
+    .ms-search { width: 100%; box-sizing: border-box; background: #000; color: #0f0; border: 1px solid #333; padding: 4px; font-family: monospace; font-size: 12px; margin-bottom: 5px; }
+    .ms-option { display: flex; align-items: center; gap: 5px; padding: 2px 0; font-size: 12px; font-weight: normal; color: #aaa; cursor: pointer; margin: 0; }
+    .ms-option:hover { color: #fff; }
+    .ms-option input { cursor: pointer; margin: 0; }
+    
+    /* Column widths */
+    th:nth-child(1) { width: 80px; }
+    th:nth-child(2) { width: 25%; }
+    th:nth-child(3) { width: 15%; }
+    th:nth-child(4) { width: 15%; }
+    th:nth-child(5) { width: 150px; }
+    th:nth-child(6) { width: 150px; }
+
+    /* Responsive text */
+    .txt-full { display: inline; }
+    .txt-short { display: none; }
+    
+    @media (max-width: 768px) {
+      .txt-full { display: none; }
+      .txt-short { display: inline; }
+      th:nth-child(1) { width: 60px; }
+      th:nth-child(5), th:nth-child(6) { width: 100px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="dict-container">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+      <h1 class="glitch" data-text="DICTIONARY">DICTIONARY</h1>
+      <a href="/" class="cyber-btn" style="text-decoration:none;">&larr; BACK TO APP</a>
+    </header>
+
+    <div class="stat-bar" id="stat-bar">Đang tải...</div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>
+            <div class="th-title" data-sort="no">STT <span class="sort-icon" id="sort-icon-no">▲</span></div>
+            <input type="text" id="filter-no" class="col-filter" placeholder="Tìm STT..." />
+          </th>
+          <th>
+            <div class="th-title" data-sort="word">
+              <span><span class="txt-full">Từ Tiếng Việt</span><span class="txt-short">TTV</span></span>
+              <span class="sort-icon" id="sort-icon-word"></span>
+            </div>
+            <input type="text" id="filter-word" class="col-filter" placeholder="Tìm từ..." />
+          </th>
+          <th>
+            <div class="th-title" data-sort="cons">
+              <span><span class="txt-full">Phụ âm</span><span class="txt-short">PA</span></span>
+              <span class="sort-icon" id="sort-icon-cons"></span>
+            </div>
+            <div class="ms-container" id="ms-cons">
+              <div class="ms-header" id="ms-cons-header">Tất cả</div>
+              <div class="ms-dropdown" id="ms-cons-dropdown">
+                <input type="text" class="ms-search" id="ms-cons-search" placeholder="Tìm..." />
+                <div class="ms-options" id="ms-cons-options">
+                  <!-- Checkboxes JS -->
+                </div>
+              </div>
+            </div>
+          </th>
+          <th>
+            <div class="th-title" data-sort="rhyme">Vần <span class="sort-icon" id="sort-icon-rhyme"></span></div>
+            <div class="ms-container" id="ms-rhyme">
+              <div class="ms-header" id="ms-rhyme-header">Tất cả</div>
+              <div class="ms-dropdown" id="ms-rhyme-dropdown">
+                <input type="text" class="ms-search" id="ms-rhyme-search" placeholder="Tìm..." />
+                <div class="ms-options" id="ms-rhyme-options">
+                  <!-- Checkboxes JS -->
+                </div>
+              </div>
+            </div>
+          </th>
+          <th>
+            <div class="th-title" data-sort="enc">Mã Time <span class="sort-icon" id="sort-icon-enc"></span></div>
+            <input type="text" id="filter-enc" class="col-filter" placeholder="Mã số..." />
+          </th>
+          <th>
+            <div class="th-title" data-sort="b60">Mã Nén <span class="sort-icon" id="sort-icon-b60"></span></div>
+            <input type="text" id="filter-b60" class="col-filter" placeholder="Base60..." />
+          </th>
+        </tr>
+      </thead>
+      <tbody id="table-body">
+        <!-- JS rendered -->
+      </tbody>
+    </table>
+
+    <div class="pagination">
+      <button id="btn-prev">PREV</button>
+      <span id="page-info">Page 1 / 1</span>
+      <button id="btn-next">NEXT</button>
+    </div>
+  </div>
+  <script type="module" src="/dict.js"></script>
+</body>
+</html>

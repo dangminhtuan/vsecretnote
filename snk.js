@@ -1,7 +1,7 @@
 import { timeToBase60, base60ToTime, encodeWord, decodeWord } from './vcomp.js';
 import { removeVietnameseTones, applyTone } from './vcomp.js';
 
-import { BASE60_MAPPING, SHORT_WORDS, TWO_DIGIT_WORDS, REAL_VIETNAMESE_WORDS, VOWEL_KEY_MAPPING } from './data.js';
+import { BASE60_MAPPING, REAL_VIETNAMESE_WORDS, VOWEL_KEY_MAPPING } from './data.js';
 
 const NEXT_WORD_PREDICTIONS = {
   'chiến': ['tranh', 'đấu', 'lược', 'sĩ', 'thuật', 'tuyến'],
@@ -41,6 +41,13 @@ const NEXT_WORD_PREDICTIONS = {
   'quá': ['đáng', 'nhiều', 'trời', 'tuyệt', 'hay', 'đẹp', 'lớn', 'nhỏ'],
   'buồn': ['chán', 'bã', 'cười', 'tẻ', 'ngủ', 'bực', 'nôn', 'phiền', 'tình', 'bã', 'so', 'thảm'],
   '_default': ['và', 'là', 'của', 'có', 'không', 'những', 'để', 'một', 'được', 'với', 'cho', 'trong', 'đã', 'này']
+};
+
+const MACRO_SHORTCUTS = {
+  "t": "tôi", "k": "không", "c": "có", "d": "đang", "đ": "được", "r": "rồi",
+  "a": "anh", "e": "em", "b": "bạn", "n": "này", "v": "và", "l": "là", "s": "sẽ",
+  "q": "quá", "m": "một", "x": "xin", "p": "phải", "h": "hỏi", "th": "thì", "nh": "như",
+  "ng": "người", "tr": "trong", "ch": "cho", "gi": "gì"
 };
 
 let dictionary = new Map();
@@ -173,7 +180,7 @@ const dictManager = new DictionaryManager();
 window.dictManager = dictManager; // Expose to global for debug/UI
 
 // Register core VN dict
-const coreWords = [...new Set([...TWO_DIGIT_WORDS, ...SHORT_WORDS, ...REAL_VIETNAMESE_WORDS])].filter(w => w);
+const coreWords = [...new Set([...REAL_VIETNAMESE_WORDS])].filter(w => w);
 dictManager.register({
     id: 'dict_vn_core',
     name: 'Tiếng Việt Cơ bản',
@@ -983,8 +990,8 @@ class SecretNoteKeyboard {
     // Show suggestions on space row
     if (/^[a-z]$/i.test(key)) {
        const charLower = key.toLowerCase();
-       const suggs1 = TWO_DIGIT_WORDS.filter(w => w && w.startsWith(charLower));
-       const suggs2 = SHORT_WORDS.filter(w => w && w.startsWith(charLower));
+       const suggs1 = [];
+       const suggs2 = [];
        const suggs = [...new Set([...suggs1, ...suggs2])].slice(0, 3);
        if (suggs.length > 0) {
            this.swipeSuggestions = { active: true, isFull: false, map: {} };
@@ -1257,9 +1264,9 @@ class SecretNoteKeyboard {
                   }
               }
           };
-          addPrefixMatches(TWO_DIGIT_WORDS);
+          
           addPrefixMatches(REAL_VIETNAMESE_WORDS);
-          addPrefixMatches(SHORT_WORDS);
+          
           
           // Fallback to alphabetical if still not enough
           if (matches.length < 10) {
@@ -1743,7 +1750,7 @@ class SecretNoteKeyboard {
     let cornerKeys = [];
     corners.forEach(p => {
        const k = this.getKeyFromPoint(p.x, p.y);
-       const isSpecial = k === ' ' || k === 'Enter' || k === 'Backspace' || k === 'Shift' || k === ',' || k === '.' || k === 'Search';
+       const isSpecial = k === 'Enter' || k === 'Backspace' || k === 'Shift' || k === ',' || k === '.' || k === 'Search';
        if (k && !isSpecial) {
           if (cornerKeys.length === 0 || cornerKeys[cornerKeys.length - 1] !== k) {
              cornerKeys.push(k);
@@ -1766,7 +1773,7 @@ class SecretNoteKeyboard {
     // Sử dụng toàn bộ path để lấy tất cả các phím lướt qua (spatial model thực thụ)
     path.forEach(p => {
        const k = this.getKeyFromPoint(p.x, p.y);
-       const isSpecial = k === ' ' || k === 'Enter' || k === 'Backspace' || k === 'Shift' || k === ',' || k === '.' || k === 'Search';
+       const isSpecial = k === 'Enter' || k === 'Backspace' || k === 'Shift' || k === ',' || k === '.' || k === 'Search';
        if (k && !isSpecial) {
           if (geoKeys.length === 0 || geoKeys[geoKeys.length - 1] !== k) {
              geoKeys.push(k);
@@ -1817,17 +1824,21 @@ class SecretNoteKeyboard {
                 
                 let w1B60 = '';
                 try { w1B60 = timeToBase60(encodeWord(w1)) || ''; } catch(e) {}
-                const w1Matches = w1Candidates.includes(w1) || w1B60.toLowerCase().startsWith(p1.toLowerCase());
+                const w1Matches = w1Candidates.includes(w1) || 
+                                  w1B60.toLowerCase().startsWith(p1.toLowerCase()) || 
+                                  (p1 && w1B60.toLowerCase().charAt(0) === p1.charAt(0).toLowerCase());
                 
                 if (w1Matches) {
                     nextWords.forEach(w2 => {
                         let w2B60 = '';
                         try { w2B60 = timeToBase60(encodeWord(w2)) || ''; } catch(e) {}
                         
-                        const w2Matches = w2Candidates.includes(w2) || (p2 && w2B60.toLowerCase().startsWith(p2.toLowerCase()));
+                        const w2Matches = w2Candidates.includes(w2) || 
+                                          (p2 && w2B60.toLowerCase().startsWith(p2.toLowerCase())) || 
+                                          (p2 && w2B60.toLowerCase().charAt(0) === p2.charAt(p2.length - 1).toLowerCase());
                         
                         if (w2Matches) {
-                            validCompoundMatches.push({ text: w1 + ' ' + w2, type: 'vi' });
+                            validCompoundMatches.push({ text: w1 + ' ' + w2, type: 'vi', score: 500 });
                         }
                     });
                 }
@@ -1850,58 +1861,118 @@ class SecretNoteKeyboard {
         return { geoWord, geoWordCorners, suggestions };
     }
 
-    if (geoWordCorners.length > 0 && geoWordCorners.length <= 3) {
-      let geoPerms = this.generatePermutations(geoWordCorners);
-      let casePerms = [];
-      geoPerms.forEach(p => {
-          let current = [''];
-          for (let char of p) {
-             let next = [];
-             for (let s of current) {
-                 next.push(s + char.toLowerCase());
-                 next.push(s + char.toUpperCase());
-             }
-             current = next;
+    const getBase60WordsFromChunk = (chunk) => {
+        let geoPerms = this.generatePermutations(chunk);
+        let casePerms = [];
+        geoPerms.forEach(p => {
+            let current = [''];
+            for (let char of p) {
+               let next = [];
+               for (let s of current) {
+                   next.push(s + char.toLowerCase());
+                   next.push(s + char.toUpperCase());
+               }
+               current = next;
+            }
+            casePerms.push(...current);
+        });
+        let validWords = [];
+        let seenDec = new Set();
+        casePerms.forEach(s => {
+          let isValidBase60 = true;
+          for (let char of s) {
+            if (!BASE60_MAPPING.includes(char)) isValidBase60 = false;
           }
-          casePerms.push(...current);
-      });
-      casePerms.forEach(s => {
-        let isValidBase60 = true;
-        for (let char of s) {
-          if (!BASE60_MAPPING.includes(char)) isValidBase60 = false;
+          if (isValidBase60) {
+             try {
+                const timeStr = base60ToTime(s);
+                if (timeStr && !timeStr.includes('?')) {
+                   const dec = decodeWord(timeStr);
+                   if (dec && !dec.includes('?') && !dec.startsWith('[')) {
+                      if (validVietnameseWords.has(dec) && !seenDec.has(dec)) {
+                         seenDec.add(dec);
+                         validWords.push({ dec: dec, s: s });
+                      }
+                   }
+                }
+             } catch(e) {}
+          }
+        });
+        return validWords;
+    };
+
+    if (geoWordCorners.length > 0 && geoWordCorners.length <= 9) {
+        let n = geoWordCorners.length;
+        let chunks = [];
+        for (let i = 0; i < Math.floor(n / 3); i++) {
+            chunks.push(geoWordCorners.substring(i*3, i*3 + 3));
         }
-        if (isValidBase60) {
-           try {
-              const timeStr = base60ToTime(s);
-              if (timeStr && !timeStr.includes('?')) {
-                 const dec = decodeWord(timeStr);
-                 if (dec && !dec.includes('?') && !dec.startsWith('[')) {
-                    if (validVietnameseWords.has(dec)) {
-                       let score = (s.length / geoWordCorners.length) * 100;
-                       if (s === geoWordCorners) score += 50;
-                       
-                       if (s.length >= dec.length) score -= 100;
-                       if (validVietnameseWords.has(s.toLowerCase()) && s.toLowerCase() !== dec.toLowerCase()) score -= 50;
-                       
-                       // Phạt nặng các từ base60 không có trong từ điển gốc (ví dụ 'luya') để nhường chỗ cho từ ghép/thông dụng
-                       if (typeof REAL_VIETNAMESE_WORDS !== 'undefined') {
-                           const hasCoreWord = REAL_VIETNAMESE_WORDS.includes(dec.toLowerCase()) || 
-                                               SHORT_WORDS.includes(dec.toLowerCase()) || 
-                                               TWO_DIGIT_WORDS.includes(dec.toLowerCase());
-                           if (!hasCoreWord) {
-                               score -= 60;
-                           }
-                       }
-                       
-                       if (score > 0) {
-                           suggestions.push({ text: dec, type: 'b60', score: Math.round(score) });
-                       }
+        let remainder = geoWordCorners.substring(Math.floor(n / 3) * 3);
+        
+        let possiblePhrases = [[]];
+        let isValidSequence = true;
+        
+        for (let chunk of chunks) {
+            const wordsForChunk = getBase60WordsFromChunk(chunk);
+            if (wordsForChunk.length === 0) { isValidSequence = false; break; }
+            
+            let newPhrases = [];
+            for (let phrase of possiblePhrases) {
+                for (let wObj of wordsForChunk) {
+                    newPhrases.push([...phrase, wObj]);
+                }
+            }
+            possiblePhrases = newPhrases;
+        }
+        
+        if (isValidSequence) {
+            let remMatches = [];
+            if (remainder.length > 0) {
+                let remLower = remainder.toLowerCase();
+                if (MACRO_SHORTCUTS[remLower]) {
+                    remMatches.push(MACRO_SHORTCUTS[remLower]);
+                }
+                if (typeof shortcutDictionary !== 'undefined' && shortcutDictionary.has(remLower)) {
+                    remMatches.push(...shortcutDictionary.get(remLower));
+                }
+                if (remMatches.length === 0) isValidSequence = false;
+            }
+            
+            if (isValidSequence) {
+                possiblePhrases.forEach(phrase => {
+                    let textParts = phrase.map(w => w.dec);
+                    let sParts = phrase.map(w => w.s).join('');
+                    
+                    if (remainder.length > 0) {
+                        remMatches.forEach(rm => {
+                            let text = textParts.length > 0 ? [...textParts, rm].join(' ') : rm;
+                            let score = 150 + (textParts.length * 50);
+                            if (sParts === geoWordCorners.substring(0, sParts.length)) score += 50;
+                            suggestions.push({ text: text, type: 'b60', score: score });
+                        });
+                    } else {
+                        let text = textParts.join(' ');
+                        let score = 150 + (textParts.length * 50);
+                        if (sParts === geoWordCorners) score += 50;
+                        
+                        let hasCore = true;
+                        if (typeof REAL_VIETNAMESE_WORDS !== 'undefined') {
+                            for (let w of phrase) {
+                                if (!REAL_VIETNAMESE_WORDS.includes(w.dec.toLowerCase())) {
+                                    hasCore = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (!hasCore) score -= 60;
+                        
+                        if (score > 0) {
+                            suggestions.push({ text: text, type: 'b60', score: score });
+                        }
                     }
-                 }
-              }
-           } catch(e) {}
+                });
+            }
         }
-      });
     }
     
     if (geoWord.length >= 2) {
@@ -2009,7 +2080,7 @@ class SecretNoteKeyboard {
          
          // Penalty for rare words (from full dictionary) that are not in core dictionary
          if (words.length > 0 && typeof REAL_VIETNAMESE_WORDS !== 'undefined') {
-             const hasCoreWord = words.some(w => REAL_VIETNAMESE_WORDS.includes(w.toLowerCase()) || SHORT_WORDS.includes(w.toLowerCase()) || TWO_DIGIT_WORDS.includes(w.toLowerCase()));
+             const hasCoreWord = words.some(w => REAL_VIETNAMESE_WORDS.includes(w.toLowerCase()));
              if (!hasCoreWord) {
                  score -= 60; // Heavy penalty for non-core words like 'luya'
              }
@@ -2049,8 +2120,8 @@ class SecretNoteKeyboard {
       const topBases = matchedBases.slice(0, 8).map(b => {
           let words = [...(allEntries.get(b) || [])];
           words.sort((w1, w2) => {
-              let score1 = HIGH_FREQ_SWIPE.has(w1) ? 20 : (SHORT_WORDS.includes(w1) ? 10 : 0);
-              let score2 = HIGH_FREQ_SWIPE.has(w2) ? 20 : (SHORT_WORDS.includes(w2) ? 10 : 0);
+              let score1 = HIGH_FREQ_SWIPE.has(w1) ? 20 : 0;
+              let score2 = HIGH_FREQ_SWIPE.has(w2) ? 20 : 0;
               
               if (prevWordContext && NEXT_WORD_PREDICTIONS[prevWordContext]) {
                   if (NEXT_WORD_PREDICTIONS[prevWordContext].includes(w1.normalize('NFC'))) score1 += 50;
