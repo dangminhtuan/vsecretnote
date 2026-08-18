@@ -1760,7 +1760,9 @@ document.getElementById('btn-sandbox-clear')?.addEventListener('click', () => {
   if (txtDecrypted) txtDecrypted.value = '';
   if (txtEncrypted) txtEncrypted.value = '';
   if (txtCompressed) txtCompressed.value = '';
-  if (active && (active === txtDecrypted || active === txtEncrypted || active === txtCompressed)) {
+  if (txtFakeViet) txtFakeViet.value = '';
+  if (txtTime5) txtTime5.value = '';
+  if (active && (active === txtDecrypted || active === txtEncrypted || active === txtCompressed || active === txtFakeViet || active === txtTime5)) {
     active.focus();
   } else {
     txtDecrypted?.focus();
