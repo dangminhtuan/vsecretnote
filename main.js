@@ -1956,47 +1956,66 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
   if (display) {
     display.style.cursor = 'pointer';
     display.addEventListener('click', () => {
-      const code = display.dataset.timecode;
-      if (!code) return;
+      const actionsEl = document.getElementById('top-left-actions');
+      const choicesEl = document.getElementById('quiz-choices');
+      
+      // Đóng quiz nếu đang mở
+      if (choicesEl && choicesEl.style.display !== 'none') {
+        choicesEl.style.display = 'none';
+        if (actionsEl) actionsEl.style.display = 'flex';
+        // Force update UI lại
+        const d = new Date();
+        const fh = d.getHours(), fm = d.getMinutes();
+        const code = String(fh).padStart(2, '0') + String(fm).padStart(2, '0');
+        if (display.dataset.timecode !== code) {
+           display.dataset.timecode = code;
+           display.innerHTML = `<span style="font-size:11px;color:#0f0;">🤍 ${code.substring(0,2)}:${code.substring(2)}</span>`;
+        }
+        return;
+      }
 
-      if (currentIsPast) {
-        // Trạng thái 😢: click → điền đủ 3 ô
-        const fullTimeStr = typeof HOLY_HOUR_CODES !== 'undefined' && HOLY_HOUR_CODES[code] ? HOLY_HOUR_CODES[code] : code + '00';
-        autoFillSpecialTime(fullTimeStr);
-        // Flash toàn bộ input xanh để user thấy
-        [txtDecrypted, txtEncrypted, txtCompressed].forEach(el => {
-          if (!el) return;
-          const prev = el.style.outline;
-          el.style.outline = '2px solid #0f0';
-          setTimeout(() => { el.style.outline = prev; }, 900);
-        });
+      // Xác định giờ thiêng mục tiêu
+      let targetCode = display.dataset.timecode;
+      const d = new Date();
+      const currentCode = String(d.getHours()).padStart(2, '0') + String(d.getMinutes()).padStart(2, '0');
+      
+      // Nếu đang là 🤍 (trái tim) => Tính giờ thiêng gần nhất trong TƯƠNG LAI
+      if (display.innerHTML.includes('🤍') || !HOLY_HOUR_CODES[targetCode]) {
+         const futureTimes = Object.keys(HOLY_HOUR_CODES).sort();
+         const nextTime = futureTimes.find(t => t > currentCode) || futureTimes[0];
+         targetCode = nextTime;
+         // Tạm hiển thị giờ tương lai lên nút
+         display.dataset.timecode = targetCode;
+         display.innerHTML = `<span style="font-size:11px;color:#0f0;font-weight:bold;">🤍 ${targetCode.substring(0,2)}:${targetCode.substring(2)}=?</span>`;
       } else {
-        // Trạng thái ⏳/⚡/🤍: click → copy số (mã thời gian) + mã nén tương ứng vào clipboard
-        const b60 = display.dataset.b60 || '';
-        const copyText = b60 ? `${code} ${b60}` : code;
-        navigator.clipboard.writeText(copyText).then(() => {
-          const prev = display.innerHTML;
-          const prevBorder = display.style.borderColor;
-          display.style.borderColor = '#fff';
-          display.innerHTML = `<span style="font-size:11px;color:#fff;font-weight:bold">✓ ${copyText}</span>`;
-          setTimeout(() => {
-            display.innerHTML = prev;
-            display.style.borderColor = prevBorder;
-          }, 1200);
-        });
+         display.innerHTML = `<span style="font-size:11px;color:#ff0;font-weight:bold;">⚡ ${targetCode.substring(0,2)}:${targetCode.substring(2)}=?</span>`;
+      }
+
+      // Mở quiz
+      const correctFullCode = HOLY_HOUR_CODES[targetCode];
+      const correctB60 = timeToBase60(correctFullCode);
+      const wrongB60 = generateWrongAnswers(correctB60);
+      const options = [correctB60, ...wrongB60].sort(() => Math.random() - 0.5);
+
+      if (actionsEl) actionsEl.style.display = 'none';
+      if (choicesEl) {
+        choicesEl.style.display = 'flex';
+        choicesEl.innerHTML = options.map(opt => 
+          `<button class="cyber-btn" style="background:#000;color:#0ff;border-color:#0ff;font-size:11px;padding:3px 6px;height:24px;border-radius:4px;min-width:35px;" onclick="handleTopLeftQuiz('${opt}', '${correctB60}', '${correctFullCode}', this)">${opt}</button>`
+        ).join('');
       }
     });
   }
 
   
   const HOLY_HOUR_CODES = {
-    '0101': '010123', '0202': '020202', '0303': '030319', '0404': '040419',
-    '0505': '050505', '0606': '060627', '0707': '070714', '0808': '080808',
+    '0101': '010123', '0202': '020205', '0303': '030324', '0404': '040429',
+    '0505': '050520', '0606': '060627', '0707': '070714', '0808': '080808',
     '0909': '090909', '1010': '101010', '1111': '111111', '1212': '121212',
     '1313': '131313', '1414': '141414', '1515': '151515', '1616': '161616',
     '1717': '171717', '1818': '181818', '1919': '191919', '2020': '202020',
-    '2121': '212121', '2222': '222222', '2323': '023235',
-    '0123': '012330', '0234': '023419', '0345': '034519', '0456': '045619'
+    '2121': '212121', '2222': '222222', '2323': '232315',
+    '0123': '012317', '0234': '023419', '0345': '034519', '0456': '045619'
   };
 
   function getSpecialTimeInfo(fh, fm) {
@@ -2088,7 +2107,9 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     currentQuizTimeCode = null;
   }
 
-  function tickSpecialTime() {
+  function tickSpecialTime() {    const choicesEl = document.getElementById('quiz-choices');
+    if (choicesEl && choicesEl.style.display !== 'none') return;
+
     if (!document.body.classList.contains('sandbox-mode') || !display) return;
 
     const now = new Date();
@@ -2219,7 +2240,12 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
    ========================================================================== */
 (function initGameEngine() {
   // Game State
-  const gameState = {
+  
+  window.triggerHolyHourQuest = function() {
+    addEXP(20, '⏱️ Trả lời đúng Giờ Thiêng');
+    checkQuestComplete('q2', 100);
+  };
+const gameState = {
     exp: parseInt(localStorage.getItem('snk_game_exp') || '0', 10),
     combo: 1,
     savedKeys: parseInt(localStorage.getItem('snk_game_saved_keys') || '0', 10),
@@ -2553,10 +2579,13 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     });
 
     if (speedInput) {
-      speedInput.addEventListener('keydown', (e) => {
+      speedInput.addEventListener('input', (e) => {
         if (!speedActive) return;
-        if (e.key === ' ' || e.code === 'Space') {
-          e.preventDefault();
+        const val = speedInput.value;
+        if (val.includes(' ')) {
+          speedInput.value = val.replace(/\s/g, '');
+        }
+        if (speedInput.value.trim().length === 3) {
           checkSpeedInput(speedInput.value.trim().toLowerCase());
         }
       });
@@ -2656,6 +2685,8 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
       // Wrong! Flash red.
       speedInput.style.backgroundColor = '#500';
       setTimeout(() => speedInput.style.backgroundColor = '', 200);
+      currentSpan.classList.add('wrong');
+      speedInput.value = '';
     }
   }
 
@@ -2736,3 +2767,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 100);
   }
 });
+
+window.handleTopLeftQuiz = function(selectedB60, correctB60, correctFullCode, btn) {
+  if (selectedB60 === correctB60) {
+    btn.style.background = '#0f0';
+    btn.style.color = '#000';
+    autoFillSpecialTime(correctFullCode);
+    navigator.clipboard.writeText(correctB60);
+    if (window.triggerHolyHourQuest) window.triggerHolyHourQuest();
+  } else {
+    btn.style.background = '#f00';
+    btn.style.color = '#000';
+    btn.style.textDecoration = 'line-through';
+  }
+};

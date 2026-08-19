@@ -762,3 +762,5 @@
     color: var(--text-color);
     opacity: 0.4;
 }
+
+.speed-word.wrong { color: #f00 !important; text-decoration: underline; }
