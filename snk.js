@@ -1,54 +1,7 @@
 import { timeToBase60, base60ToTime, encodeWord, decodeWord } from './vcomp.js';
 import { removeVietnameseTones, applyTone } from './vcomp.js';
 
-import { BASE60_MAPPING, REAL_VIETNAMESE_WORDS, VOWEL_KEY_MAPPING } from './data.js';
-
-const NEXT_WORD_PREDICTIONS = {
-  'chiến': ['tranh', 'đấu', 'lược', 'sĩ', 'thuật', 'tuyến'],
-  'công': ['nghệ', 'ty', 'nhân', 'tác', 'lý', 'an', 'cộng', 'chúng'],
-  'cộng': ['đồng', 'hòa', 'sản', 'tác'],
-  'tạm': ['thời', 'biệt', 'dừng', 'nghỉ', 'ứng'],
-  'đuôi': ['chuột', 'cáo', 'ngựa'],
-  'bàn': ['phím', 'bạc', 'giao', 'chải', 'luận', 'cờ'],
-  'làm': ['việc', 'quen', 'sao', 'ăn', 'bạn', 'phiền'],
-  'xin': ['chào', 'lỗi', 'cảm', 'phép', 'chữ'],
-  'cảm': ['ơn', 'thấy', 'giác', 'xúc', 'tử', 'tình'],
-  'ngôn': ['ngữ', 'từ', 'luận', 'tình'],
-  'quốc': ['lộ', 'trị', 'gia', 'đục'],
-  'hệ': ['thống', 'điều', 'quả', 'sinh', 'trọng'],
-  'thông': ['tin', 'báo', 'minh', 'qua', 'thường', 'số'],
-  'nhân': ['viên', 'sự', 'vật', 'loại', 'cách', 'chứng'],
-  'phát': ['triển', 'hiện', 'minh', 'ngôn', 'sóng', 'động'],
-  'máy': ['tính', 'móc', 'bay', 'ảnh', 'chủ'],
-  'việt': ['nam', 'kiều', 'ngữ', 'dã'],
-  'hôm': ['nay', 'qua', 'kia'],
-  'ngày': ['mai', 'kia', 'tháng', 'nào'],
-  'bây': ['giờ'],
-  'bao': ['giờ', 'lâu', 'nhiêu', 'gồm', 'bọc'],
-  'trang': ['web', 'chủ', 'phục', 'trí'],
-  'tôi': ['muốn', 'thích', 'đang', 'là', 'không', 'sẽ', 'cũng', 'đã', 'nghĩ', 'biết', 'thấy', 'có', 'cần'],
-  'bạn': ['ơi', 'có', 'đang', 'muốn', 'nghĩ', 'thấy', 'biết', 'sẽ', 'là', 'làm'],
-  'muốn': ['đi', 'làm', 'hỏi', 'biết', 'nói', 'mua', 'ăn', 'chơi', 'xem'],
-  'không': ['biết', 'có', 'thể', 'phải', 'thích', 'muốn', 'hiểu', 'thấy', 'tin', 'được', 'thành'],
-  'đang': ['làm', 'nghĩ', 'đi', 'ăn', 'chơi', 'xem', 'nghe', 'chờ', 'nói'],
-  'đã': ['từng', 'làm', 'thấy', 'xem', 'biết', 'có', 'được', 'xong'],
-  'sẽ': ['làm', 'đi', 'là', 'không', 'có', 'được', 'tới', 'đến', 'về'],
-  'có': ['thể', 'không', 'lẽ', 'được', 'phải', 'ai', 'người', 'những', 'nhiều'],
-  'đi': ['chơi', 'làm', 'học', 'ngủ', 'ăn', 'dạo', 'đâu', 'về', 'hỏi'],
-  'ăn': ['cơm', 'uống', 'sáng', 'trưa', 'tối', 'món', 'gì'],
-  'rất': ['nhiều', 'vui', 'tốt', 'hay', 'đẹp', 'thích', 'nhanh'],
-  'vui': ['vẻ', 'tươi', 'nhộn', 'chơi'],
-  'quá': ['đáng', 'nhiều', 'trời', 'tuyệt', 'hay', 'đẹp', 'lớn', 'nhỏ'],
-  'buồn': ['chán', 'bã', 'cười', 'tẻ', 'ngủ', 'bực', 'nôn', 'phiền', 'tình', 'bã', 'so', 'thảm'],
-  '_default': ['và', 'là', 'của', 'có', 'không', 'những', 'để', 'một', 'được', 'với', 'cho', 'trong', 'đã', 'này']
-};
-
-const MACRO_SHORTCUTS = {
-  "t": "tôi", "k": "không", "c": "có", "d": "đang", "đ": "được", "r": "rồi",
-  "a": "anh", "e": "em", "b": "bạn", "n": "này", "v": "và", "l": "là", "s": "sẽ",
-  "q": "quá", "m": "một", "x": "xin", "p": "phải", "h": "hỏi", "th": "thì", "nh": "như",
-  "ng": "người", "tr": "trong", "ch": "cho", "gi": "gì"
-};
+import { BASE60_MAPPING, REAL_VIETNAMESE_WORDS, VOWEL_KEY_MAPPING, ABBREV_DICT, ENGLISH_DICT } from './data.js';
 
 let dictionary = new Map();
 let unaccentedDictionary = new Map();
@@ -202,6 +155,14 @@ dictManager.register({
     data: { shortcuts: userShortcuts }
 });
 
+dictManager.register({
+    id: 'dict_abbrev',
+    name: 'Từ điển Viết tắt',
+    priority: 200,
+    data: { shortcuts: ABBREV_DICT }
+});
+
+
 dictManager.rebuildMaps();
 
 // Fetch others asynchronously
@@ -210,10 +171,13 @@ fetch('/syllables.json').then(r => r.json()).then(data => {
     dictManager.rebuildMaps();
 }).catch(e => console.error(e));
 
-fetch('/dict_en.json').then(r => r.json()).then(dict => {
-    dictManager.register(dict);
-    dictManager.rebuildMaps();
-}).catch(e => console.error(e));
+dictManager.register({
+    id: 'dict_en_core',
+    name: 'Tiếng Anh (Cơ bản)',
+    priority: 4,
+    data: { words: ENGLISH_DICT }
+});
+dictManager.rebuildMaps();
 
 fetch('/dict_zh.json').then(r => r.json()).then(dict => {
     dictManager.register(dict);
@@ -1675,33 +1639,11 @@ class SecretNoteKeyboard {
           this.activeTarget = document.getElementById('text-input');
       }
       if (!this.activeTarget) {
-          if (typeof NEXT_WORD_PREDICTIONS !== 'undefined' && NEXT_WORD_PREDICTIONS['_default']) {
-              this.renderSuggestions(NEXT_WORD_PREDICTIONS['_default'].map(w => ({ text: w, type: 'vi' })));
-          }
           return;
-      }
-      const val = this.activeTarget.value;
-      const start = this.activeTarget.selectionStart;
-      const beforeCursor = val.substring(0, start).trim();
-      
-      const words = beforeCursor.split(/\s+/);
-      const lastWord = words.length > 0 ? words[words.length - 1].toLowerCase().normalize('NFC') : '';
-      
-      if (document.getElementById('sandbox-debug-log')) {
-          let oldLog = document.getElementById('sandbox-debug-log').value;
-          document.getElementById('sandbox-debug-log').value = oldLog + '\n[DEBUG] predictNextWords() -> val: "' + val + '", lastWord: "' + lastWord + '"\n';
       }
       
       let suggestions = [];
-      if (typeof NEXT_WORD_PREDICTIONS !== 'undefined') {
-          if (lastWord && NEXT_WORD_PREDICTIONS[lastWord]) {
-              suggestions = NEXT_WORD_PREDICTIONS[lastWord].map(w => ({ text: w, type: 'vi' }));
-          }
-          if (suggestions.length === 0 && NEXT_WORD_PREDICTIONS['_default']) {
-              suggestions = NEXT_WORD_PREDICTIONS['_default'].map(w => ({ text: w, type: 'vi' }));
-          }
-      }
-      
+
       suggestions.push({ text: ',', type: 'raw' });
       suggestions.push({ text: '.', type: 'raw' });
       suggestions.push({ text: '?', type: 'raw' });
@@ -1819,31 +1761,6 @@ class SecretNoteKeyboard {
             
             let validCompoundMatches = [];
             
-            for (const [w1, nextWords] of Object.entries(NEXT_WORD_PREDICTIONS)) {
-                if (w1 === '_default') continue;
-                
-                let w1B60 = '';
-                try { w1B60 = timeToBase60(encodeWord(w1)) || ''; } catch(e) {}
-                const w1Matches = w1Candidates.includes(w1) || 
-                                  w1B60.toLowerCase().startsWith(p1.toLowerCase()) || 
-                                  (p1 && w1B60.toLowerCase().charAt(0) === p1.charAt(0).toLowerCase());
-                
-                if (w1Matches) {
-                    nextWords.forEach(w2 => {
-                        let w2B60 = '';
-                        try { w2B60 = timeToBase60(encodeWord(w2)) || ''; } catch(e) {}
-                        
-                        const w2Matches = w2Candidates.includes(w2) || 
-                                          (p2 && w2B60.toLowerCase().startsWith(p2.toLowerCase())) || 
-                                          (p2 && w2B60.toLowerCase().charAt(0) === p2.charAt(p2.length - 1).toLowerCase());
-                        
-                        if (w2Matches) {
-                            validCompoundMatches.push({ text: w1 + ' ' + w2, type: 'vi', score: 500 });
-                        }
-                    });
-                }
-            }
-            
             if (validCompoundMatches.length > 0) {
                 const seen = new Set();
                 validCompoundMatches.forEach(item => {
@@ -1929,9 +1846,6 @@ class SecretNoteKeyboard {
             let remMatches = [];
             if (remainder.length > 0) {
                 let remLower = remainder.toLowerCase();
-                if (MACRO_SHORTCUTS[remLower]) {
-                    remMatches.push(MACRO_SHORTCUTS[remLower]);
-                }
                 if (typeof shortcutDictionary !== 'undefined' && shortcutDictionary.has(remLower)) {
                     remMatches.push(...shortcutDictionary.get(remLower));
                 }
@@ -2096,12 +2010,6 @@ class SecretNoteKeyboard {
              prevWord = this.lastCommittedWord.trim().toLowerCase().normalize('NFC');
          }
          
-         if (prevWord && NEXT_WORD_PREDICTIONS[prevWord]) {
-             if (words.some(w => NEXT_WORD_PREDICTIONS[prevWord].includes(w.normalize('NFC')))) {
-                 score += 50;
-             }
-         }
-         
          return score;
       };
 
@@ -2122,11 +2030,6 @@ class SecretNoteKeyboard {
           words.sort((w1, w2) => {
               let score1 = HIGH_FREQ_SWIPE.has(w1) ? 20 : 0;
               let score2 = HIGH_FREQ_SWIPE.has(w2) ? 20 : 0;
-              
-              if (prevWordContext && NEXT_WORD_PREDICTIONS[prevWordContext]) {
-                  if (NEXT_WORD_PREDICTIONS[prevWordContext].includes(w1.normalize('NFC'))) score1 += 50;
-                  if (NEXT_WORD_PREDICTIONS[prevWordContext].includes(w2.normalize('NFC'))) score2 += 50;
-              }
               
               return score2 - score1;
           });
@@ -2170,32 +2073,6 @@ ${topBases.slice(0,30).map((b, i) => `${i+1}. [${b.words[0] === b.base ? 'raw' :
        const finalSuggestions = [];
        uniqueSuggestions.forEach(item => {
            finalSuggestions.push(item);
-           let w1 = item.text.toLowerCase();
-           let decodedWord = null;
-           
-           if (item.type === 'b60') {
-               try {
-                   const timeStr = base60ToTime(item.text);
-                   if (timeStr && !timeStr.includes('?')) {
-                       const dec = decodeWord(timeStr);
-                       if (dec && !dec.includes('?') && !dec.startsWith('[')) {
-                           decodedWord = dec.toLowerCase();
-                       }
-                   }
-               } catch(e) {}
-           }
-           
-           const targetWord = decodedWord || w1;
-           
-           if ((item.type === 'vi' || item.type === 'b60' || validVietnameseWords.has(targetWord)) && NEXT_WORD_PREDICTIONS[targetWord]) {
-               NEXT_WORD_PREDICTIONS[targetWord].forEach(w2 => {
-                   const compoundText = targetWord + ' ' + w2;
-                   if (!seen.has(compoundText)) {
-                       seen.add(compoundText);
-                       finalSuggestions.push({ text: compoundText, type: 'vi', score: (item.score || 0) - 1 });
-                   }
-               });
-           }
        });
        finalSuggestions.sort((a, b) => (b.score || 0) - (a.score || 0));
        return { geoWord, geoWordCorners, suggestions: finalSuggestions };

@@ -2403,6 +2403,57 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     initQuizRound();
   }
 
+  function getAdaptiveDistractors(targetWord, targetB60, streak) {
+    const firstChar = targetB60[0];
+    const distractors = new Set();
+    const wordPool = (typeof REAL_VIETNAMESE_WORDS !== 'undefined' && REAL_VIETNAMESE_WORDS.length) 
+      ? REAL_VIETNAMESE_WORDS 
+      : sampleWordsList;
+
+    if (streak >= 6) {
+      // 💥 CẤP ĐỘ KHÓ (Streak >= 6): Tất cả lựa chọn CÙNG phụ âm đầu Base60
+      const samePrefixWords = wordPool.filter(w => {
+        if (w === targetWord) return false;
+        try {
+          const b = timeToBase60(encodeWord(w));
+          return b && b[0] === firstChar && b !== targetB60;
+        } catch(e) { return false; }
+      }).sort(() => Math.random() - 0.5);
+
+      for (const w of samePrefixWords) {
+        distractors.add(timeToBase60(encodeWord(w)));
+        if (distractors.size >= 3) break;
+      }
+    } else if (streak >= 3) {
+      // ⚡ CẤP ĐỘ VỪA (Streak 3-5): 1-2 lựa chọn CÙNG phụ âm đầu để gài bẫy
+      const samePrefixWords = wordPool.filter(w => {
+        if (w === targetWord) return false;
+        try {
+          const b = timeToBase60(encodeWord(w));
+          return b && b[0] === firstChar && b !== targetB60;
+        } catch(e) { return false; }
+      }).sort(() => Math.random() - 0.5);
+
+      for (const w of samePrefixWords.slice(0, 1)) {
+        distractors.add(timeToBase60(encodeWord(w)));
+      }
+    }
+
+    // Điền nốt các lựa chọn khác phụ âm nếu chưa đủ 3
+    const otherWords = wordPool.filter(w => w !== targetWord).sort(() => Math.random() - 0.5);
+    for (const w of otherWords) {
+      if (distractors.size >= 3) break;
+      try {
+        const b = timeToBase60(encodeWord(w));
+        if (b && b !== targetB60 && !distractors.has(b)) {
+          distractors.add(b);
+        }
+      } catch(e) {}
+    }
+
+    return Array.from(distractors);
+  }
+
   function initQuizRound() {
     const wordEl = document.getElementById('quiz-target-word');
     const gridEl = document.getElementById('quiz-options-grid');
@@ -2411,19 +2462,24 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     if (!wordEl || !gridEl) return;
 
     if (feedbackEl) feedbackEl.textContent = '';
-    if (streakEl) streakEl.textContent = `🔥 Streak: ${gameState.quizStreak}`;
+    
+    // Hiển thị streak và độ khó
+    const streak = gameState.quizStreak || 0;
+    let diffBadge = '🟢 Dễ (Khác phụ âm)';
+    if (streak >= 6) diffBadge = '🔥 Cao thủ (Cùng phụ âm)';
+    else if (streak >= 3) diffBadge = '🟡 Trung bình (Gài bẫy)';
+    
+    if (streakEl) streakEl.textContent = `🔥 Streak: ${streak} | ${diffBadge}`;
 
     const targetIndex = Math.floor(Math.random() * sampleQuizPairs.length);
     currentQuizTarget = sampleQuizPairs[targetIndex];
     wordEl.textContent = `"${currentQuizTarget.word}"`;
 
-    // Pick 3 distractors
-    const options = [currentQuizTarget.b60];
-    while (options.length < 4) {
-      const rand = sampleQuizPairs[Math.floor(Math.random() * sampleQuizPairs.length)].b60;
-      if (!options.includes(rand)) options.push(rand);
-    }
-    // Shuffle options
+    // Sinh 3 đáp án bẫy theo độ khó thích ứng
+    const distractors = getAdaptiveDistractors(currentQuizTarget.word, currentQuizTarget.b60, streak);
+    const options = [currentQuizTarget.b60, ...distractors];
+    
+    // Xáo trộn 4 đáp án
     options.sort(() => Math.random() - 0.5);
 
     gridEl.innerHTML = '';

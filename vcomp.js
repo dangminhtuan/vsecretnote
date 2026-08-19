@@ -138,8 +138,10 @@ export const decodeWord = (code) => {
   
   if (isNaN(hh) || isNaN(mm) || isNaN(ss)) return '[ERR:FORMAT]';
   
-  if (ss >= 36 && ss <= 59) {
-    const engIndex = (ss - 36) * 1440 + (hh * 60) + mm;
+  // Vietnamese: ss = s2*6 + s1, max = 5*6+5 = 35
+  // English:    ss >= 36 (up to 59), 24 slots x 1440 = 34560 capacity
+  if (ss >= 36) {
+    const engIndex = (ss - 36) * 1440 + hh * 60 + mm;
     if (engIndex < ENGLISH_DICT.length) {
       return ENGLISH_DICT[engIndex];
     }
@@ -212,4 +214,4 @@ export function base60ToTime(base60Str) {
   return base60Str;
 }
 
-export const TOKEN_REGEX = /(<[^>]+>|\[[^\]]+\]|[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+)/;
+export const TOKEN_REGEX = /(<[^>]+>|\[[^\]]+\]|[a-zA-Z0-9_'\u00C0-\u024F\u1E00-\u1EFF]+)/;
