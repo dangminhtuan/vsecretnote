@@ -2807,10 +2807,7 @@ const gameState = {
         if (typeof syncFromDecrypted === 'function') syncFromDecrypted();
       }
       
-      const copyText = currentQuizTarget.time + " " + currentQuizTarget.b60;
-      navigator.clipboard.writeText(copyText).then(() => {
-        if (typeof showToast === 'function') showToast('Đã copy: ' + copyText);
-      });
+
 
     } else {
       btnEl.classList.add('wrong');
