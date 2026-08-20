@@ -45,6 +45,7 @@ const txtEncrypted = document.getElementById('time-input');
 const txtCompressed = document.getElementById('compressed-input');
 const txtFakeViet = document.getElementById('fake-viet-input');
 const txtTime5 = document.getElementById('time-5-input');
+const txtCompressedContinuous = document.getElementById('compressed-continuous-input');
 
 const btnEncode = document.getElementById('btn-encode');
 const btnDecode = document.getElementById('btn-decode');
@@ -60,6 +61,7 @@ const btnClearCompressed = document.getElementById('btn-clear-compressed');
 const breakdownList = document.getElementById('breakdown-list');
 
 function renderBreakdown(pairs) {
+  if (typeof updateContinuousBox === 'function') updateContinuousBox();
   if (!breakdownList) return;
   breakdownList.innerHTML = '';
   
@@ -92,11 +94,15 @@ function renderBreakdown(pairs) {
 function syncFromDecrypted() {
   const text = txtDecrypted.value;
   if (!text.trim()) {
-    txtEncrypted.value = '';
-    if(txtCompressed) txtCompressed.value = '';
+    if (txtDecrypted) txtDecrypted.value = '';
+    if (txtEncrypted) txtEncrypted.value = '';
+    if (txtCompressed) txtCompressed.value = '';
+    if (txtFakeViet) txtFakeViet.value = '';
+    if (txtTime5) txtTime5.value = '';
+    if (txtCompressedContinuous) txtCompressedContinuous.value = '';
     renderBreakdown([]);
     return;
-  }
+}
   const tokens = text.split(TOKEN_REGEX);
   let encryptedParts = [];
   let compressedParts = [];
@@ -134,11 +140,15 @@ function syncFromDecrypted() {
 function syncFromTime() {
   const text = txtEncrypted.value;
   if (!text.trim()) {
-    txtDecrypted.value = '';
-    if(txtCompressed) txtCompressed.value = '';
+    if (txtDecrypted) txtDecrypted.value = '';
+    if (txtEncrypted) txtEncrypted.value = '';
+    if (txtCompressed) txtCompressed.value = '';
+    if (txtFakeViet) txtFakeViet.value = '';
+    if (txtTime5) txtTime5.value = '';
+    if (txtCompressedContinuous) txtCompressedContinuous.value = '';
     renderBreakdown([]);
     return;
-  }
+}
   const tokens = text.split(TOKEN_REGEX);
   let decryptedParts = [];
   let compressedParts = [];
@@ -173,15 +183,51 @@ function syncFromTime() {
   saveCurrentNote();
 }
 
+
+function updateContinuousBox() {
+  if (txtCompressed && txtCompressedContinuous) {
+    if (document.activeElement !== txtCompressedContinuous) {
+      txtCompressedContinuous.value = txtCompressed.value.replace(/\s+/g, '');
+    }
+  }
+}
+
+function syncFromCompressedContinuous() {
+  if (!txtCompressedContinuous) return;
+  const val = txtCompressedContinuous.value.replace(/\s+/g, '');
+  if (!val) {
+    if (txtDecrypted) txtDecrypted.value = '';
+    if (txtEncrypted) txtEncrypted.value = '';
+    if (txtCompressed) txtCompressed.value = '';
+    if (txtFakeViet) txtFakeViet.value = '';
+    if (txtTime5) txtTime5.value = '';
+    renderBreakdown([]);
+    return;
+  }
+  
+  const chunks = [];
+  for (let i = 0; i < val.length; i += 3) {
+    chunks.push(val.substring(i, i + 3));
+  }
+  if (txtCompressed) {
+    txtCompressed.value = chunks.join(' ');
+    syncFromCompressed();
+  }
+}
+
 function syncFromCompressed() {
   if(!txtCompressed) return;
   const rawText = txtCompressed.value;
   if (!rawText.trim()) {
-    txtDecrypted.value = '';
-    txtEncrypted.value = '';
+    if (txtDecrypted) txtDecrypted.value = '';
+    if (txtEncrypted) txtEncrypted.value = '';
+    if (txtCompressed) txtCompressed.value = '';
+    if (txtFakeViet) txtFakeViet.value = '';
+    if (txtTime5) txtTime5.value = '';
+    if (txtCompressedContinuous) txtCompressedContinuous.value = '';
     renderBreakdown([]);
     return;
-  }
+}
 
   // Xu ly tung dong rieng de bao toan ky tu xuong dong
   const lines = rawText.split(/\r?\n/);
@@ -316,6 +362,7 @@ if (txtEncrypted) txtEncrypted.addEventListener('input', syncFromTime);
 if (txtCompressed) txtCompressed.addEventListener('input', syncFromCompressed);
 if (txtFakeViet) txtFakeViet.addEventListener('input', syncFromFakeViet);
 if (txtTime5) txtTime5.addEventListener('input', syncFromTime5);
+if (txtCompressedContinuous) txtCompressedContinuous.addEventListener('input', syncFromCompressedContinuous);
 
 let saveTimeout = null;
 
@@ -473,11 +520,23 @@ function setupCopyClear(idBtn, idClear, targetInput) {
   }
 }
 
-setupCopyClear('btn-copy-text', 'btn-clear-text', txtDecrypted);
-setupCopyClear('btn-copy-time', 'btn-clear-time', txtEncrypted);
-setupCopyClear('btn-copy-compressed', 'btn-clear-compressed', txtCompressed);
-setupCopyClear('btn-copy-fake', 'btn-clear-fake', txtFakeViet);
-setupCopyClear('btn-copy-time5', 'btn-clear-time5', txtTime5);
+
+  // Nút copy mới
+  document.getElementById('btn-copy-text')?.addEventListener('click', () => { navigator.clipboard.writeText(txtDecrypted?.value || ''); });
+  document.getElementById('btn-copy-compressed')?.addEventListener('click', () => { navigator.clipboard.writeText(txtCompressed?.value || ''); });
+  document.getElementById('btn-copy-continuous')?.addEventListener('click', () => { navigator.clipboard.writeText(txtCompressedContinuous?.value || ''); });
+  document.getElementById('btn-copy-fake')?.addEventListener('click', () => { navigator.clipboard.writeText(txtFakeViet?.value || ''); });
+  document.getElementById('btn-copy-time')?.addEventListener('click', () => { navigator.clipboard.writeText(txtEncrypted?.value || ''); });
+  document.getElementById('btn-copy-time5')?.addEventListener('click', () => { navigator.clipboard.writeText(txtTime5?.value || ''); });
+
+  // Nút clear mới
+  document.getElementById('btn-clear-continuous')?.addEventListener('click', () => { if(txtCompressedContinuous) txtCompressedContinuous.value = ''; syncFromCompressedContinuous(); });
+
+  // setupCopyClear('btn-copy-text', 'btn-clear-text', txtDecrypted);
+// setupCopyClear('btn-copy-time', 'btn-clear-time', txtEncrypted);
+// setupCopyClear('btn-copy-compressed', 'btn-clear-compressed', txtCompressed);
+// setupCopyClear('btn-copy-fake', 'btn-clear-fake', txtFakeViet);
+// setupCopyClear('btn-copy-time5', 'btn-clear-time5', txtTime5);
 
 // --- NOTE APP LOGIC ---
 let notesDB = JSON.parse(localStorage.getItem('timecypher_notes') || '[]');
@@ -2080,6 +2139,35 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
         if (typeof txtCompressed !== 'undefined' && txtCompressed) {
           txtCompressed.value = opt;
           if (typeof syncFromCompressed === 'function') syncFromCompressed();
+          
+          // FORCED FILL TO BE ABSOLUTELY SURE
+          if (typeof txtDecrypted !== 'undefined' && txtDecrypted && txtDecrypted.value === '') {
+             try {
+               const decWord = typeof decodeWord === 'function' ? decodeWord(timeCode + '00') : '';
+               txtDecrypted.value = decWord || timeCode;
+             } catch(e){}
+          }
+          if (typeof txtEncrypted !== 'undefined' && txtEncrypted && txtEncrypted.value === '') {
+             txtEncrypted.value = timeCode + '00';
+          }
+          if (typeof txtTime5 !== 'undefined' && txtTime5 && txtTime5.value === '') {
+             try { if(typeof timeTo5Digit==='function') txtTime5.value = timeTo5Digit(timeCode + '00'); }catch(e){}
+          }
+          
+          // Auto Copy to clipboard
+          const timeValue = txtEncrypted ? txtEncrypted.value : (timeCode + '00');
+          const copyStr = timeValue + " " + opt;
+          navigator.clipboard.writeText(copyStr).then(() => {
+            if (typeof showToast === 'function') showToast('Đã copy: ' + copyStr);
+            else {
+              const el = document.createElement('div');
+              el.textContent = 'Đã copy: ' + copyStr;
+              el.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#0f0;color:#000;padding:10px;border-radius:4px;z-index:99999;font-weight:bold;font-family:monospace;';
+              document.body.appendChild(el);
+              setTimeout(()=>el.remove(), 2000);
+            }
+          });
+
           const fullTimeStr = typeof HOLY_HOUR_CODES !== 'undefined' && HOLY_HOUR_CODES[timeCode] ? HOLY_HOUR_CODES[timeCode] : timeCode + '00';
           lastAutoFilledTime = fullTimeStr;
         }
@@ -2209,7 +2297,87 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
   }
 
   // Khởi động khi vào Sandbox, dừng khi thoát
-  const origEnterSandbox = window.enterSandboxMode;
+  
+  // ===== CONTEXT MENU LOGIC =====
+  const ctxMenu = document.getElementById('floating-context-menu');
+  let activeContextInput = null;
+
+  function hideContextMenu() {
+    if (ctxMenu) {
+      ctxMenu.style.display = 'none';
+      activeContextInput = null;
+    }
+  }
+
+  // Attach click listener to all textareas
+  const allTextareas = [txtDecrypted, txtEncrypted, txtCompressed, txtFakeViet, txtTime5, txtCompressedContinuous];
+  allTextareas.forEach(ta => {
+    if (ta) {
+      ta.addEventListener('focus', (e) => {
+        // Show context menu at top right of the textarea
+        activeContextInput = ta;
+        const rect = ta.getBoundingClientRect();
+        
+        ctxMenu.style.display = 'flex';
+        // Position it near the top-right of the textarea, accounting for scroll
+        const topPos = rect.top + window.scrollY - 40; // a bit above
+        let leftPos = rect.right + window.scrollX - ctxMenu.offsetWidth;
+        if (leftPos < 0) leftPos = rect.left + window.scrollX;
+        
+        ctxMenu.style.top = Math.max(10, topPos) + 'px';
+        ctxMenu.style.left = leftPos + 'px';
+      });
+    }
+  });
+
+  // Hide when clicking outside
+  document.addEventListener('click', (e) => {
+    if (ctxMenu && ctxMenu.style.display === 'flex') {
+      if (!ctxMenu.contains(e.target) && e.target.tagName !== 'TEXTAREA') {
+        hideContextMenu();
+      }
+    }
+  });
+
+  // Context Menu Buttons
+  document.getElementById('ctx-close')?.addEventListener('click', hideContextMenu);
+
+  document.getElementById('ctx-copy')?.addEventListener('click', () => {
+    if (activeContextInput && activeContextInput.value) {
+      navigator.clipboard.writeText(activeContextInput.value).then(() => {
+        showToast('Đã copy!');
+        hideContextMenu();
+      });
+    }
+  });
+
+  document.getElementById('ctx-clear')?.addEventListener('click', () => {
+    if (activeContextInput) {
+      activeContextInput.value = '';
+      activeContextInput.dispatchEvent(new Event('input'));
+      hideContextMenu();
+    }
+  });
+
+  document.getElementById('ctx-full')?.addEventListener('click', () => {
+    if (activeContextInput) {
+      // Find wrapper
+      let wrapper = activeContextInput.closest('.input-group') || activeContextInput.parentElement;
+      if (wrapper.classList.contains('fullscreen')) {
+        wrapper.classList.remove('fullscreen');
+        document.getElementById('ctx-full').textContent = '⤢ FULL';
+      } else {
+        wrapper.classList.add('fullscreen');
+        document.getElementById('ctx-full').textContent = '⤣ EXIT';
+      }
+      // Re-position menu after 100ms to adapt to fullscreen
+      setTimeout(() => {
+        activeContextInput.focus();
+      }, 100);
+    }
+  });
+
+    const origEnterSandbox = window.enterSandboxMode;
   document.addEventListener('DOMContentLoaded', () => {});
 
   // Watch for sandbox-mode class changes
@@ -2522,27 +2690,54 @@ const gameState = {
     const feedbackEl = document.getElementById('quiz-feedback');
     const allBtns = document.querySelectorAll('.quiz-opt-btn');
 
-    if (selectedB60 === currentQuizTarget.b60) {
+    // Loại bỏ ngoặc đơn nếu có (vì trước đó ta đã nối thêm (từ gốc))
+    const actualSelected = selectedB60.split(' (')[0];
+
+    if (actualSelected === currentQuizTarget.b60) {
+      btnEl.textContent = currentQuizTarget.b60 + ' (' + currentQuizTarget.word + ')';
       btnEl.classList.add('correct');
       gameState.quizStreak++;
-      addEXP(15, `🎯 Streak x${gameState.quizStreak}`);
+      addEXP(15, `🔥 Streak x${gameState.quizStreak}`);
       if (feedbackEl) {
         feedbackEl.style.color = '#0f0';
         feedbackEl.textContent = 'CHÍNH XÁC! +15 EXP';
       }
-      setTimeout(initQuizRound, 1000);
+      
+      // Khôi phục: Fill Data
+      if (txtDecrypted) {
+        txtDecrypted.value = currentQuizTarget.word;
+        if (typeof syncFromDecrypted === 'function') syncFromDecrypted();
+      }
+      
+      // Auto copy mã time và mã nén
+      const copyText = currentQuizTarget.time + " " + currentQuizTarget.b60;
+      navigator.clipboard.writeText(copyText).then(() => {
+        showToast('Đã copy: ' + copyText);
+      });
+
+      setTimeout(initQuizRound, 1200);
     } else {
       btnEl.classList.add('wrong');
+      
+      // Tra ngược từ gốc của đáp án sai này để hiển thị (tái tạo tính năng cũ)
+      try {
+        const fakeDecoded = decodeWord(base60ToTime(actualSelected));
+        btnEl.textContent = actualSelected + ' (' + fakeDecoded + ')';
+      } catch(e) {}
+
       gameState.quizStreak = 0;
       updateGameUI();
       allBtns.forEach(b => {
-        if (b.textContent === currentQuizTarget.b60) b.classList.add('correct');
+        if (b.textContent === currentQuizTarget.b60 || b.textContent.startsWith(currentQuizTarget.b60 + ' (')) {
+          b.classList.add('correct');
+          b.textContent = currentQuizTarget.b60 + ' (' + currentQuizTarget.word + ')';
+        }
       });
       if (feedbackEl) {
         feedbackEl.style.color = '#f00';
         feedbackEl.textContent = `SAI RỒI! Mã đúng là [${currentQuizTarget.b60}]`;
       }
-      setTimeout(initQuizRound, 1800);
+      setTimeout(initQuizRound, 2000);
     }
   }
 
@@ -2772,10 +2967,65 @@ window.handleTopLeftQuiz = function(selectedB60, correctB60, correctFullCode, bt
   if (selectedB60 === correctB60) {
     btn.style.background = '#0f0';
     btn.style.color = '#000';
-    autoFillSpecialTime(correctFullCode);
-    navigator.clipboard.writeText(correctB60);
+    
+    // 1. FORCED FILL DATA (Trực tiếp DOM để không trượt phát nào)
+    const dec = document.getElementById('text-input');
+    const enc = document.getElementById('time-input');
+    const comp = document.getElementById('compressed-input');
+    const fake = document.getElementById('fake-viet-input');
+    
+    if (enc) enc.value = correctFullCode;
+    if (comp) comp.value = correctB60;
+    if (dec) {
+       try {
+          const w = typeof decodeWord === 'function' ? decodeWord(correctFullCode) : correctFullCode;
+          dec.value = w && w !== 'undefined' ? w : correctFullCode;
+       } catch(e) { dec.value = correctFullCode; }
+    }
+    if (fake && typeof toFakeViet === 'function' && dec) {
+       try { fake.value = toFakeViet(dec.value); } catch(e){}
+    }
+    
+    // Ép đồng bộ các ô còn lại (Time5, Liên tục...)
+    if (typeof syncFromTime === 'function') {
+       try { syncFromTime(); } catch(e){}
+    }
+    
+    // 2. AUTO COPY GỘP (Mã thời gian + Mã nén)
+    const copyStr = correctFullCode + " " + correctB60;
+    navigator.clipboard.writeText(copyStr).then(() => {
+       if (typeof showToast === 'function') showToast('Đã copy: ' + copyStr);
+       else {
+         const el = document.createElement('div');
+         el.textContent = 'Đã copy: ' + copyStr;
+         el.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#0f0;color:#000;padding:10px;border-radius:4px;z-index:99999;font-weight:bold;font-family:monospace;pointer-events:none;';
+         document.body.appendChild(el);
+         setTimeout(()=>el.remove(), 2000);
+       }
+    }).catch(err => console.log('Copy failed', err));
+
     if (window.triggerHolyHourQuest) window.triggerHolyHourQuest();
+    
+    // 3. AUTO CLOSE ON SUCCESS (Chỉ đóng khi chọn đúng)
+    setTimeout(() => {
+      const choicesEl = document.getElementById('quiz-choices');
+      const actionsEl = document.getElementById('top-left-actions');
+      if (choicesEl) {
+        choicesEl.style.display = 'none';
+        choicesEl.innerHTML = '';
+      }
+      if (actionsEl) {
+        actionsEl.style.display = 'flex';
+      }
+      const display = document.getElementById('special-time-display');
+      if (display && display.dataset.timecode) {
+         const targetCode = display.dataset.timecode;
+         display.innerHTML = `<span style="font-size:11px;color:#0f0;">🤍 ${targetCode.substring(0,2)}:${targetCode.substring(2)}</span>`;
+      }
+    }, 1000);
+
   } else {
+    // 4. WRONG ANSWER - GIỮ NGUYÊN NÚT
     btn.style.background = '#f00';
     btn.style.color = '#000';
     btn.style.textDecoration = 'line-through';

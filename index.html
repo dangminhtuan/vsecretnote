@@ -14,21 +14,19 @@
   <canvas id="matrix-canvas"></canvas>
     </div>
     <div class="app-container">
-      <div id="sandbox-top-left" style="display: none; position: fixed; top: 10px; left: 10px; z-index: 9999; flex-direction: column; align-items: flex-start; gap: 6px;">
-        <div style="display: flex; align-items: center; gap: 6px;">
-          <div id="special-time-display" style="display: none; font-family: monospace; font-size: 11px; color: #0f0; background: #000; border: 1px solid #0f0; border-radius: 5px; padding: 3px 8px; align-items: center; justify-content: center; gap: 4px; flex-direction: row; line-height: 1; text-align: center; min-height: 36px; box-sizing: border-box; cursor: pointer;"></div>
-          <div id="top-left-actions" style="display: flex; gap: 6px;">
+      <div id="sandbox-top-left" style="display: none; position: fixed; top: 10px; left: 10px; z-index: 9999; flex-direction: row; align-items: center; gap: 8px;">
+  <div id="special-time-display" style="display: none; font-family: monospace; font-size: 11px; color: #0f0; background: #000; border: 1px solid #0f0; border-radius: 5px; padding: 3px 8px; align-items: center; justify-content: center; gap: 4px; flex-direction: row; line-height: 1; text-align: center; min-height: 36px; box-sizing: border-box; cursor: pointer;"></div>
+  <div id="quiz-choices" style="display: none; gap: 6px; align-items: center; flex-wrap: wrap;"></div>
+  <div id="top-left-actions" style="display: flex; gap: 6px;">
             <button id="btn-toggle-vk" class="cyber-btn" title="Bật bàn phím" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 16px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0; opacity: 0.4; transition: opacity 0.2s;">&#9000;</button>
             <button id="btn-share-link" class="cyber-btn" title="Chia sẻ link" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0;">&#128279;</button>
             <button id="btn-activity-log" class="cyber-btn" title="Activity Log" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0;">&#128202;</button>
             <button id="btn-sandbox-hashtag" class="cyber-btn" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 16px; font-weight: bold; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0;">#</button>
           </div>
-          <div id="quiz-choices" style="display: none; gap: 6px; align-items: center; flex-wrap: wrap;"></div>
-        </div>
-      </div>
+</div>
       <div id="sandbox-actions" style="display: none; position: fixed; top: 10px; right: 10px; left: auto; z-index: 9999; gap: 5px; transform: scale(0.7); transform-origin: top right; align-items: center;">
         <button id="btn-sandbox-clear" class="cyber-btn" style="border-color: #ffaa00; color: #ffaa00; background: #000; cursor: pointer; padding: 4px 10px; letter-spacing: 1px; white-space: nowrap; line-height: 1.3; text-align: center;"><span style="display:block;font-size:0.85em;">[DEL]</span><span style="display:block;font-size:0.75em;">CLEAR</span></button>
-        <button id="btn-copy-b60" class="cyber-btn" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; padding: 4px 10px; letter-spacing: 1px; white-space: nowrap; line-height: 1.3; text-align: center;"><span style="display:block;font-size:0.85em;">COPY</span><span style="display:block;font-size:0.75em;">BASE60</span></button>
+        <button id="btn-copy-b60" class="cyber-btn" style="border-color: #555; color: #555; background: #000; cursor: not-allowed; padding: 4px 10px; letter-spacing: 1px; white-space: nowrap; line-height: 1.3; text-align: center;" disabled><span style="display:block;font-size:0.85em;">[ ]</span><span style="display:block;font-size:0.75em;">EMPTY</span></button>
         <button id="btn-exit-sandbox" class="cyber-btn" style="border-color: #f00; color: #f00; background: #000; cursor: pointer; padding: 4px 10px; letter-spacing: 1px; white-space: nowrap; line-height: 1.3; text-align: center;"><span style="display:block;font-size:0.85em;">[ESC]</span><span style="display:block;font-size:0.75em;">EXIT</span></button>
       </div>
       <header style="display: flex; justify-content: space-between; align-items: center;">
@@ -131,12 +129,7 @@
           <div class="input-group">
             <div class="label-row">
               <label for="text-input">TEXT DECRYPTED [VI/EN]</label>
-              <div class="action-btns">
-                <button id="btn-copy-text" class="copy-btn">COPY</button>
-                <button id="btn-clear-text" class="copy-btn clear-btn">CLEAR</button>
-                <button class="copy-btn btn-fullscreen" onclick="toggleFullscreen(this)">⤢</button>
               </div>
-            </div>
             <textarea id="text-input" placeholder="Nhập văn bản cần mã hóa..." spellcheck="false"></textarea>
           </div>
           
@@ -149,25 +142,24 @@
           <div class="input-group compressed-group">
             <div class="label-row">
               <label for="compressed-input">COMPRESSED CODE [BASE60]</label>
-              <div class="action-btns">
-                <button id="btn-copy-compressed" class="copy-btn">COPY</button>
-                <button id="btn-clear-compressed" class="copy-btn clear-btn">CLEAR</button>
-                <button class="copy-btn btn-fullscreen" onclick="toggleFullscreen(this)">⤢</button>
               </div>
-            </div>
             <textarea id="compressed-input" placeholder="Mã nén siêu ngắn..." spellcheck="false"></textarea>
           </div>
+
+          <!-- Compressed Base60 Continuous -->
+          <div class="input-group compressed-group">
+            <div class="label-row">
+              <label for="compressed-continuous-input">CONTINUOUS BASE60 [NO SPACE]</label>
+            </div>
+            <textarea id="compressed-continuous-input" placeholder="Mã nén liên tiếp (không khoảng trắng)..." spellcheck="false"></textarea>
+          </div>
+  
 
           <!-- Mã giả Việt -->
           <div class="input-group">
             <div class="label-row">
               <label for="fake-viet-input">MÃ GIẢ VIỆT</label>
-              <div class="action-btns">
-                <button id="btn-copy-fake" class="copy-btn">COPY</button>
-                <button id="btn-clear-fake" class="copy-btn clear-btn">CLEAR</button>
-                <button class="copy-btn btn-fullscreen" onclick="toggleFullscreen(this)">⤢</button>
               </div>
-            </div>
             <textarea id="fake-viet-input" placeholder="Mã giả Việt (♰...♰)" spellcheck="false"></textarea>
           </div>
 
@@ -175,12 +167,7 @@
           <div class="input-group">
             <div class="label-row">
               <label for="time-input">TIME ENCRYPTED [HH:MM:SS]</label>
-              <div class="action-btns">
-                <button id="btn-copy-time" class="copy-btn">COPY</button>
-                <button id="btn-clear-time" class="copy-btn clear-btn">CLEAR</button>
-                <button class="copy-btn btn-fullscreen" onclick="toggleFullscreen(this)">⤢</button>
               </div>
-            </div>
             <textarea id="time-input" placeholder="Mã thời gian 6 chữ số..." spellcheck="false"></textarea>
           </div>
 
@@ -188,12 +175,7 @@
           <div class="input-group">
             <div class="label-row">
               <label for="time-5-input">TIME ENCRYPTED [SSSSS]</label>
-              <div class="action-btns">
-                <button id="btn-copy-time5" class="copy-btn">COPY</button>
-                <button id="btn-clear-time5" class="copy-btn clear-btn">CLEAR</button>
-                <button class="copy-btn btn-fullscreen" onclick="toggleFullscreen(this)">⤢</button>
               </div>
-            </div>
             <textarea id="time-5-input" placeholder="Mã thời gian 5 chữ số..." spellcheck="false"></textarea>
           </div>
 
@@ -404,6 +386,15 @@
     </div>
   </div>
 
-</body>
+
+    <!-- Floating Context Menu -->
+    <div id="floating-context-menu" style="display: none; position: absolute; z-index: 10000; gap: 6px; background: rgba(0, 15, 0, 0.95); border: 1px solid #0f0; padding: 6px; border-radius: 4px; box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); flex-direction: row; align-items: center;">
+      <button id="ctx-copy" class="copy-btn" style="font-weight: bold;">[^C] COPY</button>
+      <button id="ctx-clear" class="copy-btn clear-btn" style="font-weight: bold;">[DEL] CLR</button>
+      <button id="ctx-full" class="copy-btn btn-fullscreen" style="font-weight: bold;">⤢ FULL</button>
+      <button id="ctx-close" class="copy-btn clear-btn" style="border-color: #777; color: #777;">✕</button>
+    </div>
+
+  </body>
 </html>
 
