@@ -2068,13 +2068,13 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
 
   
   const HOLY_HOUR_CODES = {
-    '0101': '010123', '0202': '020205', '0303': '030324', '0404': '040429',
-    '0505': '050520', '0606': '060627', '0707': '070714', '0808': '080808',
-    '0909': '090909', '1010': '101010', '1111': '111111', '1212': '121212',
-    '1313': '131313', '1414': '141414', '1515': '151515', '1616': '161616',
-    '1717': '171717', '1818': '181818', '1919': '191919', '2020': '202020',
-    '2121': '212121', '2222': '222222', '2323': '232315',
-    '0123': '012317', '0234': '023419', '0345': '034519', '0456': '045619'
+    '0000': '000005', '0101': '010123', '0202': '020205', '0303': '030335',
+    '0404': '040429', '0505': '050520', '0606': '060627', '0707': '070700',
+    '0808': '080801', '0909': '090900', '1010': '101000', '1111': '111105',
+    '1212': '121200', '1313': '131301', '1414': '141401', '1515': '151501',
+    '1616': '161601', '1717': '171700', '1818': '181802', '1919': '191900',
+    '2020': '202005', '2121': '212100', '2222': '222202', '2323': '232302',
+    '0123': '012317', '1234': '123407', '2345': '234503', '2332': '233211'
   };
 
   function getSpecialTimeInfo(fh, fm) {
@@ -2105,16 +2105,11 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
 
   function generateWrongAnswers(correctB60) {
     const wrong = [];
-    const wordPool = (typeof REAL_VIETNAMESE_WORDS !== 'undefined' && REAL_VIETNAMESE_WORDS.length) 
-      ? REAL_VIETNAMESE_WORDS 
-      : sampleWordsList;
-      
-    // Trích xuất ngẫu nhiên các từ an toàn có mã base60 3 ký tự
-    const safeWords = wordPool.sort(() => Math.random() - 0.5);
-    for (const w of safeWords) {
+    const holyCodes = Object.values(HOLY_HOUR_CODES);
+    const shuffled = holyCodes.sort(() => Math.random() - 0.5);
+    for (const c of shuffled) {
       try {
-        const t = encodeWord(w);
-        const b = timeToBase60(t);
+        const b = typeof timeToBase60 === 'function' ? timeToBase60(c) : '';
         if (b && b.length === 3 && b !== correctB60 && !wrong.includes(b)) {
           wrong.push(b);
           if (wrong.length >= 2) break;
@@ -2304,7 +2299,7 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
       display.style.borderColor = '#0f0';
       display.style.color = '#0f0';
       display.innerHTML = `<span style="font-size:12px;font-weight:bold">⏳ ${foundSpecial.label}</span>`;
-      if (b60) showQuiz(timeCode, b60, foundSpecial.label);
+      // Auto-show removed
     }
   }
 
@@ -2986,9 +2981,7 @@ window.handleTopLeftQuiz = function(selectedB60, correctB60, correctFullCode, bt
   if (selectedB60 === correctB60) {
     btn.style.background = '#0f0';
     btn.style.color = '#000';
-    if (wordToShow && !btn.textContent.includes('(')) {
-       btn.textContent = `${selectedB60} (${wordToShow})`;
-    }
+    
     
     // 1. FORCED FILL DATA (Trực tiếp DOM để không trượt phát nào)
     const dec = document.getElementById('text-input');
@@ -3051,8 +3044,6 @@ window.handleTopLeftQuiz = function(selectedB60, correctB60, correctFullCode, bt
     btn.style.background = '#f00';
     btn.style.color = '#000';
     btn.style.textDecoration = 'line-through';
-    if (wordToShow && !btn.textContent.includes('(')) {
-       btn.textContent = `${selectedB60} (${wordToShow})`;
-    }
+    
   }
 };
