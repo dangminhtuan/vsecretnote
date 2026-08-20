@@ -1815,16 +1815,10 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.getElementById('btn-sandbox-clear')?.addEventListener('click', () => {
-  const active = document.activeElement;
-  if (txtDecrypted) txtDecrypted.value = '';
-  if (txtEncrypted) txtEncrypted.value = '';
-  if (txtCompressed) txtCompressed.value = '';
-  if (txtFakeViet) txtFakeViet.value = '';
-  if (txtTime5) txtTime5.value = '';
-  if (active && (active === txtDecrypted || active === txtEncrypted || active === txtCompressed || active === txtFakeViet || active === txtTime5)) {
-    active.focus();
-  } else {
-    txtDecrypted?.focus();
+  if (typeof txtDecrypted !== 'undefined' && txtDecrypted) {
+    txtDecrypted.value = '';
+    txtDecrypted.dispatchEvent(new Event('input')); // Đồng bộ xóa toàn bộ
+    txtDecrypted.focus();
   }
 });
 
@@ -2582,20 +2576,117 @@ const gameState = {
 
   // --- FLASH QUIZ MODULE ---
   const sampleQuizPairs = [
-    { word: 'không', b60: 'ko' },
-    { word: 'tôi', b60: '8' },
-    { word: 'được', b60: '0' },
-    { word: 'là', b60: '8e' },
-    { word: 'của', b60: 'cU0' },
-    { word: 'có', b60: 'c' },
-    { word: 'những', b60: 'yn9' },
-    { word: 'để', b60: '2r' },
-    { word: 'một', b60: '1' },
-    { word: 'với', b60: 'vhC' },
-    { word: 'cho', b60: 'cho' },
-    { word: 'trong', b60: 'k5j' },
-    { word: 'đã', b60: '1E' },
-    { word: 'này', b60: 'nTN' }
+    { word: 'cạ', b60: 'cck', time: '000005' },
+    { word: 'phạc', b60: 'ddW', time: '010123' },
+    { word: 'gạch', b60: 'ggk', time: '020205' },
+    { word: 'tục', b60: 'GG4', time: '030335' },
+    { word: 'thiệt', b60: 'jjR', time: '040429' },
+    { word: 'tràn', b60: 'kkN', time: '050520' },
+    { word: 'xỉn', b60: 'KKt', time: '060627' },
+    { word: 'hôn', b60: 'hhc', time: '070700' },
+    { word: 'vú', b60: 'vvd', time: '080801' },
+    { word: 'dâm', b60: 'DDc', time: '090900' },
+    { word: 'mút', b60: 'mmc', time: '101000' },
+    { word: 'chịch', b60: 'CCk', time: '111105' },
+    { word: 'rên', b60: 'rrc', time: '121200' },
+    { word: 'sướng', b60: 'ssd', time: '131301' },
+    { word: 'nứng', b60: 'nnd', time: '141401' },
+    { word: 'bướm', b60: 'bbd', time: '151501' },
+    { word: 'liếm', b60: 'lld', time: '161601' },
+    { word: 'chim', b60: 'QQc', time: '171700' },
+    { word: 'sờ', b60: 'SSg', time: '181802' },
+    { word: 'ôm', b60: 'zzc', time: '191900' },
+    { word: 'ngực', b60: 'NNk', time: '202005' },
+    { word: 'nhấp', b60: 'yyc', time: '212100' },
+    { word: 'lồn', b60: 'LLg', time: '222202' },
+    { word: 'ngành', b60: 'NWg', time: '202302' },
+    { word: 'được', b60: 'dWQ', time: '012317' },
+    { word: 'rớt', b60: 'r3K', time: '123406' },
+    { word: 'nghẻm', b60: 'WHG', time: '234503' },
+    { word: 'nghợn', b60: 'W1C', time: '233211' },
+    { word: 'ấp', b60: 'zyc', time: '192100' },
+    { word: 'hít', b60: 'hDK', time: '070906' },
+    { word: 'vuốt', b60: 'vsr', time: '081312' },
+    { word: 've', b60: 'KaA', time: '065541' },
+    { word: 'xoa', b60: 'KCp', time: '061124' },
+    { word: 'cưng', b60: 'cnc', time: '001400' },
+    { word: 'chiều', b60: 'Ckv', time: '110508' },
+    { word: 'thương', b60: 'jsS', time: '041318' },
+    { word: 'nhớ', b60: 'ySd', time: '211801' },
+    { word: 'nhung', b60: 'yvr', time: '210812' },
+    { word: 'say', b60: 'vH5', time: '084536' },
+    { word: 'đắm', b60: 'd0d', time: '013101' },
+    { word: 'nồng', b60: 'ntv', time: '142708' },
+    { word: 'cháy', b60: 'CTd', time: '112801' },
+    { word: 'khát', b60: 'Kqc', time: '062600' },
+    { word: 'khao', b60: 'Kpc', time: '062400' },
+    { word: 'mong', b60: 'mzK', time: '101906' },
+    { word: 'chờ', b60: 'CSg', time: '111802' },
+    { word: 'thèm', b60: 'jHN', time: '044520' },
+    { word: 'ngọt', b60: 'NyC', time: '202111' },
+    { word: 'ngào', b60: 'Npg', time: '202402' },
+    { word: 'đê', b60: 'dUc', time: '015000' },
+    { word: 'mê', b60: 'mUc', time: '105000' },
+    { word: 'quấn', b60: 'g7z', time: '023819' },
+    { word: 'quýt', b60: 'gVx', time: '025130' },
+    { word: 'mơn', b60: 'm1K', time: '103206' },
+    { word: 'trớn', b60: 'k1f', time: '053225' },
+    { word: 'mặn', b60: 'm1k', time: '103205' },
+    { word: 'mà', b60: 'mcg', time: '100002' },
+    { word: 'êm', b60: 'zXc', time: '195200' },
+    { word: 'ái', b60: 'zGd', time: '190301' },
+    { word: 'cắn', b60: 'c1d', time: '003201' },
+    { word: 'dập', b60: 'Dyk', time: '092105' },
+    { word: 'nhồi', b60: 'yqv', time: '212608' },
+    { word: 'đút', b60: 'dmc', time: '011000' },
+    { word: 'xóc', b60: 'Knp', time: '061424' },
+    { word: 'rỉ', b60: 'riG', time: '125703' },
+    { word: 'rùng', b60: 'rvn', time: '120814' },
+    { word: 'mình', b60: 'mhv', time: '100708' },
+    { word: 'bắn', b60: 'b1d', time: '153201' },
+    { word: 'trớ', b60: 'kSz', time: '051819' },
+    { word: 'xuất', b60: 'Kgx', time: '060230' },
+    { word: 'tinh', b60: 'Ghp', time: '030724' },
+    { word: 'rụng', b60: 'rvQ', time: '120817' },
+    { word: 'rời', b60: 'rxv', time: '123008' },
+    { word: 'mẩy', b60: 'mBG', time: '104203' },
+    { word: 'khít', b60: 'KDK', time: '060906' },
+    { word: 'trơn', b60: 'k1p', time: '053224' },
+    { word: 'ướt', b60: 'ztr', time: '192712' },
+    { word: 'át', b60: 'zqc', time: '192600' },
+    { word: 'đãng', b60: 'dKj', time: '010604' },
+    { word: 'cu', b60: 'bS9', time: '151840' },
+    { word: 'cặc', b60: 'cxk', time: '003005' },
+    { word: 'mông', b60: 'mtK', time: '102706' },
+    { word: 'đùi', b60: 'dkn', time: '010514' },
+    { word: 'eo', b60: 'zJc', time: '194700' },
+    { word: 'môi', b60: 'mqK', time: '102606' },
+    { word: 'lưỡi', b60: 'lpl', time: '162416' },
+    { word: 'anh', b60: 'zWc', time: '192300' },
+    { word: 'em', b60: 'lJ6', time: '164737' },
+    { word: 'vợ', b60: 'vSk', time: '081805' },
+    { word: 'chồng', b60: 'Ctv', time: '112708' },
+    { word: 'bé', b60: 'bEd', time: '154301' },
+    { word: 'dượng', b60: 'Dsk', time: '091305' },
+    { word: 'ngoan', b60: 'NsK', time: '201306' },
+    { word: 'hư', b60: 'hSr', time: '071812' },
+    { word: 'gợi', b60: 'gxC', time: '023011' },
+    { word: 'cảm', b60: 'cjG', time: '000403' },
+    { word: 'khiêu', b60: 'KkK', time: '060506' },
+    { word: 'khích', b60: 'KCc', time: '061100' },
+    { word: 'quyến', b60: 'g10', time: '023231' },
+    { word: 'rũ', b60: 'rvj', time: '120804' },
+    { word: 'quá', b60: 'gcz', time: '020019' },
+    { word: 'này', b60: 'nTg', time: '142802' },
+    { word: 'nọ', b60: 'n4C', time: '143511' },
+    { word: 'thích', b60: 'jCS', time: '041118' },
+    { word: 'muốn', b60: 'mCs', time: '101113' },
+    { word: 'ngủ', b60: 'NvG', time: '200803' },
+    { word: 'chơi', b60: 'CxK', time: '113006' },
+    { word: 'làm', b60: 'ljg', time: '160402' },
+    { word: 'cùng', b60: 'cvn', time: '000814' },
+    { word: 'nào', b60: 'npg', time: '142402' },
+    { word: 'vậy', b60: 'vBk', time: '084205' },
   ];
 
   let currentQuizTarget = null;
@@ -2684,7 +2775,7 @@ const gameState = {
     options.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'quiz-opt-btn';
-      btn.textContent = opt.b60 + ' (' + opt.word + ')';
+      btn.textContent = opt.b60;
       btn.dataset.b60 = opt.b60;
       btn.dataset.word = opt.word;
       btn.addEventListener('click', () => handleQuizAnswer(opt.b60, btn));
@@ -2697,6 +2788,14 @@ const gameState = {
     const allBtns = document.querySelectorAll('.quiz-opt-btn');
 
     if (feedbackEl && feedbackEl.innerHTML.includes('Câu hỏi tiếp')) return;
+
+    // Lật bài (Hiện từ gốc cho TẤT CẢ các đáp án)
+    allBtns.forEach(b => {
+      b.textContent = b.dataset.b60 + ' (' + b.dataset.word + ')';
+      if (b.dataset.b60 === currentQuizTarget.b60) {
+        b.classList.add('correct'); // Bôi xanh đáp án đúng
+      }
+    });
 
     if (selectedB60 === currentQuizTarget.b60) {
       btnEl.classList.add('correct');
@@ -2717,11 +2816,6 @@ const gameState = {
       btnEl.classList.add('wrong');
       gameState.quizStreak = 0;
       updateGameUI();
-      allBtns.forEach(b => {
-        if (b.dataset.b60 === currentQuizTarget.b60) {
-          b.classList.add('correct');
-        }
-      });
     }
 
     if (feedbackEl) {
