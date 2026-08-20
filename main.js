@@ -2606,53 +2606,52 @@ const gameState = {
 
   function getAdaptiveDistractors(targetWord, targetB60, streak) {
     const firstChar = targetB60[0];
-    const distractors = new Set();
+    const distractors = new Map();
     const wordPool = (typeof REAL_VIETNAMESE_WORDS !== 'undefined' && REAL_VIETNAMESE_WORDS.length) 
       ? REAL_VIETNAMESE_WORDS 
       : sampleWordsList;
 
     if (streak >= 6) {
-      // 💥 CẤP ĐỘ KHÓ (Streak >= 6): Tất cả lựa chọn CÙNG phụ âm đầu Base60
       const samePrefixWords = wordPool.filter(w => {
         if (w === targetWord) return false;
         try {
           const b = timeToBase60(encodeWord(w));
-          return b && b[0] === firstChar && b !== targetB60;
+          return b && b.length === 3 && b[0] === firstChar && b !== targetB60;
         } catch(e) { return false; }
       }).sort(() => Math.random() - 0.5);
 
       for (const w of samePrefixWords) {
-        distractors.add(timeToBase60(encodeWord(w)));
+        distractors.set(timeToBase60(encodeWord(w)), w);
         if (distractors.size >= 3) break;
       }
     } else if (streak >= 3) {
-      // ⚡ CẤP ĐỘ VỪA (Streak 3-5): 1-2 lựa chọn CÙNG phụ âm đầu để gài bẫy
       const samePrefixWords = wordPool.filter(w => {
         if (w === targetWord) return false;
         try {
           const b = timeToBase60(encodeWord(w));
-          return b && b[0] === firstChar && b !== targetB60;
+          return b && b.length === 3 && b[0] === firstChar && b !== targetB60;
         } catch(e) { return false; }
       }).sort(() => Math.random() - 0.5);
 
       for (const w of samePrefixWords.slice(0, 1)) {
-        distractors.add(timeToBase60(encodeWord(w)));
+        distractors.set(timeToBase60(encodeWord(w)), w);
       }
     }
 
-    // Điền nốt các lựa chọn khác phụ âm nếu chưa đủ 3
     const otherWords = wordPool.filter(w => w !== targetWord).sort(() => Math.random() - 0.5);
     for (const w of otherWords) {
       if (distractors.size >= 3) break;
       try {
         const b = timeToBase60(encodeWord(w));
-        if (b && b !== targetB60 && !distractors.has(b)) {
-          distractors.add(b);
+        if (b && b.length === 3 && b !== targetB60 && !distractors.has(b)) {
+          distractors.set(b, w);
         }
       } catch(e) {}
     }
 
-    return Array.from(distractors);
+    const result = [];
+    distractors.forEach((w, b) => result.push({ b60: b, word: w }));
+    return result;
   }
 
   function initQuizRound() {
@@ -2662,9 +2661,8 @@ const gameState = {
     const streakEl = document.getElementById('quiz-streak-count');
     if (!wordEl || !gridEl) return;
 
-    if (feedbackEl) feedbackEl.textContent = '';
+    if (feedbackEl) feedbackEl.innerHTML = '';
     
-    // Hiển thị streak và độ khó
     const streak = gameState.quizStreak || 0;
     let diffBadge = '🟢 Dễ (Khác phụ âm)';
     if (streak >= 6) diffBadge = '🔥 Cao thủ (Cùng phụ âm)';
@@ -2672,23 +2670,24 @@ const gameState = {
     
     if (streakEl) streakEl.textContent = `🔥 Streak: ${streak} | ${diffBadge}`;
 
-    const targetIndex = Math.floor(Math.random() * sampleQuizPairs.length);
-    currentQuizTarget = sampleQuizPairs[targetIndex];
+    const validPairs = sampleQuizPairs.filter(p => p.b60 && p.b60.length === 3);
+    const targetIndex = Math.floor(Math.random() * validPairs.length);
+    currentQuizTarget = validPairs[targetIndex];
     wordEl.textContent = `"${currentQuizTarget.word}"`;
 
-    // Sinh 3 đáp án bẫy theo độ khó thích ứng
     const distractors = getAdaptiveDistractors(currentQuizTarget.word, currentQuizTarget.b60, streak);
-    const options = [currentQuizTarget.b60, ...distractors];
+    const options = [{ b60: currentQuizTarget.b60, word: currentQuizTarget.word }, ...distractors];
     
-    // Xáo trộn 4 đáp án
     options.sort(() => Math.random() - 0.5);
 
     gridEl.innerHTML = '';
     options.forEach(opt => {
       const btn = document.createElement('button');
       btn.className = 'quiz-opt-btn';
-      btn.textContent = opt;
-      btn.addEventListener('click', () => handleQuizAnswer(opt, btn));
+      btn.textContent = opt.b60 + ' (' + opt.word + ')';
+      btn.dataset.b60 = opt.b60;
+      btn.dataset.word = opt.word;
+      btn.addEventListener('click', () => handleQuizAnswer(opt.b60, btn));
       gridEl.appendChild(btn);
     });
   }
@@ -2697,54 +2696,37 @@ const gameState = {
     const feedbackEl = document.getElementById('quiz-feedback');
     const allBtns = document.querySelectorAll('.quiz-opt-btn');
 
-    // Loại bỏ ngoặc đơn nếu có (vì trước đó ta đã nối thêm (từ gốc))
-    const actualSelected = selectedB60.split(' (')[0];
+    if (feedbackEl && feedbackEl.innerHTML.includes('Câu hỏi tiếp')) return;
 
-    if (actualSelected === currentQuizTarget.b60) {
-      btnEl.textContent = currentQuizTarget.b60 + ' (' + currentQuizTarget.word + ')';
+    if (selectedB60 === currentQuizTarget.b60) {
       btnEl.classList.add('correct');
       gameState.quizStreak++;
       addEXP(15, `🔥 Streak x${gameState.quizStreak}`);
-      if (feedbackEl) {
-        feedbackEl.style.color = '#0f0';
-        feedbackEl.textContent = 'CHÍNH XÁC! +15 EXP';
-      }
       
-      // Khôi phục: Fill Data
-      if (txtDecrypted) {
+      if (typeof txtDecrypted !== 'undefined' && txtDecrypted) {
         txtDecrypted.value = currentQuizTarget.word;
         if (typeof syncFromDecrypted === 'function') syncFromDecrypted();
       }
       
-      // Auto copy mã time và mã nén
       const copyText = currentQuizTarget.time + " " + currentQuizTarget.b60;
       navigator.clipboard.writeText(copyText).then(() => {
-        showToast('Đã copy: ' + copyText);
+        if (typeof showToast === 'function') showToast('Đã copy: ' + copyText);
       });
 
-      setTimeout(initQuizRound, 1200);
     } else {
       btnEl.classList.add('wrong');
-      
-      // Tra ngược từ gốc của đáp án sai này để hiển thị (tái tạo tính năng cũ)
-      try {
-        const fakeDecoded = decodeWord(base60ToTime(actualSelected));
-        btnEl.textContent = actualSelected + ' (' + fakeDecoded + ')';
-      } catch(e) {}
-
       gameState.quizStreak = 0;
       updateGameUI();
       allBtns.forEach(b => {
-        if (b.textContent === currentQuizTarget.b60 || b.textContent.startsWith(currentQuizTarget.b60 + ' (')) {
+        if (b.dataset.b60 === currentQuizTarget.b60) {
           b.classList.add('correct');
-          b.textContent = currentQuizTarget.b60 + ' (' + currentQuizTarget.word + ')';
         }
       });
-      if (feedbackEl) {
-        feedbackEl.style.color = '#f00';
-        feedbackEl.textContent = `SAI RỒI! Mã đúng là [${currentQuizTarget.b60}]`;
-      }
-      setTimeout(initQuizRound, 2000);
+    }
+
+    if (feedbackEl) {
+      feedbackEl.innerHTML = '<button id="btn-next-quiz" style="background:#0f0; color:#000; font-weight:bold; padding:8px 16px; border:none; cursor:pointer; border-radius:4px; font-family:monospace; margin-top:8px;">CÂU HỎI TIẾP ▸</button>';
+      document.getElementById('btn-next-quiz').addEventListener('click', initQuizRound);
     }
   }
 
