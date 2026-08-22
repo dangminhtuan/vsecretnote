@@ -38,11 +38,12 @@
     
     /* Column widths */
     th:nth-child(1) { width: 80px; }
-    th:nth-child(2) { width: 25%; }
-    th:nth-child(3) { width: 15%; }
-    th:nth-child(4) { width: 15%; }
-    th:nth-child(5) { width: 150px; }
-    th:nth-child(6) { width: 150px; }
+    th:nth-child(2) { width: 20%; }
+    th:nth-child(3) { width: 12%; }
+    th:nth-child(4) { width: 12%; }
+    th:nth-child(5) { width: 12%; }
+    th:nth-child(6) { width: 120px; }
+    th:nth-child(7) { width: 120px; }
 
     /* Responsive text */
     .txt-full { display: inline; }
@@ -52,7 +53,7 @@
       .txt-full { display: none; }
       .txt-short { display: inline; }
       th:nth-child(1) { width: 60px; }
-      th:nth-child(5), th:nth-child(6) { width: 100px; }
+      th:nth-child(6), th:nth-child(7) { width: 90px; }
     }
   </style>
 </head>
@@ -106,7 +107,19 @@
               </div>
             </div>
           </th>
-          <th>
+                    <th>
+            <div class="th-title" data-sort="toneName">Dấu <span class="sort-icon" id="sort-icon-toneName"></span></div>
+            <div class="ms-container" id="ms-tone">
+              <div class="ms-header" id="ms-tone-header">Tất cả</div>
+              <div class="ms-dropdown" id="ms-tone-dropdown">
+                <input type="text" class="ms-search" id="ms-tone-search" placeholder="Tìm..." />
+                <div class="ms-options" id="ms-tone-options">
+                  <!-- Checkboxes JS -->
+                </div>
+              </div>
+            </div>
+          </th>
+<th>
             <div class="th-title" data-sort="enc">Mã Time <span class="sort-icon" id="sort-icon-enc"></span></div>
             <input type="text" id="filter-enc" class="col-filter" placeholder="Mã số..." />
           </th>

@@ -15,6 +15,18 @@ const allRhymes = [...new Set([...RHYMES_BASE, ...RHYMES_EXTRA_1, ...RHYMES_EXTR
 let selectedCons = new Set();
 let selectedRhymes = new Set();
 
+const TONE_NAMES = {
+  0: "Bằng",
+  1: "Sắc",
+  2: "Huyền",
+  3: "Hỏi",
+  4: "Ngã",
+  5: "Nặng"
+};
+const allTones = ["Bằng", "Sắc", "Huyền", "Hỏi", "Ngã", "Nặng"];
+let selectedTones = new Set();
+
+
 function removeAccents(str) {
   return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
 }
@@ -99,6 +111,7 @@ function initMultiSelect(containerId, dataList, selectedSet) {
 document.addEventListener('click', (e) => {
   if (!e.target.closest('#ms-cons')) document.getElementById('ms-cons').classList.remove('open');
   if (!e.target.closest('#ms-rhyme')) document.getElementById('ms-rhyme').classList.remove('open');
+  if (!e.target.closest('#ms-tone')) document.getElementById('ms-tone').classList.remove('open');
 });
 
 function init() {
@@ -106,6 +119,7 @@ function init() {
   const displayConsonants = [...allConsonants].reverse();
   initMultiSelect('ms-cons', displayConsonants, selectedCons);
   initMultiSelect('ms-rhyme', allRhymes, selectedRhymes);
+    initMultiSelect('ms-tone', allTones, selectedTones);
 
   // Build Data
   dictionaryData = REAL_VIETNAMESE_WORDS.map((word, idx) => {
@@ -120,6 +134,7 @@ function init() {
       b60,
       cons: ph.consonant,
       rhyme: ph.rhyme,
+        toneName: TONE_NAMES[ph.tone],
       tone: ph.tone
     };
   });
@@ -187,6 +202,7 @@ function applyFilters() {
     
     if (selectedCons.size > 0 && !selectedCons.has(item.cons)) return false;
     if (selectedRhymes.size > 0 && !selectedRhymes.has(item.rhyme)) return false;
+      if (selectedTones.size > 0 && !selectedTones.has(item.toneName)) return false;
     
     return true;
   });
@@ -232,6 +248,7 @@ function applyFilters() {
         b60,
         cons: ph.consonant,
         rhyme: ph.rhyme,
+        toneName: TONE_NAMES[ph.tone],
         tone: ph.tone
       };
       
@@ -271,6 +288,7 @@ function renderTable() {
       <td style="font-weight:bold; color: ${isInvalid ? '#f00' : '#fff'};">${item.word}</td>
       <td style="color: #888;">${item.cons || '-'}</td>
       <td style="color: #888;">${item.rhyme}</td>
+        <td style="color: #888;">${item.toneName || '-'}</td>
       <td style="color: ${isInvalid ? '#f00' : '#ff0'}; font-weight:bold;">${item.enc}</td>
       <td style="color: ${isInvalid ? '#f00' : '#0f0'}; font-weight:bold;">${item.b60}</td>
     `;

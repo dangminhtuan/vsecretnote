@@ -351,13 +351,6 @@ function syncFromCompressedContinuous() {
     chunks.push(val.substring(i, i + 3));
   }
   
-if (txtCVNSS4) {
-  txtCVNSS4.addEventListener('input', () => {
-    syncFromCVNSS4();
-    logActivity({ type: 'edit', field: 'cvnss4' });
-  });
-}
-
   if (txtCompressed) {
     txtCompressed.value = chunks.join(' ');
     syncFromCompressed();
@@ -571,7 +564,15 @@ function syncFromTime5() {
   syncFromTime();
 }
 
-if (txtDecrypted) txtDecrypted.addEventListener('input', syncFromDecrypted);
+
+  if (txtCVNSS4) {
+    txtCVNSS4.addEventListener('input', () => {
+      syncFromCVNSS4();
+      logActivity({ type: 'edit', field: 'cvnss4' });
+    });
+  }
+
+  if (txtDecrypted) txtDecrypted.addEventListener('input', syncFromDecrypted);
 if (txtEncrypted) txtEncrypted.addEventListener('input', syncFromTime);
 if (txtCompressed) txtCompressed.addEventListener('input', syncFromCompressed);
 if (txtFakeViet) txtFakeViet.addEventListener('input', syncFromFakeViet);
