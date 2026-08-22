@@ -25,7 +25,8 @@
           </div>
 </div>
       <div id="sandbox-actions" style="display: none; position: fixed; top: 10px; right: 10px; left: auto; z-index: 9999; gap: 5px; transform: scale(0.7); transform-origin: top right; align-items: center;">
-        <button id="btn-sandbox-clear" class="cyber-btn" style="border-color: #ffaa00; color: #ffaa00; background: #000; cursor: pointer; padding: 4px 10px; letter-spacing: 1px; white-space: nowrap; line-height: 1.3; text-align: center;"><span style="display:block;font-size:0.85em;">[DEL]</span><span style="display:block;font-size:0.75em;">CLEAR</span></button>
+        <button id="btn-multi-copy" class="cyber-btn" style="border-color: #0ff; color: #0ff; background: #000; cursor: pointer; padding: 4px 10px; letter-spacing: 1px; white-space: nowrap; line-height: 1.3; text-align: center;"><span style="display:block;font-size:0.85em;">[m^C]</span><span style="display:block;font-size:0.75em;">BATCH</span></button>
+          <button id="btn-sandbox-clear" class="cyber-btn" style="border-color: #ffaa00; color: #ffaa00; background: #000; cursor: pointer; padding: 4px 10px; letter-spacing: 1px; white-space: nowrap; line-height: 1.3; text-align: center;"><span style="display:block;font-size:0.85em;">[DEL]</span><span style="display:block;font-size:0.75em;">CLEAR</span></button>
         <button id="btn-copy-b60" class="cyber-btn" style="display: none !important; border-color: #555; color: #555; background: #000; cursor: not-allowed; padding: 4px 10px; letter-spacing: 1px; white-space: nowrap; line-height: 1.3; text-align: center;" disabled><span style="display:block;font-size:0.85em;">[ ]</span><span style="display:block;font-size:0.75em;">EMPTY</span></button>
         <button id="btn-exit-sandbox" class="cyber-btn" style="border-color: #f00; color: #f00; background: #000; cursor: pointer; padding: 4px 10px; letter-spacing: 1px; white-space: nowrap; line-height: 1.3; text-align: center;"><span style="display:block;font-size:0.85em;">[ESC]</span><span style="display:block;font-size:0.75em;">EXIT</span></button>
       </div>
@@ -128,9 +129,11 @@
           <!-- Text Decrypted -->
           <div class="input-group">
             <div class="label-row">
-              <label for="text-input">TEXT DECRYPTED [VI/EN] <span id="compression-stats" style="color:#0f0; font-size:12px; font-weight:normal; margin-left:10px;"></span></label>
+              <label for="text-input">TEXT DECRYPTED [VI/EN]</label>
               </div>
             <textarea id="text-input" placeholder="Nhập văn bản cần mã hóa..." spellcheck="false"></textarea>
+              
+
           </div>
           
           <div class="controls">
@@ -171,7 +174,24 @@
             <textarea id="fake-viet-input" placeholder="Mã giả Việt (♰...♰)" spellcheck="false"></textarea>
           </div>
 
-          <!-- Time Encrypted -->
+          
+            <!-- Tiếng Việt camelCase -->
+            <div class="input-group">
+              <div class="label-row">
+                <label for="camel-case-input">TIẾNG VIỆT CAMELCASE [TAG]</label>
+              </div>
+              <textarea id="camel-case-input" placeholder="víDụNhưThếNày..." spellcheck="false"></textarea>
+            </div>
+  
+            <!-- Tiếng Việt Không Dấu Liền -->
+            <div class="input-group">
+              <div class="label-row">
+                <label for="no-accent-input">KHÔNG DẤU LIỀN [TAG]</label>
+              </div>
+              <textarea id="no-accent-input" placeholder="vidunhuthenay..." spellcheck="false"></textarea>
+            </div>
+
+            <!-- Time Encrypted -->
           <div class="input-group">
             <div class="label-row">
               <label for="time-input">TIME ENCRYPTED [HH:MM:SS]</label>

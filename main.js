@@ -67,7 +67,106 @@ function getUtf8ByteLength(str) {
   return new Blob([str]).size;
 }
 
+
+
+function toCamelCase(str) {
+  if (!str) return '';
+  return str.trim().split(/\s+/)
+    .map((word, index) => {
+      if (index === 0) return word.toLowerCase();
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
+    .join('');
+}
+
+function toNoAccentContinuous(str) {
+  if (!str) return '';
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+    .replace(/\s+/g, '').toLowerCase();
+}
+
 function updateCompressionStats() {
+  const rawText = txtDecrypted ? txtDecrypted.value : '';
+  const rawBytes = getUtf8ByteLength(rawText);
+  
+  const groups = document.querySelectorAll('.input-group');
+  groups.forEach(group => {
+    const ta = group.querySelector('textarea');
+    if (!ta) return;
+    
+    let barContainer = group.querySelector('.mini-byte-bar-container');
+    if (!barContainer) {
+      barContainer = document.createElement('div');
+      barContainer.className = 'mini-byte-bar-container';
+      barContainer.style.cssText = 'display: flex; align-items: center; gap: 10px; margin-top: 5px; font-size: 11px; font-family: monospace; padding: 0 4px;';
+      
+      const textSpan = document.createElement('span');
+      textSpan.className = 'm-byte-text';
+      textSpan.style.color = '#888';
+      textSpan.style.minWidth = '80px';
+      
+      const barWrapper = document.createElement('div');
+      barWrapper.style.cssText = 'flex: 1; height: 3px; background: #222; border-radius: 1px; overflow: hidden;';
+      
+      const barFill = document.createElement('div');
+      barFill.className = 'm-byte-fill';
+      barFill.style.cssText = 'width: 0%; height: 100%; transition: width 0.3s ease, background 0.3s ease;';
+      
+      barWrapper.appendChild(barFill);
+      barContainer.appendChild(barWrapper);
+      barContainer.appendChild(textSpan);
+      
+      // append right after the label-row, or inside it? Inside label-row is cleaner
+      const labelRow = group.querySelector('.label-row');
+      if (labelRow) {
+         barContainer.style.marginTop = '0';
+         barContainer.style.flex = '1';
+         barContainer.style.justifyContent = 'flex-end';
+         labelRow.appendChild(barContainer);
+      } else {
+         group.appendChild(barContainer);
+      }
+    }
+    
+    const textSpan = barContainer.querySelector('.m-byte-text');
+    const barFill = barContainer.querySelector('.m-byte-fill');
+    
+    let currentBytes = 0;
+    if (ta.id === 'text-input') {
+      currentBytes = rawBytes;
+    } else if (ta.id.includes('compressed')) {
+      currentBytes = getUtf8ByteLength(ta.value.replace(/\s+/g, ''));
+    } else {
+      currentBytes = getUtf8ByteLength(ta.value);
+    }
+    
+    if (rawBytes === 0) {
+      textSpan.textContent = currentBytes > 0 ? currentBytes + ' B' : '';
+      barFill.style.width = '0%';
+      return;
+    }
+    
+    const pct = Math.round((currentBytes / rawBytes) * 100);
+    textSpan.textContent = \/\B=\%\;
+    
+    if (ta.id === 'text-input') {
+      barFill.style.background = '#888';
+      barFill.style.width = '100%';
+    } else if (pct < 100) {
+      barFill.style.background = '#0f0'; // Green
+      barFill.style.width = Math.min(100, pct) + '%';
+    } else if (pct === 100) {
+      barFill.style.background = '#aa0'; // Yellow
+      barFill.style.width = '100%';
+    } else {
+      barFill.style.background = '#f00'; // Red
+      barFill.style.width = '100%'; 
+    }
+  });
+}
+
+function _oldUpdateCompressionStats() {
   const statsEl = document.getElementById('compression-stats');
   if (!statsEl) return;
   const rawText = txtDecrypted ? txtDecrypted.value : '';
@@ -585,6 +684,49 @@ function setupCopyClear(idBtn, idClear, targetInput) {
 // setupCopyClear('btn-copy-compressed', 'btn-clear-compressed', txtCompressed);
 // setupCopyClear('btn-copy-fake', 'btn-clear-fake', txtFakeViet);
 // setupCopyClear('btn-copy-time5', 'btn-clear-time5', txtTime5);
+
+
+let multiCopyMode = false;
+let multiCopyText = [];
+
+const btnMultiCopy = document.getElementById('btn-multi-copy');
+if (btnMultiCopy) {
+  btnMultiCopy.addEventListener('click', () => {
+    multiCopyMode = !multiCopyMode;
+    if (multiCopyMode) {
+      btnMultiCopy.style.boxShadow = '0 0 10px #0ff';
+      btnMultiCopy.style.background = '#022';
+      multiCopyText = [];
+      if(typeof showToast === 'function') showToast('BATCH COPY MODE: ON');
+    } else {
+      btnMultiCopy.style.boxShadow = 'none';
+      btnMultiCopy.style.background = '#000';
+      multiCopyText = [];
+      if(typeof showToast === 'function') showToast('BATCH COPY MODE: OFF');
+    }
+  });
+}
+
+function handleInputClickForCopy(e) {
+  if (!multiCopyMode) return;
+  const val = e.target.value.trim();
+  if (val) {
+    multiCopyText.push(val);
+    const textToCopy = multiCopyText.join(' ');
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      if(typeof showToast === 'function') {
+        showToast('Đã copy: ' + textToCopy);
+      }
+    });
+  }
+}
+
+['text-input', 'compressed-input', 'compressed-continuous-input', 'cvnss4-input', 'fake-viet-input', 'time-input', 'time5-input'].forEach(id => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.addEventListener('click', handleInputClickForCopy);
+  }
+});
 
 // --- NOTE APP LOGIC ---
 let notesDB = JSON.parse(localStorage.getItem('timecypher_notes') || '[]');
