@@ -62,6 +62,33 @@ const btnClearCompressed = document.getElementById('btn-clear-compressed');
 
 const breakdownList = document.getElementById('breakdown-list');
 
+
+function getUtf8ByteLength(str) {
+  return new Blob([str]).size;
+}
+
+function updateCompressionStats() {
+  const statsEl = document.getElementById('compression-stats');
+  if (!statsEl) return;
+  const rawText = txtDecrypted ? txtDecrypted.value : '';
+  const compText = txtCompressedContinuous ? txtCompressedContinuous.value : (txtCompressed ? txtCompressed.value.replace(/\s+/g, '') : '');
+  
+  if (!rawText.trim() || !compText.trim()) {
+    statsEl.textContent = '';
+    return;
+  }
+  
+  const rawBytes = getUtf8ByteLength(rawText);
+  const compBytes = getUtf8ByteLength(compText); // Base60 is 1 byte per char
+  
+  if (rawBytes === 0) return;
+  
+  const saved = rawBytes - compBytes;
+  const ratio = Math.round((saved / rawBytes) * 100);
+  
+  statsEl.textContent = `| Tiết kiệm: ${ratio}% (${rawBytes}B -> ${compBytes}B)`;
+}
+
 function renderBreakdown(pairs) {
   if (typeof updateContinuousBox === 'function') updateContinuousBox();
   if (!breakdownList) return;

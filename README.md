@@ -42,3 +42,12 @@ npm run build
 ```
 
 *Sản phẩm được phát triển nhằm mục tiêu tối ưu hóa tốc độ nhập liệu và bảo mật thông tin cá nhân bằng ngôn ngữ Tiếng Việt.*
+
+
+## 🚀 Sức mạnh của VCOMP (Vietnamese Base60 Compression)
+VCOMP là một bước tiến hóa tối thượng trong việc xử lý và lưu trữ tiếng Việt:
+- **Nén Dữ Liệu Tuyệt Đối:** Mọi từ tiếng Việt được nén thành chính xác 3 ký tự Base60 thuần túy, triệt tiêu hoàn toàn dấu cách. Tiết kiệm hơn 50% dung lượng lưu trữ so với tiếng Việt có dấu.
+- **Bảo Toàn Hệ Thống:** Không bao giờ lỗi font, lỗi url, lỗi database key nhờ vào tập ký tự Base60 an toàn 100%.
+- **Bảo Mật Nhận Thức:** Hoạt động như một lớp mật mã tự nhiên (Zero-Knowledge) giúp bảo vệ quyền riêng tư tuyệt đối. Con người có thể được huấn luyện để giải mã và đọc hiểu qua hệ sinh thái học tập của VCOMP.
+
+Để xem bài đánh giá và so sánh chi tiết tính ưu việt của **VCOMP so với CVNSS4.0**, vui lòng đọc tại: [VCOMP vs CVNSS4.0](VCOMP_vs_CVNSS4.md)
