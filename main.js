@@ -148,7 +148,7 @@ function updateCompressionStats() {
     }
     
     const pct = Math.round((currentBytes / rawBytes) * 100);
-    textSpan.textContent = \/\B=\%\;
+    textSpan.textContent = `${currentBytes}/${rawBytes}B=${pct}%`;
     
     if (ta.id === 'text-input') {
       barFill.style.background = '#888';
@@ -2223,19 +2223,19 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
       const currentCode = String(d.getHours()).padStart(2, '0') + String(d.getMinutes()).padStart(2, '0');
       
       // Nếu đang là 🤍 (trái tim) => Tính giờ thiêng gần nhất trong TƯƠNG LAI
-      if (display.innerHTML.includes('🤍') || !HOLY_HOUR_CODES[targetCode]) {
-         const futureTimes = Object.keys(HOLY_HOUR_CODES).sort();
-         const nextTime = futureTimes.find(t => t > currentCode) || futureTimes[0];
-         targetCode = nextTime;
-         // Tạm hiển thị giờ tương lai lên nút
-         display.dataset.timecode = targetCode;
-         display.innerHTML = `<span style="font-size:11px;color:#0f0;font-weight:bold;">🤍 ${targetCode.substring(0,2)}:${targetCode.substring(2)}=?</span>`;
-      } else {
-         display.innerHTML = `<span style="font-size:11px;color:#ff0;font-weight:bold;">⚡ ${targetCode.substring(0,2)}:${targetCode.substring(2)}=?</span>`;
-      }
-
-      // Mở quiz
-      const correctFullCode = HOLY_HOUR_CODES[targetCode];
+              // Nếu đang là trái tim => Tính giờ thiêng gần nhất
+        if (display.innerHTML.includes('dY ?') || !targetCode) {
+           const futureTimes = Object.keys(HOLY_HOUR_CODES).sort();
+           const nextTime = futureTimes.find(t => t > currentCode) || futureTimes[0];
+           targetCode = nextTime;
+           display.dataset.timecode = targetCode;
+           display.innerHTML = `<span style="font-size:11px;color:#0f0;font-weight:bold;">dY ? ${targetCode.substring(0,2)}:${targetCode.substring(2)}=?</span>`;
+        } else {
+           display.innerHTML = `<span style="font-size:11px;color:#ff0;font-weight:bold;">⭐ ${targetCode.substring(0,2)}:${targetCode.substring(2)}=?</span>`;
+        }
+  
+        // Mở quiz
+        const correctFullCode = typeof HOLY_HOUR_CODES !== 'undefined' && HOLY_HOUR_CODES[targetCode] ? HOLY_HOUR_CODES[targetCode] : targetCode + '00';
       const correctB60 = timeToBase60(correctFullCode);
       const wrongB60 = generateWrongAnswers(correctB60);
       const options = [correctB60, ...wrongB60].sort(() => Math.random() - 0.5);
