@@ -37,31 +37,45 @@
     .ms-option input { cursor: pointer; margin: 0; }
     
     /* Column widths */
-    th:nth-child(1) { width: 80px; }
-    th:nth-child(2) { width: 20%; }
-    th:nth-child(3) { width: 12%; }
-    th:nth-child(4) { width: 12%; }
-    th:nth-child(5) { width: 12%; }
-    th:nth-child(6) { width: 120px; }
-    th:nth-child(7) { width: 120px; }
+    th:nth-child(1) { width: 65px; }
+    th:nth-child(2) { width: 18%; }
+    th:nth-child(3) { width: 10%; }
+    th:nth-child(4) { width: 18%; }
+    th:nth-child(5) { width: 16%; }
+    th:nth-child(6) { width: 105px; }
+    th:nth-child(7) { width: 105px; }
 
     /* Responsive text */
     .txt-full { display: inline; }
     .txt-short { display: none; }
     
     @media (max-width: 768px) {
+      body { padding: 10px 4px; }
       .txt-full { display: none; }
       .txt-short { display: inline; }
-      th:nth-child(1) { width: 60px; }
-      th:nth-child(6), th:nth-child(7) { width: 90px; }
+      table { font-size: 11px; }
+      td { padding: 6px 2px; }
+      th { padding: 6px 2px; }
+      th:nth-child(1) { width: 36px; }
+      th:nth-child(2) { width: 18%; }
+      th:nth-child(3) { width: 9%; }
+      th:nth-child(4) { width: 17%; }
+      th:nth-child(5) { width: 18%; }
+      th:nth-child(6) { width: 66px; }
+      th:nth-child(7) { width: 52px; }
+      .col-filter { font-size: 10px; padding: 2px; }
+      .ms-header { font-size: 10px; padding: 2px; }
     }
   </style>
 </head>
 <body>
   <div class="dict-container">
-    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 8px;">
       <h1 class="glitch" data-text="DICTIONARY">DICTIONARY</h1>
-      <a href="/" class="cyber-btn" style="text-decoration:none;">&larr; BACK TO APP</a>
+      <div style="display: flex; gap: 8px;">
+        <a href="/matrix.html" class="cyber-btn" style="text-decoration:none; color: #ff0; border-color: #ff0;">▦ MATRIX</a>
+        <a href="/" class="cyber-btn" style="text-decoration:none;">&larr; BACK TO APP</a>
+      </div>
     </header>
 
     <div class="stat-bar" id="stat-bar">Đang tải...</div>

@@ -117,16 +117,11 @@ function updateCompressionStats() {
       barContainer.appendChild(barWrapper);
       barContainer.appendChild(textSpan);
       
-      // append right after the label-row, or inside it? Inside label-row is cleaner
-      const labelRow = group.querySelector('.label-row');
-      if (labelRow) {
-         barContainer.style.marginTop = '0';
-         barContainer.style.flex = '1';
-         barContainer.style.justifyContent = 'flex-end';
-         labelRow.appendChild(barContainer);
-      } else {
-         group.appendChild(barContainer);
-      }
+      // Always append below the textarea
+      barContainer.style.marginTop = '2px';
+      barContainer.style.marginBottom = '8px';
+      barContainer.style.justifyContent = 'flex-end';
+      group.insertBefore(barContainer, ta.nextSibling);
     }
     
     const textSpan = barContainer.querySelector('.m-byte-text');
@@ -225,7 +220,9 @@ function syncFromDecrypted() {
     if (txtDecrypted) txtDecrypted.value = '';
     if (txtEncrypted) txtEncrypted.value = '';
     if (txtCompressed) txtCompressed.value = '';
-    if (txtFakeViet) txtFakeViet.value = '';
+          if (txtFakeViet) txtFakeViet.value = '';
+      if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = '';
+      if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = '';
     if (txtTime5) txtTime5.value = '';
     if (txtCompressedContinuous) txtCompressedContinuous.value = '';
     if (txtCVNSS4) txtCVNSS4.value = '';
@@ -265,6 +262,10 @@ function syncFromDecrypted() {
   if(txtCVNSS4) txtCVNSS4.value = cvnss4Parts.join('');
   
   if(txtFakeViet) txtFakeViet.value = toFakeViet(text);
+  
+  if(document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = typeof toCamelCase === 'function' ? toCamelCase(txtDecrypted ? txtDecrypted.value : '') : '';
+  
+  if(document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = typeof toNoAccentContinuous === 'function' ? toNoAccentContinuous(txtDecrypted ? txtDecrypted.value : '') : '';
   if(txtTime5) txtTime5.value = timeTo5Digit(encryptedParts.join(''));
 
   renderBreakdown(breakdownPairs);
@@ -277,7 +278,9 @@ function syncFromTime() {
     if (txtDecrypted) txtDecrypted.value = '';
     if (txtEncrypted) txtEncrypted.value = '';
     if (txtCompressed) txtCompressed.value = '';
-    if (txtFakeViet) txtFakeViet.value = '';
+          if (txtFakeViet) txtFakeViet.value = '';
+      if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = '';
+      if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = '';
     if (txtTime5) txtTime5.value = '';
     if (txtCompressedContinuous) txtCompressedContinuous.value = '';
     if (txtCVNSS4) txtCVNSS4.value = '';
@@ -318,6 +321,10 @@ function syncFromTime() {
   if(txtCVNSS4) txtCVNSS4.value = cvnss4Parts.join('');
 
   if(txtFakeViet) txtFakeViet.value = toFakeViet(txtDecrypted.value);
+
+  if(document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = typeof toCamelCase === 'function' ? toCamelCase(txtDecrypted ? txtDecrypted.value : '') : '';
+
+  if(document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = typeof toNoAccentContinuous === 'function' ? toNoAccentContinuous(txtDecrypted ? txtDecrypted.value : '') : '';
   if(txtTime5) txtTime5.value = timeTo5Digit(text);
 
   renderBreakdown(breakdownPairs);
@@ -340,7 +347,9 @@ function syncFromCompressedContinuous() {
     if (txtDecrypted) txtDecrypted.value = '';
     if (txtEncrypted) txtEncrypted.value = '';
     if (txtCompressed) txtCompressed.value = '';
-    if (txtFakeViet) txtFakeViet.value = '';
+          if (txtFakeViet) txtFakeViet.value = '';
+      if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = '';
+      if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = '';
     if (txtTime5) txtTime5.value = '';
     renderBreakdown([]);
     return;
@@ -364,7 +373,9 @@ function syncFromCVNSS4() {
     if (txtDecrypted) txtDecrypted.value = '';
     if (txtEncrypted) txtEncrypted.value = '';
     if (txtCompressed) txtCompressed.value = '';
-    if (txtFakeViet) txtFakeViet.value = '';
+          if (txtFakeViet) txtFakeViet.value = '';
+      if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = '';
+      if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = '';
     if (txtTime5) txtTime5.value = '';
     if (txtCompressedContinuous) txtCompressedContinuous.value = '';
     renderBreakdown([]);
@@ -407,7 +418,11 @@ function syncFromCVNSS4() {
   if (txtEncrypted) txtEncrypted.value = allTimeParts.join('');
   if (txtCompressed) txtCompressed.value = allCompressedParts.join('');
   
-  if (txtFakeViet) txtFakeViet.value = typeof toFakeViet === 'function' ? toFakeViet(txtDecrypted.value) : '';
+  if(txtFakeViet) txtFakeViet.value = typeof toFakeViet === 'function' ? toFakeViet(txtDecrypted.value) : '';
+  
+  if(document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = typeof toCamelCase === 'function' ? toCamelCase(txtDecrypted ? txtDecrypted.value : '') : '';
+  
+  if(document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = typeof toNoAccentContinuous === 'function' ? toNoAccentContinuous(txtDecrypted ? txtDecrypted.value : '') : '';
   if (txtTime5) txtTime5.value = typeof timeTo5Digit === 'function' ? timeTo5Digit(txtEncrypted.value) : '';
   if (txtCompressedContinuous) txtCompressedContinuous.value = txtCompressed ? txtCompressed.value.replace(/\s+/g, '') : '';
   
@@ -423,7 +438,9 @@ function syncFromCompressed() {
     if (txtDecrypted) txtDecrypted.value = '';
     if (txtEncrypted) txtEncrypted.value = '';
     if (txtCompressed) txtCompressed.value = '';
-    if (txtFakeViet) txtFakeViet.value = '';
+          if (txtFakeViet) txtFakeViet.value = '';
+      if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = '';
+      if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = '';
     if (txtTime5) txtTime5.value = '';
     if (txtCompressedContinuous) txtCompressedContinuous.value = '';
     if (txtCVNSS4) txtCVNSS4.value = '';
@@ -471,6 +488,10 @@ function syncFromCompressed() {
   txtDecrypted.value = allDecryptedParts.join('');
 
   if(txtFakeViet) txtFakeViet.value = toFakeViet(txtDecrypted.value);
+
+  if(document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = typeof toCamelCase === 'function' ? toCamelCase(txtDecrypted ? txtDecrypted.value : '') : '';
+
+  if(document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = typeof toNoAccentContinuous === 'function' ? toNoAccentContinuous(txtDecrypted ? txtDecrypted.value : '') : '';
   if(txtTime5) txtTime5.value = timeTo5Digit(txtEncrypted.value);
 
   renderBreakdown(allBreakdownPairs);
@@ -755,48 +776,199 @@ function setupCopyClear(idBtn, idClear, targetInput) {
 
 
 let multiCopyMode = false;
-let multiCopyText = [];
+let multiCopySelected = []; // [{id, label, val}]
 
+const MXC_FIELDS = [
+  { id: 'text-input',                  label: 'TEXT gốc'       },
+  { id: 'compressed-continuous-input', label: 'Nén liên tiếp'  },
+  { id: 'compressed-input',            label: 'BASE60'          },
+  { id: 'cvnss4-input',                label: 'CVNSS4'          },
+  { id: 'fake-viet-input',             label: 'Fake Viet'       },
+  { id: 'camel-case-input',            label: 'camelCase'       },
+  { id: 'no-accent-input',             label: 'Không dấu'       },
+  { id: 'time-input',                  label: 'TIME'            },
+  { id: 'time-5-input',                label: 'TIME-5'          },
+];
+
+const mxcSheet   = document.getElementById('mxc-sheet');
+const mxcItems   = document.getElementById('mxc-items');
+const mxcCount   = document.getElementById('mxc-count');
+const mxcDoCopy  = document.getElementById('mxc-do-copy');
+const mxcCancel  = document.getElementById('mxc-cancel');
 const btnMultiCopy = document.getElementById('btn-multi-copy');
+
+function mxcUpdateCount() {
+  if (mxcCount) mxcCount.textContent = multiCopySelected.length > 0 ? multiCopySelected.length + ' đã chọn' : '';
+}
+
+function mxcOpenSheet() {
+  if (!mxcSheet || !mxcItems) return;
+  multiCopySelected = [];
+  mxcItems.innerHTML = '';
+
+  MXC_FIELDS.forEach(({ id, label }) => {
+    const el = document.getElementById(id);
+    const val = el ? el.value.trim() : '';
+    const hasVal = !!val;
+
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex; align-items:center; gap:6px; padding:6px 8px; border:1px solid #0f0; border-radius:4px; user-select:none; background:#000;';
+    row.dataset.id = id;
+
+    // --- Left badge (plain text) ---
+    const badgeLeft = document.createElement('span');
+    badgeLeft.className = 'mxc-badge-plain';
+    badgeLeft.dataset.mode = 'plain';
+    badgeLeft.dataset.fieldId = id;
+    badgeLeft.style.cssText = 'width:22px; height:22px; border:1px solid ' + (hasVal ? '#0f0' : '#333') + '; border-radius:3px; display:flex; align-items:center; justify-content:center; font-family:monospace; font-size:11px; color:#0f0; flex-shrink:0; cursor:' + (hasVal ? 'pointer' : 'default') + ';';
+    badgeLeft.textContent = '';
+
+    // --- Label ---
+    const labelSpan = document.createElement('span');
+    labelSpan.style.cssText = 'font-family:monospace; font-size:11px; color:' + (hasVal ? '#0f0' : '#333') + '; flex-shrink:0; min-width:85px;';
+    labelSpan.textContent = label;
+
+    // --- Preview ---
+    const preview = document.createElement('span');
+    preview.style.cssText = 'font-family:monospace; font-size:10px; color:' + (hasVal ? '#666' : '#333') + '; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;';
+    preview.textContent = val || '(trống)';
+
+    // --- Right badge (hashtag) ---
+    const badgeRight = document.createElement('span');
+    badgeRight.className = 'mxc-badge-hash';
+    badgeRight.dataset.mode = 'hash';
+    badgeRight.dataset.fieldId = id;
+    badgeRight.style.cssText = 'width:22px; height:22px; border:1px solid ' + (hasVal ? '#0f0' : '#333') + '; border-radius:3px; display:flex; align-items:center; justify-content:center; font-family:monospace; font-size:11px; color:#0f0; flex-shrink:0; cursor:' + (hasVal ? 'pointer' : 'default') + '; flex-direction:column; line-height:1;';
+    badgeRight.innerHTML = hasVal ? '<span style="font-size:8px;color:#888">#</span>' : '';
+
+    row.appendChild(badgeLeft);
+    row.appendChild(labelSpan);
+    row.appendChild(preview);
+    row.appendChild(badgeRight);
+
+    if (hasVal) {
+      // Helper: toggle a specific slot (plain or hash)
+      const toggleSlot = (mode, badge) => {
+        const slotId = id + '::' + mode;
+        const outVal = mode === 'hash' ? '#' + val : val;
+        const idx = multiCopySelected.findIndex(s => s.slotId === slotId);
+        if (idx !== -1) {
+          multiCopySelected.splice(idx, 1);
+          badge.style.background = 'transparent';
+          badge.style.color = '#0f0';
+          badge.style.border = '1px solid #0f0';
+          badge.textContent = mode === 'hash' ? '' : '';
+          if (mode === 'hash') badge.innerHTML = '<span style="font-size:8px;color:#888">#</span>';
+        } else {
+          multiCopySelected.push({ slotId, id, mode, val: outVal });
+          const order = multiCopySelected.length;
+          badge.style.background = mode === 'hash' ? '#f0a' : '#0ff';
+          badge.style.color = '#000';
+          badge.style.border = '1px solid ' + (mode === 'hash' ? '#f0a' : '#0ff');
+          badge.textContent = order;
+        }
+        mxcUpdateCount();
+        mxcRefreshBadges();
+      };
+
+      badgeLeft.addEventListener('click', (e) => { e.stopPropagation(); toggleSlot('plain', badgeLeft); });
+      badgeRight.addEventListener('click', (e) => { e.stopPropagation(); toggleSlot('hash', badgeRight); });
+
+      // Click on label/preview area → toggle plain (convenience)
+      labelSpan.style.cursor = 'pointer';
+      preview.style.cursor = 'pointer';
+      labelSpan.addEventListener('click', () => toggleSlot('plain', badgeLeft));
+      preview.addEventListener('click', () => toggleSlot('plain', badgeLeft));
+    }
+
+    mxcItems.appendChild(row);
+  });
+
+  mxcSheet.style.display = 'block';
+  mxcUpdateCount();
+}
+
+function mxcRefreshBadges() {
+  // Re-number all selected badges in order
+  document.querySelectorAll('.mxc-badge-plain, .mxc-badge-hash').forEach(badge => {
+    const id = badge.dataset.fieldId;
+    const mode = badge.dataset.mode;
+    const slotId = id + '::' + mode;
+    const idx = multiCopySelected.findIndex(s => s.slotId === slotId);
+    if (idx !== -1) {
+      badge.textContent = idx + 1;
+      badge.style.background = mode === 'hash' ? '#f0a' : '#0ff';
+      badge.style.color = '#000';
+    } else {
+      badge.style.background = 'transparent';
+      badge.style.color = '#0f0';
+      if (mode === 'hash') badge.innerHTML = '<span style="font-size:8px;color:#888">#</span>';
+      else badge.textContent = '';
+    }
+  });
+}
+
+
+function mxcCloseSheet() {
+  if (mxcSheet) mxcSheet.style.display = 'none';
+  multiCopySelected = [];
+  if (btnMultiCopy) {
+    btnMultiCopy.style.boxShadow = 'none';
+    btnMultiCopy.style.background = '#000';
+  }
+  multiCopyMode = false;
+}
+
 if (btnMultiCopy) {
   btnMultiCopy.addEventListener('click', () => {
     multiCopyMode = !multiCopyMode;
     if (multiCopyMode) {
       btnMultiCopy.style.boxShadow = '0 0 10px #0ff';
       btnMultiCopy.style.background = '#022';
-      multiCopyText = [];
-      if(typeof showToast === 'function') showToast('BATCH COPY MODE: ON');
+      mxcOpenSheet();
     } else {
-      btnMultiCopy.style.boxShadow = 'none';
-      btnMultiCopy.style.background = '#000';
-      multiCopyText = [];
-      if(typeof showToast === 'function') showToast('BATCH COPY MODE: OFF');
+      mxcCloseSheet();
     }
   });
 }
 
-function handleInputClickForCopy(e) {
-  if (!multiCopyMode) return;
-  const val = e.target.value.trim();
-  if (val) {
-    multiCopyText.push(val);
-    const textToCopy = multiCopyText.join(' ');
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      if(typeof showToast === 'function') {
-        showToast('Đã copy: ' + textToCopy);
-      }
-    });
-  }
+if (mxcCancel) {
+  mxcCancel.addEventListener('click', () => mxcCloseSheet());
 }
 
-['text-input', 'compressed-input', 'compressed-continuous-input', 'cvnss4-input', 'fake-viet-input', 'time-input', 'time5-input'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) {
-    el.addEventListener('click', handleInputClickForCopy);
-  }
-});
+if (mxcDoCopy) {
+  mxcDoCopy.addEventListener('click', () => {
+    if (multiCopySelected.length === 0) {
+      if (typeof showEXPToast === 'function') showEXPToast('Chưa chọn ô nào!');
+      return;
+    }
+    const text = multiCopySelected.map(s => s.val).join(' ');
+    const doCopy = () => {
+      if (typeof showEXPToast === 'function') showEXPToast('✓ Đã copy ' + multiCopySelected.length + ' mục!');
+      mxcCloseSheet();
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(doCopy).catch(() => {
+        const ta = document.createElement('textarea');
+        ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;';
+        document.body.appendChild(ta); ta.focus(); ta.select();
+        try { document.execCommand('copy'); } catch(e){}
+        document.body.removeChild(ta);
+        doCopy();
+      });
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try { document.execCommand('copy'); } catch(e){}
+      document.body.removeChild(ta);
+      doCopy();
+    }
+  });
+}
 
 // --- NOTE APP LOGIC ---
+
 let notesDB = JSON.parse(localStorage.getItem('timecypher_notes') || '[]');
 notesDB.forEach(n => {
   if (n.linkedNoteId) {
@@ -907,6 +1079,19 @@ const notesList = document.getElementById('notes-list');
 const tabBtns = document.querySelectorAll('.tab-btn');
 const btnArchiveNote = document.getElementById('btn-archive-note');
 const btnDeleteNote = document.getElementById('btn-delete-note');
+
+window.showToast = function(msg) {
+  const container = document.getElementById('exp-toast-container');
+  if (!container) return;
+  const toast = document.createElement('div');
+  toast.className = 'exp-toast';
+  toast.textContent = msg;
+  toast.style.color = '#0ff';
+  toast.style.borderColor = '#0ff';
+  toast.style.backgroundColor = 'rgba(0, 50, 50, 0.9)';
+  container.appendChild(toast);
+  setTimeout(() => { toast.remove(); }, 2000);
+};
 
 function enterSandboxMode(silent = false) {
   document.body.classList.add('sandbox-mode');
@@ -2580,11 +2765,14 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
         
         ctxMenu.style.display = 'flex';
         // Position it near the top-right of the textarea, accounting for scroll
-        const topPos = rect.top + window.scrollY - 40; // a bit above
+        let topPos = rect.top + window.scrollY - 45; // a bit above
+        if (rect.top < 60) {
+          topPos = rect.bottom + window.scrollY + 8;
+        }
         let leftPos = rect.right + window.scrollX - ctxMenu.offsetWidth;
         if (leftPos < 0) leftPos = rect.left + window.scrollX;
         
-        ctxMenu.style.top = Math.max(10, topPos) + 'px';
+        ctxMenu.style.top = topPos + 'px';
         ctxMenu.style.left = leftPos + 'px';
       });
     }

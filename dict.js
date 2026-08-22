@@ -16,14 +16,14 @@ let selectedCons = new Set();
 let selectedRhymes = new Set();
 
 const TONE_NAMES = {
-  0: "Bằng",
-  1: "Sắc",
-  2: "Huyền",
-  3: "Hỏi",
-  4: "Ngã",
-  5: "Nặng"
+  0: "=Bằng",
+  1: "✓Sắc",
+  2: "`Huyền",
+  3: "ˀHỏi",
+  4: "~Ngã",
+  5: "•Nặng"
 };
-const allTones = ["Bằng", "Sắc", "Huyền", "Hỏi", "Ngã", "Nặng"];
+const allTones = ["=Bằng", "✓Sắc", "`Huyền", "ˀHỏi", "~Ngã", "•Nặng"];
 let selectedTones = new Set();
 
 
@@ -106,6 +106,19 @@ function initMultiSelect(containerId, dataList, selectedSet) {
       }
     });
   });
+
+  return {
+    syncUI: () => {
+      optionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+        cb.checked = selectedSet.has(cb.value);
+      });
+      if (selectedSet.size === 0) {
+        header.textContent = 'Tất cả';
+      } else {
+        header.textContent = Array.from(selectedSet).join(', ') || 'Đã chọn';
+      }
+    }
+  };
 }
 
 document.addEventListener('click', (e) => {
@@ -117,9 +130,40 @@ document.addEventListener('click', (e) => {
 function init() {
   // Populate dropdowns
   const displayConsonants = [...allConsonants].reverse();
-  initMultiSelect('ms-cons', displayConsonants, selectedCons);
-  initMultiSelect('ms-rhyme', allRhymes, selectedRhymes);
-    initMultiSelect('ms-tone', allTones, selectedTones);
+  const msCons = initMultiSelect('ms-cons', displayConsonants, selectedCons);
+  const msRhyme = initMultiSelect('ms-rhyme', allRhymes, selectedRhymes);
+  const msTone = initMultiSelect('ms-tone', allTones, selectedTones);
+
+  // Check URL params from matrix.html or external links
+  const urlParams = new URLSearchParams(window.location.search);
+  const pRhyme = urlParams.get('rhyme');
+  const pTone = urlParams.get('tone');
+  const pConsGroup = urlParams.get('consGroup');
+  const pCons = urlParams.get('cons');
+
+  if (pRhyme && allRhymes.includes(pRhyme)) {
+    selectedRhymes.add(pRhyme);
+  }
+  if (pTone) {
+    if (TONE_NAMES[pTone]) {
+      selectedTones.add(TONE_NAMES[pTone]);
+    } else if (allTones.includes(pTone)) {
+      selectedTones.add(pTone);
+    }
+  }
+  if (pCons) {
+    pCons.split(',').forEach(c => {
+      if (allConsonants.includes(c)) selectedCons.add(c);
+    });
+  } else if (pConsGroup === 'extra') {
+    CONSONANTS_EXTRA.filter(c => c).forEach(c => selectedCons.add(c));
+  } else if (pConsGroup === 'base') {
+    CONSONANTS_BASE.filter(c => c !== null).forEach(c => selectedCons.add(c));
+  }
+
+  msCons.syncUI();
+  msRhyme.syncUI();
+  msTone.syncUI();
 
   // Build Data
   dictionaryData = REAL_VIETNAMESE_WORDS.map((word, idx) => {
@@ -225,8 +269,13 @@ function applyFilters() {
     let valA = a[sortCol];
     let valB = b[sortCol];
     
-    if (typeof valA === 'string') valA = valA.toLowerCase();
-    if (typeof valB === 'string') valB = valB.toLowerCase();
+    if (sortCol === 'toneName') {
+      valA = a.tone;
+      valB = b.tone;
+    } else {
+      if (typeof valA === 'string') valA = valA.toLowerCase();
+      if (typeof valB === 'string') valB = valB.toLowerCase();
+    }
     
     if (valA < valB) return sortAsc ? -1 : 1;
     if (valA > valB) return sortAsc ? 1 : -1;

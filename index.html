@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
   <head>
     <meta charset="UTF-8" />
@@ -30,6 +30,20 @@
         <button id="btn-copy-b60" class="cyber-btn" style="display: none !important; border-color: #555; color: #555; background: #000; cursor: not-allowed; padding: 4px 10px; letter-spacing: 1px; white-space: nowrap; line-height: 1.3; text-align: center;" disabled><span style="display:block;font-size:0.85em;">[ ]</span><span style="display:block;font-size:0.75em;">EMPTY</span></button>
         <button id="btn-exit-sandbox" class="cyber-btn" style="border-color: #f00; color: #f00; background: #000; cursor: pointer; padding: 4px 10px; letter-spacing: 1px; white-space: nowrap; line-height: 1.3; text-align: center;"><span style="display:block;font-size:0.85em;">[ESC]</span><span style="display:block;font-size:0.75em;">EXIT</span></button>
       </div>
+      
+      <!-- M^C Bottom Sheet -->
+      <div id="mxc-sheet" style="display:none; position:fixed; bottom:0; left:0; right:0; z-index:10000; background:#0a0a0a; border-top:2px solid #0ff; padding:10px 12px 20px; max-height:60vh; overflow-y:auto; box-shadow:0 -4px 20px rgba(0,255,255,0.3);">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <span style="color:#0ff; font-family:monospace; font-size:12px; font-weight:bold; letter-spacing:1px;">[ M^C ] CHỌN Ô → COPY</span>
+          <div style="display:flex; gap:6px; align-items:center;">
+            <span id="mxc-count" style="color:#0ff; font-family:monospace; font-size:11px;"></span>
+            <button id="mxc-do-copy" style="background:#0ff; color:#000; border:none; padding:5px 14px; font-family:monospace; font-weight:bold; border-radius:4px; cursor:pointer; font-size:12px; letter-spacing:1px;">COPY</button>
+            <button id="mxc-cancel" style="background:#000; color:#f00; border:1px solid #f00; padding:5px 10px; font-family:monospace; border-radius:4px; cursor:pointer; font-size:14px; line-height:1;">✕</button>
+          </div>
+        </div>
+        <div id="mxc-items" style="display:flex; flex-direction:column; gap:5px;"></div>
+      </div>
+
       <header style="display: flex; justify-content: space-between; align-items: center;">
         <div class="logo-container">
           <h1 class="glitch" data-text="TIMECYPHER">TIMECYPHER</h1>
@@ -42,10 +56,11 @@
         <aside class="notes-sidebar">
           <div class="sidebar-header">
             <h2>CIPHER NOTES</h2>
-            <div style="display: flex; gap: 5px;">
+            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
               <button id="btn-new-note" class="cyber-btn-small">+ NEW</button>
               <button id="btn-playground" class="cyber-btn-small" style="background: #110; color: #ff0; border-color: #880;">SANDBOX</button>
               <a href="/dict.html" class="cyber-btn-small" style="background: #011; color: #0ff; border-color: #088; text-decoration: none;">DICT</a>
+              <a href="/matrix.html" class="cyber-btn-small" style="background: #110; color: #ff0; border-color: #880; text-decoration: none;">MATRIX</a>
             </div>
           </div>
           <div class="search-container">
@@ -136,6 +151,14 @@
 
           </div>
           
+          <!-- Compressed Base60 Continuous -->
+          <div class="input-group compressed-group">
+            <div class="label-row">
+              <label for="compressed-continuous-input">CONTINUOUS BASE60 [NO SPACE]</label>
+            </div>
+            <textarea id="compressed-continuous-input" placeholder="Mã nén liên tiếp (không khoảng trắng)..." spellcheck="false"></textarea>
+          </div>
+          
           <div class="controls">
             <button id="btn-encode" class="cyber-btn"><span class="btn-text">ENCODE &darr;</span></button>
             <button id="btn-decode" class="cyber-btn"><span class="btn-text">DECODE &uarr;</span></button>
@@ -149,13 +172,7 @@
             <textarea id="compressed-input" placeholder="Mã nén siêu ngắn..." spellcheck="false"></textarea>
           </div>
 
-          <!-- Compressed Base60 Continuous -->
-          <div class="input-group compressed-group">
-            <div class="label-row">
-              <label for="compressed-continuous-input">CONTINUOUS BASE60 [NO SPACE]</label>
-            </div>
-            <textarea id="compressed-continuous-input" placeholder="Mã nén liên tiếp (không khoảng trắng)..." spellcheck="false"></textarea>
-          </div>
+
   
 
           <!-- CVNSS4 Encrypted -->
