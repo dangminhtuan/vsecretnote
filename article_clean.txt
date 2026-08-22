@@ -1,0 +1,492 @@
+﻿
+"Chữ Việt Nam Song Song 4.0" - tán thành hay
+phản đối - Phúc Lai
+ 
+ 
+ 
+Chữ Việt Nam Song 4.0  tán thành hay phản đối?
+ 
+Phúc Lai
+ 
+ 
+Vài nét
+về Luật sư Phúc Lai
+Thạc sĩ Luật, nhà văn chuyên về đề tài giáo dục. 
+Chủ blog Người lang thang cuối
+cùng (nguoilangthangcuoicung.net)
+ 
+ 
+Tuesday, April 14, 2020
+Chữ Việt Nam song song 4.0  tán thành hay phản đối?
+ 
+ 
+Bất chấp dịch
+bệnh Covid-19 đang
+hoành hành dữ dội, phải chăng bị cách ly toàn xã
+hội sinh rỗi rãi mà cộng đồng mạng mấy hôm nay lại dậy sóng vì câu
+chuyện chữ Việt Nam song song 4.0 (trong bài này
+tôi sẽ gọi tắt là song song 4.0.) Vốn là người làm việc với máy tính suốt
+ngày  thẳng thắn ra là gõ chữ, tôi rất quan tâm đến
+mọi cách để tăng tốc độ đánh máy, đồng nghĩa với việc giảm thời gian làm việc
+với máy tính.
+ 
+Đầu tiên cho phép tôi dông
+dài một chút: tôi vốn
+nổi tiếng với tốc độ đánh máy, có thể
+nói không thua bất cứ một nhân viên văn
+thư chuyên nghiệp nào. Đầu tiên là sự khổ
+luyện để
+có tốc độ gõ phím nhanh như
+nghệ sỹ dương cầm  nhưng về sau do dùng bộ
+gõ kiểu telex mà tôi nhận
+thấy dường
+như tăng tốc độ gõ phím không
+tăng được
+tốc độ chung bao nhiêu vì telex là kiểu
+gõ tương đối dễ nhầm, gõ nhanh mà nhầm
+thì thà chậm lại một chút không phải sửa vẫn tốt hơn. Thời dùng Vietkey, tôi hay dùng chức năng Auto-correct của
+Microsoft Words để tận
+dụng chức năng tốc ký nhưng chức năng đó của phần mềm khá hạn chế, chỉ từ khi sử dụng bộ gõ Unikey
+với bảng gõ tắt không hạn chế, tận dụng trí nhớ tốt nên tôi giảm
+được tốc
+độ gõ, dùng nhiều gõ tắt mà vẫn đảm bảo rất ít phải quay lại sửa. Nhưng đó là những
+kinh nghiệm cá nhân, không
+phải ai cũng dùng được, ví dụ không
+phải ai cũng nhớ được hàng trăm ký hiệu viết tắt, gõ tắt.
+ 
+Ai đã từng
+trải qua thời
+sinh viên đều trăn trở với hệ thống ký hiệu viết tắt của bạn khi mượn vở, các ký hiệu số 0 có cái gạch đít là chữ không cũng là bình thường. Bản thân tôi có hệ
+thống ký hiệu riêng, như dùng chữ nhân của tiếng Hán để không là người,
+đánh thêm dấu sắc thành nhấn dấu ngã thành nhẫn và nặng thì thành nhận.
+Sinh viên mỗi trường lại có hệ thống viết tắt riêng, như dấu thuộc trong toán học
+được đánh
+thêm dấu sắc thành chữ thuốc của sinh viên trường Y
+ 
+Tuy nhiên, cách viết
+tắt này không thành hệ
+thống nên thực tế, nó là những
+hệ thống ký hiệu mang tính cá
+nhân, và không thể ứng dụng được trong một số những hoàn cảnh quan trọng. Tôi sẽ xin quay lại với ý này sau. Trên
+cơ sở nhu cầu và kinh nghiệm
+sẵn có trên đây, tôi quan tâm
+tìm hiểu xem song song 4.0 là gì và
+khả năng ứng dụng của nó ra sao. Đọc một lượt các bài báo
+tôi nhận thấy chính hai tác giả
+của nó cũng khẳng định không phải để thay thế chữ Quốc ngữ, như vậy chúng ta khi tìm hiểu
+nó, cũng phải xuất phát từ góc độ này. Mà nếu
+đã như vậy, sẽ phát sinh nhu
+cầu chuyển đổi giữa hai cách thể
+hiện tiếng Việt đều bằng các ký tự la-tinh này. Tôi
+dùng một kỹ thuật rất đơn giản, là trong Microsoft Words bấm
+tổ hợp Ctrl+H (find and replace) và thay thế cụm ký tự and bằng ần và anb bằng ấn thì phần mềm thay thế bình thường, như vậy thì phát triển
+những công cụ chuyển đổi giữa hai cách viết
+là không có gì khó
+khăn.
+ 
+Tại sao lại phải đặt vấn đề như vậy? Chính vì không
+thay thế chữ Quốc ngữ nên dùng cách thể
+hiện nào cũng phải có cách chuyển
+đổi qua lại
+được với
+nhau, để phục vụ đại chúng cho tất cả những người không cần, không nghiên cứu, không học cách viết và đọc kiểu chữ này, thì vẫn
+có cách cho họ đọc được
+và chúng ta cũng không nghi ngờ rằng những người đọc
+chữ Quốc ngữ truyền thống vẫn mãi mãi chiếm
+số đông.
+ 
+Theo các tác giả của song song 4.0 thì việc học nó chỉ vài ngày, việc
+này hoàn toàn có thể
+được, vì trước đây đã từng học ký hiệu morse và tập truyền tin với nhau bằng cách gõ hay bất cứ cách nào khác, khó
+hơn nhiều mà còn học
+được, thì
+cách viết này không khó.
+Việc còn lại chúng ta cần so sánh xem cách nào
+nhanh hơn cách nào, tôi
+xin lập bảng như sau, trong đó
+chọn bốn câu thơ của Xuân Quỳnh và hai câu của
+Nguyễn Du làm ví dụ.
+ 
+Dữ dội và dịu êm
+Ồn ào và lặng lẽ
+Sông không hiểu nổi mình
+Sóng tìm ra tận bể
+ 
+Trải qua một cuộc
+bể dâu
+Những điều trông
+thấy mà đau đớn lòng
+ 
+Chữ
+gốc
+Kỹ
+thuật telex
+Type
+Viết
+Song song 4.0
+Type
+Viết
+Ghi
+chú
+Dữ
+D_]_x
+3
+5
+Z_u_w
+3
+3
+Dội
+D_o_o_i_j
+5
+7
+Z_o_i_f
+4
+6
+Và
+V_a_f
+3
+3
+V_a_l
+3
+3
+Dịu
+D_i_u_j
+4
+5
+Z_i_w_f
+4
+6
+Êm
+E_e_m
+3
+3
+E_m_y
+3
+3
+KNH
+Ồn
+O_o_n_f
+4
+4
+O_n_d
+3
+3
+KNH
+Ào
+A_o_f
+3
+2
+A_o_l
+3
+1
+Và
+V_a_f
+3
+3
+V_a_l
+3
+3
+Lặng
+L_a_w_n_g_j
+6
+3
+L_a_g_h
+4
+1
+Lẽ
+L_e_x
+3
+2
+L_e_s
+3
+2
+Sông
+S_o_o_n_g
+5
+3
+S_o_g_y
+4
+2-3
+KNH
+Không
+K_h_o_o_n_g
+6
+2
+K_o_g_y
+4
+2-3
+Hiểu
+H_i_e_e_u_r
+6
+4
+H_i_w_q
+4
+2
+Nổi
+N_o_o_i_r
+5
+4
+N_o_i_q
+4
+2
+KNH
+Mình
+M_i_n_h_f
+5
+3
+M_i_h_l
+4
+2
+Sóng
+S_o_n_g_s
+5
+2
+S_o_g_j
+4
+2
+Tìm
+T_i_m_f
+4
+4
+T_i_m_l
+4
+3
+Ra
+R_a
+2
+1
+R_a
+2
+1
+Tận
+T_a_a_n_j
+5
+4
+T_a_n_f
+4
+3
+Bể
+B_e_e_r
+4
+3
+B_e_q
+3
+1
+Trải
+T_r_a_i_r
+5
+4
+T_r_a_i_z
+5
+4
+Qua
+Q_u_a
+3
+1
+Q_a
+2
+1
+Một
+M_o_o_t_j
+5
+4
+M_o_t_f
+4
+3
+Cuộc
+C_u_o_o_c_j
+6
+3
+C_u_s_f
+4
+2
+Bể
+B_e_e_r
+4
+3
+B_e_q
+3
+1
+Dâu
+D_a_a_u
+4
+2
+Z_a_u_y
+4
+1
+Những
+N_h_w_n_g_x
+6
+3
+N_h_u_g_w
+5
+1
+KNH
+Điều
+D_d_i_e_e_u_f
+7
+5
+D_i_w_d
+4
+4
+Trông
+T_r_o_o_n_g
+6
+3
+T_r_o_g_y
+5
+2
+Thấy
+T_h_a_a_y_s
+6
+4
+T_h_a_y_b
+5
+2
+Mà
+M_a_f
+3
+2
+M_a_l
+3
+1
+Đau
+D_d_a_u
+4
+2
+D_a_u
+3
+1
+Đớn
+D_d_[_n_s
+5
+4
+D_o_n_x
+4
+2
+Lòng
+L_o_n_g_f
+5
+2
+L_o_g_l
+4
+1
+Tổng
+153
+109
+125
+77
+So sánh
+22,4%
+41,5%
+ 
+Phép so sánh trên đây
+tôi thực hiện trên cơ sở thói quen đánh
+máy tính và cả viết
+tay của cá nhân, trong
+đó cột Viết là số lần nhấc, đặt bút cho một
+chữ cần viết, sẽ có người viết liền nét nhiều, có người nhấc bút nhiều Nếu nhớ lại, chúng ta có thời
+áp dụng chữ cải cách với chữ viết đơn giản đi, giống chữ in hơn nhưng hóa ra học sinh viết lại chậm hơn do bị mất đi khả năng viết liền nét, thì với song song 4.0 ta có kết quả:
+-     
+Nếu gõ máy, sáu câu thơ
+trên mất 153 lần gõ phím với telex, và 125 lần cho song song, tốc độ nhanh hơn 22,4%.
+-     
+Nếu viết tay,
+109 so với 77 lần
+nhấc bút lên đặt bút xuống, tốc độ của song song 4.0 nhanh hơn đến 41,5%.
+Gắn bó lâu với telex và Quốc ngữ hiện hành, tôi vẫn thử so sánh chẳng hạn với những chữ mặc dù gõ hai
+lần nhưng là nhấn hai lần một phím, như hai lần o thành ô tôi có ghi
+chú KNH (không nhanh hơn) để cố dìm hàng song song 4.0 nhưng cục diện vẫn không thay đổi nhiều.
+ 
+Hai câu thơ của Xuân Quỳnh có số âm phức
+tạp dạng oái oăm còn là ít,
+hai câu của Nguyễn Du chỉ có một lần chữ điều (âm iêu) trong
+khi song song 4.0 lại rất mạnh ở chỗ đánh trúng vào trọng điểm là các âm phức
+tạp, phải dùng nhiều nguyên âm này,
+ví dụ như adx, adh = oắt oặt  với những câu có nhiều âm phức tạp lại thêm cả dấu, tôi tin là kết quả trên đây còn cao hơn với lợi thế nghiêng về song song 4.0. Cần phải nói thêm rằng,
+nếu gõ chữ Quốc ngữ hiện hành có thể
+dùng bảng gõ tắt được, thì với song song 4.0 cũng được,
+không có gì trở ngại. Có thể nói ít ra đối với tôi, cách tiếp cận này của hai tác giả mang tính cách
+mạng. Chúng ta cũng cần hình dung là ngoài số lần gõ phím ít đi,
+thì khoảng cách giữa các phím cần
+gõ không quá xa, ngón
+tay phải chạy từ chỗ nọ sang chỗ kia quá nhiều cũng là một yếu tố rất quan trọng trong đánh máy nhanh.
+ 
+Theo dõi các ý kiến trên mạng xã hội tôi thấy có người cho rằng, bây giờ với sự bùng nổ của thiết bị, nên nhu cầu
+tốc ký giảm xuống, chẳng hạn có thể ghi âm bằng
+điện thoại.
+Điều này đúng, nhưng không hẳn đúng cho tất cả  có rất nhiều trường hợp người ta vẫn phải viết bằng tay, như trong những điều kiện lao động khó khăn, phức tạp (sinh viên y khoa đi thực hành trên xác
+người là một ví dụ). Tất nhiên chúng ta hiểu với mong
+ước của các
+tác giả mới chỉ dừng lại ở mức độ ai cần thì hẵng học mà dùng, nhưng
+những công trình như vậy rất cần có được sự đánh giá khách quan, hay thì bảo là hay, không hay thì bảo là không hay.
+ 
+Hiện nay các phụ
+huynh mới nhận ra nhu cầu thiết yếu của giáo dục kỹ năng sống đối với các con của mình, mà trong đó
+kỹ năng sinh tồn là một trong những kỹ năng quan trọng nhất. Cho con tham gia sinh hoạt
+Hướng đạo
+sinh, tôi nhận thấy việc học sinh học ký hiệu morse đã thiết thực, lại biết dùng tín hiệu xê-ma-pho (semaphore: đánh
+tín hiệu bằng cờ) thì rất hay, có khi cả
+đời không cần dùng nhưng một khi rơi vào hoàn cảnh
+khó khăn của thiên tai, chiến tranh thì rất hữu ích, có thể cứu được mạng sống. Với lực lượng vũ trang, việc sử dụng song song 4.0 cũng giúp tăng tốc độ truyền tin, dù bằng đèn hiệu cờ hiệu hay điện đài hoặc bất cứ phương tiện thô sơ hay hiện đại nào nhanh hơn
+đối thủ vài % giây cũng
+đã có thể đem lại chiến thắng. Dù hiện nay chúng ta không còn dùng
+nhiều loại điện thoại cục gạch toàn phải nhắn tin không dấu nữa, nhưng trong cuộc sống chắc chắn vẫn còn những nhu cầu gửi đoạn văn bản không dấu, như trước đây ta dùng điện tín kiểu telex vậy. Trường hợp đó, song song 4.0 sẽ là một ứng cử viên sáng giá.
+ 
+Ngoài ưu điểm của tốc độ thì song song 4.0 còn có ưu điểm
+nào nữa? Tôi chưa có điều kiện so sánh giữa hai file văn bản giống hệt nhau về định dạng, phông chữ nhưng có thể cho rằng với số ký tự
+ít hơn thì dung lượng của tệp tin cũng nhỏ hơn. Tất nhiên với nhu cầu cá nhân trong
+giai đoạn thiết bị lưu trữ ngày càng rẻ,
+đây không phải vấn đề quan trọng nhưng với nhu cầu lưu trữ mức độ rất lớn thì đây cũng là một điểm đáng xem xét.
+ 
+ 
+Vậy thì các tác giả của song song 4.0 có ẩn ý gì khi gán
+cho nó mỹ từ 4.0? vì nếu chỉ dừng lại ở cách biểu hiện mới của cách ký âm
+tiếng Việt, điều đó chưa đủ để gắn nó với cuộc Cách mạng công nghệ thời 4.0, dù những thay đổi của nó là đáng kể và như
+tôi đánh giá, có tính
+cách mạng? Dù nhận thấy đây là một phương pháp tốc ký  ký âm có
+nhiều ưu điểm nhưng tôi cũng vẫn có những điều không đồng ý với các tác giả, như cho rằng nó đẹp thậm chí đẹp hơn chữ Quốc ngữ hiện nay. Đánh giá đẹp xấu là tùy mắt mỗi người, nhưng chữ Quốc ngữ Việt Nam hiện nay đang rất đẹp. Thứ hai, chúng ta không thể tự dưng xóa bỏ kết quả hàng trăm năm sử dụng chữ Quốc ngữ với cơ man sách vở, do đó việc giữ cách thể hiện tiếng Việt bằng chữ Quốc ngữ hiện nay là chắc chắn và không cần
+bàn cãi, mà nếu như thế thì song song 4.0 phải tìm được cách sinh tồn của nó.
+ 
+Giả sử tôi là người ủng hộ song song 4.0 nhưng tôi sẽ không bắt người khác phải đọc được những
+gì mình viết, do đó chắc chắn tôi phải tìm cách chuyển
+đổi (convert) sang chữ
+Quốc ngữ. Ngay ở thời điểm hiện nay,
+chúng ta đã bắt đầu nhận thấy công cụ thư điện tử bắt đầu giảm sút vai trò,
+thay thế bằng các trình nhắn tin tức thời (nôm na là
+chat) như trước
+đây là Yahoo!
+Messenger, Skype và hiện
+nay ở Việt Nam là
+Viber, Zalo, Facebook Messenger kèm
+theo là đa phương tiện: âm thanh, hình ảnh
+thì việc đang gõ telex lại chuyển sang gõ song song 4.0 không phải là chuyển đổi về công nghệ là chuyển đổi về tư duy. Muốn như vậy con người phải đạt độ thành thạo nhất định, nhưng chưa đủ: nó vẫn hiển thị song song 4.0. Nếu các tác giả
+kết hợp được với nhóm công nghệ
+nào đó phát triển một phần mềm, một bộ gõ dùng phương thức song song 4.0 nhưng gõ đến đâu hiển thị Quốc ngữ đến đó, hoặc muốn chuyển đổi qua
+lại phương
+thức hiển thị đều được Nếu
+có được công cụ như vậy tôi sẵn sàng chuyển hẳn sang dùng song song 4.0 để đánh máy và hoàn toàn
+chủ động
+muốn cho hiển thị như thế nào cũng được, dù có thể không phải mất 3 ngày mà là 3 tuần
+để học nó. Chưa dừng ở đó, trường hợp với các văn bản cứng tức là bản đã in ra rồi, cần phải có những phần mềm nhận dạng từ tệp tin ảnh để chuyển đổi lại thành Quốc ngữ bản mềm để xử lý, chứ không thể gửi đi một văn bản và người nhận phải nhờ ai đó phiên dịch từ tiếng Việt sang tiếng Việt.
+ 
+Tâm lý chung của
+con người là ngại thay đổi, và khi người ta nhìn thấy những ký tự lạ khó đọc sẽ thấy ngứa mắt, (khác gì tiếng
+nước ngoài đâu!) và nhanh chóng phản
+đối thì cũng tương tự như câu chuyện trước đây cụ Bùi Hiền bị người ta rủa xả thôi. Mỗi cách thể hiện chữ Việt mới đều là những cố gắng, nỗ lực rất đáng trân trọng và nghiêm túc
+xem xét, vì nếu thực sự nó có giá
+trị mà chúng ta bỏ qua thì thực có lỗi với dân tộc.
+ 
+ 
+© Tác giả: Phúc Lai (phuclai2008@gmail.com)
+Nguồn:
+https://www.nguoilangthangcuoicung.net/2020/04/chu-viet-nam-song-song-40-tan-thanh-hay.html
+ 
+ 
+Trình bày: Trần Tư Bình (Email: tubinhtran@gmail.com, Web: Chữ Việt Nhanh)
+ 
+ 
+Về Trang Chính
+Chữ Việt Nhanh
+ 
+ 

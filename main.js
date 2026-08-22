@@ -9,6 +9,7 @@ import {
 import {
   encodeWord, decodeWord, timeToBase60, base60ToTime, TOKEN_REGEX
 , applyTone} from './vcomp.js';
+import { encodeCVNSS4Word } from './cvnss4.js';
 
 // --- UI MATRIX EFFECT ---
 const canvas = document.getElementById('matrix-canvas');
@@ -46,6 +47,7 @@ const txtCompressed = document.getElementById('compressed-input');
 const txtFakeViet = document.getElementById('fake-viet-input');
 const txtTime5 = document.getElementById('time-5-input');
 const txtCompressedContinuous = document.getElementById('compressed-continuous-input');
+const txtCVNSS4 = document.getElementById('cvnss4-input');
 
 const btnEncode = document.getElementById('btn-encode');
 const btnDecode = document.getElementById('btn-decode');
@@ -100,6 +102,7 @@ function syncFromDecrypted() {
     if (txtFakeViet) txtFakeViet.value = '';
     if (txtTime5) txtTime5.value = '';
     if (txtCompressedContinuous) txtCompressedContinuous.value = '';
+    if (txtCVNSS4) txtCVNSS4.value = '';
     renderBreakdown([]);
     return;
 }
@@ -107,6 +110,7 @@ function syncFromDecrypted() {
   let encryptedParts = [];
   let compressedParts = [];
   let breakdownPairs = [];
+  let cvnss4Parts = [];
 
   tokens.forEach(token => {
     if (!token) return;
@@ -115,20 +119,24 @@ function syncFromDecrypted() {
       const b60Code = timeToBase60(timeCode);
       encryptedParts.push(timeCode);
       compressedParts.push(b60Code);
+      cvnss4Parts.push(encodeCVNSS4Word(token));
       breakdownPairs.push({ word: token, time: timeCode, base60: b60Code });
     
     } else if (token.startsWith('[') && token.endsWith(']')) {
       encryptedParts.push(token);
       compressedParts.push(token);
+      cvnss4Parts.push(token);
       breakdownPairs.push({ word: token.substring(1, token.length - 1), time: token, base60: token });
     } else {
       encryptedParts.push(token);
       compressedParts.push(token);
+      cvnss4Parts.push(token);
     }
   });
 
   txtEncrypted.value = encryptedParts.join('');
   if(txtCompressed) txtCompressed.value = compressedParts.join('');
+  if(txtCVNSS4) txtCVNSS4.value = cvnss4Parts.join('');
   
   if(txtFakeViet) txtFakeViet.value = toFakeViet(text);
   if(txtTime5) txtTime5.value = timeTo5Digit(encryptedParts.join(''));
@@ -146,6 +154,7 @@ function syncFromTime() {
     if (txtFakeViet) txtFakeViet.value = '';
     if (txtTime5) txtTime5.value = '';
     if (txtCompressedContinuous) txtCompressedContinuous.value = '';
+    if (txtCVNSS4) txtCVNSS4.value = '';
     renderBreakdown([]);
     return;
 }
@@ -153,6 +162,7 @@ function syncFromTime() {
   let decryptedParts = [];
   let compressedParts = [];
   let breakdownPairs = [];
+  let cvnss4Parts = [];
 
   tokens.forEach(token => {
     if (!token) return;
@@ -161,20 +171,25 @@ function syncFromTime() {
       const decoded = decodeWord(token);
       decryptedParts.push(decoded);
       compressedParts.push(b60Code);
+      cvnss4Parts.push(encodeCVNSS4Word(token));
       breakdownPairs.push({ time: token, word: decoded, base60: b60Code });
     
     } else if (token.startsWith('[') && token.endsWith(']')) {
       decryptedParts.push(token);
       compressedParts.push(token);
+      cvnss4Parts.push(token);
       breakdownPairs.push({ time: token, word: token.substring(1, token.length - 1), base60: token });
     } else {
       decryptedParts.push(token);
       compressedParts.push(token);
+      cvnss4Parts.push(token);
     }
   });
 
   txtDecrypted.value = decryptedParts.join('');
+  if(txtCVNSS4) txtCVNSS4.value = cvnss4Parts.join('');
   if(txtCompressed) txtCompressed.value = compressedParts.join('');
+  if(txtCVNSS4) txtCVNSS4.value = cvnss4Parts.join('');
 
   if(txtFakeViet) txtFakeViet.value = toFakeViet(txtDecrypted.value);
   if(txtTime5) txtTime5.value = timeTo5Digit(text);
@@ -225,6 +240,7 @@ function syncFromCompressed() {
     if (txtFakeViet) txtFakeViet.value = '';
     if (txtTime5) txtTime5.value = '';
     if (txtCompressedContinuous) txtCompressedContinuous.value = '';
+    if (txtCVNSS4) txtCVNSS4.value = '';
     renderBreakdown([]);
     return;
 }
@@ -234,11 +250,13 @@ function syncFromCompressed() {
   const allTimeParts = [];
   const allDecryptedParts = [];
   const allBreakdownPairs = [];
+  const allCvnss4Parts = [];
 
   lines.forEach((line, lineIdx) => {
     if (lineIdx > 0) {
       allTimeParts.push('\n');
       allDecryptedParts.push('\n');
+      allCvnss4Parts.push('\n');
     }
     const tokens = line.split(TOKEN_REGEX);
     tokens.forEach(token => {
@@ -248,14 +266,17 @@ function syncFromCompressed() {
         const decoded = decodeWord(timeCode);
         allTimeParts.push(timeCode);
         allDecryptedParts.push(decoded);
+        allCvnss4Parts.push(encodeCVNSS4Word(decoded));
         allBreakdownPairs.push({ base60: token, time: timeCode, word: decoded });
       } else if (token.startsWith('[') && token.endsWith(']')) {
         allTimeParts.push(token);
         allDecryptedParts.push(token);
+        allCvnss4Parts.push(token);
         allBreakdownPairs.push({ base60: token, time: token, word: token.substring(1, token.length - 1) });
       } else {
         allTimeParts.push(token);
         allDecryptedParts.push(token);
+        allCvnss4Parts.push(token);
       }
     });
   });
@@ -2196,7 +2217,8 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     currentQuizTimeCode = null;
   }
 
-  function tickSpecialTime() {    const choicesEl = document.getElementById('quiz-choices');
+  function tickSpecialTime() {
+    const choicesEl = document.getElementById('quiz-choices');
     if (choicesEl && choicesEl.style.display !== 'none') return;
 
     if (!document.body.classList.contains('sandbox-mode') || !display) return;
