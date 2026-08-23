@@ -18,7 +18,8 @@
   <div id="special-time-display" style="display: none; font-family: monospace; font-size: 11px; color: #0f0; background: #000; border: 1px solid #0f0; border-radius: 5px; padding: 3px 8px; align-items: center; justify-content: center; gap: 4px; flex-direction: row; line-height: 1; text-align: center; min-height: 36px; box-sizing: border-box; cursor: pointer;"></div>
   <div id="quiz-choices" style="display: none; gap: 6px; align-items: center; flex-wrap: wrap;"></div>
   <div id="top-left-actions" style="display: flex; gap: 6px;">
-            <button id="btn-toggle-vk" class="cyber-btn" title="Bật bàn phím" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 16px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0; opacity: 0.4; transition: opacity 0.2s;">&#9000;</button>
+            <button id="btn-toggle-vk" class="cyber-btn" title="Bật/Tắt bàn phím ảo" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 16px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0; opacity: 0.4; transition: opacity 0.2s;">&#9000;</button>
+            <button id="btn-toggle-tutor" class="cyber-btn" title="Bật/Tắt Trợ giảng Ghi nhớ" style="border-color: #00ff66; color: #00ff66; background: #000; cursor: pointer; font-size: 16px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0; opacity: 1; transition: all 0.2s;">🎓</button>
             <button id="btn-share-link" class="cyber-btn" title="Chia sẻ link" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0;">&#128279;</button>
             <button id="btn-activity-log" class="cyber-btn" title="Activity Log" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0;">&#128202;</button>
             <button id="btn-sandbox-hashtag" class="cyber-btn" style="display: none !important; border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 16px; font-weight: bold; width: 36px; height: 36px; border-radius: 5px; align-items: center; justify-content: center; padding: 0;">#</button>
@@ -145,10 +146,62 @@
           <div class="input-group">
             <div class="label-row">
               <label for="text-input">TEXT DECRYPTED [VI/EN]</label>
-              </div>
+            </div>
             <textarea id="text-input" placeholder="Nhập văn bản cần mã hóa..." spellcheck="false"></textarea>
-              
+          </div>
 
+          <!-- Cyber Super Tutor Card -->
+          <div id="tutor-card" class="cyber-tutor-container" style="display: block; margin-bottom: 12px; background: rgba(0, 18, 12, 0.9); border: 1px solid #00ff66; border-radius: 6px; padding: 8px 10px; box-shadow: 0 0 10px rgba(0, 255, 102, 0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 4px;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <span style="font-size: 13px;">🎓</span>
+                <span style="font-weight: bold; font-size: 11px; color: #00ff66; letter-spacing: 0.5px;">TRỢ GIẢNG GHI NHỚ</span>
+                <span id="tutor-active-badge" style="font-size: 10px; background: #002b11; color: #00ff66; padding: 1px 6px; border-radius: 3px; border: 1px solid #006622; font-weight: bold;">thành ➜ TW2</span>
+              </div>
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <input type="text" id="tutor-quick-input" placeholder="Tra nhanh từ / mã (VD: thành, TW2)..." style="background: #000; color: #ffea00; border: 1px solid #554400; border-radius: 3px; padding: 2px 6px; font-size: 10px; width: 175px;" />
+              </div>
+            </div>
+
+            <!-- Hero Mnemonic Formula -->
+            <div id="tutor-formula-box" style="background: rgba(0, 0, 0, 0.7); border-left: 3px solid #ffea00; padding: 5px 8px; font-size: 11px; color: #fff; line-height: 1.4; margin-bottom: 8px; border-radius: 0 4px 4px 0;">
+              💡 <span id="tutor-formula-text">Chỉ cần nhớ: phụ âm <b>"th"</b> mã là <b style="color:#00ffff">T</b>, vần <b>"anh"</b> mã là <b style="color:#ffea00">W</b>, dấu <b>Huyền (`)</b> kiểu VNI là <b style="color:#ff55ff">2</b> ➜ Ghép lại thành <b style="color:#00ff66">TW2</b>!</span>
+            </div>
+
+            <!-- 3 Columns Breakdown -->
+            <div id="tutor-cols-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 6px; margin-bottom: 8px;">
+              <!-- Col 1: Phụ âm -->
+              <div class="tutor-col" style="background: #00151a; border: 1px solid #004455; border-radius: 4px; padding: 4px 6px;">
+                <div style="font-size: 9px; color: #888; font-weight: bold;">1. PHỤ ÂM ĐẦU</div>
+                <div id="tutor-col-cons" style="font-size: 10.5px; color: #00ffff; font-weight: bold; margin-top: 2px;">"th" ➜ Mã: [ T ]</div>
+              </div>
+              <!-- Col 2: Vần -->
+              <div class="tutor-col" style="background: #1a1600; border: 1px solid #554400; border-radius: 4px; padding: 4px 6px;">
+                <div style="font-size: 9px; color: #888; font-weight: bold;">2. VẦN & BẢNG VẦN</div>
+                <div id="tutor-col-rhyme" style="font-size: 10.5px; color: #ffea00; font-weight: bold; margin-top: 2px;">"anh" ➜ Mã: [ W ] (B1)</div>
+              </div>
+              <!-- Col 3: Dấu -->
+              <div class="tutor-col" style="background: #1a001a; border: 1px solid #550055; border-radius: 4px; padding: 4px 6px;">
+                <div style="font-size: 9px; color: #888; font-weight: bold;">3. THANH ĐIỆU & QUY ƯỚC</div>
+                <div id="tutor-col-tone" style="font-size: 10.5px; color: #ff55ff; font-weight: bold; margin-top: 2px;">Dấu Huyền (`) ➜ [ 2 ] (VNI)</div>
+              </div>
+            </div>
+
+            <!-- Smart Learning Expansions (Học 1 biết 10) -->
+            <div id="tutor-expansions" style="font-size: 10px; display: flex; flex-direction: column; gap: 4px;">
+              <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <span style="color: #00ffff; font-weight: bold; min-width: 95px;">🔹 Cùng phụ âm:</span>
+                <span id="tutor-same-cons" style="display: flex; gap: 4px; flex-wrap: wrap;"></span>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <span style="color: #ffea00; font-weight: bold; min-width: 95px;">🔸 Cùng vần:</span>
+                <span id="tutor-same-rhyme" style="display: flex; gap: 4px; flex-wrap: wrap;"></span>
+              </div>
+              <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                <span style="color: #00ff66; font-weight: bold; min-width: 95px;">🟢 Cùng vần + dấu:</span>
+                <span id="tutor-same-rhyme-tone" style="display: flex; gap: 4px; flex-wrap: wrap;"></span>
+              </div>
+            </div>
           </div>
           
           <!-- Compressed Base60 Continuous -->

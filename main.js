@@ -3608,6 +3608,236 @@ window.handleTopLeftQuiz = function(selectedB60, correctB60, correctFullCode, bt
     btn.style.background = '#f00';
     btn.style.color = '#000';
     btn.style.textDecoration = 'line-through';
-    
   }
 };
+
+// ==========================================
+// 🎓 SUPER MNEMONIC TUTOR ENGINE (TRỢ GIẢNG GHI NHỚ SIÊU CẤP)
+// ==========================================
+function initMnemonicTutor() {
+  const tutorCard = document.getElementById('tutor-card');
+  const btnToggleTutor = document.getElementById('btn-toggle-tutor');
+  const quickInput = document.getElementById('tutor-quick-input');
+  const badgeActive = document.getElementById('tutor-active-badge');
+  const formulaText = document.getElementById('tutor-formula-text');
+  const colCons = document.getElementById('tutor-col-cons');
+  const colRhyme = document.getElementById('tutor-col-rhyme');
+  const colTone = document.getElementById('tutor-col-tone');
+  const sameConsEl = document.getElementById('tutor-same-cons');
+  const sameRhymeEl = document.getElementById('tutor-same-rhyme');
+  const sameRhymeToneEl = document.getElementById('tutor-same-rhyme-tone');
+
+  if (!tutorCard) return;
+
+  let tutorVisible = true;
+  if (btnToggleTutor) {
+    btnToggleTutor.addEventListener('click', () => {
+      tutorVisible = !tutorVisible;
+      tutorCard.style.display = tutorVisible ? 'block' : 'none';
+      btnToggleTutor.style.opacity = tutorVisible ? '1' : '0.4';
+    });
+  }
+
+  // --- 1. PRE-INDEX REAL WORDS FOR 0.01ms INSTANT LOOKUP ---
+  const consIndex = new Map();
+  const rhymeIndex = new Map();
+  const rhymeToneIndex = new Map();
+  let isIndexed = false;
+
+  function buildTutorIndex() {
+    if (isIndexed) return;
+    const realList = typeof REAL_VIETNAMESE_WORDS !== 'undefined' ? REAL_VIETNAMESE_WORDS : [];
+    for (const rw of realList) {
+      const rEnc = encodeWord(rw);
+      if (rEnc.startsWith('[')) continue;
+      const rB60 = timeToBase60(rEnc);
+      const c1 = rB60[0], c2 = rB60[1], c3 = rB60[2];
+
+      if (!consIndex.has(c1)) consIndex.set(c1, []);
+      if (consIndex.get(c1).length < 5) consIndex.get(c1).push({ word: rw, b60: rB60 });
+
+      if (!rhymeIndex.has(c2)) rhymeIndex.set(c2, []);
+      if (rhymeIndex.get(c2).length < 5) rhymeIndex.get(c2).push({ word: rw, b60: rB60 });
+
+      const rtKey = c2 + '_' + c3;
+      if (!rhymeToneIndex.has(rtKey)) rhymeToneIndex.set(rtKey, []);
+      if (rhymeToneIndex.get(rtKey).length < 5) rhymeToneIndex.get(rtKey).push({ word: rw, b60: rB60 });
+    }
+    isIndexed = true;
+  }
+  setTimeout(buildTutorIndex, 50);
+
+  function getWordUnderCursor(textarea) {
+    if (!textarea) return '';
+    const val = textarea.value || '';
+    const pos = textarea.selectionStart || 0;
+    const left = val.slice(0, pos).search(/\S+$/);
+    const right = val.slice(pos).search(/\s/);
+    if (left < 0) return '';
+    const word = right < 0 ? val.slice(left) : val.slice(left, pos + right);
+    return word.trim();
+  }
+
+  let lastAnalyzedKey = '';
+
+  function updateTutor(inputStr) {
+    if (!tutorVisible) return;
+    inputStr = (inputStr || '').trim();
+    if (!inputStr) inputStr = 'thành';
+
+    if (inputStr === lastAnalyzedKey) return; // Skip if unchanged
+    lastAnalyzedKey = inputStr;
+
+    let word = '', code = '', b60 = '';
+    if (/^[a-zA-Z0-9]{3}$/.test(inputStr)) {
+      b60 = inputStr;
+      code = base60ToTime(b60);
+      word = decodeWord(code);
+    } else {
+      const cleanW = inputStr.replace(/^[^\p{L}\d]+|[^\p{L}\d]+$/gu, '');
+      word = cleanW || inputStr;
+      code = encodeWord(word);
+      b60 = timeToBase60(code);
+    }
+
+    if (!word || word.includes('?') || word.startsWith('[')) {
+      if (formulaText) {
+        formulaText.innerHTML = `⚠️ <i>Chưa tìm thấy quy tắc nén cho từ/mã "<b>${inputStr}</b>". Hãy thử từ khác (VD: <b>thành</b>, <b>rớt</b>, <b>TW2</b>)...</i>`;
+      }
+      return;
+    }
+
+    const hh = parseInt(code.substring(0,2), 10);
+    const mm = parseInt(code.substring(2,4), 10);
+    const ss = parseInt(code.substring(4,6), 10);
+
+    const s2 = Math.floor(ss / 6);
+    const s1 = ss % 6;
+    const consTable = Math.floor(s2 / 3);
+    const rhymeTable = s2 % 3;
+
+    const consonant = consTable === 0 ? CONSONANTS_BASE[hh] : CONSONANTS_EXTRA[hh];
+    const rhyme = rhymeTable === 0 ? RHYMES_BASE[mm] : (rhymeTable === 1 ? RHYMES_EXTRA_1[mm] : RHYMES_EXTRA_2[mm]);
+
+    const c1 = b60[0];
+    const c2 = b60[1];
+    const c3 = b60[2];
+
+    const toneNames = ['không dấu (Bằng)', 'dấu Sắc (✓)', 'dấu Huyền (`)', 'dấu Hỏi (ˀ)', 'dấu Ngã (~)', 'dấu Nặng (•)'];
+    const toneName = toneNames[s1];
+
+    let toneMnemonic = '';
+    let toneTableLabel = '';
+    if (s2 === 0) { toneMnemonic = `dấu <b>${toneName}</b> kiểu Telex thường (<b style="color:#ff55ff">${c3}</b>)`; toneTableLabel = `Dấu ${toneName} ➜ [ <b style="color:#ff55ff">${c3}</b> ] (Telex)`; }
+    else if (s2 === 1) { toneMnemonic = `dấu <b>${toneName}</b> kiểu Telex HOA (<b style="color:#ff55ff">${c3}</b>) ở Bảng 2`; toneTableLabel = `Dấu ${toneName} ➜ [ <b style="color:#ff55ff">${c3}</b> ] (Telex HOA B2)`; }
+    else if (s2 === 2) { toneMnemonic = `dấu <b>${toneName}</b> kiểu Nguyên âm (<b style="color:#ff55ff">${c3}</b>) ở Bảng 3`; toneTableLabel = `Dấu ${toneName} ➜ [ <b style="color:#ff55ff">${c3}</b> ] (Nguyên âm B3)`; }
+    else if (s2 === 3) { toneMnemonic = `dấu <b>${toneName}</b> kiểu VNI (<b style="color:#ff55ff">${c3}</b>) cho PA phụ B1`; toneTableLabel = `Dấu ${toneName} ➜ [ <b style="color:#ff55ff">${c3}</b> ] (VNI B1)`; }
+    else if (s2 === 4) { toneMnemonic = `dấu <b>${toneName}</b> kiểu VNI cao (<b style="color:#ff55ff">${c3}</b>) cho PA phụ B2`; toneTableLabel = `Dấu ${toneName} ➜ [ <b style="color:#ff55ff">${c3}</b> ] (VNI B2)`; }
+    else if (s2 === 5) { toneMnemonic = `dấu <b>${toneName}</b> kiểu Nguyên âm HOA (<b style="color:#ff55ff">${c3}</b>) cho PA phụ B3`; toneTableLabel = `Dấu ${toneName} ➜ [ <b style="color:#ff55ff">${c3}</b> ] (Nguyên âm HOA B3)`; }
+
+    const consDesc = consonant === '' ? 'nguyên âm đầu (không có phụ âm)' : `phụ âm <b>"${consonant}"</b> mã là <b style="color:#00ffff">${c1}</b>`;
+    const rhymeTableName = rhymeTable === 0 ? 'B1' : (rhymeTable === 1 ? 'B2' : 'B3');
+    const rhymeDesc = `vần <b>"${rhyme}"</b> mã là <b style="color:#ffea00">${c2}</b>`;
+
+    if (badgeActive) badgeActive.textContent = `${word} ➜ ${b60} (${code.substring(0,2)}:${code.substring(2,4)}:${code.substring(4,6)})`;
+    if (formulaText) {
+      formulaText.innerHTML = `💡 Chỉ cần nhớ: ${consDesc}, ${rhymeDesc}, ${toneMnemonic} ➜ Ghép lại thành <b style="color:#00ff66">${b60}</b>!`;
+    }
+
+    if (colCons) colCons.innerHTML = `"${consonant || '(rỗng)'}" ➜ Mã: [ <b style="color:#00ffff">${c1}</b> ] ${consTable === 1 ? '(PA phụ)' : ''}`;
+    if (colRhyme) colRhyme.innerHTML = `"${rhyme}" ➜ Mã: [ <b style="color:#ffea00">${c2}</b> ] (${rhymeTableName})`;
+    if (colTone) colTone.innerHTML = toneTableLabel;
+
+    // Instant O(1) Lookups from Pre-built Index
+    buildTutorIndex();
+    const sameCons = (consIndex.get(c1) || []).filter(item => item.word !== word).slice(0, 5);
+    const sameRhyme = (rhymeIndex.get(c2) || []).filter(item => item.word !== word).slice(0, 5);
+    const sameRhymeTone = (rhymeToneIndex.get(c2 + '_' + c3) || []).filter(item => item.word !== word).slice(0, 5);
+
+    function renderChips(container, list, color) {
+      if (!container) return;
+      if (!list || list.length === 0) {
+        container.innerHTML = `<span style="color:#666; font-style:italic;">(không có từ phù hợp)</span>`;
+        return;
+      }
+      container.innerHTML = list.map(item =>
+        `<button class="cyber-chip-btn" data-word="${item.word}" style="background:#000; color:${color}; border:1px solid ${color}; border-radius:3px; padding:1px 5px; font-size:10px; cursor:pointer; font-family:inherit; transition:all 0.1s;">${item.word} <span style="opacity:0.75; font-size:9px;">[${item.b60}]</span></button>`
+      ).join('');
+    }
+
+    renderChips(sameConsEl, sameCons, '#00ffff');
+    renderChips(sameRhymeEl, sameRhyme, '#ffea00');
+    renderChips(sameRhymeToneEl, sameRhymeTone, '#00ff66');
+  }
+
+  // --- 2. DEBOUNCE & SPACE TRIGGER FOR 60FPS TYPING ---
+  let debounceTimer = null;
+
+  if (quickInput) {
+    quickInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => updateTutor(quickInput.value), 100);
+    });
+  }
+
+  const txtDec = document.getElementById('text-input');
+  if (txtDec) {
+    txtDec.addEventListener('input', (e) => {
+      clearTimeout(debounceTimer);
+      const isSpaceOrPunct = e.data && /[\s.,;?!]/.test(e.data);
+      if (isSpaceOrPunct) {
+        const w = getWordUnderCursor(txtDec);
+        if (w) updateTutor(w);
+      } else {
+        debounceTimer = setTimeout(() => {
+          const w = getWordUnderCursor(txtDec);
+          if (w) updateTutor(w);
+        }, 150);
+      }
+    });
+
+    txtDec.addEventListener('click', () => {
+      const w = getWordUnderCursor(txtDec);
+      if (w) updateTutor(w);
+    });
+
+    txtDec.addEventListener('keyup', (e) => {
+      if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const w = getWordUnderCursor(txtDec);
+        if (w) updateTutor(w);
+      }
+    });
+  }
+
+  const txtEnc = document.getElementById('compressed-continuous-input') || document.getElementById('compressed-input');
+  if (txtEnc) {
+    txtEnc.addEventListener('click', () => {
+      const w = getWordUnderCursor(txtEnc);
+      if (w && w.length === 3) updateTutor(w);
+    });
+    txtEnc.addEventListener('keyup', (e) => {
+      if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        const w = getWordUnderCursor(txtEnc);
+        if (w && w.length === 3) updateTutor(w);
+      }
+    });
+  }
+
+  tutorCard.addEventListener('click', (e) => {
+    const btn = e.target.closest('.cyber-chip-btn');
+    if (btn && btn.dataset.word) {
+      updateTutor(btn.dataset.word);
+      if (quickInput) quickInput.value = btn.dataset.word;
+    }
+  });
+
+  // Initial load
+  updateTutor('thành');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initMnemonicTutor();
+});
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+  initMnemonicTutor();
+}
