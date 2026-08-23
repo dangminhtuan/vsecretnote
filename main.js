@@ -270,6 +270,7 @@ function syncFromDecrypted() {
 
   renderBreakdown(breakdownPairs);
   saveCurrentNote();
+  if (typeof window.updateMnemonicTutorFromDecrypted === 'function') window.updateMnemonicTutorFromDecrypted();
 }
 
 function syncFromTime() {
@@ -329,6 +330,7 @@ function syncFromTime() {
 
   renderBreakdown(breakdownPairs);
   saveCurrentNote();
+  if (typeof window.updateMnemonicTutorFromDecrypted === 'function') window.updateMnemonicTutorFromDecrypted();
 }
 
 
@@ -496,6 +498,7 @@ function syncFromCompressed() {
 
   renderBreakdown(allBreakdownPairs);
   saveCurrentNote();
+  if (typeof window.updateMnemonicTutorFromDecrypted === 'function') window.updateMnemonicTutorFromDecrypted();
 }
 
 // ===== FAKE VIETNAMESE & 5 DIGITS LOGIC =====
@@ -3687,44 +3690,47 @@ function initMnemonicTutor() {
     inputStr = (inputStr || '').trim();
     if (!inputStr) inputStr = 'thành';
 
-    if (inputStr === lastAnalyzedKey) return; // Skip if unchanged
-    lastAnalyzedKey = inputStr;
-
-    let word = '', code = '', b60 = '';
-
+    // 1. ALWAYS RESOLVE TO VIETNAMESE WORD (TÂM ĐIỂM TIẾNG VIỆT GỐC)
+    let word = '';
     if (forceMode === 'b60' && /^[a-zA-Z0-9]{3}$/.test(inputStr)) {
-      b60 = inputStr;
-      code = base60ToTime(b60);
-      word = decodeWord(code);
-    } else if (forceMode === 'vi') {
-      const cleanW = inputStr.replace(/^[^\p{L}\d]+|[^\p{L}\d]+$/gu, '');
-      word = cleanW || inputStr;
-      code = encodeWord(word);
-      b60 = timeToBase60(code);
-    } else {
-      // Auto mode: Try Vietnamese word first
-      const cleanW = inputStr.replace(/^[^\p{L}\d]+|[^\p{L}\d]+$/gu, '');
-      const testWord = cleanW || inputStr;
-      const viCode = encodeWord(testWord);
-
-      if (/^\d{6}$/.test(viCode)) {
-        word = testWord.toLowerCase();
-        code = viCode;
-        b60 = timeToBase60(code);
-      } else if (/^[a-zA-Z0-9]{3}$/.test(inputStr)) {
-        b60 = inputStr;
-        code = base60ToTime(b60);
-        word = decodeWord(code);
-      } else {
-        word = testWord;
-        code = viCode;
-        b60 = timeToBase60(code);
+      const b60Time = base60ToTime(inputStr);
+      if (/^\d{6}$/.test(b60Time)) {
+        const decoded = decodeWord(b60Time);
+        if (decoded && !decoded.includes('?') && !decoded.startsWith('[')) {
+          word = decoded;
+        }
       }
     }
 
-    if (!word || word.includes('?') || word.startsWith('[')) {
+    if (!word) {
+      const cleanW = inputStr.replace(/^[^\p{L}\d]+|[^\p{L}\d]+$/gu, '');
+      const testW = (cleanW || inputStr).toLowerCase();
+      const viCode = encodeWord(testW);
+      if (/^\d{6}$/.test(viCode)) {
+        word = testW;
+      } else if (/^[a-zA-Z0-9]{3}$/.test(inputStr)) {
+        // Fallback: If input is a Base60 code, decode it to get Vietnamese word
+        const b60Time = base60ToTime(inputStr);
+        if (/^\d{6}$/.test(b60Time)) {
+          const decoded = decodeWord(b60Time);
+          if (decoded && !decoded.includes('?') && !decoded.startsWith('[')) {
+            word = decoded;
+          }
+        }
+      }
+      if (!word) word = testW;
+    }
+
+    if (word === lastAnalyzedKey) return; // Skip if unchanged
+    lastAnalyzedKey = word;
+
+    // 2. ENCODE & BREAKDOWN FROM THE ORIGINAL VIETNAMESE WORD
+    const code = encodeWord(word);
+    const b60 = timeToBase60(code);
+
+    if (!code || !/^\d{6}$/.test(code) || code.startsWith('[')) {
       if (formulaText) {
-        formulaText.innerHTML = `⚠️ <i>Chưa tìm thấy quy tắc nén cho từ/mã "<b>${inputStr}</b>". Hãy thử từ khác (VD: <b>thành</b>, <b>rớt</b>, <b>TW2</b>)...</i>`;
+        formulaText.innerHTML = `⚠️ <i>Chưa tìm thấy quy tắc nén cho từ "<b>${word}</b>". Hãy thử từ khác (VD: <b>thành</b>, <b>vui</b>, <b>rớt</b>)...</i>`;
       }
       return;
     }
@@ -3922,6 +3928,20 @@ function initMnemonicTutor() {
       if (quickInput) quickInput.value = btn.dataset.word;
     }
   });
+
+  window.updateMnemonicTutorFromDecrypted = function() {
+    if (!tutorVisible) return;
+    const txtDec = document.getElementById('text-input');
+    if (!txtDec) return;
+    const val = txtDec.value || '';
+    if (!val.trim()) return;
+    let w = getWordUnderCursor(txtDec);
+    if (!w) {
+      const words = val.trim().split(/\s+/);
+      w = words[words.length - 1];
+    }
+    if (w) updateTutor(w, 'vi');
+  };
 
   // Initial load
   updateTutor('thành');
