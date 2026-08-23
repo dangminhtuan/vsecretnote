@@ -444,22 +444,23 @@
            =================================================== -->
       <section id="keep-view-container" class="keep-view-container" style="display: none;">
         <div class="keep-header-bar">
-          <div class="keep-header-left">
-            <button id="btn-exit-keep-view" class="cyber-btn-small" style="background:#000; color:#00ffcc; border-color:#00ffcc; font-weight:bold; font-size:12px; cursor:pointer; padding: 4px 10px;">← 💻 STUDIO</button>
-            <h2 style="color: #00ffcc; font-size: 15px; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; margin: 0;">
-              <span>🗂️ CIPHER KEEP</span>
-              <span id="keep-note-count" style="font-size: 10.5px; background: rgba(0,255,204,0.15); border: 1px solid #00ffcc; color: #00ffcc; padding: 1px 7px; border-radius: 10px; font-weight: normal;">0 NOTES</span>
-            </h2>
-            <button id="btn-keep-toggle-reveal" class="cyber-btn-small" style="background: rgba(255, 234, 0, 0.1); color: #ffea00; border-color: #ffea00; font-size: 11px; padding: 3px 8px; cursor: pointer;" title="Bật / Tắt hiển thị Tiếng Việt cho toàn bộ thẻ">👁️ HIỆN VI</button>
+          <div class="keep-header-row-1" style="display: flex; width: 100%; justify-content: space-between; align-items: center; gap: 6px;">
+            <button id="btn-exit-keep-view" class="cyber-btn-small" style="background:#000; color:#00ffcc; border-color:#00ffcc; font-weight:bold; font-size:11px; cursor:pointer; padding: 3px 8px; white-space: nowrap; flex-shrink: 0;">← STUDIO</button>
+            
+            <div style="display: flex; align-items: center; gap: 5px; flex-shrink: 0;">
+              <span style="color: #00ffcc; font-size: 13px; font-weight: bold; letter-spacing: 0.5px; white-space: nowrap;">🗂️ KEEP</span>
+              <span id="keep-note-count" style="font-size: 10px; background: rgba(0,255,204,0.15); border: 1px solid #00ffcc; color: #00ffcc; padding: 1px 6px; border-radius: 8px;">0</span>
+            </div>
+
+            <div style="display: flex; gap: 4px; align-items: center; margin-left: auto; flex-shrink: 0;">
+              <button id="btn-keep-toggle-reveal" class="cyber-btn-small" style="background: rgba(255, 234, 0, 0.1); color: #ffea00; border-color: #ffea00; font-size: 10.5px; padding: 3px 6px; cursor: pointer; white-space: nowrap;" title="Bật / Tắt hiển thị Tiếng Việt">👁️ VI</button>
+              <button class="tab-btn active" id="keep-tab-active" data-keeptab="active" style="padding: 2px 6px; font-size: 10.5px;">ACTIVE</button>
+              <button class="tab-btn" id="keep-tab-archive" data-keeptab="archive" style="padding: 2px 6px; font-size: 10.5px;">ARCHIVE</button>
+            </div>
           </div>
 
-          <div class="keep-search-box">
-            <input type="text" id="keep-search-input" class="cyber-input" placeholder="🔍 Tìm kiếm thẻ (Tiếng Việt hoặc Base60)..." spellcheck="false" style="width: 100%; font-size: 12px; padding: 5px 10px; background: rgba(0,15,10,0.9); border-color: #00ffcc;" />
-          </div>
-
-          <div class="keep-tabs">
-            <button class="tab-btn active" id="keep-tab-active" data-keeptab="active">ACTIVE</button>
-            <button class="tab-btn" id="keep-tab-archive" data-keeptab="archive">ARCHIVE</button>
+          <div class="keep-search-row" style="width: 100%; margin-top: 6px;">
+            <input type="text" id="keep-search-input" class="cyber-input" placeholder="🔍 Tìm kiếm Tiếng Việt hoặc Base60..." spellcheck="false" style="width: 100%; font-size: 12px; padding: 4px 10px; background: rgba(0,15,10,0.9); border-color: #00ffcc; height: 28px; box-sizing: border-box;" />
           </div>
         </div>
 

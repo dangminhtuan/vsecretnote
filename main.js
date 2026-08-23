@@ -1625,7 +1625,10 @@ function renderKeepView() {
     card.className = 'keep-card' + (n.id === currentNoteId ? ' active' : '');
     
     const d = new Date(n.updatedAt || Date.now());
-    const timeFormatted = `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')} ${d.toLocaleDateString()}`;
+    const isToday = new Date().toDateString() === d.toDateString();
+    const timeFormatted = isToday
+      ? `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`
+      : `${d.getDate().toString().padStart(2,'0')}/${(d.getMonth()+1).toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
     const decryptedText = getNoteDecryptedPreview(n.content, 400) || '(Chưa có nội dung)';
     const b60Preview = n.content.length > 80 ? n.content.substring(0, 80) + '...' : n.content;
 
@@ -1643,7 +1646,7 @@ function renderKeepView() {
 
     let relIcon = '';
     if (n.relations && n.relations.length > 0) {
-      relIcon = `<span title="${n.relations.length} liên kết quan hệ" style="font-size:11px; color:#00ffcc; background:rgba(0,255,204,0.1); padding:1px 5px; border-radius:3px; border:1px solid rgba(0,255,204,0.3);">🔗 ${n.relations.length}</span>`;
+      relIcon = `<span title="${n.relations.length} liên kết quan hệ" style="font-size:10px; color:#00ffcc; background:rgba(0,255,204,0.1); padding:1px 4px; border-radius:3px; border:1px solid rgba(0,255,204,0.3);">🔗 ${n.relations.length}</span>`;
     }
 
     card.innerHTML = `
@@ -1652,13 +1655,13 @@ function renderKeepView() {
         ${relIcon}
       </div>
       <div class="keep-card-body-b60" title="Mã Base60">${b60Preview || '[Trống]'}</div>
-      <div class="keep-card-peek-hint">👁️ Rê chuột để giải mã</div>
+      <div class="keep-card-peek-hint">👁️ Chạm / Rê chuột xem dịch</div>
       <div class="keep-card-body-vi">💬 ${decryptedText}</div>
       <div class="keep-card-footer">
         <span>🕒 ${timeFormatted}</span>
         <div class="keep-card-actions">
-          <button class="keep-action-btn keep-copy-vi" title="Copy Tiếng Việt">📋 VI</button>
-          <button class="keep-action-btn keep-copy-b60" title="Copy Base60">🔐 B60</button>
+          <button class="keep-action-btn keep-copy-vi" title="Copy Tiếng Việt">VI</button>
+          <button class="keep-action-btn keep-copy-b60" title="Copy Base60">B60</button>
           <button class="keep-action-btn keep-btn-archive" title="${n.isArchived ? 'Khôi phục' : 'Lưu trữ'}">${n.isArchived ? '📥' : '📦'}</button>
           <button class="keep-action-btn danger keep-btn-delete" title="Xóa">🗑️</button>
         </div>
@@ -1667,8 +1670,13 @@ function renderKeepView() {
 
     card.addEventListener('click', (e) => {
       if (e.target.closest('.keep-action-btn')) return;
-      loadNote(n.id);
-      toggleKeepView(false);
+      const isTouch = window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= 768;
+      if (isTouch && !card.classList.contains('revealed') && !isKeepRevealAll) {
+        card.classList.add('revealed');
+      } else {
+        loadNote(n.id);
+        toggleKeepView(false);
+      }
     });
 
     const btnCopyVi = card.querySelector('.keep-copy-vi');

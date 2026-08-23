@@ -1614,6 +1614,15 @@ body.sandbox-mode #sandbox-debug-container {
   line-height: 1.2;
 }
 
+.keep-card.revealed .keep-card-body-vi {
+  display: block !important;
+  animation: fadeInKeep 0.15s ease-out;
+}
+
+.keep-card.revealed .keep-card-peek-hint {
+  display: none !important;
+}
+
 .keep-action-btn:hover {
   background: #00ffcc;
   color: #000;
@@ -1625,6 +1634,93 @@ body.sandbox-mode #sandbox-debug-container {
   background: #ff3333;
   color: #fff;
   border-color: #ff3333;
+}
+
+/* ===================================================
+   📱 MOBILE RESPONSIVE POLISH & 2-COLUMN MAKEOVER
+   =================================================== */
+@media (max-width: 600px) {
+  body {
+    padding: 4px 0 !important;
+  }
+  .app-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 8px 6px !important;
+    border-radius: 4px !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border-width: 1px !important;
+  }
+  header {
+    margin-bottom: 6px !important;
+  }
+  .logo-container h1 {
+    font-size: 1.5rem !important;
+    letter-spacing: 2px !important;
+  }
+  .subtitle {
+    font-size: 0.68rem !important;
+    margin-top: 1px !important;
+    letter-spacing: 0.5px !important;
+  }
+  .keep-view-container {
+    gap: 8px !important;
+  }
+  .keep-header-bar {
+    padding-bottom: 6px !important;
+    gap: 6px !important;
+  }
+  .keep-quick-creator {
+    margin: 2px 0 6px 0 !important;
+  }
+  .keep-quick-box {
+    padding: 6px 8px !important;
+    gap: 5px !important;
+    border-radius: 6px !important;
+  }
+  .keep-quick-content {
+    font-size: 12px !important;
+  }
+  .keep-cards-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 6px !important;
+  }
+  .keep-card {
+    padding: 7px 8px !important;
+    min-height: 90px !important;
+    gap: 5px !important;
+    border-radius: 5px !important;
+  }
+  .keep-card-body-b60 {
+    font-size: 11.5px !important;
+    padding: 5px 6px !important;
+    line-height: 1.35 !important;
+    letter-spacing: 0.3px !important;
+  }
+  .keep-card-peek-hint {
+    font-size: 8px !important;
+    gap: 3px !important;
+  }
+  .keep-card-body-vi {
+    font-size: 11px !important;
+    padding: 4px 6px !important;
+    line-height: 1.3 !important;
+  }
+  .keep-card-footer {
+    padding-top: 4px !important;
+    font-size: 8.5px !important;
+    flex-wrap: wrap !important;
+    gap: 3px !important;
+  }
+  .keep-card-actions {
+    gap: 2px !important;
+  }
+  .keep-action-btn {
+    padding: 1px 4px !important;
+    font-size: 9px !important;
+    border-radius: 2px !important;
+  }
 }
 
 
