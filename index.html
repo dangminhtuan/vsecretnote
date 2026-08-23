@@ -42,10 +42,37 @@
               </div>
             </div>
 
-            <button id="btn-share-link" class="cyber-btn" title="Chia sẻ link" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0;">&#128279;</button>
+            <!-- 🗂️ Google Keep View Toggle Button -->
             <button id="btn-top-keep-view" class="cyber-btn" title="Chuyển sang giao diện Google Keep (Cards Board)" style="border-color: #00ffcc; color: #00ffcc; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0;">🗂️</button>
-            <a href="/dict-matrix.html" target="_blank" class="cyber-btn" title="Ma Trận & Từ Điển Base60" style="border-color: #00ff66; color: #00ff66; background: #000; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0; text-decoration: none;">📊</a>
-            <button id="btn-activity-log" class="cyber-btn" title="Activity Log" style="display: none !important; border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; align-items: center; justify-content: center; padding: 0;">&#128202;</button>
+
+            <!-- 🛠️ Tools Menu (Gộp Share Link, Ma Trận, Ngôn ngữ Ký hiệu VSSL, Thống kê) -->
+            <div style="position: relative; display: inline-block;">
+              <button id="btn-tools-menu" class="cyber-btn" title="Menu Công cụ & Tiện ích" style="border-color: #ffaa00; color: #ffaa00; background: #000; cursor: pointer; font-size: 16px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.2s;">🛠️</button>
+              
+              <div id="tools-dropdown-menu" style="display: none; position: absolute; top: 42px; left: 0; z-index: 10001; background: rgba(5, 15, 12, 0.98); border: 1px solid #ffaa00; box-shadow: 0 4px 22px rgba(255, 170, 0, 0.35); border-radius: 6px; padding: 8px 10px; min-width: 215px; backdrop-filter: blur(10px); flex-direction: column; gap: 6px;">
+                <div style="font-size: 10px; color: #888; font-family: monospace; font-weight: bold; border-bottom: 1px solid #443311; padding-bottom: 4px; letter-spacing: 1px;">🛠️ CÔNG CỤ & TIỆN ÍCH</div>
+                
+                <button id="btn-share-link" class="cyber-menu-item" style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #00ff66; background: transparent; border: none; cursor: pointer; padding: 6px 8px; border-radius: 4px; text-align: left; width: 100%; font-family: inherit;">
+                  <span>🔗</span>
+                  <span>Chia sẻ link mật mã</span>
+                </button>
+
+                <a href="/dict-matrix.html" target="_blank" class="cyber-menu-item" style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #00ffcc; text-decoration: none; padding: 6px 8px; border-radius: 4px; font-family: inherit;">
+                  <span>📊</span>
+                  <span>Ma trận & Từ điển Base60</span>
+                </a>
+
+                <a href="/vssl.html" target="_blank" class="cyber-menu-item" style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #a5b4fc; text-decoration: none; padding: 6px 8px; border-radius: 4px; font-family: inherit;">
+                  <span>🤟</span>
+                  <span>Thủ ngữ VSSL (Ký hiệu)</span>
+                </a>
+
+                <button id="btn-activity-log" class="cyber-menu-item" style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #ffaa00; background: transparent; border: none; cursor: pointer; padding: 6px 8px; border-radius: 4px; text-align: left; width: 100%; font-family: inherit;">
+                  <span>📈</span>
+                  <span>Nhật ký hoạt động (Log)</span>
+                </button>
+              </div>
+            </div>
             <button id="btn-sandbox-hashtag" class="cyber-btn" style="display: none !important; border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 16px; font-weight: bold; width: 36px; height: 36px; border-radius: 5px; align-items: center; justify-content: center; padding: 0;">#</button>
           </div>
 </div>

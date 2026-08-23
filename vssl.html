@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VSSL — Ngôn ngữ Ký hiệu Tốc ký Tiếng Việt</title>
+<style>
+/* ─── CSS VARIABLES & RESET ─────────────────────────────────────────── */
+:root {
+  --bg:       #0f172a;
+  --bg2:      #1e293b;
+  --bg3:      #334155;
+  --border:   #475569;
+  --text:     #e2e8f0;
+  --text2:    #94a3b8;
+  --accent:   #38bdf8;
+  --accent2:  #818cf8;
+  --green:    #34d399;
+  --red:      #f87171;
+  --orange:   #fb923c;
+  --purple:   #c084fc;
+  --yellow:   #fbbf24;
+  --radius:   10px;
+  --font:     'Segoe UI', system-ui, sans-serif;
+  --mono:     'Cascadia Code', 'Consolas', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+button { cursor: pointer; font-family: inherit; border: none; outline: none; }
+input, textarea { font-family: inherit; }
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ─── LAYOUT ─────────────────────────────────────────────────────────── */
+.app-header {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 20px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; z-index: 100;
+}
+.app-header h1 {
+  font-size: 1.2rem; font-weight: 700;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.app-header .tagline { color: var(--text2); font-size: 0.75rem; }
+.nav-tabs {
+  display: flex; gap: 4px; margin-left: auto;
+}
+.nav-tab {
+  padding: 6px 14px; border-radius: 8px;
+  background: transparent; color: var(--text2);
+  font-size: 0.8rem; transition: all 0.2s;
+  border: 1px solid transparent;
+}
+.nav-tab:hover { color: var(--text); background: var(--bg3); }
+.nav-tab.active {
+  background: var(--accent); color: #0f172a;
+  font-weight: 700; border-color: transparent;
+}
+.back-link {
+  color: var(--text2); text-decoration: none;
+  font-size: 0.75rem; padding: 4px 10px;
+  border: 1px solid var(--border); border-radius: 6px;
+  transition: all 0.2s;
+}
+.back-link:hover { color: var(--accent); border-color: var(--accent); }
+
+main { padding: 20px; max-width: 1400px; margin: 0 auto; }
+
+/* ─── PANELS ─────────────────────────────────────────────────────────── */
+.panel {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+.panel.active { display: block; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+
+/* ─── HERO SECTION ───────────────────────────────────────────────────── */
+.hero {
+  text-align: center; padding: 24px 16px;
+}
+.hero h2 {
+  font-size: 2rem; font-weight: 800; margin-bottom: 8px;
+  background: linear-gradient(135deg, var(--accent), var(--purple), var(--green));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.hero p { color: var(--text2); max-width: 600px; margin: 0 auto 20px; font-size: 0.9rem; line-height: 1.6; }
+
+.principle-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 12px; max-width: 700px; margin: 0 auto 24px;
+}
+.principle-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 16px 12px;
+  text-align: center;
+}
+.principle-card .icon { font-size: 2rem; margin-bottom: 8px; }
+.principle-card h3 { font-size: 0.85rem; color: var(--text2); margin-bottom: 4px; }
+.principle-card .value { font-size: 1rem; font-weight: 700; color: var(--accent); }
+
+/* ─── DEMO SECTION (MAIN FEATURE) ───────────────────────────────────── */
+.demo-section {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px; margin-bottom: 20px;
+}
+.demo-section h3 {
+  font-size: 0.9rem; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--text2);
+  margin-bottom: 16px;
+}
+.input-row {
+  display: flex; gap: 8px; margin-bottom: 16px;
+}
+#wordInput {
+  flex: 1; padding: 10px 14px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text);
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+#wordInput:focus { border-color: var(--accent); outline: none; }
+#analyzeBtn {
+  padding: 10px 20px; border-radius: 8px;
+  background: var(--accent); color: #0f172a;
+  font-weight: 700; font-size: 0.9rem;
+  transition: all 0.2s;
+}
+#analyzeBtn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+/* Quick word buttons */
+.quick-words {
+  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px;
+}
+.quick-word-btn {
+  padding: 4px 12px; border-radius: 20px;
+  background: var(--bg3); border: 1px solid var(--border);
+  color: var(--text); font-size: 0.8rem;
+  transition: all 0.2s;
+}
+.quick-word-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ─── SIGN DISPLAY — DUAL HAND ───────────────────────────────────────── */
+.sign-display {
+  display: flex; align-items: stretch; gap: 16px;
+  margin-top: 8px;
+}
+.hand-panel {
+  flex: 1; background: var(--bg3);
+  border-radius: var(--radius); padding: 16px;
+  text-align: center; position: relative;
+  transition: all 0.3s;
+  border: 2px solid transparent;
+}
+.hand-panel.active-sign { border-color: var(--accent); }
+.hand-panel .panel-label {
+  font-size: 0.7rem; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--text2); margin-bottom: 8px;
+}
+.hand-canvas-wrap {
+  width: 160px; height: 160px; margin: 0 auto 8px;
+  position: relative;
+}
+.hand-canvas-wrap canvas { width: 100%; height: 100%; }
+.sign-name {
+  font-size: 1.1rem; font-weight: 700; color: var(--text);
+}
+.sign-desc {
+  font-size: 0.72rem; color: var(--text2); margin-top: 4px; line-height: 1.4;
+}
+.sign-component {
+  font-family: var(--mono); font-size: 0.85rem;
+  padding: 3px 8px; border-radius: 5px;
+  display: inline-block; margin-top: 6px;
+}
+
+/* Tone display center */
+.tone-panel {
+  width: 110px; background: var(--bg3);
+  border-radius: var(--radius); padding: 12px;
+  text-align: center; display: flex;
+  flex-direction: column; align-items: center; justify-content: center;
+  gap: 8px;
+}
+.tone-arrow {
+  font-size: 3rem; line-height: 1;
+  transition: transform 0.3s;
+}
+.tone-label { font-size: 0.75rem; color: var(--text2); }
+.tone-name { font-size: 1rem; font-weight: 700; }
+
+/* Word result badge */
+.word-result {
+  background: var(--bg3); border-radius: var(--radius);
+  padding: 12px 16px; margin-top: 12px;
+  display: flex; align-items: center; gap: 16px;
+}
+.result-word {
+  font-size: 1.6rem; font-weight: 800; color: var(--text);
+}
+.result-parts {
+  font-size: 0.8rem; color: var(--text2); line-height: 1.8;
+}
+.result-parts span { font-family: var(--mono); padding: 1px 5px;
+  border-radius: 4px; background: var(--bg2); }
+
+/* ─── SENTENCE MODE ──────────────────────────────────────────────────── */
+.sentence-strip {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-top: 12px; padding: 12px;
+  background: var(--bg3); border-radius: var(--radius);
+  min-height: 50px;
+}
+.word-chip {
+  padding: 5px 12px; border-radius: 20px;
+  background: var(--bg2); border: 1px solid var(--border);
+  font-size: 0.85rem; cursor: pointer;
+  transition: all 0.2s;
+}
+.word-chip:hover, .word-chip.selected { background: var(--accent); color: #0f172a; font-weight: 600; border-color: transparent; }
+
+/* ─── REFERENCE TABLE ────────────────────────────────────────────────── */
+.ref-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-top: 12px;
+}
+.ref-card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.ref-card-header {
+  padding: 10px 14px;
+  background: var(--bg3);
+  font-size: 0.8rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  display: flex; align-items: center; gap: 8px;
+}
+.ref-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.78rem;
+}
+.ref-table th {
+  background: var(--bg3); padding: 6px 10px;
+  text-align: left; color: var(--text2);
+  font-weight: 600; font-size: 0.7rem;
+}
+.ref-table td {
+  padding: 6px 10px; border-top: 1px solid var(--border);
+  vertical-align: middle;
+}
+.ref-table tr:hover td { background: var(--bg3); }
+.tone-pill {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 8px; border-radius: 20px;
+  font-size: 0.75rem; font-weight: 600;
+}
+.shape-icon {
+  font-size: 1.3rem; display: inline-block; margin-right: 4px;
+}
+
+/* ─── DICTIONARY / LOOKUP ────────────────────────────────────────────── */
+.dict-search-row {
+  display: flex; gap: 8px; margin-bottom: 14px;
+}
+#dictSearch {
+  flex: 1; padding: 8px 12px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 8px; color: var(--text);
+}
+#dictSearch:focus { border-color: var(--accent); outline: none; }
+.dict-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px; max-height: 480px; overflow-y: auto;
+}
+.dict-entry {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px;
+  cursor: pointer; transition: all 0.2s;
+}
+.dict-entry:hover { border-color: var(--accent); transform: translateY(-2px); }
+.dict-entry .de-word { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+.dict-entry .de-parts {
+  font-size: 0.7rem; color: var(--text2);
+  font-family: var(--mono);
+}
+.dict-entry .de-sign { font-size: 1.2rem; margin-top: 6px; }
+
+/* ─── PRACTICE MODE ──────────────────────────────────────────────────── */
+.practice-modes {
+  display: flex; gap: 8px; margin-bottom: 16px;
+}
+.mode-btn {
+  flex: 1; padding: 10px;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: var(--radius); color: var(--text);
+  font-size: 0.85rem; text-align: center;
+  transition: all 0.2s;
+}
+.mode-btn.active { background: var(--accent2); color: #fff; border-color: transparent; }
+.mode-btn:hover:not(.active) { border-color: var(--accent2); }
+
+.flashcard-area {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 16px; padding: 30px;
+  text-align: center; min-height: 300px;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px;
+  position: relative;
+}
+.fc-question {
+  font-size: 3rem; margin-bottom: 8px;
+  transition: all 0.3s;
+}
+.fc-hint { color: var(--text2); font-size: 0.85rem; }
+.fc-answer {
+  font-size: 2rem; font-weight: 800; color: var(--green);
+  display: none;
+}
+.fc-answer.show { display: block; }
+.fc-actions { display: flex; gap: 10px; }
+.btn { padding: 10px 22px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; transition: all 0.2s; }
+.btn-primary { background: var(--accent); color: #0f172a; }
+.btn-primary:hover { opacity: 0.85; }
+.btn-secondary { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--accent); }
+.btn-success { background: var(--green); color: #0f172a; }
+.btn-danger { background: var(--red); color: #fff; }
+
+/* Speed drill */
+.drill-area {
+  display: none;
+}
+.drill-area.active { display: block; }
+.drill-header {
+  display: flex; align-items: center; gap: 16px;
+  margin-bottom: 16px;
+}
+.drill-timer {
+  font-family: var(--mono); font-size: 1.5rem;
+  color: var(--yellow); background: var(--bg3);
+  padding: 6px 14px; border-radius: 8px;
+}
+.drill-score {
+  font-size: 1.1rem; font-weight: 700; color: var(--green);
+}
+.drill-word {
+  font-size: 2.5rem; font-weight: 800; text-align: center;
+  padding: 20px; background: var(--bg2);
+  border-radius: 12px; margin-bottom: 12px;
+  min-height: 100px; display: flex;
+  align-items: center; justify-content: center;
+}
+.drill-sign-mini {
+  display: flex; gap: 8px; justify-content: center;
+  margin-bottom: 16px;
+}
+.drill-sign-chip {
+  background: var(--bg3); border-radius: 8px;
+  padding: 8px 14px; text-align: center; font-size: 0.8rem;
+}
+.drill-sign-chip .emoji { font-size: 1.4rem; display: block; }
+.drill-sign-chip .lbl { color: var(--text2); font-size: 0.68rem; margin-top: 2px; }
+
+/* Stats bar */
+.stats-bar {
+  display: flex; gap: 8px; margin-top: 16px;
+}
+.stat-chip {
+  flex: 1; background: var(--bg3); border-radius: 8px;
+  padding: 8px 12px; text-align: center;
+}
+.stat-chip .s-val { font-size: 1.2rem; font-weight: 700; color: var(--accent); }
+.stat-chip .s-lbl { font-size: 0.68rem; color: var(--text2); margin-top: 2px; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .principle-grid { grid-template-columns: repeat(2, 1fr); }
+  .ref-grid { grid-template-columns: 1fr; }
+  .sign-display { flex-direction: column; }
+  .tone-panel { width: 100%; flex-direction: row; justify-content: space-around; }
+  .nav-tabs { display: none; }
+}
+
+/* ─── ANIMATIONS ─────────────────────────────────────────────────────── */
+@keyframes signPulse {
+  0%,100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+@keyframes handIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.9); }
+  to { opacity: 1; transform: none; }
+}
+.sign-animate { animation: signPulse 0.4s ease; }
+.hand-in { animation: handIn 0.35s ease; }
+</style>
+</head>
+<body>
+
+<!-- ─── HEADER ─────────────────────────────────────────────────────────── -->
+<header class="app-header">
+  <span style="font-size:1.5rem">🤟</span>
+  <div>
+    <h1>VSSL</h1>
+    <div class="tagline">Vietnamese Sign Speed Language · Tốc ký Tiếng Việt</div>
+  </div>
+  <nav class="nav-tabs">
+    <button class="nav-tab active" data-panel="demo">🖐 Demo</button>
+    <button class="nav-tab" data-panel="reference">📋 Tham chiếu</button>
+    <button class="nav-tab" data-panel="dictionary">📖 Từ điển</button>
+    <button class="nav-tab" data-panel="practice">🎯 Luyện tập</button>
+  </nav>
+  <a href="/" class="back-link">← VSecretNote</a>
+</header>
+
+<!-- ─── MAIN ───────────────────────────────────────────────────────────── -->
+<main>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PANEL 1: DEMO
+════════════════════════════════════════════════════════════════════ -->
+<section class="panel active" id="panel-demo">
+
+  <!-- Hero -->
+  <div class="hero">
+    <h2>🤟 VSSL — Ký hiệu 1 Nhịp</h2>
+    <p>Mỗi từ Tiếng Việt = <strong>1 nhịp kép đồng thời</strong>.<br>
+    Tay Trái biểu đạt <em>Phụ âm</em> · Tay Phải biểu đạt <em>Vần</em> · Hướng di chuyển biểu đạt <em>Thanh điệu</em>.</p>
+    <div class="principle-grid">
+      <div class="principle-card">
+        <div class="icon">🤚</div>
+        <h3>Tay Trái</h3>
+        <div class="value">Phụ Âm Đầu</div>
+      </div>
+      <div class="principle-card">
+        <div class="icon">✋</div>
+        <h3>Tay Phải</h3>
+        <div class="value">Vần Chính</div>
+      </div>
+      <div class="principle-card">
+        <div class="icon">↗</div>
+        <h3>Di Chuyển</h3>
+        <div class="value">Thanh Điệu</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Demo: Nhập từ -->
+  <div class="demo-section">
+    <h3>🔍 Phân tích ký hiệu</h3>
+    <div class="input-row">
+      <input id="wordInput" type="text" placeholder="Nhập từ Tiếng Việt... (VD: học, yêu, bạn)" autocomplete="off" spellcheck="false">
+      <button id="analyzeBtn">→ Phân tích</button>
+    </div>
+    <div class="quick-words" id="quickWords"></div>
+
+    <!-- Sign Display -->
+    <div class="sign-display" id="signDisplay">
+      <!-- Tay trái — Phụ âm -->
+      <div class="hand-panel" id="leftHandPanel">
+        <div class="panel-label">🤚 Tay Trái — Phụ âm đầu</div>
+        <div class="hand-canvas-wrap">
+          <canvas id="leftHandCanvas" width="160" height="160"></canvas>
+        </div>
+        <div class="sign-name" id="leftSignName">—</div>
+        <div class="sign-component" id="leftSignComp" style="background:#1e293b;color:#94a3b8">PA</div>
+        <div class="sign-desc" id="leftSignDesc">Nhập một từ để xem ký hiệu</div>
+      </div>
+
+      <!-- Thanh điệu — Center -->
+      <div class="tone-panel" id="tonePanel">
+        <div class="panel-label" style="font-size:0.65rem;letter-spacing:.1em;color:var(--text2)">THANH ĐIỆU</div>
+        <div class="tone-arrow" id="toneArrow">·</div>
+        <div class="tone-name" id="toneName">—</div>
+        <div class="tone-label" id="toneDesc"></div>
+      </div>
+
+      <!-- Tay phải — Vần -->
+      <div class="hand-panel" id="rightHandPanel">
+        <div class="panel-label">✋ Tay Phải — Vần</div>
+        <div class="hand-canvas-wrap">
+          <canvas id="rightHandCanvas" width="160" height="160"></canvas>
+        </div>
+        <div class="sign-name" id="rightSignName">—</div>
+        <div class="sign-component" id="rightSignComp" style="background:#1e293b;color:#94a3b8">VẦN</div>
+        <div class="sign-desc" id="rightSignDesc">Nhập một từ để xem ký hiệu</div>
+      </div>
+    </div>
+
+    <!-- Word result -->
+    <div class="word-result" id="wordResult" style="display:none">
+      <div class="result-word" id="resultWord"></div>
+      <div class="result-parts" id="resultParts"></div>
+    </div>
+  </div>
+
+  <!-- Phân tích câu -->
+  <div class="demo-section">
+    <h3>💬 Phân tích câu</h3>
+    <div class="input-row">
+      <input id="sentInput" type="text" placeholder="Nhập câu... (VD: tôi yêu việt nam)" autocomplete="off">
+      <button id="analyzeSentBtn" class="btn btn-secondary">Phân tích câu</button>
+    </div>
+    <div class="sentence-strip" id="sentenceStrip">
+      <span style="color:var(--text2);font-size:0.8rem;padding:4px">Nhập câu và nhấn phân tích...</span>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PANEL 2: REFERENCE
+════════════════════════════════════════════════════════════════════ -->
+<section class="panel" id="panel-reference">
+  <h2 style="margin-bottom:16px;font-size:1.1rem">📋 Bảng Quy Chuẩn Ký Hiệu VSSL</h2>
+  <div class="ref-grid">
+
+    <!-- Phụ âm đầu -->
+    <div class="ref-card">
+      <div class="ref-card-header">🤚 Tay Trái — Phụ Âm Đầu (31 ký hiệu)</div>
+      <table class="ref-table" id="consonantTable">
+        <thead><tr><th>PA</th><th>Ký hiệu tay</th><th>Emoji</th><th>Gợi nhớ</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <!-- Thanh điệu -->
+    <div class="ref-card">
+      <div class="ref-card-header">↗ Hướng di chuyển — Thanh Điệu (6 hướng)</div>
+      <table class="ref-table" id="toneTable">
+        <thead><tr><th>Thanh</th><th>Mũi tên</th><th>Hướng</th><th>Mô tả</th></tr></thead>
+        <tbody id="toneTableBody"></tbody>
+      </table>
+
+      <div class="ref-card-header" style="margin-top:16px">✋ Tay Phải — 12 Hình Cơ Bản</div>
+      <table class="ref-table" id="rhymeShapeTable">
+        <thead><tr><th>Shape</th><th>Tên</th><th>Emoji</th><th>Nhóm vần</th></tr></thead>
+        <tbody id="rhymeShapeBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Bảng mẫu 20 từ -->
+  <h3 style="margin:20px 0 12px;font-size:0.9rem;color:var(--text2);text-transform:uppercase;letter-spacing:.1em">
+    🔑 Bảng Mẫu — 20 Từ Phổ Biến Nhất
+  </h3>
+  <div class="dict-grid" id="sampleWords" style="max-height:none"></div>
+
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PANEL 3: DICTIONARY
+════════════════════════════════════════════════════════════════════ -->
+<section class="panel" id="panel-dictionary">
+  <h2 style="margin-bottom:12px;font-size:1.1rem">📖 Từ điển Ký hiệu VSSL</h2>
+  <div class="dict-search-row">
+    <input id="dictSearch" placeholder="Tìm từ... (VD: học, yêu, hoặc nhập vần 'an', 'ươm'...)">
+    <button class="btn btn-secondary" id="dictClearBtn">✕ Xóa</button>
+  </div>
+  <div style="color:var(--text2);font-size:0.78rem;margin-bottom:12px" id="dictCount"></div>
+  <div class="dict-grid" id="dictGrid"></div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════
+     PANEL 4: PRACTICE
+════════════════════════════════════════════════════════════════════ -->
+<section class="panel" id="panel-practice">
+  <h2 style="margin-bottom:12px;font-size:1.1rem">🎯 Luyện Tập Thực Chiến</h2>
+
+  <div class="stats-bar" id="statsBar">
+    <div class="stat-chip">
+      <div class="s-val" id="statTotal">0</div>
+      <div class="s-lbl">Tổng thử</div>
+    </div>
+    <div class="stat-chip">
+      <div class="s-val" id="statCorrect">0</div>
+      <div class="s-lbl">Đúng</div>
+    </div>
+    <div class="stat-chip">
+      <div class="s-val" id="statStreak">0</div>
+      <div class="s-lbl">Streak 🔥</div>
+    </div>
+    <div class="stat-chip">
+      <div class="s-val" id="statAccuracy">—</div>
+      <div class="s-lbl">Độ chính xác</div>
+    </div>
+  </div>
+
+  <div class="practice-modes" style="margin-top:16px">
+    <button class="mode-btn active" data-mode="flashcard">📇 FlashCard<br><small>Đoán từ từ ký hiệu</small></button>
+    <button class="mode-btn" data-mode="reverse">🔄 Ngược<br><small>Đoán ký hiệu từ từ</small></button>
+    <button class="mode-btn" data-mode="drill">⚡ Speed Drill<br><small>Giao tiếp nhanh</small></button>
+  </div>
+
+  <!-- FLASHCARD MODE -->
+  <div id="flashcardMode">
+    <div class="flashcard-area" id="flashcardArea">
+      <div style="font-size:0.8rem;color:var(--text2)">Ký hiệu tay nào biểu đạt từ này?</div>
+      <div class="fc-question" id="fcQuestion">—</div>
+
+      <div id="fcSignDisplay" style="display:flex;gap:12px;justify-content:center">
+        <div style="text-align:center">
+          <canvas id="fcLeftCanvas" width="100" height="100"></canvas>
+          <div style="font-size:0.7rem;color:var(--text2);margin-top:4px">Tay Trái (PA)</div>
+        </div>
+        <div style="text-align:center;display:flex;align-items:center">
+          <div id="fcToneArrow" style="font-size:2.5rem;color:var(--yellow)">·</div>
+        </div>
+        <div style="text-align:center">
+          <canvas id="fcRightCanvas" width="100" height="100"></canvas>
+          <div style="font-size:0.7rem;color:var(--text2);margin-top:4px">Tay Phải (Vần)</div>
+        </div>
+      </div>
+
+      <div class="fc-answer" id="fcAnswer"></div>
+      <div class="fc-hint" id="fcHint"></div>
+
+      <div class="fc-actions">
+        <button class="btn btn-secondary" id="fcReveal">👁 Xem đáp án</button>
+        <button class="btn btn-success" id="fcCorrect" style="display:none">✓ Đúng</button>
+        <button class="btn btn-danger" id="fcWrong" style="display:none">✗ Sai</button>
+        <button class="btn btn-primary" id="fcNext">Tiếp →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SPEED DRILL MODE -->
+  <div id="drillMode" class="drill-area" style="display:none">
+    <div class="drill-header">
+      <div class="drill-timer" id="drillTimer">30</div>
+      <div class="drill-score" id="drillScore">0 từ</div>
+      <button class="btn btn-primary" id="drillStartBtn">▶ Bắt đầu</button>
+      <button class="btn btn-secondary" id="drillStopBtn" style="display:none">■ Dừng</button>
+    </div>
+    <div class="drill-word" id="drillWord">Sẵn sàng?</div>
+    <div class="drill-sign-mini" id="drillSignMini"></div>
+    <div style="display:flex;gap:8px;justify-content:center">
+      <button class="btn btn-success" id="drillGot" disabled>✓ Nhớ ra rồi!</button>
+      <button class="btn btn-secondary" id="drillSkip" disabled>→ Bỏ qua</button>
+    </div>
+  </div>
+
+</section>
+
+</main>
+
+<!-- ─── JAVASCRIPT ──────────────────────────────────────────────────────── -->
+<script type="module">
+// ─── IMPORTS ───────────────────────────────────────────────────────────────
+import {
+  TONE_SIGNS, CONSONANT_SIGNS, RHYME_BASE_SHAPES, RHYME_MODIFIERS,
+  RHYME_SIGN_MAP, CONSONANT_BASE_KEYS, CONSONANT_EXTRA_KEYS,
+  getConsonantSign, getRhymeSign, getToneSign, DEMO_WORDS
+} from './vssl_data.js';
+
+import { removeVietnameseTones } from './vcomp.js';
+
+// ─── PHONETIC PARSER (lấy từ vcomp logic, tự chứa) ────────────────────────
+const CONSONANTS_ALL = [
+  'ngh','ng','nh','kh','gh','gi','ch','ph','qu','th','tr',
+  'đ','g','h','v','d','m','r','s','n','b','l','x','t','c','k','p','f'
+];
+
+function parseWord(word) {
+  word = word.toLowerCase().trim();
+  if (!word) return null;
+  const [clean, tone] = removeVietnameseTones(word);
+
+  let consonant = '';
+  let rhyme = clean;
+  for (const c of CONSONANTS_ALL) {
+    if (clean.startsWith(c)) {
+      consonant = c;
+      rhyme = clean.slice(c.length);
+      break;
+    }
+  }
+  // đặc biệt: gi + nguyên âm
+  if (consonant === 'gi') {
+    if (rhyme === '') rhyme = 'i';
+    else if (!rhyme.startsWith('ê') && !/^[aăâeêioôơuưy]/.test(rhyme)) rhyme = 'i' + rhyme;
+  }
+
+  const consSign = getConsonantSign(consonant);
+  const rhymeSign = getRhymeSign(rhyme);
+  const toneSign = getToneSign(tone);
+
+  return { word, consonant, rhyme, tone, consSign, rhymeSign, toneSign };
+}
+
+// ─── HAND DRAWING ENGINE (SVG-on-Canvas) ──────────────────────────────────
+// 21 điểm bàn tay MediaPipe-style, vẽ trên canvas 2D
+const PALM_COLOR = '#1e293b';
+const SKIN_COLOR = '#fbbf24';
+const JOINT_COLOR = '#f59e0b';
+const BONE_COLOR  = '#92400e';
+
+// Tọa độ bình thường hóa [0..1] cho 21 landmark
+// Index: 0=wrist, 1-4=thumb, 5-8=index, 9-12=middle, 13-16=ring, 17-20=pinky
+const BASE_LANDMARKS = [
+  [0.5, 0.9],   // 0 wrist
+  [0.2, 0.78],  // 1 thumb CMC
+  [0.12, 0.65], // 2 thumb MCP
+  [0.07, 0.52], // 3 thumb IP
+  [0.04, 0.41], // 4 thumb tip
+  [0.35, 0.55], // 5 index MCP
+  [0.33, 0.38], // 6 index PIP
+  [0.32, 0.24], // 7 index DIP
+  [0.31, 0.12], // 8 index tip
+  [0.5,  0.52], // 9 middle MCP
+  [0.5,  0.34], // 10 middle PIP
+  [0.5,  0.2],  // 11 middle DIP
+  [0.5,  0.08], // 12 middle tip
+  [0.65, 0.55], // 13 ring MCP
+  [0.66, 0.37], // 14 ring PIP
+  [0.67, 0.23], // 15 ring DIP
+  [0.68, 0.12], // 16 ring tip
+  [0.79, 0.59], // 17 pinky MCP
+  [0.81, 0.44], // 18 pinky PIP
+  [0.82, 0.32], // 19 pinky DIP
+  [0.83, 0.22], // 20 pinky tip
+];
+
+const CONNECTIONS = [
+  [0,1],[1,2],[2,3],[3,4],         // thumb
+  [0,5],[5,6],[6,7],[7,8],         // index
+  [0,9],[9,10],[10,11],[11,12],    // middle
+  [0,13],[13,14],[14,15],[15,16],  // ring
+  [0,17],[17,18],[18,19],[19,20],  // pinky
+  [5,9],[9,13],[13,17],            // palm
+];
+
+function curledLandmarks(fingerMask) {
+  // fingerMask: [thumb, index, middle, ring, pinky] — 1=duỗi, 0=gập
+  const pts = BASE_LANDMARKS.map(p => [...p]);
+  const fingerSegments = [
+    [1,2,3,4],   // thumb
+    [5,6,7,8],   // index
+    [9,10,11,12],// middle
+    [13,14,15,16],// ring
+    [17,18,19,20],// pinky
+  ];
+  fingerSegments.forEach((seg, fi) => {
+    if (!fingerMask[fi]) {
+      // curl: kéo tip vào lòng bàn tay
+      const mcp = pts[seg[0]];
+      const tipDst = [mcp[0] + 0.03, mcp[1] + 0.12];
+      // Interpolate các đốt ngón
+      const ratio = [0, 0.3, 0.65, 1.0];
+      seg.forEach((idx, i) => {
+        pts[idx] = [
+          mcp[0] + (tipDst[0]-mcp[0]) * ratio[i] + (i>0 ? (Math.random()-0.5)*0.01:0),
+          mcp[1] + (tipDst[1]-mcp[1]) * ratio[i],
+        ];
+      });
+    }
+  });
+  return pts;
+}
+
+function drawHand(canvas, fingers = [1,1,1,1,1], orient = 'up', color = SKIN_COLOR, highlight = null, mirror = false) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const pts = curledLandmarks(fingers);
+
+  // Transform: scale to canvas
+  function tx(p) {
+    let [x, y] = p;
+    if (mirror) x = 1 - x;
+    // Orient: rotate canvas for different palm directions
+    return [x * W, y * H];
+  }
+
+  // Draw palm fill (convex hull of palm points)
+  const palmPts = [0,5,9,13,17,1].map(i => tx(pts[i]));
+  ctx.beginPath();
+  ctx.moveTo(palmPts[0][0], palmPts[0][1]);
+  palmPts.slice(1).forEach(p => ctx.lineTo(p[0], p[1]));
+  ctx.closePath();
+  ctx.fillStyle = color + '44';
+  ctx.fill();
+
+  // Draw bones
+  CONNECTIONS.forEach(([a, b]) => {
+    const [ax, ay] = tx(pts[a]);
+    const [bx, by] = tx(pts[b]);
+    ctx.beginPath();
+    ctx.moveTo(ax, ay); ctx.lineTo(bx, by);
+    ctx.strokeStyle = BONE_COLOR + 'aa';
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+  });
+
+  // Draw joints
+  pts.forEach((p, i) => {
+    const [x, y] = tx(p);
+    const r = i === 0 ? 6 : (i % 4 === 0 ? 5 : 3.5);
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = i === 0 ? color : (i % 4 === 0 ? color : JOINT_COLOR + 'cc');
+    ctx.fill();
+    if (highlight && highlight.includes(i)) {
+      ctx.strokeStyle = '#38bdf8';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  });
+}
+
+function drawHandFromSign(canvas, sign, mirror = false) {
+  if (!sign) {
+    drawHand(canvas, [0,0,0,0,0], 'in', '#64748b', null, mirror);
+    return;
+  }
+  drawHand(canvas, sign.fingers, sign.orient, SKIN_COLOR, null, mirror);
+  // Overlay modifier / wrist tilt via canvas transform
+}
+
+// ─── TONE ARROW DRAWING ────────────────────────────────────────────────────
+function drawToneArrow(canvas, toneSign) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  if (!toneSign) return;
+  const cx = W / 2, cy = H / 2;
+  const len = 40;
+  const angle = Math.atan2(toneSign.dy, toneSign.dx);
+  const ex = cx + Math.cos(angle) * len;
+  const ey = cy + Math.sin(angle) * len;
+  const sx = cx - Math.cos(angle) * len;
+  const sy = cy - Math.sin(angle) * len;
+
+  ctx.beginPath();
+  ctx.moveTo(sx, sy);
+  if (toneSign.tone === 4) {
+    // Wave
+    const steps = 20;
+    for (let i = 0; i <= steps; i++) {
+      const t = i / steps;
+      const wx = sx + (ex - sx) * t;
+      const wy = sy + (ey - sy) * t + Math.sin(t * Math.PI * 3) * 12;
+      ctx.lineTo(wx, wy);
+    }
+  } else {
+    ctx.lineTo(ex, ey);
+  }
+  ctx.strokeStyle = toneSign.color;
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.stroke();
+
+  // Arrow head
+  if (toneSign.tone !== 4) {
+    const aw = 10, ah = 8;
+    ctx.beginPath();
+    ctx.moveTo(ex, ey);
+    ctx.lineTo(ex - Math.cos(angle - 0.5) * aw, ey - Math.sin(angle - 0.5) * aw);
+    ctx.lineTo(ex - Math.cos(angle + 0.5) * aw, ey - Math.sin(angle + 0.5) * aw);
+    ctx.closePath();
+    ctx.fillStyle = toneSign.color;
+    ctx.fill();
+  }
+
+  // For tone 3 (hỏi) — add stop mark
+  if (toneSign.tone === 3) {
+    ctx.beginPath();
+    ctx.moveTo(ex + Math.cos(angle+Math.PI/2)*6, ey + Math.sin(angle+Math.PI/2)*6);
+    ctx.lineTo(ex + Math.cos(angle-Math.PI/2)*6, ey + Math.sin(angle-Math.PI/2)*6);
+    ctx.strokeStyle = toneSign.color;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+  }
+}
+
+// ─── MAIN ANALYZE FUNCTION ────────────────────────────────────────────────
+function analyzeWord(word) {
+  const data = parseWord(word);
+  if (!data) return;
+
+  // Left hand (consonant) — mirror=false (tay trái)
+  drawHandFromSign(document.getElementById('leftHandCanvas'), data.consSign, false);
+  // Right hand (rhyme) — mirror=true (tay phải)
+  const rhymeShape = RHYME_BASE_SHAPES[data.rhymeSign.shape];
+  if (rhymeShape) drawHandFromSign(document.getElementById('rightHandCanvas'), rhymeShape, true);
+
+  // Tone
+  document.getElementById('toneArrow').textContent = data.toneSign.arrow;
+  document.getElementById('toneArrow').style.color = data.toneSign.color;
+  document.getElementById('toneName').textContent = data.toneSign.name;
+  document.getElementById('toneDesc').textContent = data.toneSign.desc;
+
+  // Labels
+  document.getElementById('leftSignName').textContent = data.consSign.name;
+  document.getElementById('leftSignComp').textContent = `PA: ${data.consonant || '(rỗng)'}`;
+  document.getElementById('leftSignComp').style.background = data.consSign.color + '33';
+  document.getElementById('leftSignComp').style.color = data.consSign.color;
+  document.getElementById('leftSignDesc').textContent = data.consSign.note;
+
+  const rShapeName = rhymeShape ? rhymeShape.name : '?';
+  const rModName = RHYME_MODIFIERS[data.rhymeSign.mod]?.name || '';
+  document.getElementById('rightSignName').textContent = `${rShapeName} · ${rModName}`;
+  document.getElementById('rightSignComp').textContent = `Vần: ${data.rhyme || '(rỗng)'}`;
+  document.getElementById('rightSignComp').style.background = (rhymeShape?.color || '#64748b') + '33';
+  document.getElementById('rightSignComp').style.color = rhymeShape?.color || '#64748b';
+  document.getElementById('rightSignDesc').textContent = data.rhymeSign.desc || '';
+
+  // Word result
+  document.getElementById('wordResult').style.display = 'flex';
+  document.getElementById('resultWord').textContent = data.word;
+  document.getElementById('resultParts').innerHTML = `
+    <span>PA: ${data.consonant || '∅'}</span>
+    &nbsp;+&nbsp;
+    <span>VẦN: ${data.rhyme}</span>
+    &nbsp;+&nbsp;
+    <span>T${data.tone}: ${data.toneSign.name}</span>
+  `;
+
+  // Animate
+  document.querySelectorAll('.hand-panel').forEach(p => {
+    p.classList.add('active-sign');
+    setTimeout(() => p.classList.remove('active-sign'), 600);
+  });
+}
+
+// ─── SENTENCE ANALYSIS ────────────────────────────────────────────────────
+function analyzeSentence(sentence) {
+  const words = sentence.trim().split(/\s+/).filter(Boolean);
+  const strip = document.getElementById('sentenceStrip');
+  strip.innerHTML = '';
+  words.forEach(w => {
+    const chip = document.createElement('div');
+    chip.className = 'word-chip';
+    const d = parseWord(w);
+    if (d) {
+      chip.textContent = w;
+      chip.title = `PA:${d.consonant||'∅'} + VẦN:${d.rhyme} + T${d.tone}`;
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.word-chip').forEach(c => c.classList.remove('selected'));
+        chip.classList.add('selected');
+        document.getElementById('wordInput').value = w;
+        analyzeWord(w);
+        document.querySelector('[data-panel="demo"]').click();
+      });
+    } else {
+      chip.textContent = w;
+      chip.style.color = 'var(--text2)';
+    }
+    strip.appendChild(chip);
+  });
+}
+
+// ─── REFERENCE TABLE POPULATION ──────────────────────────────────────────
+function buildReferenceTable() {
+  // Consonant table
+  const tbody = document.querySelector('#consonantTable tbody');
+  [...CONSONANT_BASE_KEYS, ...CONSONANT_EXTRA_KEYS].forEach(key => {
+    const sign = CONSONANT_SIGNS[key];
+    if (!sign) return;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><strong>${key || '∅'}</strong></td>
+      <td style="font-size:0.75rem;color:var(--text2)">${sign.fingers.join('·')}</td>
+      <td style="font-size:1.2rem">${sign.emoji}</td>
+      <td style="font-size:0.75rem;color:var(--text2)">${sign.note}</td>
+    `;
+    tr.style.cursor = 'pointer';
+    tr.addEventListener('click', () => {
+      const fc = document.querySelector('#leftHandCanvas');
+      drawHandFromSign(fc, sign, false);
+    });
+    tbody.appendChild(tr);
+  });
+
+  // Tone table
+  const tTbody = document.getElementById('toneTableBody');
+  TONE_SIGNS.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span style="color:${t.color};font-weight:700">${t.name}</span></td>
+      <td style="font-size:1.5rem;color:${t.color}">${t.arrow}</td>
+      <td style="font-size:0.78rem">${t.desc}</td>
+      <td><span class="tone-pill" style="background:${t.color}22;color:${t.color}">${t.label}</span></td>
+    `;
+    tTbody.appendChild(tr);
+  });
+
+  // Rhyme shape table
+  const rTbody = document.getElementById('rhymeShapeBody');
+  RHYME_BASE_SHAPES.forEach(s => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span style="background:${s.color}22;color:${s.color};padding:2px 7px;border-radius:5px;font-weight:700">${s.id}</span></td>
+      <td style="font-size:0.78rem">${s.name}</td>
+      <td style="font-size:1.3rem">${s.emoji}</td>
+      <td style="font-size:0.72rem;color:var(--text2)">${s.desc}</td>
+    `;
+    rTbody.appendChild(tr);
+  });
+}
+
+// ─── SAMPLE WORDS / DICTIONARY ────────────────────────────────────────────
+const FULL_WORD_LIST = [
+  ...DEMO_WORDS,
+  'học','tập','ngôn','ngữ','ký','hiệu','tốc','ký','tiếng',
+  'chào','tạm','biệt','cảm','ơn','xin','lỗi','vâng','không',
+  'tôi','bạn','anh','chị','em','họ','chúng','mình',
+  'ăn','uống','đi','đến','làm','được','muốn','cần','có','là',
+  'ngày','tháng','năm','giờ','phút','giây',
+  'sức','khỏe','hạnh','phúc','bình','an',
+];
+
+function makeWordCard(word, container) {
+  const d = parseWord(word);
+  if (!d) return;
+  const card = document.createElement('div');
+  card.className = 'dict-entry';
+  card.innerHTML = `
+    <div class="de-word">${word}</div>
+    <div class="de-sign">${d.consSign.emoji || '✊'} ${RHYME_BASE_SHAPES[d.rhymeSign.shape]?.emoji || '✋'} <span style="color:${d.toneSign.color}">${d.toneSign.arrow}</span></div>
+    <div class="de-parts" style="margin-top:4px">
+      PA: <span style="color:${d.consSign.color}">${d.consonant||'∅'}</span> |
+      VẦN: ${d.rhyme} |
+      T${d.tone}
+    </div>
+  `;
+  card.addEventListener('click', () => {
+    document.querySelector('[data-panel="demo"]').click();
+    document.getElementById('wordInput').value = word;
+    analyzeWord(word);
+  });
+  container.appendChild(card);
+}
+
+function buildDictionary() {
+  const grid = document.getElementById('dictGrid');
+  const sampleGrid = document.getElementById('sampleWords');
+  FULL_WORD_LIST.forEach(w => makeWordCard(w, grid));
+  DEMO_WORDS.forEach(w => makeWordCard(w, sampleGrid));
+  document.getElementById('dictCount').textContent = `Hiển thị ${FULL_WORD_LIST.length} từ`;
+}
+
+// Dict search
+document.getElementById('dictSearch').addEventListener('input', function() {
+  const q = this.value.toLowerCase().trim();
+  const grid = document.getElementById('dictGrid');
+  grid.innerHTML = '';
+  const filtered = FULL_WORD_LIST.filter(w => {
+    if (!q) return true;
+    const d = parseWord(w);
+    return w.includes(q) || (d && (d.rhyme.includes(q) || d.consonant.includes(q)));
+  });
+  filtered.forEach(w => makeWordCard(w, grid));
+  document.getElementById('dictCount').textContent = `Hiển thị ${filtered.length} / ${FULL_WORD_LIST.length} từ`;
+});
+document.getElementById('dictClearBtn').addEventListener('click', () => {
+  document.getElementById('dictSearch').value = '';
+  document.getElementById('dictSearch').dispatchEvent(new Event('input'));
+});
+
+// ─── PRACTICE — FLASHCARD ────────────────────────────────────────────────
+let practiceStats = JSON.parse(localStorage.getItem('vsslStats') || '{"total":0,"correct":0,"streak":0}');
+let fcPool = [...DEMO_WORDS];
+let fcIndex = 0;
+let fcMode = 'flashcard'; // flashcard | reverse | drill
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function updateStats() {
+  document.getElementById('statTotal').textContent = practiceStats.total;
+  document.getElementById('statCorrect').textContent = practiceStats.correct;
+  document.getElementById('statStreak').textContent = practiceStats.streak;
+  const acc = practiceStats.total > 0
+    ? Math.round(practiceStats.correct / practiceStats.total * 100) + '%'
+    : '—';
+  document.getElementById('statAccuracy').textContent = acc;
+  localStorage.setItem('vsslStats', JSON.stringify(practiceStats));
+}
+
+function loadFlashcard() {
+  shuffleArray(fcPool);
+  fcIndex = 0;
+  nextCard();
+}
+
+function nextCard() {
+  const word = fcPool[fcIndex % fcPool.length];
+  fcIndex++;
+  const d = parseWord(word);
+  if (!d) { nextCard(); return; }
+
+  const fcQuestion = document.getElementById('fcQuestion');
+  const fcAnswer = document.getElementById('fcAnswer');
+  const fcHint = document.getElementById('fcHint');
+
+  if (fcMode === 'flashcard') {
+    // Hiển thị từ → người dùng đoán ký hiệu
+    fcQuestion.textContent = word;
+    fcQuestion.style.fontSize = '3rem';
+    fcHint.textContent = `Gợi ý: PA=${d.consonant||'∅'}, Vần=${d.rhyme}`;
+    fcAnswer.textContent = `${d.consSign.emoji} ${RHYME_BASE_SHAPES[d.rhymeSign.shape]?.emoji||''} ${d.toneSign.arrow} (${d.toneSign.name})`;
+  } else {
+    // Hiển thị ký hiệu → đoán từ
+    fcQuestion.textContent = `${d.consSign.emoji} + ${RHYME_BASE_SHAPES[d.rhymeSign.shape]?.emoji||'✋'} + ${d.toneSign.arrow}`;
+    fcQuestion.style.fontSize = '2.5rem';
+    fcHint.textContent = `${d.consSign.note} · ${d.rhymeSign.desc||''}`;
+    fcAnswer.textContent = word;
+  }
+
+  fcAnswer.classList.remove('show');
+  document.getElementById('fcReveal').style.display = '';
+  document.getElementById('fcCorrect').style.display = 'none';
+  document.getElementById('fcWrong').style.display = 'none';
+
+  // Draw on mini canvases
+  drawHandFromSign(document.getElementById('fcLeftCanvas'), d.consSign, false);
+  const rhymeShape = RHYME_BASE_SHAPES[d.rhymeSign.shape];
+  if (rhymeShape) drawHandFromSign(document.getElementById('fcRightCanvas'), rhymeShape, true);
+  document.getElementById('fcToneArrow').textContent = d.toneSign.arrow;
+  document.getElementById('fcToneArrow').style.color = d.toneSign.color;
+}
+
+document.getElementById('fcReveal').addEventListener('click', () => {
+  document.getElementById('fcAnswer').classList.add('show');
+  document.getElementById('fcReveal').style.display = 'none';
+  document.getElementById('fcCorrect').style.display = '';
+  document.getElementById('fcWrong').style.display = '';
+});
+document.getElementById('fcCorrect').addEventListener('click', () => {
+  practiceStats.total++; practiceStats.correct++; practiceStats.streak++;
+  updateStats(); nextCard();
+});
+document.getElementById('fcWrong').addEventListener('click', () => {
+  practiceStats.total++; practiceStats.streak = 0;
+  updateStats(); nextCard();
+});
+document.getElementById('fcNext').addEventListener('click', nextCard);
+
+// ─── PRACTICE — SPEED DRILL ──────────────────────────────────────────────
+let drillInterval = null;
+let drillTime = 30;
+let drillCount = 0;
+let drillRunning = false;
+let drillWords = shuffleArray([...FULL_WORD_LIST]);
+let drillIdx = 0;
+
+function startDrill() {
+  drillRunning = true;
+  drillTime = 30;
+  drillCount = 0;
+  drillIdx = 0;
+  drillWords = shuffleArray([...FULL_WORD_LIST]);
+  document.getElementById('drillStartBtn').style.display = 'none';
+  document.getElementById('drillStopBtn').style.display = '';
+  document.getElementById('drillGot').disabled = false;
+  document.getElementById('drillSkip').disabled = false;
+  showDrillWord();
+  drillInterval = setInterval(() => {
+    drillTime--;
+    document.getElementById('drillTimer').textContent = drillTime;
+    if (drillTime <= 0) stopDrill();
+    if (drillTime <= 5) document.getElementById('drillTimer').style.color = 'var(--red)';
+  }, 1000);
+}
+
+function stopDrill() {
+  clearInterval(drillInterval);
+  drillRunning = false;
+  document.getElementById('drillStartBtn').style.display = '';
+  document.getElementById('drillStopBtn').style.display = 'none';
+  document.getElementById('drillGot').disabled = true;
+  document.getElementById('drillSkip').disabled = true;
+  document.getElementById('drillWord').textContent = `Kết quả: ${drillCount} từ / 30 giây`;
+  document.getElementById('drillSignMini').innerHTML = '';
+  document.getElementById('drillTimer').textContent = '30';
+  document.getElementById('drillTimer').style.color = 'var(--yellow)';
+}
+
+function showDrillWord() {
+  if (!drillRunning) return;
+  const word = drillWords[drillIdx % drillWords.length];
+  drillIdx++;
+  const d = parseWord(word);
+  if (!d) { showDrillWord(); return; }
+  document.getElementById('drillWord').textContent = word;
+  document.getElementById('drillScore').textContent = drillCount + ' từ';
+
+  // Mini sign chips
+  const mini = document.getElementById('drillSignMini');
+  mini.innerHTML = `
+    <div class="drill-sign-chip">
+      <span class="emoji">${d.consSign.emoji}</span>
+      <div class="lbl">PA: ${d.consonant||'∅'}</div>
+    </div>
+    <div class="drill-sign-chip">
+      <span class="emoji" style="color:${d.toneSign.color}">${d.toneSign.arrow}</span>
+      <div class="lbl">T${d.tone}: ${d.toneSign.name}</div>
+    </div>
+    <div class="drill-sign-chip">
+      <span class="emoji">${RHYME_BASE_SHAPES[d.rhymeSign.shape]?.emoji||'✋'}</span>
+      <div class="lbl">Vần: ${d.rhyme}</div>
+    </div>
+  `;
+}
+
+document.getElementById('drillStartBtn').addEventListener('click', startDrill);
+document.getElementById('drillStopBtn').addEventListener('click', stopDrill);
+document.getElementById('drillGot').addEventListener('click', () => { drillCount++; showDrillWord(); });
+document.getElementById('drillSkip').addEventListener('click', showDrillWord);
+
+// ─── NAV TABS ─────────────────────────────────────────────────────────────
+document.querySelectorAll('.nav-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+  });
+});
+
+// ─── PRACTICE MODE BUTTONS ────────────────────────────────────────────────
+document.querySelectorAll('.mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    fcMode = btn.dataset.mode;
+    if (fcMode === 'drill') {
+      document.getElementById('flashcardMode').style.display = 'none';
+      document.getElementById('drillMode').style.display = 'block';
+      document.getElementById('drillMode').classList.add('active');
+    } else {
+      document.getElementById('flashcardMode').style.display = 'block';
+      document.getElementById('drillMode').style.display = 'none';
+      loadFlashcard();
+    }
+  });
+});
+
+// ─── INPUT EVENTS ─────────────────────────────────────────────────────────
+document.getElementById('analyzeBtn').addEventListener('click', () => {
+  const w = document.getElementById('wordInput').value.trim();
+  if (w) analyzeWord(w);
+});
+document.getElementById('wordInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const w = document.getElementById('wordInput').value.trim();
+    if (w) analyzeWord(w);
+  }
+});
+document.getElementById('analyzeSentBtn').addEventListener('click', () => {
+  const s = document.getElementById('sentInput').value.trim();
+  if (s) analyzeSentence(s);
+});
+document.getElementById('sentInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const s = document.getElementById('sentInput').value.trim();
+    if (s) analyzeSentence(s);
+  }
+});
+
+// ─── QUICK WORDS ─────────────────────────────────────────────────────────
+const quickWordsEl = document.getElementById('quickWords');
+DEMO_WORDS.slice(0, 12).forEach(w => {
+  const btn = document.createElement('button');
+  btn.className = 'quick-word-btn';
+  btn.textContent = w;
+  btn.addEventListener('click', () => {
+    document.getElementById('wordInput').value = w;
+    analyzeWord(w);
+  });
+  quickWordsEl.appendChild(btn);
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+buildReferenceTable();
+buildDictionary();
+loadFlashcard();
+updateStats();
+analyzeWord('học'); // Demo từ đầu tiên
+
+// Draw default empty hands
+setTimeout(() => {
+  analyzeWord('học');
+}, 100);
+</script>
+
+</body>
+</html>

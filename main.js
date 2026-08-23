@@ -1516,8 +1516,22 @@ function toggleKeepView(forceState) {
     isKeepViewActive = !isKeepViewActive;
   }
 
+  // Close all floating dropdowns
+  const viewOptionsMenu = document.getElementById('view-options-menu');
+  const toolsDropdownMenu = document.getElementById('tools-dropdown-menu');
+  if (viewOptionsMenu) viewOptionsMenu.style.display = 'none';
+  if (toolsDropdownMenu) toolsDropdownMenu.style.display = 'none';
+
   if (isKeepViewActive) {
     localStorage.setItem('timecypher_last_mode', 'keep');
+    document.body.classList.remove('sandbox-mode');
+    
+    // Hide sandbox fixed action bars
+    const sandboxTopLeft = document.getElementById('sandbox-top-left');
+    const sandboxActions = document.getElementById('sandbox-actions');
+    if (sandboxTopLeft) sandboxTopLeft.style.display = 'none';
+    if (sandboxActions) sandboxActions.style.display = 'none';
+
     if (studioLayout) studioLayout.style.display = 'none';
     if (keepViewContainer) keepViewContainer.style.display = 'flex';
     if (btnToggleKeepView) {
@@ -1556,6 +1570,13 @@ function toggleKeepView(forceState) {
 
 function renderKeepView() {
   if (!keepCardsGrid) return;
+
+  // Always ensure fresh notesDB from localStorage
+  try {
+    const raw = localStorage.getItem('timecypher_notes');
+    if (raw) notesDB = JSON.parse(raw);
+  } catch (e) {}
+
   const query = (keepSearchInput ? keepSearchInput.value : '').trim();
   let filterStr = query;
   
@@ -2511,6 +2532,8 @@ let isVkPrefVisible = localStorage.getItem('pref_view_vk') === 'true';
 
 const btnViewOptions = document.getElementById('btn-view-options');
 const viewOptionsMenu = document.getElementById('view-options-menu');
+const btnToolsMenu = document.getElementById('btn-tools-menu');
+const toolsDropdownMenu = document.getElementById('tools-dropdown-menu');
 const chkViewVk = document.getElementById('chk-view-vk');
 const chkViewTutor = document.getElementById('chk-view-tutor');
 const chkViewToolbar = document.getElementById('chk-view-toolbar');
@@ -2521,12 +2544,32 @@ if (btnViewOptions && viewOptionsMenu) {
     const isHidden = viewOptionsMenu.style.display === 'none' || !viewOptionsMenu.style.display;
     viewOptionsMenu.style.display = isHidden ? 'flex' : 'none';
     btnViewOptions.style.background = isHidden ? 'rgba(0, 255, 204, 0.2)' : '#000';
+    if (toolsDropdownMenu) toolsDropdownMenu.style.display = 'none';
+    if (btnToolsMenu) btnToolsMenu.style.background = '#000';
   });
 
   document.addEventListener('click', (e) => {
     if (!viewOptionsMenu.contains(e.target) && e.target !== btnViewOptions) {
       viewOptionsMenu.style.display = 'none';
       btnViewOptions.style.background = '#000';
+    }
+  });
+}
+
+if (btnToolsMenu && toolsDropdownMenu) {
+  btnToolsMenu.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isHidden = toolsDropdownMenu.style.display === 'none' || !toolsDropdownMenu.style.display;
+    toolsDropdownMenu.style.display = isHidden ? 'flex' : 'none';
+    btnToolsMenu.style.background = isHidden ? 'rgba(255, 170, 0, 0.2)' : '#000';
+    if (viewOptionsMenu) viewOptionsMenu.style.display = 'none';
+    if (btnViewOptions) btnViewOptions.style.background = '#000';
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!toolsDropdownMenu.contains(e.target) && e.target !== btnToolsMenu) {
+      toolsDropdownMenu.style.display = 'none';
+      btnToolsMenu.style.background = '#000';
     }
   });
 }
