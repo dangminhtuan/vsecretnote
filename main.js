@@ -2307,24 +2307,77 @@ function copyBase60ToClipboard() {
 
 document.getElementById('btn-copy-b60')?.addEventListener('click', copyBase60ToClipboard);
 
-// ===== ⌨️ TOGGLE VIRTUAL KEYBOARD =====
-document.getElementById('btn-toggle-vk')?.addEventListener('click', () => {
-  if (!window.snk) return;
-  const btn = document.getElementById('btn-toggle-vk');
-  if (window.snk.isDisabled) {
-    window.snk.isDisabled = false;
-    const active = document.activeElement;
-    if (active && (active === txtDecrypted || active === txtEncrypted || active === txtCompressed)) {
-      window.snk.activeTarget = active;
-      window.snk.show();
+// ===== 👁️ VIEW OPTIONS (DROPDOWN & 3 TOGGLES) =====
+let isToolbarEnabled = localStorage.getItem('pref_view_toolbar') !== 'false';
+let isTutorPrefVisible = localStorage.getItem('pref_view_tutor') !== 'false';
+let isVkPrefVisible = localStorage.getItem('pref_view_vk') === 'true';
+
+const btnViewOptions = document.getElementById('btn-view-options');
+const viewOptionsMenu = document.getElementById('view-options-menu');
+const chkViewVk = document.getElementById('chk-view-vk');
+const chkViewTutor = document.getElementById('chk-view-tutor');
+const chkViewToolbar = document.getElementById('chk-view-toolbar');
+
+if (btnViewOptions && viewOptionsMenu) {
+  btnViewOptions.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isHidden = viewOptionsMenu.style.display === 'none' || !viewOptionsMenu.style.display;
+    viewOptionsMenu.style.display = isHidden ? 'flex' : 'none';
+    btnViewOptions.style.background = isHidden ? 'rgba(0, 255, 204, 0.2)' : '#000';
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!viewOptionsMenu.contains(e.target) && e.target !== btnViewOptions) {
+      viewOptionsMenu.style.display = 'none';
+      btnViewOptions.style.background = '#000';
     }
-    if (btn) { btn.style.opacity = '1'; btn.title = 'Tắt bàn phím'; }
-  } else {
-    window.snk.isDisabled = true;
-    if (window.snk.hide) window.snk.hide();
-    if (btn) { btn.style.opacity = '0.4'; btn.title = 'Bật bàn phím'; }
-  }
-});
+  });
+}
+
+// 1. Toggle Virtual Keyboard
+if (chkViewVk) {
+  chkViewVk.checked = isVkPrefVisible;
+  chkViewVk.addEventListener('change', () => {
+    const show = chkViewVk.checked;
+    localStorage.setItem('pref_view_vk', show ? 'true' : 'false');
+    if (window.snk) {
+      window.snk.isDisabled = !show;
+      if (show) {
+        const active = document.activeElement;
+        if (active && (active === txtDecrypted || active === txtEncrypted || active === txtCompressed)) {
+          window.snk.activeTarget = active;
+          window.snk.show();
+        }
+      } else {
+        if (window.snk.hide) window.snk.hide();
+      }
+    }
+  });
+}
+
+// 2. Toggle Tutor (Trợ Giảng)
+if (chkViewTutor) {
+  chkViewTutor.checked = isTutorPrefVisible;
+  chkViewTutor.addEventListener('change', () => {
+    const show = chkViewTutor.checked;
+    localStorage.setItem('pref_view_tutor', show ? 'true' : 'false');
+    if (typeof window.setMnemonicTutorVisible === 'function') {
+      window.setMnemonicTutorVisible(show);
+    }
+  });
+}
+
+// 3. Toggle Floating Context Toolbar (Thanh Copy nổi)
+if (chkViewToolbar) {
+  chkViewToolbar.checked = isToolbarEnabled;
+  chkViewToolbar.addEventListener('change', () => {
+    isToolbarEnabled = chkViewToolbar.checked;
+    localStorage.setItem('pref_view_toolbar', isToolbarEnabled ? 'true' : 'false');
+    if (!isToolbarEnabled && typeof hideContextMenu === 'function') {
+      hideContextMenu();
+    }
+  });
+}
 
 // ===== 🔗 SHARE LINK =====
 document.getElementById('btn-share-link')?.addEventListener('click', () => {
@@ -2806,6 +2859,7 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
   allTextareas.forEach(ta => {
     if (ta) {
       ta.addEventListener('focus', (e) => {
+        if (!isToolbarEnabled) return;
         // Show context menu at top right of the textarea
         activeContextInput = ta;
         const rect = ta.getBoundingClientRect();
@@ -3637,14 +3691,13 @@ function initMnemonicTutor() {
 
   if (!tutorCard) return;
 
-  let tutorVisible = true;
-  if (btnToggleTutor) {
-    btnToggleTutor.addEventListener('click', () => {
-      tutorVisible = !tutorVisible;
-      tutorCard.style.display = tutorVisible ? 'block' : 'none';
-      btnToggleTutor.style.opacity = tutorVisible ? '1' : '0.4';
-    });
-  }
+  let tutorVisible = localStorage.getItem('pref_view_tutor') !== 'false';
+  tutorCard.style.display = tutorVisible ? 'block' : 'none';
+
+  window.setMnemonicTutorVisible = function(vis) {
+    tutorVisible = vis;
+    if (tutorCard) tutorCard.style.display = vis ? 'block' : 'none';
+  };
 
   // --- 1. PRE-INDEX REAL WORDS FOR 0.01ms INSTANT LOOKUP ---
   const consIndex = new Map();

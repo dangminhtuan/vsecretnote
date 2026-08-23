@@ -17,9 +17,31 @@
       <div id="sandbox-top-left" style="display: none; position: fixed; top: 10px; left: 10px; z-index: 9999; flex-direction: row; align-items: center; gap: 8px;">
   <div id="special-time-display" style="display: none; font-family: monospace; font-size: 11px; color: #0f0; background: #000; border: 1px solid #0f0; border-radius: 5px; padding: 3px 8px; align-items: center; justify-content: center; gap: 4px; flex-direction: row; line-height: 1; text-align: center; min-height: 36px; box-sizing: border-box; cursor: pointer;"></div>
   <div id="quiz-choices" style="display: none; gap: 6px; align-items: center; flex-wrap: wrap;"></div>
-  <div id="top-left-actions" style="display: flex; gap: 6px;">
-            <button id="btn-toggle-vk" class="cyber-btn" title="Bật/Tắt bàn phím ảo" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 16px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0; opacity: 0.4; transition: opacity 0.2s;">&#9000;</button>
-            <button id="btn-toggle-tutor" class="cyber-btn" title="Bật/Tắt Trợ giảng Ghi nhớ" style="border-color: #00ff66; color: #00ff66; background: #000; cursor: pointer; font-size: 16px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0; opacity: 1; transition: all 0.2s;">🎓</button>
+          <div id="top-left-actions" style="display: flex; gap: 6px; align-items: center;">
+            <!-- 👁️ View Options Toggle & Dropdown Menu -->
+            <div style="position: relative; display: inline-block;">
+              <button id="btn-view-options" class="cyber-btn" title="Tùy chọn hiển thị (View)" style="border-color: #00ffcc; color: #00ffcc; background: #000; cursor: pointer; font-size: 16px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.2s;">👁️</button>
+              
+              <div id="view-options-menu" style="display: none; position: absolute; top: 42px; left: 0; z-index: 10001; background: rgba(5, 15, 10, 0.96); border: 1px solid #00ffcc; box-shadow: 0 4px 20px rgba(0, 255, 204, 0.35); border-radius: 6px; padding: 8px 10px; min-width: 190px; backdrop-filter: blur(10px); flex-direction: column; gap: 8px;">
+                <div style="font-size: 10px; color: #888; font-family: monospace; font-weight: bold; border-bottom: 1px solid #224433; padding-bottom: 4px; letter-spacing: 1px;">⚙️ TÙY CHỌN HIỂN THỊ</div>
+                
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: #eee; cursor: pointer; user-select: none;">
+                  <input type="checkbox" id="chk-view-vk" style="accent-color: #00ffcc; width: 14px; height: 14px; cursor: pointer;">
+                  <span>⌨️ Bàn phím ảo</span>
+                </label>
+                
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: #eee; cursor: pointer; user-select: none;">
+                  <input type="checkbox" id="chk-view-tutor" checked style="accent-color: #00ff66; width: 14px; height: 14px; cursor: pointer;">
+                  <span>🎓 Trợ giảng ghi nhớ</span>
+                </label>
+                
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: #eee; cursor: pointer; user-select: none;">
+                  <input type="checkbox" id="chk-view-toolbar" checked style="accent-color: #ffaa00; width: 14px; height: 14px; cursor: pointer;">
+                  <span>📋 Thanh Copy nổi</span>
+                </label>
+              </div>
+            </div>
+
             <button id="btn-share-link" class="cyber-btn" title="Chia sẻ link" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0;">&#128279;</button>
             <button id="btn-activity-log" class="cyber-btn" title="Activity Log" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0;">&#128202;</button>
             <button id="btn-sandbox-hashtag" class="cyber-btn" style="display: none !important; border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 16px; font-weight: bold; width: 36px; height: 36px; border-radius: 5px; align-items: center; justify-content: center; padding: 0;">#</button>
