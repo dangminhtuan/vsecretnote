@@ -1155,10 +1155,53 @@ function saveCurrentNote() {
   localStorage.setItem('timecypher_notes', JSON.stringify(notesDB));
   if(typeof updateTagsDatalist === 'function') updateTagsDatalist();
   renderNotesSidebar();
+  if (typeof isKeepViewActive !== 'undefined' && isKeepViewActive && typeof renderKeepView === 'function') renderKeepView();
 }
 
 const backlinksContainer = document.getElementById('backlinks-container');
 const backlinksList = document.getElementById('backlinks-list');
+
+function getNoteDecryptedPreview(content, maxLen = 30) {
+  if (!content) return '';
+  const text = content.replace(/[⇧⇪]/g, '');
+  const tokens = text.split(TOKEN_REGEX);
+  let decryptedParts = [];
+  tokens.forEach(token => {
+    if (!token) return;
+    if (token.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
+      if (token.length > 3 && token.length % 3 === 0 && /^[a-zA-Z0-9]+$/.test(token) && !/^\d+$/.test(token)) {
+        for (let i = 0; i < token.length; i += 3) {
+          const chunk = token.substring(i, i + 3);
+          const timeCode = base60ToTime(chunk);
+          decryptedParts.push(decodeWord(timeCode) + ' ');
+        }
+      } else {
+        const timeCode = base60ToTime(token);
+        decryptedParts.push(decodeWord(timeCode));
+      }
+    } else if (token.startsWith('"') && token.endsWith('"')) {
+      decryptedParts.push(token.substring(1, token.length - 1));
+    } else if (token.startsWith('[') && token.endsWith(']')) {
+      decryptedParts.push(token);
+    } else {
+      decryptedParts.push(token);
+    }
+  });
+  let res = decryptedParts.join('').replace(/\s+/g, ' ').trim();
+  if (res.length > maxLen) {
+    res = res.substring(0, maxLen) + '...';
+  }
+  return res;
+}
+
+function getNoteDisplayLabel(note, maxLen = 25) {
+  if (!note) return 'Không rõ';
+  const tagStr = (note.tags && note.tags.length > 0) ? `[${note.tags.join(', ')}] ` : '';
+  const preview = getNoteDecryptedPreview(note.content, maxLen) || (note.content ? note.content.substring(0, 15) + '...' : 'Ghi chú');
+  const d = new Date(note.updatedAt || Date.now());
+  const timeStr = `${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+  return `${tagStr}${preview} (${timeStr})`;
+}
 
 function renderBacklinks(id) {
   if(!backlinksContainer || !backlinksList) return;
@@ -1166,52 +1209,42 @@ function renderBacklinks(id) {
     backlinksContainer.style.display = 'none';
     return;
   }
-  const backlinks = notesDB.filter(n => n.linkedNoteId === id && !n.isArchived);
+  const backlinks = notesDB.filter(n => !n.isArchived && n.relations && n.relations.some(r => r.targetId === id));
   if(backlinks.length > 0) {
     backlinksList.innerHTML = '';
     backlinks.forEach(bl => {
-      // Decode content from Base60
-      const text = bl.content.replace(/[⇧⇪]/g, '');
-      const tokens = text.split(TOKEN_REGEX);
-      let decryptedParts = [];
-      tokens.forEach(token => {
-        if (!token) return;
-        if (token.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
-          const timeCode = base60ToTime(token);
-          decryptedParts.push(decodeWord(timeCode));
-        } else if (token.startsWith('"') && token.endsWith('"')) {
-          decryptedParts.push(token.substring(1, token.length - 1));
-        } else if (token.startsWith('[') && token.endsWith(']')) {
-          decryptedParts.push(token);
-        } else {
-          decryptedParts.push(token);
-        }
-      });
-      const decodedText = decryptedParts.join('');
+      const relObj = bl.relations.find(r => r.targetId === id);
+      const relType = relObj ? relObj.type : 'Liên kết';
+      const decodedText = getNoteDecryptedPreview(bl.content, 500) || bl.content;
 
       const box = document.createElement('div');
-      box.style.background = 'rgba(255, 234, 0, 0.15)';
-      box.style.border = '1px solid #ffea00';
-      box.style.color = '#ffea00';
-      box.style.padding = '12px';
-      box.style.borderRadius = '3px';
-      box.style.marginBottom = '10px';
+      box.style.background = 'rgba(0, 255, 255, 0.08)';
+      box.style.border = '1px solid #00ffff';
+      box.style.color = '#00ffff';
+      box.style.padding = '8px 10px';
+      box.style.borderRadius = '4px';
+      box.style.marginBottom = '8px';
       box.style.width = '100%';
       box.style.boxSizing = 'border-box';
 
       const tagTitle = document.createElement('div');
       tagTitle.style.fontWeight = 'bold';
-      tagTitle.style.marginBottom = '8px';
-      tagTitle.style.textTransform = 'uppercase';
-      tagTitle.style.borderBottom = '1px dashed #ffea00';
-      tagTitle.style.paddingBottom = '5px';
-      const blTag = bl.tags && bl.tags.length > 0 ? bl.tags[0] : '';
-      tagTitle.textContent = `âš¡ LINKED NOTE${blTag ? ': ' + blTag : ''}`;
+      tagTitle.style.marginBottom = '6px';
+      tagTitle.style.fontSize = '11px';
+      tagTitle.style.cursor = 'pointer';
+      tagTitle.style.display = 'flex';
+      tagTitle.style.justifyContent = 'space-between';
+      tagTitle.style.borderBottom = '1px dashed rgba(0, 255, 255, 0.4)';
+      tagTitle.style.paddingBottom = '4px';
+      tagTitle.innerHTML = `<span>⚡ [${relType}] ${getNoteDisplayLabel(bl, 20)}</span> <span style="font-size:10px; color:#aaa;">↗ Mở Note</span>`;
+      tagTitle.onclick = () => loadNote(bl.id);
       
       const contentDiv = document.createElement('div');
       contentDiv.style.fontFamily = 'var(--font-mono)';
       contentDiv.style.whiteSpace = 'pre-wrap';
       contentDiv.style.lineHeight = '1.4';
+      contentDiv.style.fontSize = '11px';
+      contentDiv.style.color = '#eee';
       contentDiv.textContent = decodedText;
 
       box.appendChild(tagTitle);
@@ -1444,6 +1477,356 @@ if(btnImport && fileInput) {
   });
 }
 
+// --- 🗂️ GOOGLE KEEP CARDS VIEW LOGIC ---
+let isKeepViewActive = false;
+let keepCurrentTab = 'active';
+let keepSelectedTagFilter = null;
+
+const studioLayout = document.getElementById('studio-view-layout');
+const keepViewContainer = document.getElementById('keep-view-container');
+const btnToggleKeepView = document.getElementById('btn-toggle-keep-view');
+const btnTopKeepView = document.getElementById('btn-top-keep-view');
+const btnExitKeepView = document.getElementById('btn-exit-keep-view');
+const btnKeepToggleReveal = document.getElementById('btn-keep-toggle-reveal');
+const keepCardsGrid = document.getElementById('keep-cards-grid');
+const keepSearchInput = document.getElementById('keep-search-input');
+const keepNoteCount = document.getElementById('keep-note-count');
+const keepTagsCloud = document.getElementById('keep-tags-cloud');
+const keepTabActive = document.getElementById('keep-tab-active');
+const keepTabArchive = document.getElementById('keep-tab-archive');
+let isKeepRevealAll = false;
+
+const keepQuickBox = document.getElementById('keep-quick-box');
+const keepQuickContent = document.getElementById('keep-quick-content');
+const keepQuickTags = document.getElementById('keep-quick-tags');
+const keepQuickActions = document.getElementById('keep-quick-actions');
+const btnKeepQuickSave = document.getElementById('btn-keep-quick-save');
+const btnKeepQuickCancel = document.getElementById('btn-keep-quick-cancel');
+
+function toggleKeepView(forceState) {
+  forceSave();
+  if (typeof forceState === 'boolean') {
+    isKeepViewActive = forceState;
+  } else {
+    isKeepViewActive = !isKeepViewActive;
+  }
+
+  if (isKeepViewActive) {
+    if (studioLayout) studioLayout.style.display = 'none';
+    if (keepViewContainer) keepViewContainer.style.display = 'flex';
+    if (btnToggleKeepView) {
+      btnToggleKeepView.textContent = '💻 STUDIO';
+      btnToggleKeepView.style.background = '#00ffcc';
+      btnToggleKeepView.style.color = '#000';
+    }
+    if (btnTopKeepView) {
+      btnTopKeepView.style.background = '#00ffcc';
+      btnTopKeepView.style.color = '#000';
+    }
+    if (keepSearchInput && searchNote) {
+      keepSearchInput.value = searchNote.value;
+    }
+    renderKeepView();
+  } else {
+    if (studioLayout) studioLayout.style.display = 'grid';
+    if (keepViewContainer) keepViewContainer.style.display = 'none';
+    if (btnToggleKeepView) {
+      btnToggleKeepView.textContent = '🗂️ KEEP';
+      btnToggleKeepView.style.background = '#002b22';
+      btnToggleKeepView.style.color = '#00ffcc';
+    }
+    if (btnTopKeepView) {
+      btnTopKeepView.style.background = '#000';
+      btnTopKeepView.style.color = '#00ffcc';
+    }
+    if (searchNote && keepSearchInput) {
+      searchNote.value = keepSearchInput.value;
+    }
+    renderNotesSidebar();
+  }
+}
+
+function renderKeepView() {
+  if (!keepCardsGrid) return;
+  const query = (keepSearchInput ? keepSearchInput.value : '').trim();
+  let filterStr = query;
+  
+  if (query && query.match(/[^\w\s]/)) {
+    const words = query.replace(/[.,!?()[\]{}"']/g, ' ').split(/\s+/).filter(w => w.length > 0);
+    filterStr = words.map(w => timeToBase60(encodeWord(w))).join(' ');
+  }
+
+  let filtered = notesDB.filter(n => (keepCurrentTab === 'archive' ? n.isArchived : !n.isArchived));
+
+  if (keepSelectedTagFilter) {
+    filtered = filtered.filter(n => n.tags && n.tags.includes(keepSelectedTagFilter));
+  }
+
+  if (query) {
+    filtered = filtered.filter(n => {
+      const matchContent = n.content.includes(filterStr) || n.content.toLowerCase().includes(query.toLowerCase());
+      const decrypted = getNoteDecryptedPreview(n.content, 1000).toLowerCase();
+      const matchDecrypted = decrypted.includes(query.toLowerCase());
+      const matchTag = n.tags && n.tags.some(t => t.toLowerCase().includes(query.toLowerCase()));
+      return matchContent || matchDecrypted || matchTag;
+    });
+  }
+
+  if (keepNoteCount) {
+    keepNoteCount.textContent = `${filtered.length} NOTE${filtered.length !== 1 ? 'S' : ''}`;
+  }
+
+  // Tags Cloud
+  if (keepTagsCloud) {
+    const allTags = new Set();
+    notesDB.forEach(n => {
+      if ((keepCurrentTab === 'archive' ? n.isArchived : !n.isArchived) && n.tags) {
+        n.tags.forEach(t => allTags.add(t));
+      }
+    });
+
+    keepTagsCloud.innerHTML = '';
+    if (allTags.size > 0) {
+      const allPill = document.createElement('div');
+      allPill.className = 'keep-tag-filter-pill' + (!keepSelectedTagFilter ? ' active' : '');
+      allPill.textContent = '🌟 Tất cả';
+      allPill.onclick = () => {
+        keepSelectedTagFilter = null;
+        renderKeepView();
+      };
+      keepTagsCloud.appendChild(allPill);
+
+      allTags.forEach(t => {
+        const pill = document.createElement('div');
+        pill.className = 'keep-tag-filter-pill' + (keepSelectedTagFilter === t ? ' active' : '');
+        pill.textContent = `#${t}`;
+        pill.onclick = () => {
+          keepSelectedTagFilter = (keepSelectedTagFilter === t) ? null : t;
+          renderKeepView();
+        };
+        keepTagsCloud.appendChild(pill);
+      });
+    }
+  }
+
+  // Cards Grid
+  keepCardsGrid.innerHTML = '';
+  if (filtered.length === 0) {
+    keepCardsGrid.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px 20px; color: #666; font-size: 14px; border: 1px dashed rgba(0,255,204,0.2); border-radius: 8px;">
+        ${query || keepSelectedTagFilter ? '🔍 Không tìm thấy ghi chú phù hợp với bộ lọc.' : '📝 Chưa có ghi chú nào. Hãy tạo ghi chú đầu tiên ở trên!'}
+      </div>
+    `;
+    return;
+  }
+
+  filtered.forEach(n => {
+    const card = document.createElement('div');
+    card.className = 'keep-card' + (n.id === currentNoteId ? ' active' : '');
+    
+    const d = new Date(n.updatedAt || Date.now());
+    const timeFormatted = `${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')} ${d.toLocaleDateString()}`;
+    const decryptedText = getNoteDecryptedPreview(n.content, 400) || '(Chưa có nội dung)';
+    const b60Preview = n.content.length > 80 ? n.content.substring(0, 80) + '...' : n.content;
+
+    let tagsHtml = '';
+    if (n.tags && n.tags.length > 0) {
+      tagsHtml = '<div class="keep-card-tags">';
+      n.tags.forEach(t => {
+        const count = n.counters && n.counters[t] ? ` (${n.counters[t]})` : '';
+        tagsHtml += `<span class="keep-card-tag">${t}${count}</span>`;
+      });
+      tagsHtml += '</div>';
+    } else {
+      tagsHtml = '<div class="keep-card-tags"><span style="font-size:10px; color:#555;">[Không nhãn]</span></div>';
+    }
+
+    let relIcon = '';
+    if (n.relations && n.relations.length > 0) {
+      relIcon = `<span title="${n.relations.length} liên kết quan hệ" style="font-size:11px; color:#00ffcc; background:rgba(0,255,204,0.1); padding:1px 5px; border-radius:3px; border:1px solid rgba(0,255,204,0.3);">🔗 ${n.relations.length}</span>`;
+    }
+
+    card.innerHTML = `
+      <div class="keep-card-header">
+        ${tagsHtml}
+        ${relIcon}
+      </div>
+      <div class="keep-card-body-b60" title="Mã Base60">${b60Preview || '[Trống]'}</div>
+      <div class="keep-card-peek-hint">👁️ Rê chuột để giải mã</div>
+      <div class="keep-card-body-vi">💬 ${decryptedText}</div>
+      <div class="keep-card-footer">
+        <span>🕒 ${timeFormatted}</span>
+        <div class="keep-card-actions">
+          <button class="keep-action-btn keep-copy-vi" title="Copy Tiếng Việt">📋 VI</button>
+          <button class="keep-action-btn keep-copy-b60" title="Copy Base60">🔐 B60</button>
+          <button class="keep-action-btn keep-btn-archive" title="${n.isArchived ? 'Khôi phục' : 'Lưu trữ'}">${n.isArchived ? '📥' : '📦'}</button>
+          <button class="keep-action-btn danger keep-btn-delete" title="Xóa">🗑️</button>
+        </div>
+      </div>
+    `;
+
+    card.addEventListener('click', (e) => {
+      if (e.target.closest('.keep-action-btn')) return;
+      loadNote(n.id);
+      toggleKeepView(false);
+    });
+
+    const btnCopyVi = card.querySelector('.keep-copy-vi');
+    if (btnCopyVi) {
+      btnCopyVi.addEventListener('click', (e) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(decryptedText);
+        showToast('✓ Đã copy Tiếng Việt');
+      });
+    }
+
+    const btnCopyB60 = card.querySelector('.keep-copy-b60');
+    if (btnCopyB60) {
+      btnCopyB60.addEventListener('click', (e) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(n.content);
+        showToast('✓ Đã copy mã Base60');
+      });
+    }
+
+    const btnArchive = card.querySelector('.keep-btn-archive');
+    if (btnArchive) {
+      btnArchive.addEventListener('click', (e) => {
+        e.stopPropagation();
+        n.isArchived = !n.isArchived;
+        localStorage.setItem('timecypher_notes', JSON.stringify(notesDB));
+        renderKeepView();
+        renderNotesSidebar();
+        showToast(n.isArchived ? '📦 Đã lưu trữ ghi chú' : '📥 Đã khôi phục ghi chú');
+      });
+    }
+
+    const btnDelete = card.querySelector('.keep-btn-delete');
+    if (btnDelete) {
+      btnDelete.addEventListener('click', (e) => {
+        e.stopPropagation();
+        cyberConfirm('Bạn có chắc chắn muốn xóa vĩnh viễn Note này?', () => {
+          notesDB = notesDB.filter(item => item.id !== n.id);
+          localStorage.setItem('timecypher_notes', JSON.stringify(notesDB));
+          if (currentNoteId === n.id) createNewNote();
+          renderKeepView();
+          renderNotesSidebar();
+          showToast('🗑️ Đã xóa ghi chú');
+        });
+      });
+    }
+
+    keepCardsGrid.appendChild(card);
+  });
+}
+
+if (btnToggleKeepView) btnToggleKeepView.addEventListener('click', () => toggleKeepView());
+if (btnTopKeepView) btnTopKeepView.addEventListener('click', () => toggleKeepView());
+if (btnExitKeepView) btnExitKeepView.addEventListener('click', () => toggleKeepView(false));
+if (btnKeepToggleReveal) {
+  btnKeepToggleReveal.addEventListener('click', () => {
+    isKeepRevealAll = !isKeepRevealAll;
+    if (keepViewContainer) {
+      keepViewContainer.classList.toggle('reveal-all', isKeepRevealAll);
+    }
+    btnKeepToggleReveal.textContent = isKeepRevealAll ? '👁️ ẨN VI' : '👁️ HIỆN VI';
+    btnKeepToggleReveal.style.color = isKeepRevealAll ? '#00ffcc' : '#ffea00';
+    btnKeepToggleReveal.style.borderColor = isKeepRevealAll ? '#00ffcc' : '#ffea00';
+    btnKeepToggleReveal.style.background = isKeepRevealAll ? 'rgba(0,255,204,0.15)' : 'rgba(255,234,0,0.1)';
+  });
+}
+if (keepSearchInput) keepSearchInput.addEventListener('input', renderKeepView);
+
+if (keepTabActive && keepTabArchive) {
+  keepTabActive.addEventListener('click', () => {
+    keepTabActive.classList.add('active');
+    keepTabArchive.classList.remove('active');
+    keepCurrentTab = 'active';
+    renderKeepView();
+  });
+  keepTabArchive.addEventListener('click', () => {
+    keepTabArchive.classList.add('active');
+    keepTabActive.classList.remove('active');
+    keepCurrentTab = 'archive';
+    renderKeepView();
+  });
+}
+
+if (keepQuickContent) {
+  keepQuickContent.addEventListener('focus', () => {
+    if (keepQuickTags) keepQuickTags.style.display = 'block';
+    if (keepQuickActions) keepQuickActions.style.display = 'flex';
+    keepQuickContent.rows = 3;
+  });
+}
+
+if (btnKeepQuickCancel) {
+  btnKeepQuickCancel.addEventListener('click', () => {
+    if (keepQuickTags) {
+      keepQuickTags.style.display = 'none';
+      keepQuickTags.value = '';
+    }
+    if (keepQuickActions) keepQuickActions.style.display = 'none';
+    if (keepQuickContent) {
+      keepQuickContent.value = '';
+      keepQuickContent.rows = 1;
+    }
+  });
+}
+
+if (btnKeepQuickSave) {
+  btnKeepQuickSave.addEventListener('click', () => {
+    const text = (keepQuickContent ? keepQuickContent.value : '').trim();
+    if (!text) return;
+
+    const tokens = text.split(TOKEN_REGEX);
+    let compressedParts = [];
+    tokens.forEach(token => {
+      if (!token) return;
+      if (token.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
+        const timeCode = encodeWord(token);
+        const b60Code = timeToBase60(timeCode);
+        compressedParts.push(b60Code);
+      } else if (token.startsWith('[') && token.endsWith(']')) {
+        compressedParts.push(token);
+      } else {
+        compressedParts.push(token);
+      }
+    });
+    const base60Data = compressedParts.join(' ').replace(/\s+/g, ' ').trim();
+
+    const rawTags = (keepQuickTags ? keepQuickTags.value : '').split(',').map(t => t.trim()).filter(t => t.length > 0);
+
+    const newId = 'note_' + Date.now();
+    const newNote = {
+      id: newId,
+      tags: rawTags,
+      counters: {},
+      relations: [],
+      content: base60Data,
+      isArchived: false,
+      updatedAt: Date.now()
+    };
+
+    notesDB.unshift(newNote);
+    localStorage.setItem('timecypher_notes', JSON.stringify(notesDB));
+
+    if (keepQuickContent) {
+      keepQuickContent.value = '';
+      keepQuickContent.rows = 1;
+    }
+    if (keepQuickTags) {
+      keepQuickTags.value = '';
+      keepQuickTags.style.display = 'none';
+    }
+    if (keepQuickActions) keepQuickActions.style.display = 'none';
+
+    renderKeepView();
+    renderNotesSidebar();
+    showToast('✓ Đã tạo ghi chú mới');
+  });
+}
+
 renderNotesSidebar();
 enterSandboxMode(true);
 logActivity({ type: 'visit' });
@@ -1538,16 +1921,17 @@ function renderNoteRelations() {
     badge.style.justifyContent = 'space-between';
     badge.style.color = '#0ff';
     badge.style.borderColor = '#0ff';
+    badge.title = `Click để mở: ${getNoteDisplayLabel(targetNote, 50)}`;
     
     const textSpan = document.createElement('span');
     textSpan.style.cursor = 'pointer';
-    textSpan.textContent = `🔗 ${rel.type}: ${targetNote.tags && targetNote.tags.length > 0 ? targetNote.tags[0] : rel.targetId.substring(0, 10)}`;
+    textSpan.textContent = `🔗 ${rel.type}: ${getNoteDisplayLabel(targetNote, 22)}`;
     textSpan.onclick = () => loadNote(rel.targetId);
     
     const rmBtn = document.createElement('span');
     rmBtn.textContent = '×';
     rmBtn.style.color = '#f00';
-    rmBtn.style.marginLeft = '10px';
+    rmBtn.style.marginLeft = '8px';
     rmBtn.style.cursor = 'pointer';
     rmBtn.style.fontWeight = 'bold';
     rmBtn.onclick = (e) => {
@@ -1567,15 +1951,14 @@ function renderNoteRelations() {
     const currentVal = selTargetNote.value;
     selTargetNote.innerHTML = '<option value="">-- Target Note --</option>';
     notesDB.forEach(n => {
-      if(n.id !== currentNoteId && n.id !== 'playground') {
+      if(n.id !== currentNoteId && n.id !== 'playground' && !n.isArchived) {
         const opt = document.createElement('option');
         opt.value = n.id;
-        const displayTag = n.tags && n.tags.length > 0 ? n.tags[0] : n.id.substring(0,10);
-        opt.textContent = displayTag;
+        opt.textContent = getNoteDisplayLabel(n, 30);
         selTargetNote.appendChild(opt);
       }
     });
-    if(notesDB.find(n => n.id === currentVal && n.id !== currentNoteId)) {
+    if(notesDB.find(n => n.id === currentVal && n.id !== currentNoteId && !n.isArchived)) {
       selTargetNote.value = currentVal;
     }
   }

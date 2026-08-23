@@ -54,6 +54,19 @@ export const applyTone = (rhyme, tone) => {
   const marks = ['', '\u0301', '\u0300', '\u0309', '\u0303', '\u0323'];
   const m = marks[tone];
   
+  if (rhyme.startsWith('ưa')) {
+    return ('ư' + m + rhyme.substring(1)).normalize('NFC');
+  }
+  if (rhyme.startsWith('ươ')) {
+    return ('ư' + 'ơ' + m + rhyme.substring(2)).normalize('NFC');
+  }
+  if (rhyme.startsWith('uô')) {
+    return ('u' + 'ô' + m + rhyme.substring(2)).normalize('NFC');
+  }
+  if (rhyme.startsWith('iê')) {
+    return ('i' + 'ê' + m + rhyme.substring(2)).normalize('NFC');
+  }
+  
   const VOWEL_PRIORITY = ['a', 'ă', 'â', 'e', 'ê', 'o', 'ô', 'ơ', 'y', 'ư', 'u', 'i'];
   for (let v of VOWEL_PRIORITY) {
     if (rhyme.includes(v)) {
@@ -174,12 +187,17 @@ export const decodeWord = (code) => {
     if (decodedS1 === 0) decodedS1 = 1;
   }
 
-  if (consonant === 'gi' && rhyme && rhyme.startsWith('iê')) {
-    rhyme = rhyme.substring(1);
+  let prefix = consonant;
+  if (consonant === 'gi' && rhyme) {
+    if (rhyme.startsWith('iê')) {
+      rhyme = rhyme.substring(1);
+    } else if (rhyme.startsWith('i')) {
+      prefix = 'g';
+    }
   }
 
   const tonedRhyme = applyTone(rhyme || '', decodedS1);
-  return consonant + tonedRhyme;
+  return prefix + tonedRhyme;
 };
 
 // --- BASE60 COMPRESSION ENGINE (TELEX + VNI ENHANCED) ---

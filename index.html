@@ -43,6 +43,7 @@
             </div>
 
             <button id="btn-share-link" class="cyber-btn" title="Chia sẻ link" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0;">&#128279;</button>
+            <button id="btn-top-keep-view" class="cyber-btn" title="Chuyển sang giao diện Google Keep (Cards Board)" style="border-color: #00ffcc; color: #00ffcc; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0;">🗂️</button>
             <a href="/dict-matrix.html" target="_blank" class="cyber-btn" title="Ma Trận & Từ Điển Base60" style="border-color: #00ff66; color: #00ff66; background: #000; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0; text-decoration: none;">📊</a>
             <button id="btn-activity-log" class="cyber-btn" title="Activity Log" style="display: none !important; border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; align-items: center; justify-content: center; padding: 0;">&#128202;</button>
             <button id="btn-sandbox-hashtag" class="cyber-btn" style="display: none !important; border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 16px; font-weight: bold; width: 36px; height: 36px; border-radius: 5px; align-items: center; justify-content: center; padding: 0;">#</button>
@@ -75,12 +76,13 @@
         </div>
       </header>
 
-      <div class="layout-split">
+      <div class="layout-split" id="studio-view-layout">
         <!-- CỘT 1: SIDEBAR GHI CHÚ -->
         <aside class="notes-sidebar">
           <div class="sidebar-header">
             <h2>CIPHER NOTES</h2>
             <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+              <button id="btn-toggle-keep-view" class="cyber-btn-small" style="background: #002b22; color: #00ffcc; border-color: #00ffcc; font-weight: bold;" title="Chuyển đổi giao diện Google Keep (Cards Board)">🗂️ KEEP</button>
               <button id="btn-new-note" class="cyber-btn-small">+ NEW</button>
               <button id="btn-playground" class="cyber-btn-small" style="background: #110; color: #ff0; border-color: #880;">SANDBOX</button>
               <a href="/dict.html" target="_blank" class="cyber-btn-small" style="background: #011; color: #0ff; border-color: #088; text-decoration: none;">DICT</a>
@@ -436,6 +438,56 @@
 
         <!-- BẢNG TỪ ĐIỂN -->
       </div>
+
+      <!-- ===================================================
+           🗂️ GOOGLE KEEP CARDS VIEW (CIPHER KEEP BOARD)
+           =================================================== -->
+      <section id="keep-view-container" class="keep-view-container" style="display: none;">
+        <div class="keep-header-bar">
+          <div class="keep-header-left">
+            <button id="btn-exit-keep-view" class="cyber-btn-small" style="background:#000; color:#00ffcc; border-color:#00ffcc; font-weight:bold; font-size:12px; cursor:pointer; padding: 4px 10px;">← 💻 STUDIO</button>
+            <h2 style="color: #00ffcc; font-size: 15px; letter-spacing: 1px; display: flex; align-items: center; gap: 8px; margin: 0;">
+              <span>🗂️ CIPHER KEEP</span>
+              <span id="keep-note-count" style="font-size: 10.5px; background: rgba(0,255,204,0.15); border: 1px solid #00ffcc; color: #00ffcc; padding: 1px 7px; border-radius: 10px; font-weight: normal;">0 NOTES</span>
+            </h2>
+            <button id="btn-keep-toggle-reveal" class="cyber-btn-small" style="background: rgba(255, 234, 0, 0.1); color: #ffea00; border-color: #ffea00; font-size: 11px; padding: 3px 8px; cursor: pointer;" title="Bật / Tắt hiển thị Tiếng Việt cho toàn bộ thẻ">👁️ HIỆN VI</button>
+          </div>
+
+          <div class="keep-search-box">
+            <input type="text" id="keep-search-input" class="cyber-input" placeholder="🔍 Tìm kiếm thẻ (Tiếng Việt hoặc Base60)..." spellcheck="false" style="width: 100%; font-size: 12px; padding: 5px 10px; background: rgba(0,15,10,0.9); border-color: #00ffcc;" />
+          </div>
+
+          <div class="keep-tabs">
+            <button class="tab-btn active" id="keep-tab-active" data-keeptab="active">ACTIVE</button>
+            <button class="tab-btn" id="keep-tab-archive" data-keeptab="archive">ARCHIVE</button>
+          </div>
+        </div>
+
+        <!-- Quick Note Creator (Google Keep Style) -->
+        <div class="keep-quick-creator">
+          <div class="keep-quick-box" id="keep-quick-box">
+            <input type="text" id="keep-quick-tags" placeholder="🏷️ Nhãn / Tags (cách nhau bởi dấu phẩy, VD: việc_cần_làm, 🔥)..." class="cyber-input keep-quick-tags" style="display: none;" />
+            <textarea id="keep-quick-content" placeholder="📝 Tạo ghi chú nhanh (gõ Tiếng Việt hoặc Base60)..." class="cyber-input keep-quick-content" rows="1"></textarea>
+            <div class="keep-quick-actions" id="keep-quick-actions" style="display: none;">
+              <div style="display: flex; gap: 6px; align-items: center;">
+                <span style="font-size: 11px; color: #888;">⚡ Tự động mã hóa & đồng bộ với Studio</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button id="btn-keep-quick-cancel" class="cyber-btn-small" style="color: #888; border-color: #555; background: #000; cursor: pointer;">ĐÓNG</button>
+                <button id="btn-keep-quick-save" class="cyber-btn-small" style="background: #00ffcc; color: #000; font-weight: bold; border-color: #00ffcc; cursor: pointer;">+ LƯU NOTE</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tag Filters Cloud -->
+        <div id="keep-tags-cloud" class="keep-tags-cloud" style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; padding: 0 4px;"></div>
+
+        <!-- Masonry Grid Cards -->
+        <div id="keep-cards-grid" class="keep-cards-grid">
+          <!-- Cards injected dynamically by JS -->
+        </div>
+      </section>
 
       <div id="status-panel" class="status-panel">
         <span class="status-indicator"></span> SYSTEM ONLINE. WAITING FOR INPUT...
