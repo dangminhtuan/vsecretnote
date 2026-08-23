@@ -3682,7 +3682,7 @@ function initMnemonicTutor() {
 
   let lastAnalyzedKey = '';
 
-  function updateTutor(inputStr) {
+  function updateTutor(inputStr, forceMode = 'auto') {
     if (!tutorVisible) return;
     inputStr = (inputStr || '').trim();
     if (!inputStr) inputStr = 'thành';
@@ -3691,15 +3691,35 @@ function initMnemonicTutor() {
     lastAnalyzedKey = inputStr;
 
     let word = '', code = '', b60 = '';
-    if (/^[a-zA-Z0-9]{3}$/.test(inputStr)) {
+
+    if (forceMode === 'b60' && /^[a-zA-Z0-9]{3}$/.test(inputStr)) {
       b60 = inputStr;
       code = base60ToTime(b60);
       word = decodeWord(code);
-    } else {
+    } else if (forceMode === 'vi') {
       const cleanW = inputStr.replace(/^[^\p{L}\d]+|[^\p{L}\d]+$/gu, '');
       word = cleanW || inputStr;
       code = encodeWord(word);
       b60 = timeToBase60(code);
+    } else {
+      // Auto mode: Try Vietnamese word first
+      const cleanW = inputStr.replace(/^[^\p{L}\d]+|[^\p{L}\d]+$/gu, '');
+      const testWord = cleanW || inputStr;
+      const viCode = encodeWord(testWord);
+
+      if (/^\d{6}$/.test(viCode)) {
+        word = testWord.toLowerCase();
+        code = viCode;
+        b60 = timeToBase60(code);
+      } else if (/^[a-zA-Z0-9]{3}$/.test(inputStr)) {
+        b60 = inputStr;
+        code = base60ToTime(b60);
+        word = decodeWord(code);
+      } else {
+        word = testWord;
+        code = viCode;
+        b60 = timeToBase60(code);
+      }
     }
 
     if (!word || word.includes('?') || word.startsWith('[')) {
@@ -3859,24 +3879,24 @@ function initMnemonicTutor() {
       const isSpaceOrPunct = e.data && /[\s.,;?!]/.test(e.data);
       if (isSpaceOrPunct) {
         const w = getWordUnderCursor(txtDec);
-        if (w) updateTutor(w);
+        if (w) updateTutor(w, 'vi');
       } else {
         debounceTimer = setTimeout(() => {
           const w = getWordUnderCursor(txtDec);
-          if (w) updateTutor(w);
+          if (w) updateTutor(w, 'vi');
         }, 150);
       }
     });
 
     txtDec.addEventListener('click', () => {
       const w = getWordUnderCursor(txtDec);
-      if (w) updateTutor(w);
+      if (w) updateTutor(w, 'vi');
     });
 
     txtDec.addEventListener('keyup', (e) => {
       if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
         const w = getWordUnderCursor(txtDec);
-        if (w) updateTutor(w);
+        if (w) updateTutor(w, 'vi');
       }
     });
   }
@@ -3885,12 +3905,12 @@ function initMnemonicTutor() {
   if (txtEnc) {
     txtEnc.addEventListener('click', () => {
       const w = getWordUnderCursor(txtEnc);
-      if (w && w.length === 3) updateTutor(w);
+      if (w && w.length === 3) updateTutor(w, 'b60');
     });
     txtEnc.addEventListener('keyup', (e) => {
       if (e.key === ' ' || e.key === 'Enter' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
         const w = getWordUnderCursor(txtEnc);
-        if (w && w.length === 3) updateTutor(w);
+        if (w && w.length === 3) updateTutor(w, 'b60');
       }
     });
   }
