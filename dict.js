@@ -219,49 +219,98 @@ function updateSortIcons() {
   }
 }
 
+function smartMatch(target, query) {
+  if (!query) return true;
+  if (!target) return false;
+
+  const trimmed = query.trim();
+  if (!trimmed) return true;
+
+  let regexPattern = trimmed;
+  const hasWildcard = /[*?]/.test(trimmed) && !/[\\^$(){}[\]|+]/.test(trimmed);
+  if (hasWildcard) {
+    regexPattern = '^' + trimmed.replace(/([.+^$[\]\\(){}|-])/g, '\\$1').replace(/\*/g, '.*').replace(/\?/g, '.') + '$';
+  }
+
+  try {
+    const reg = new RegExp(regexPattern, 'i');
+    if (reg.test(target)) return true;
+
+    const targetNoMark = removeAccents(target);
+    const patternNoMark = removeAccents(regexPattern);
+    const regNoMark = new RegExp(patternNoMark, 'i');
+    if (regNoMark.test(targetNoMark)) return true;
+  } catch (e) {}
+
+  const tStr = target.toLowerCase();
+  const qStr = trimmed.toLowerCase();
+  if (tStr.includes(qStr)) return true;
+
+  const tNoMark = removeAccents(tStr);
+  const qNoMark = removeAccents(qStr);
+  return tNoMark.includes(qNoMark);
+}
+
+function smartMatchBase60(target, query) {
+  if (!query) return true;
+  if (!target) return false;
+  const trimmed = query.trim();
+  if (!trimmed) return true;
+
+  let regexPattern = trimmed;
+  const hasWildcard = /[*?]/.test(trimmed) && !/[\\^$(){}[\]|+]/.test(trimmed);
+  if (hasWildcard) {
+    regexPattern = '^' + trimmed.replace(/([.+^$[\]\\(){}|-])/g, '\\$1').replace(/\*/g, '.*').replace(/\?/g, '.') + '$';
+  }
+
+  // Exact case regex match if user used uppercase
+  try {
+    const regExact = new RegExp(regexPattern);
+    if (regExact.test(target)) return true;
+  } catch (e) {}
+
+  // Case-insensitive regex match
+  try {
+    const regInsensitive = new RegExp(regexPattern, 'i');
+    if (regInsensitive.test(target)) return true;
+  } catch (e) {}
+
+  if (target.includes(trimmed)) return true;
+  return target.toLowerCase().includes(trimmed.toLowerCase());
+}
+
 function applyFilters() {
-  const fNo = document.getElementById('filter-no').value.toLowerCase();
-  const fWord = document.getElementById('filter-word').value.toLowerCase();
-  const fWordNoMark = removeAccents(fWord);
-  const fEnc = document.getElementById('filter-enc').value.toLowerCase();
-  const fB60 = document.getElementById('filter-b60').value.toLowerCase();
+  const fNo = document.getElementById('filter-no').value;
+  const fWord = document.getElementById('filter-word').value;
+  const fEnc = document.getElementById('filter-enc').value;
+  const fB60 = document.getElementById('filter-b60').value;
 
   filteredData = dictionaryData.filter(item => {
-    if (fNo && !item.no.toString().includes(fNo)) return false;
-    
-    if (fWord) {
-       const w1 = item.word.toLowerCase();
-       const w2 = item.wordNoMark;
-       if (fWord === fWordNoMark) {
-         // Query has no accents -> match either
-         if (!w1.includes(fWord) && !w2.includes(fWordNoMark)) return false;
-       } else {
-         // Query has accents -> strict match
-         if (!w1.includes(fWord)) return false;
-       }
-    }
-    
-    if (fEnc && !item.enc.includes(fEnc)) return false;
-    if (fB60 && !item.b60.toLowerCase().includes(fB60)) return false;
+    if (fNo && !smartMatch(item.no.toString(), fNo)) return false;
+    if (fWord && !smartMatch(item.word, fWord)) return false;
+    if (fEnc && !smartMatch(item.enc, fEnc)) return false;
+    if (fB60 && !smartMatchBase60(item.b60, fB60)) return false;
     
     if (selectedCons.size > 0 && !selectedCons.has(item.cons)) return false;
     if (selectedRhymes.size > 0 && !selectedRhymes.has(item.rhyme)) return false;
-      if (selectedTones.size > 0 && !selectedTones.has(item.toneName)) return false;
+    if (selectedTones.size > 0 && !selectedTones.has(item.toneName)) return false;
     
     return true;
   });
 
   filteredData.sort((a, b) => {
     if (fWord) {
+      const fWordClean = fWord.trim().toLowerCase();
+      const fWordNoMark = removeAccents(fWordClean);
       // 1. Exact match priority
-      const aExact = (a.word.toLowerCase() === fWord || a.wordNoMark === fWordNoMark);
-      const bExact = (b.word.toLowerCase() === fWord || b.wordNoMark === fWordNoMark);
+      const aExact = (a.word.toLowerCase() === fWordClean || a.wordNoMark === fWordNoMark);
+      const bExact = (b.word.toLowerCase() === fWordClean || b.wordNoMark === fWordNoMark);
       if (aExact && !bExact) return -1;
       if (!aExact && bExact) return 1;
-      
+
       // 2. Starts with priority
-      const aStarts = (a.word.toLowerCase().startsWith(fWord) || a.wordNoMark.startsWith(fWordNoMark));
-      const bStarts = (b.word.toLowerCase().startsWith(fWord) || b.wordNoMark.startsWith(fWordNoMark));
+      const aStarts = (a.word.toLowerCase().startsWith(fWordClean) || a.wordNoMark.startsWith(fWordNoMark));
+      const bStarts = (b.word.toLowerCase().startsWith(fWordClean) || b.wordNoMark.startsWith(fWordNoMark));
       if (aStarts && !bStarts) return -1;
       if (!aStarts && bStarts) return 1;
     }
@@ -311,6 +360,35 @@ function applyFilters() {
   renderTable();
 }
 
+function highlightText(text, query, customClass = 'search-highlight') {
+  if (!text) return '';
+  if (!query) return text;
+
+  const trimmed = query.trim();
+  if (!trimmed) return text;
+
+  let regexPattern = trimmed;
+  const hasWildcard = /[*?]/.test(trimmed) && !/[\\^$(){}[\]|+]/.test(trimmed);
+  if (hasWildcard) {
+    regexPattern = trimmed.replace(/([.+^$[\]\\(){}|-])/g, '\\$1').replace(/\*/g, '.*').replace(/\?/g, '.');
+  }
+
+  try {
+    const reg = new RegExp(`(${regexPattern})`, 'gi');
+    if (reg.test(text)) {
+      return text.replace(reg, `<mark class="${customClass}">$1</mark>`);
+    }
+  } catch (e) {}
+
+  const idx = text.toLowerCase().indexOf(trimmed.toLowerCase());
+  if (idx !== -1) {
+    const matchPart = text.substr(idx, trimmed.length);
+    return text.substring(0, idx) + `<mark class="${customClass}">${matchPart}</mark>` + text.substring(idx + trimmed.length);
+  }
+
+  return text;
+}
+
 function renderTable() {
   const tbody = document.getElementById('table-body');
   tbody.innerHTML = '';
@@ -328,18 +406,28 @@ function renderTable() {
   const end = Math.min(start + PAGE_SIZE, total);
   const pageData = filteredData.slice(start, end);
 
+  const fNo = document.getElementById('filter-no')?.value || '';
+  const fWord = document.getElementById('filter-word')?.value || '';
+  const fEnc = document.getElementById('filter-enc')?.value || '';
+  const fB60 = document.getElementById('filter-b60')?.value || '';
+
   pageData.forEach(item => {
     const tr = document.createElement('tr');
     const isInvalid = item.enc.startsWith('[');
     
+    const displayNo = highlightText(item.no.toString(), fNo);
+    const displayWord = highlightText(item.word, fWord, 'search-highlight-word');
+    const displayEnc = highlightText(item.enc, fEnc, 'search-highlight-time');
+    const displayB60 = highlightText(item.b60, fB60, 'search-highlight-b60');
+
     tr.innerHTML = `
-      <td>${item.no}</td>
-      <td style="font-weight:bold; color: ${isInvalid ? '#f00' : '#fff'};">${item.word}</td>
+      <td>${displayNo}</td>
+      <td style="font-weight:bold; color: ${isInvalid ? '#f00' : '#fff'};">${displayWord}</td>
       <td style="color: #888;">${item.cons || '-'}</td>
       <td style="color: #888;">${item.rhyme}</td>
-        <td style="color: #888;">${item.toneName || '-'}</td>
-      <td style="color: ${isInvalid ? '#f00' : '#ff0'}; font-weight:bold;">${item.enc}</td>
-      <td style="color: ${isInvalid ? '#f00' : '#0f0'}; font-weight:bold;">${item.b60}</td>
+      <td style="color: #888;">${item.toneName || '-'}</td>
+      <td style="color: ${isInvalid ? '#f00' : '#ff0'}; font-weight:bold;">${displayEnc}</td>
+      <td style="color: ${isInvalid ? '#f00' : '#0f0'}; font-weight:bold;">${displayB60}</td>
     `;
     tbody.appendChild(tr);
   });

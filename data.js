@@ -29,7 +29,7 @@ export const RHYMES_BASE = [
 
 // RHYMES_EXTRA_1: i/o/ô/ơ
 export const RHYMES_EXTRA_1 = [
-  'iêc', 'iên', 'iêng', 'iêp', 'iêt', 'iêu', 'in', 'inh', 'ip', 'it', 'iu',
+  'iêc', 'iên', 'iêng', 'iêp', 'iêt', 'iu', 'in', 'iêu', 'ip', 'it', 'inh',
   'oa', 'oai', 'oan', 'oc', 'oe', 'oi', 'om', 'on', 'ong', 'op', 'ot', 'oăn', 'oăng',
   'ô', 'ôc', 'ôi', 'ông', 'ôp', 'ôt',
   'ơi', 'ơm', 'ơn', 'ơp', 'ơt',
@@ -40,7 +40,7 @@ export const RHYMES_EXTRA_1 = [
 
 // RHYMES_EXTRA_2: u/ư/y
 export const RHYMES_EXTRA_2 = [
-  'ua', 'uân', 'uât', 'uc', 'uê', 'ui', 'um', 'un', 'ung', 'uôc', 'uôi', 'uôn', 'uông', 'uôt', 'up', 'uy', 'uyên', 'uyêt',
+  'ua', 'uât', 'uc', 'uê', 'ui', 'um', 'un', 'uân', 'ung', 'uôc', 'uôi', 'uôn', 'uông', 'uôt', 'up', 'uy', 'uyên', 'uyêt',
   'ư', 'ưa', 'ưi', 'ưm', 'ưn', 'ươc', 'ươi', 'ươn', 'ươp', 'ươt', 'ưt', 'ưu',
   'y', 'yêm', 'yên', 'yêt', 'yêu',
   'ươu', 'uôm', 'uơ', 'uâng', 'uây', 'uêch', 'uênh', 'uya', 'uych', 'uyn',

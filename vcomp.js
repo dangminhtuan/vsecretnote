@@ -68,15 +68,7 @@ export const applyTone = (rhyme, tone) => {
 export const encodeWord = (word, bypassShortcut = false) => {
   word = word.toLowerCase();
 
-  const engIndex = ENGLISH_DICT.indexOf(word);
-  if (engIndex !== -1) {
-    const ss = 36 + Math.floor(engIndex / 1440);
-    const remainder = engIndex % 1440;
-    const hh = Math.floor(remainder / 60);
-    const mm = remainder % 60;
-    return `${hh.toString().padStart(2,'0')}${mm.toString().padStart(2,'0')}${ss.toString().padStart(2,'0')}`;
-  }
-
+  // 1. Prioritize Vietnamese Phonetics
   const { consonant, rhyme, tone } = extractPhonetics(word);
   
   let cBaseIdx = -1;
@@ -120,12 +112,22 @@ export const encodeWord = (word, bypassShortcut = false) => {
     else if (rExtra2Idx !== -1) { mm = rExtra2Idx; s2 = 5; }
   }
   
-  if (hh === -1 || mm === -1) {
-    return `[${word}]`;
+  if (hh !== -1 && mm !== -1 && (consonant !== '' || rhyme !== '')) {
+    const ss = s2 * 6 + s1;
+    return `${hh.toString().padStart(2,'0')}${mm.toString().padStart(2,'0')}${ss.toString().padStart(2,'0')}`;
   }
-  
-  const ss = s2 * 6 + s1;
-  return `${hh.toString().padStart(2,'0')}${mm.toString().padStart(2,'0')}${ss.toString().padStart(2,'0')}`;
+
+  // 2. Fallback to English dictionary for non-Vietnamese words
+  const engIndex = ENGLISH_DICT.indexOf(word);
+  if (engIndex !== -1) {
+    const ss = 36 + Math.floor(engIndex / 1440);
+    const remainder = engIndex % 1440;
+    const hh = Math.floor(remainder / 60);
+    const mm = remainder % 60;
+    return `${hh.toString().padStart(2,'0')}${mm.toString().padStart(2,'0')}${ss.toString().padStart(2,'0')}`;
+  }
+
+  return `[${word}]`;
 };
 
 // --- DECODER ---
@@ -184,7 +186,31 @@ export const decodeWord = (code) => {
   return consonant + tonedRhyme;
 };
 
-// --- BASE60 COMPRESSION ENGINE ---
+// --- BASE60 COMPRESSION ENGINE (TELEX + VNI ENHANCED) ---
+export const BASE60_HH = [
+  'c', 'd', 'g', 'G', 'j', 'k', 'K', 'h', 'v', 'D', 'm', 'C', 'r', 's', 'n', 'b', 'l', 'Q', 'S', 'z', 'N', 'y', 'L', 'W'
+];
+export const BASE60_HH_EXTRA = [
+  'p', 'f', 'q', 't', 'T', 'R', 'x'
+];
+export const BASE60_MM = BASE60_MAPPING;
+export const BASE60_SS = [
+  // s2=0 (Base Rhyme + Base PA): Telex thường
+  'z', 's', 'f', 'r', 'x', 'j',
+  // s2=1 (Extra 1 Rhyme + Base PA): Telex hoa
+  'Z', 'S', 'F', 'R', 'X', 'J',
+  // s2=2 (Extra 2 Rhyme + Base PA): Nguyên âm thường
+  'a', 'e', 'i', 'u', 'w', 'y',
+  // s2=3 (Base Rhyme + Extra PA): VNI 0-5
+  '0', '1', '2', '3', '4', '5',
+  // s2=4 (Extra 1 Rhyme + Extra PA): VNI cao 6-9+BC
+  '6', '7', '8', '9', 'B', 'C',
+  // s2=5 (Extra 2 Rhyme + Extra PA): Nguyên âm HOA
+  'A', 'E', 'I', 'U', 'W', 'Y',
+  // 36..59: English dictionary slots (24 chars)
+  'c', 'd', 'g', 'G', 'k', 'K', 'h', 'v', 'D', 'm', 'n', 'b', 'l', 'Q', 'N', 'L', 'p', 'q', 't', 'T', 'H', 'M', 'P', 'V'
+];
+
 export function timeToBase60(timeStr) {
   if (timeStr.includes('?') || timeStr.startsWith('[')) return timeStr;
   
@@ -197,13 +223,46 @@ export function timeToBase60(timeStr) {
     const hh = parseInt(processStr.substring(0,2), 10);
     const mm = parseInt(processStr.substring(2,4), 10);
     const ss = parseInt(processStr.substring(4,6), 10);
-    if (!isNaN(hh) && !isNaN(mm) && !isNaN(ss)) return BASE60_MAPPING[hh] + BASE60_MAPPING[mm] + BASE60_MAPPING[ss];
+    if (!isNaN(hh) && !isNaN(mm) && !isNaN(ss)) {
+      if (ss >= 36) {
+        return BASE60_MAPPING[hh] + BASE60_MAPPING[mm] + BASE60_SS[ss];
+      }
+      const s2 = Math.floor(ss / 6);
+      const isExtra = s2 >= 3 && s2 <= 5;
+      const c1 = isExtra ? (BASE60_HH_EXTRA[hh] || BASE60_MAPPING[hh]) : (BASE60_HH[hh] || BASE60_MAPPING[hh]);
+      const c2 = BASE60_MM[mm] || BASE60_MAPPING[mm];
+      const c3 = BASE60_SS[ss] || BASE60_MAPPING[ss];
+      return c1 + c2 + c3;
+    }
   }
   return timeStr;
 }
 
 export function base60ToTime(base60Str) {
   if (base60Str.length === 3) {
+    const c1 = base60Str[0];
+    const c2 = base60Str[1];
+    const c3 = base60Str[2];
+
+    const ss = BASE60_SS.indexOf(c3);
+    if (ss !== -1) {
+      if (ss >= 36) {
+        const hh = BASE60_MAPPING.indexOf(c1);
+        const mm = BASE60_MAPPING.indexOf(c2);
+        if (hh !== -1 && mm !== -1) {
+          return hh.toString().padStart(2,'0') + mm.toString().padStart(2,'0') + ss.toString().padStart(2,'0');
+        }
+      } else {
+        const s2 = Math.floor(ss / 6);
+        const isExtra = s2 >= 3 && s2 <= 5;
+        const hh = isExtra ? BASE60_HH_EXTRA.indexOf(c1) : BASE60_HH.indexOf(c1);
+        const mm = BASE60_MM.indexOf(c2);
+        if (hh !== -1 && mm !== -1) {
+          return hh.toString().padStart(2,'0') + mm.toString().padStart(2,'0') + ss.toString().padStart(2,'0');
+        }
+      }
+    }
+
     const i1 = BASE60_MAPPING.indexOf(base60Str[0]);
     const i2 = BASE60_MAPPING.indexOf(base60Str[1]);
     const i3 = BASE60_MAPPING.indexOf(base60Str[2]);

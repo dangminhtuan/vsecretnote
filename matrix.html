@@ -7,30 +7,31 @@
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/snk.css" />
   <style>
-    body { padding: 10px 8px; font-family: monospace; background: #000; color: #0f0; margin: 0; }
+    body { padding: 8px 6px; font-family: monospace; background: #000; color: #0f0; margin: 0; }
     .matrix-container { max-width: 1000px; margin: 0 auto; }
     
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: nowrap; gap: 6px; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: nowrap; gap: 6px; }
     .nav-actions { display: flex; gap: 5px; flex-shrink: 0; }
 
-    .control-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 8px; }
-    .search-box { flex: 1; min-width: 140px; background: #000; color: #0f0; border: 1px solid #0f0; padding: 4px 8px; font-family: monospace; font-size: 12px; box-sizing: border-box; }
+    .control-bar { display: flex; justify-content: space-between; align-items: center; gap: 6px; margin-bottom: 6px; flex-wrap: wrap; }
+    .search-box { flex: 1; min-width: 130px; background: #000; color: #0f0; border: 1px solid #0f0; padding: 4px 8px; font-family: monospace; font-size: 12px; box-sizing: border-box; }
     .search-box::placeholder { color: #050; }
     .stat-text { color: #888; font-size: 11px; white-space: nowrap; }
 
-    .legend-bar { display: flex; gap: 10px; align-items: center; font-size: 11px; margin-bottom: 8px; color: #888; }
-    .legend-badge { padding: 0 4px; border-radius: 2px; font-family: monospace; font-weight: bold; }
+    .legend-bar { display: flex; gap: 6px; align-items: center; font-size: 10.5px; margin-bottom: 6px; color: #888; flex-wrap: wrap; }
+    .legend-badge { padding: 1px 4px; border-radius: 2px; font-family: monospace; font-weight: bold; }
 
     .table-wrapper { width: 100%; border: 1px solid #333; margin-bottom: 15px; }
     table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-    th { border: 1px solid #333; padding: 6px 1px; text-align: center; background: #111; color: #0f0; font-size: 13px; font-weight: bold; }
+    th { border: 1px solid #333; padding: 6px 1px; text-align: center; background: #111; color: #0f0; font-size: 12.5px; font-weight: bold; }
     td { border: 1px solid #222; padding: 3px 1px; text-align: center; font-size: 11px; vertical-align: middle; }
     tr:nth-child(even) td { background: #050505; }
     tr:hover td { background: #0d1a0d; }
 
     /* Column width distribution */
-    th:nth-child(1), td:nth-child(1) { width: 28px; color: #555; font-size: 10px; }
-    th:nth-child(2), td:nth-child(2) { width: 44px; font-weight: bold; color: #fff; border-right: 1px solid #0f0; }
+    th:nth-child(1), td:nth-child(1) { width: 22px; color: #555; font-size: 10px; }
+    th:nth-child(2), td:nth-child(2) { width: 38px; font-weight: bold; color: #fff; }
+    th:nth-child(3), td:nth-child(3) { width: 24px; font-weight: bold; border-right: 1px solid #0f0; }
 
     /* Code badges */
     .cell-codes { display: flex; flex-direction: column; gap: 2px; align-items: center; justify-content: center; }
@@ -49,17 +50,47 @@
       transition: all 0.15s ease;
       cursor: pointer;
     }
-    .code-badge.base-p {
+
+    /* Bảng 1: Telex Thường (Xanh lá) */
+    .code-badge.base-p1 {
       color: #0f0;
       background: #001a00;
       border: 1px solid #004400;
     }
-    .code-badge.base-p:hover {
+    .code-badge.base-p1:hover {
       color: #fff;
       background: #004400;
       border-color: #0f0;
       box-shadow: 0 0 6px #0f0;
     }
+
+    /* Bảng 2: Telex HOA (Vàng) */
+    .code-badge.base-p2 {
+      color: #ffea00;
+      background: #1a1600;
+      border: 1px solid #554400;
+    }
+    .code-badge.base-p2:hover {
+      color: #fff;
+      background: #443700;
+      border-color: #ffea00;
+      box-shadow: 0 0 6px #ffea00;
+    }
+
+    /* Bảng 3: Nguyên âm (Hồng tím) */
+    .code-badge.base-p3 {
+      color: #ff55ff;
+      background: #1a001a;
+      border: 1px solid #550055;
+    }
+    .code-badge.base-p3:hover {
+      color: #fff;
+      background: #440044;
+      border-color: #ff55ff;
+      box-shadow: 0 0 6px #ff55ff;
+    }
+
+    /* Nhóm PA phụ: VNI (Xanh cyan) */
     .code-badge.extra-p {
       color: #0ff;
       background: #00151a;
@@ -71,6 +102,8 @@
       border-color: #0ff;
       box-shadow: 0 0 6px #0ff;
     }
+
+    /* Disabled */
     .code-badge.disabled-code {
       color: #333;
       background: #050505;
@@ -81,13 +114,109 @@
       user-select: none;
     }
 
+    /* Rhyme code badge */
+    .rhyme-code-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: bold;
+      padding: 1px 3px;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .rhyme-code-badge:hover {
+      transform: scale(1.18);
+      box-shadow: 0 0 8px currentColor;
+    }
+    .rhyme-code-badge:active {
+      transform: scale(0.95);
+    }
+    .code-b1 { color: #0f0; background: #002200; border: 1px solid #004400; }
+    .code-b2 { color: #ffea00; background: #221d00; border: 1px solid #554400; }
+    .code-b3 { color: #ff55ff; background: #220022; border: 1px solid #550055; }
+
+    .tag-b1 { color: #0f0; background: #002200; }
+    .tag-b2 { color: #ffea00; background: #221d00; }
+    .tag-b3 { color: #ff55ff; background: #220022; }
+
+    /* Search Highlights */
+    mark.search-highlight {
+      background: #ffea00;
+      color: #000;
+      font-weight: 900;
+      padding: 0 2px;
+      border-radius: 2px;
+      box-shadow: 0 0 6px rgba(255, 234, 0, 0.9);
+      display: inline-block;
+      line-height: 1.15;
+    }
+
+    /* Cyber Segmented Navigation Group */
+    .cyber-nav-group {
+      display: inline-flex;
+      align-items: stretch;
+      background: #000;
+      border: 1px solid #00ff66;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 0 8px rgba(0, 255, 102, 0.25);
+    }
+    .cyber-nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 10px;
+      min-width: 42px;
+      text-decoration: none;
+      color: #00ff66;
+      font-family: inherit;
+      background: transparent;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .cyber-nav-btn .nav-icon {
+      font-size: 13px;
+      line-height: 1.1;
+    }
+    .cyber-nav-btn .nav-text {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+      margin-top: 1px;
+    }
+    .cyber-nav-btn:hover {
+      background: rgba(0, 255, 102, 0.25);
+      color: #fff;
+      box-shadow: inset 0 0 6px #00ff66;
+    }
+    .cyber-nav-btn.btn-cyan {
+      color: #00ffff;
+    }
+    .cyber-nav-btn.btn-cyan:hover {
+      background: rgba(0, 255, 255, 0.25);
+      color: #fff;
+      box-shadow: inset 0 0 6px #00ffff;
+    }
+    .cyber-nav-divider {
+      width: 1px;
+      background: rgba(0, 255, 102, 0.35);
+    }
+
     @media (max-width: 768px) {
-      body { padding: 6px 4px; }
-      h1.glitch { font-size: 18px; }
-      .code-badge { font-size: 10px; letter-spacing: -0.5px; }
-      th { font-size: 12px; padding: 4px 0; }
-      th:nth-child(1), td:nth-child(1) { width: 24px; }
-      th:nth-child(2), td:nth-child(2) { width: 38px; }
+      body { padding: 4px 2px; }
+      h1.glitch { font-size: 17px; }
+      .code-badge { font-size: 9.5px; letter-spacing: -0.5px; }
+      th { font-size: 11px; padding: 4px 0; }
+      th:nth-child(1), td:nth-child(1) { width: 18px; font-size: 9px; }
+      th:nth-child(2), td:nth-child(2) { width: 32px; font-size: 10.5px; }
+      th:nth-child(3), td:nth-child(3) { width: 20px; font-size: 10px; }
+      .rhyme-code-badge { font-size: 9.5px; padding: 0 1px; }
+      .legend-bar { font-size: 9px; gap: 3px; }
+      .cyber-nav-btn { padding: 1px 7px; min-width: 36px; }
+      .cyber-nav-btn .nav-icon { font-size: 11.5px; }
+      .cyber-nav-btn .nav-text { font-size: 8.5px; }
     }
   </style>
 </head>
@@ -97,21 +226,33 @@
       <div>
         <h1 class="glitch" data-text="RHYME MATRIX" style="margin: 0; font-size: 20px;">RHYME MATRIX</h1>
       </div>
-      <div class="nav-actions">
-        <a href="/" class="cyber-btn" style="text-decoration:none; padding: 3px 8px; font-size: 11px;">&larr; APP</a>
-        <a href="/dict.html" class="cyber-btn" style="text-decoration:none; padding: 3px 8px; font-size: 11px; color: #0ff; border-color: #0ff;">📖 DICT</a>
+      <div class="cyber-nav-group">
+        <a href="/" class="cyber-nav-btn" title="Về trang ứng dụng chính">
+          <span class="nav-icon">⚡</span>
+          <span class="nav-text">APP</span>
+        </a>
+        <div class="cyber-nav-divider"></div>
+        <a href="/dict.html" class="cyber-nav-btn btn-cyan" title="Sang trang Từ điển">
+          <span class="nav-icon">📖</span>
+          <span class="nav-text">DICT</span>
+        </a>
       </div>
     </header>
 
-    <div class="control-bar">
-      <input type="text" id="search-rhyme" class="search-box" placeholder="Tìm vần..." autocomplete="off" spellcheck="false" />
+    <div class="control-bar" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+      <div style="position: relative; flex: 1; min-width: 220px; max-width: 340px;">
+        <input type="text" id="search-rhyme" class="search-box" style="width: 100%; padding-right: 26px;" placeholder="Tìm vần / :mã (VD: :h) / Regex (*, ?)..." autocomplete="off" spellcheck="false" />
+        <button id="btn-clear-search" title="Xóa tìm kiếm" style="display: none; position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #ff0; cursor: pointer; font-size: 13px; font-weight: bold; line-height: 1; padding: 2px;">✖</button>
+      </div>
+      <button id="btn-sort-mode" class="cyber-btn" style="padding: 3px 7px; font-size: 11px; white-space: nowrap; cursor: pointer; color: #0ff; border-color: #0ff;">🔀 Gom theo Ký tự Vần</button>
       <div class="stat-text" id="stat-text">Đang tải...</div>
     </div>
 
     <div class="legend-bar">
-      <span><span class="legend-badge" style="background:#001a00; color:#0f0; border:1px solid #004400;">c...</span> = PA chính</span>
-      <span>|</span>
-      <span><span class="legend-badge" style="background:#00151a; color:#0ff; border:1px solid #004455;">t...</span> = PA phụ</span>
+      <span><span class="legend-badge" style="background:#001a00; color:#0f0; border:1px solid #004400;">B1</span> Telex thường</span>
+      <span><span class="legend-badge" style="background:#1a1600; color:#ffea00; border:1px solid #554400;">B2</span> Telex HOA</span>
+      <span><span class="legend-badge" style="background:#1a001a; color:#ff55ff; border:1px solid #550055;">B3</span> Nguyên âm</span>
+      <span><span class="legend-badge" style="background:#00151a; color:#0ff; border:1px solid #004455;">PA phụ</span> VNI</span>
     </div>
 
     <div class="table-wrapper">
@@ -119,7 +260,8 @@
         <thead>
           <tr>
             <th>STT</th>
-            <th>Vần</th>
+            <th id="th-rhyme" style="cursor: pointer;" title="Nhấn để đổi cách sắp xếp (Thứ tự bảng / Gom theo ký tự vần)">Vần ⇕</th>
+            <th id="th-code" style="cursor: pointer;" title="Ký tự Base60 của Vần (Nhấn để gom theo mã)">Mã</th>
             <th title="Dấu Bằng (=)">=</th>
             <th title="Dấu Sắc (✓)">✓</th>
             <th title="Dấu Huyền (`)">`</th>

@@ -45,10 +45,88 @@
     th:nth-child(6) { width: 105px; }
     th:nth-child(7) { width: 105px; }
 
+    /* Search Highlights */
+    mark.search-highlight-time,
+    mark.search-highlight-b60,
+    mark.search-highlight-word,
+    mark.search-highlight {
+      background: #ffea00;
+      color: #000;
+      font-weight: 900;
+      padding: 0 3px;
+      border-radius: 2px;
+      box-shadow: 0 0 6px rgba(255, 234, 0, 0.9);
+      display: inline-block;
+      line-height: 1.15;
+    }
+    mark.search-highlight-word {
+      background: #00ff66;
+      color: #000;
+      box-shadow: 0 0 6px rgba(0, 255, 102, 0.9);
+    }
+    mark.search-highlight-b60 {
+      background: #00ffff;
+      color: #000;
+      box-shadow: 0 0 6px rgba(0, 255, 255, 0.9);
+    }
+
     /* Responsive text */
     .txt-full { display: inline; }
     .txt-short { display: none; }
     
+    /* Cyber Segmented Navigation Group */
+    .cyber-nav-group {
+      display: inline-flex;
+      align-items: stretch;
+      background: #000;
+      border: 1px solid #00ff66;
+      border-radius: 4px;
+      overflow: hidden;
+      box-shadow: 0 0 8px rgba(0, 255, 102, 0.25);
+    }
+    .cyber-nav-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 10px;
+      min-width: 42px;
+      text-decoration: none;
+      color: #00ff66;
+      font-family: inherit;
+      background: transparent;
+      transition: all 0.15s ease;
+      cursor: pointer;
+    }
+    .cyber-nav-btn .nav-icon {
+      font-size: 13px;
+      line-height: 1.1;
+    }
+    .cyber-nav-btn .nav-text {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+      margin-top: 1px;
+    }
+    .cyber-nav-btn:hover {
+      background: rgba(0, 255, 102, 0.25);
+      color: #fff;
+      box-shadow: inset 0 0 6px #00ff66;
+    }
+    .cyber-nav-btn.btn-yellow {
+      color: #ffea00;
+    }
+    .cyber-nav-btn.btn-yellow:hover {
+      background: rgba(255, 234, 0, 0.25);
+      color: #fff;
+      box-shadow: inset 0 0 6px #ffea00;
+    }
+    .cyber-nav-divider {
+      width: 1px;
+      background: rgba(0, 255, 102, 0.35);
+    }
+
     @media (max-width: 768px) {
       body { padding: 10px 4px; }
       .txt-full { display: none; }
@@ -65,6 +143,9 @@
       th:nth-child(7) { width: 52px; }
       .col-filter { font-size: 10px; padding: 2px; }
       .ms-header { font-size: 10px; padding: 2px; }
+      .cyber-nav-btn { padding: 1px 7px; min-width: 36px; }
+      .cyber-nav-btn .nav-icon { font-size: 11.5px; }
+      .cyber-nav-btn .nav-text { font-size: 8.5px; }
     }
   </style>
 </head>
@@ -72,9 +153,16 @@
   <div class="dict-container">
     <header style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 8px;">
       <h1 class="glitch" data-text="DICTIONARY">DICTIONARY</h1>
-      <div style="display: flex; gap: 8px;">
-        <a href="/matrix.html" class="cyber-btn" style="text-decoration:none; color: #ff0; border-color: #ff0;">▦ MATRIX</a>
-        <a href="/" class="cyber-btn" style="text-decoration:none;">&larr; BACK TO APP</a>
+      <div class="cyber-nav-group">
+        <a href="/" class="cyber-nav-btn" title="Về trang ứng dụng chính">
+          <span class="nav-icon">⚡</span>
+          <span class="nav-text">APP</span>
+        </a>
+        <div class="cyber-nav-divider"></div>
+        <a href="/matrix.html" class="cyber-nav-btn btn-yellow" title="Sang trang Ma trận Vần">
+          <span class="nav-icon">▦</span>
+          <span class="nav-text">MATRIX</span>
+        </a>
       </div>
     </header>
 
@@ -85,14 +173,14 @@
         <tr>
           <th>
             <div class="th-title" data-sort="no">STT <span class="sort-icon" id="sort-icon-no">▲</span></div>
-            <input type="text" id="filter-no" class="col-filter" placeholder="Tìm STT..." />
+            <input type="text" id="filter-no" class="col-filter" placeholder="STT / Regex..." />
           </th>
           <th>
             <div class="th-title" data-sort="word">
               <span><span class="txt-full">Từ Tiếng Việt</span><span class="txt-short">TTV</span></span>
               <span class="sort-icon" id="sort-icon-word"></span>
             </div>
-            <input type="text" id="filter-word" class="col-filter" placeholder="Tìm từ..." />
+            <input type="text" id="filter-word" class="col-filter" placeholder="Từ / Regex (*, ?)..." />
           </th>
           <th>
             <div class="th-title" data-sort="cons">
@@ -135,11 +223,11 @@
           </th>
 <th>
             <div class="th-title" data-sort="enc">Mã Time <span class="sort-icon" id="sort-icon-enc"></span></div>
-            <input type="text" id="filter-enc" class="col-filter" placeholder="Mã số..." />
+            <input type="text" id="filter-enc" class="col-filter" placeholder="Số / Regex..." />
           </th>
           <th>
             <div class="th-title" data-sort="b60">Mã Nén <span class="sort-icon" id="sort-icon-b60"></span></div>
-            <input type="text" id="filter-b60" class="col-filter" placeholder="Base60..." />
+            <input type="text" id="filter-b60" class="col-filter" placeholder="B60 / Regex..." />
           </th>
         </tr>
       </thead>
