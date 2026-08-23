@@ -3623,6 +3623,8 @@ function initMnemonicTutor() {
   const colCons = document.getElementById('tutor-col-cons');
   const colRhyme = document.getElementById('tutor-col-rhyme');
   const colTone = document.getElementById('tutor-col-tone');
+  const confusionBox = document.getElementById('tutor-confusion-box');
+  const confusionList = document.getElementById('tutor-confusion-list');
   const sameConsEl = document.getElementById('tutor-same-cons');
   const sameRhymeEl = document.getElementById('tutor-same-rhyme');
   const sameRhymeToneEl = document.getElementById('tutor-same-rhyme-tone');
@@ -3747,6 +3749,76 @@ function initMnemonicTutor() {
     if (colCons) colCons.innerHTML = `"${consonant || '(rỗng)'}" ➜ Mã: [ <b style="color:#00ffff">${c1}</b> ] ${consTable === 1 ? '(PA phụ)' : ''}`;
     if (colRhyme) colRhyme.innerHTML = `"${rhyme}" ➜ Mã: [ <b style="color:#ffea00">${c2}</b> ] (${rhymeTableName})`;
     if (colTone) colTone.innerHTML = toneTableLabel;
+
+    // Render Anti-Confusion Contrast Alerts
+    if (confusionBox && confusionList) {
+      const notes = [];
+      const consContrastMap = {
+        'T': { other: 't', descThis: 'phụ âm "th"', descOther: 'phụ âm "t"' },
+        't': { other: 'T', descThis: 'phụ âm "t"', descOther: 'phụ âm "th"' },
+        'C': { other: 'c', descThis: 'phụ âm "ch"', descOther: 'phụ âm "c/k"' },
+        'c': { other: 'C', descThis: 'phụ âm "c/k"', descOther: 'phụ âm "ch"' },
+        'D': { other: 'd', descThis: 'phụ âm "d/gi"', descOther: 'phụ âm "đ"' },
+        'd': { other: 'D', descThis: 'phụ âm "đ"', descOther: 'phụ âm "d/gi"' },
+        'G': { other: 'g', descThis: 'phụ âm "gh"', descOther: 'phụ âm "g"' },
+        'g': { other: 'G', descThis: 'phụ âm "g"', descOther: 'phụ âm "gh"' },
+        'K': { other: 'k', descThis: 'phụ âm "kh"', descOther: 'phụ âm "k/c"' },
+        'k': { other: 'K', descThis: 'phụ âm "k/c"', descOther: 'phụ âm "kh"' },
+        'N': { other: 'n', descThis: 'phụ âm "ng/ngh"', descOther: 'phụ âm "n"' },
+        'n': { other: 'N', descThis: 'phụ âm "n"', descOther: 'phụ âm "ng/ngh"' },
+        'q': { other: 'Q', descThis: 'phụ âm "qu"', descOther: 'phụ âm "ch" (từ chim)' },
+        'Q': { other: 'q', descThis: 'phụ âm "ch" (từ chim)', descOther: 'phụ âm "qu"' },
+        'R': { other: 'r', descThis: 'phụ âm "tr"', descOther: 'phụ âm "r"' },
+        'r': { other: 'R', descThis: 'phụ âm "r"', descOther: 'phụ âm "tr"' },
+        'L': { other: 'l', descThis: 'phụ âm "l" (nhóm 22: lồn)', descOther: 'phụ âm "l" (nhóm 16: liếm)' },
+        'l': { other: 'L', descThis: 'phụ âm "l" (nhóm 16: liếm)', descOther: 'phụ âm "l" (nhóm 22: lồn)' },
+        'S': { other: 's', descThis: 'phụ âm "s" (nhóm 18: sờ)', descOther: 'phụ âm "s" (nhóm 13: sướng)' },
+        's': { other: 'S', descThis: 'phụ âm "s" (nhóm 13: sướng)', descOther: 'phụ âm "s" (nhóm 18: sờ)' },
+        'W': { other: 'v', descThis: 'phụ âm "ngh" (nhóm 23: nghạnh)', descOther: 'phụ âm "v" (nhóm 08: vú)' }
+      };
+
+      if (consContrastMap[c1]) {
+        const item = consContrastMap[c1];
+        notes.push(`• <b>Phụ âm:</b> [ <b style="color:#00ffff">${c1}</b> ] là <i>${item.descThis}</i> <span style="color:#ffaa00;">≠</span> [ <b style="color:#888">${item.other}</b> ] là <i>${item.descOther}</i>`);
+      } else if (c1 === 'h') {
+        notes.push(`• <b>Phụ âm:</b> [ <b style="color:#00ffff">h</b> ] (thường) là <i>phụ âm "h"</i> <span style="color:#ffaa00;">≠</span> [ <b style="color:#888">H</b> ] (không phải phụ âm, là ký hiệu vần slot 33: uô/ênh)`);
+      }
+
+      const rhymeContrastMap = {
+        'h': { other: 'H', descThis: `vần "${rhyme}" (slot 07: ôn/iêu/uân)`, descOther: 'slot 33 (uô/ênh/uôm)' },
+        'H': { other: 'h', descThis: `vần "${rhyme}" (slot 33: uô/ênh/uôm)`, descOther: 'slot 07 (ôn/iêu/uân)' },
+        'q': { other: 'Q', descThis: `vần "${rhyme}" (slot 26: at/ưt/uât)`, descOther: 'slot 42 (uơ/ơu/oai)' },
+        'Q': { other: 'q', descThis: `vần "${rhyme}" (slot 42: uơ/ơu/oai)`, descOther: 'slot 26 (at/ưt/uât)' },
+        'd': { other: 'D', descThis: `vần "${rhyme}" (slot 01: ac/ach/oac)`, descOther: 'slot 29 (iêc/iêt/oăt)' },
+        'D': { other: 'd', descThis: `vần "${rhyme}" (slot 29: iêc/iêt/oăt)`, descOther: 'slot 01 (ac/ach/oac)' },
+        'c': { other: 'C', descThis: `vần "${rhyme}" (slot 00: a/ai/ao)`, descOther: 'slot 28 (e/ec/oan)' },
+        'C': { other: 'c', descThis: `vần "${rhyme}" (slot 28: e/ec/oan)`, descOther: 'slot 00 (a/ai/ao)' },
+        'm': { other: 'M', descThis: `vần "${rhyme}" (slot 10: ut/un/ưng)`, descOther: 'slot 38 (om/on/oap)' },
+        'M': { other: 'm', descThis: `vần "${rhyme}" (slot 38: om/on/oap)`, descOther: 'slot 10 (ut/un/ưng)' },
+      };
+
+      if (rhymeContrastMap[c2]) {
+        const item = rhymeContrastMap[c2];
+        notes.push(`• <b>Vần:</b> [ <b style="color:#ffea00">${c2}</b> ] là <i>${item.descThis}</i> <span style="color:#ffaa00;">≠</span> [ <b style="color:#888">${item.other}</b> ] là <i>${item.descOther}</i>`);
+      }
+
+      if (/[ZSFXRJ]/.test(c3)) {
+        notes.push(`• <b>Dấu:</b> [ <b style="color:#ff55ff">${c3}</b> ] (Telex HOA) chỉ định <b>Bảng 2</b> <span style="color:#ffaa00;">≠</span> [ <b style="color:#888">${c3.toLowerCase()}</b> ] (Telex thường) chỉ định <b>Bảng 1</b>`);
+      } else if (/[zsfrxj]/.test(c3)) {
+        notes.push(`• <b>Dấu:</b> [ <b style="color:#ff55ff">${c3}</b> ] (Telex thường) chỉ định <b>Bảng 1</b> <span style="color:#ffaa00;">≠</span> [ <b style="color:#888">${c3.toUpperCase()}</b> ] (Telex HOA) chỉ định <b>Bảng 2</b>`);
+      } else if (/[0-5]/.test(c3)) {
+        notes.push(`• <b>Dấu:</b> [ <b style="color:#ff55ff">${c3}</b> ] (VNI số 0-5) dùng cho <b>Phụ âm phụ ở Bảng 1</b> (t, th, qu, ph, tr, x...)`);
+      } else if (/[6-9BC]/.test(c3)) {
+        notes.push(`• <b>Dấu:</b> [ <b style="color:#ff55ff">${c3}</b> ] (VNI cao 6-9, B, C) dùng cho <b>Phụ âm phụ ở Bảng 2</b>`);
+      }
+
+      if (notes.length > 0) {
+        confusionList.innerHTML = notes.map(n => `<div>${n}</div>`).join('');
+        confusionBox.style.display = 'block';
+      } else {
+        confusionBox.style.display = 'none';
+      }
+    }
 
     // Instant O(1) Lookups from Pre-built Index
     buildTutorIndex();
