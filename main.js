@@ -1097,6 +1097,7 @@ window.showToast = function(msg) {
 };
 
 function enterSandboxMode(silent = false) {
+  localStorage.setItem('timecypher_last_mode', 'sandbox');
   document.body.classList.add('sandbox-mode');
   currentNoteId = 'playground';
   txtDecrypted.value = '';
@@ -1259,6 +1260,8 @@ function renderBacklinks(id) {
 
 function loadNote(id) {
   forceSave();
+  localStorage.setItem('timecypher_last_mode', 'studio');
+  localStorage.setItem('timecypher_last_note_id', id);
   document.body.classList.remove('sandbox-mode');
   const note = notesDB.find(n => n.id === id);
   if (!note) return;
@@ -1286,6 +1289,7 @@ function loadNote(id) {
 
 function createNewNote() {
   document.body.classList.remove('sandbox-mode');
+  localStorage.setItem('timecypher_last_mode', 'studio');
   forceSave();
   currentNoteId = null;
   txtDecrypted.value = '';
@@ -1513,6 +1517,7 @@ function toggleKeepView(forceState) {
   }
 
   if (isKeepViewActive) {
+    localStorage.setItem('timecypher_last_mode', 'keep');
     if (studioLayout) studioLayout.style.display = 'none';
     if (keepViewContainer) keepViewContainer.style.display = 'flex';
     if (btnToggleKeepView) {
@@ -1529,6 +1534,7 @@ function toggleKeepView(forceState) {
     }
     renderKeepView();
   } else {
+    localStorage.setItem('timecypher_last_mode', 'studio');
     document.body.classList.remove('sandbox-mode');
     if (studioLayout) studioLayout.style.display = '';
     if (keepViewContainer) keepViewContainer.style.display = 'none';
@@ -1837,13 +1843,26 @@ if (btnKeepQuickSave) {
   });
 }
 
-document.body.classList.remove('sandbox-mode');
 renderNotesSidebar();
-if (notesDB && notesDB.length > 0) {
-  loadNote(notesDB[0].id);
+
+const lastMode = localStorage.getItem('timecypher_last_mode') || 'sandbox';
+if (lastMode === 'keep') {
+  toggleKeepView(true);
+} else if (lastMode === 'studio') {
+  document.body.classList.remove('sandbox-mode');
+  const lastNoteId = localStorage.getItem('timecypher_last_note_id');
+  if (lastNoteId && notesDB.find(n => n.id === lastNoteId)) {
+    loadNote(lastNoteId);
+  } else if (notesDB && notesDB.length > 0) {
+    loadNote(notesDB[0].id);
+  } else {
+    createNewNote();
+  }
 } else {
-  createNewNote();
+  // Sandbox mode by default
+  enterSandboxMode(true);
 }
+
 logActivity({ type: 'visit' });
 
 // --- FULLSCREEN LOGIC ---
