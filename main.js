@@ -1285,6 +1285,7 @@ function loadNote(id) {
 }
 
 function createNewNote() {
+  document.body.classList.remove('sandbox-mode');
   forceSave();
   currentNoteId = null;
   txtDecrypted.value = '';
@@ -1528,7 +1529,8 @@ function toggleKeepView(forceState) {
     }
     renderKeepView();
   } else {
-    if (studioLayout) studioLayout.style.display = 'grid';
+    document.body.classList.remove('sandbox-mode');
+    if (studioLayout) studioLayout.style.display = '';
     if (keepViewContainer) keepViewContainer.style.display = 'none';
     if (btnToggleKeepView) {
       btnToggleKeepView.textContent = '🗂️ KEEP';
@@ -1835,8 +1837,13 @@ if (btnKeepQuickSave) {
   });
 }
 
+document.body.classList.remove('sandbox-mode');
 renderNotesSidebar();
-enterSandboxMode(true);
+if (notesDB && notesDB.length > 0) {
+  loadNote(notesDB[0].id);
+} else {
+  createNewNote();
+}
 logActivity({ type: 'visit' });
 
 // --- FULLSCREEN LOGIC ---
