@@ -95,10 +95,6 @@ export const encodeWord = (word, bypassShortcut = false) => {
   let hh = -1, mm = -1;
   let s1 = tone;
   let s2 = 0;
-
-  if (/[cpt]$|ch$/.test(rhyme)) {
-    if (s1 === 1) s1 = 0;
-  }
   
   if (cBaseIdx !== -1) {
     hh = cBaseIdx;

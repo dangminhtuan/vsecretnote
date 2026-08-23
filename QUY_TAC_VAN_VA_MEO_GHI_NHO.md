@@ -66,7 +66,7 @@ Khi **Số Giờ trùng Số Phút** ($HH = MM$), hệ thống tạo ra một đ
 | **`07:07`** | **hôn** | `070700` | **`hhz`** | `h` (PA h) + `h` (vần ôn) + `z` (Bằng B1) |
 | **`08:08`** | **vú** | `080801` | **`vvs`** | `v` (PA v) + `v` (vần u) + `s` (Sắc B1) |
 | **`09:09`** | **dâm** | `090900` | **`DDz`** | `D` (PA d) + `D` (vần âm) + `z` (Bằng B1) |
-| **`10:10`** | **mút** | `101000` | **`mmz`** | `m` (PA m) + `m` (vần ut) + `z` (Bằng B1) |
+| **`10:10`** | **mút** | `101001` | **`mms`** | `m` (PA m) + `m` (vần ut) + `s` (Sắc B1) |
 | **`11:11`** | **chịch** | `111105` | **`CCj`** | `C` (PA ch) + `C` (vần ich) + `j` (Nặng B1) |
 | **`12:12`** | **rên** | `121200` | **`rrz`** | `r` (PA r) + `r` (vần ên) + `z` (Bằng B1) |
 | **`13:13`** | **sướng** | `131301` | **`sss`** | `s` (PA s) + `s` (vần ương) + `s` (Sắc B1) |
@@ -77,7 +77,7 @@ Khi **Số Giờ trùng Số Phút** ($HH = MM$), hệ thống tạo ra một đ
 | **`18:18`** | **sờ** | `181802` | **`SSf`** | `S` (PA s2) + `S` (vần ơ) + `f` (Huyền B1) |
 | **`19:19`** | **ôm** | `191900` | **`zzz`** | `z` (PA rỗng) + `z` (vần ôm) + `z` (Bằng B1) |
 | **`20:20`** | **ngực** | `202005` | **`NNj`** | `N` (PA ng) + `N` (vần ưc) + `j` (Nặng B1) |
-| **`21:21`** | **nhấp** | `212100` | **`yyz`** | `y` (PA nh) + `y` (vần âp) + `z` (Bằng B1) |
+| **`21:21`** | **nhấp** | `212101` | **`yys`** | `y` (PA nh) + `y` (vần âp) + `s` (Sắc B1) |
 | **`22:22`** | **lồn** | `222202` | **`LLf`** | `L` (PA l2) + `L` (vần ôn) + `f` (Huyền B1) |
 
 ---
@@ -102,13 +102,13 @@ Trong kiến trúc 3 Bảng, các vần ở **KHÁC BẢNG NHAU** hoàn toàn c�
 Hệ thống tích hợp sẵn các bộ từ ngữ ấn tượng cho toàn bộ các thế số đẹp trên đồng hồ:
 
 ### 🪞 1. Thế Số Đảo / Gánh (Mirror Times):
-* **`06:09`** *(Tư thế 69)* $\rightarrow$ **`khít`** (`KDZ`)
+* **`06:09`** *(Tư thế 69)* $\rightarrow$ **`khít`** (`KDS`)
 * **`09:06`** $\rightarrow$ **`dạng`** (`DKj`) *(dạng háng / dạng chân)*
 * **`12:21`** $\rightarrow$ **`rập`** (`ryj`) *(dập dập rập rập)*
 * **`21:12`** $\rightarrow$ **`nhoài`** (`yrF`) *(nhoài người)*
 * **`13:31`** $\rightarrow$ **`săm`** (`s0z`) *(săm soi)*
 * **`14:41`** $\rightarrow$ **`nẫu`** (`nAx`) *(nẫu ruột)*
-* **`01:10`** $\rightarrow$ **`đút`** (`dmz`) *(đút vào)*
+* **`01:10`** $\rightarrow$ **`đút`** (`dms`) *(đút vào)*
 * **`04:40`** $\rightarrow$ **`thật`** (`T95`) *(thật lòng)*
 * **`05:50`** $\rightarrow$ **`kê`** (`kUz`) *(kê cao)*
 
