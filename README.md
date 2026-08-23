@@ -51,3 +51,5 @@ VCOMP là một bước tiến hóa tối thượng trong việc xử lý và l�
 - **Bảo Mật Nhận Thức:** Hoạt động như một lớp mật mã tự nhiên (Zero-Knowledge) giúp bảo vệ quyền riêng tư tuyệt đối. Con người có thể được huấn luyện để giải mã và đọc hiểu qua hệ sinh thái học tập của VCOMP.
 
 Để xem bài đánh giá và so sánh chi tiết tính ưu việt của **VCOMP so với CVNSS4.0**, vui lòng đọc tại: [VCOMP vs CVNSS4.0](VCOMP_vs_CVNSS4.md)
+
+Để xem toàn bộ quy tắc 3 Bảng Vần, Trục từ neo bậy, Thế số đẹp và Mẹo tra cứu tốc độ cao, vui lòng xem tại: [Quy Tắc Vần & Mẹo Ghi Nhớ TimeCypher](QUY_TAC_VAN_VA_MEO_GHI_NHO.md)

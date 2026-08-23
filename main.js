@@ -2544,7 +2544,7 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
 
     // 3. Thế số Sảnh Tiến (Straight)
     '0123': '012317', // được
-    '1234': '123406', // rớt
+    '1234': '123407', // rớt (r3S)
     '2345': '234503', // nghẻm
     '0234': '023423', // quặp
     '0345': '034501', // ghém
