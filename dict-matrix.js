@@ -1,7 +1,7 @@
 import {
   RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2,
   CONSONANTS_BASE, CONSONANTS_EXTRA,
-  REAL_VIETNAMESE_WORDS,
+  REAL_VIETNAMESE_WORDS, ENGLISH_DICT,
   BASE60_MAPPING
 } from './data.js';
 import { removeVietnameseTones, encodeWord, timeToBase60 } from './vcomp.js';
@@ -106,7 +106,6 @@ function buildMatrixData() {
           firstBaseWord = baseWords[0].word;
           baseCode = baseWords[0].b60;
         } else {
-          // Synthetic code
           const hh = 19; // z
           const c1 = BASE60_MAPPING[hh];
           const c2 = rhymeChar;
@@ -259,7 +258,9 @@ function applyMatrixFilters() {
 // ==========================================
 // 3. DICTIONARY TAB LOGIC
 // ==========================================
-let dictionaryData = [];
+let wordsDictionaryData = [];
+let all10kData = [];
+let currentDataset = [];
 let filteredDictData = [];
 const PAGE_SIZE = 100;
 let currentPage = 1;
@@ -271,12 +272,23 @@ let selectedRhymes = new Set();
 let selectedTones = new Set();
 const allTones = ["=Bằng", "✓Sắc", "`Huyền", "ˀHỏi", "~Ngã", "•Nặng"];
 
+const time6ToWordMap = new Map();
+
 function buildDictionaryData() {
-  dictionaryData = REAL_VIETNAMESE_WORDS.map((word, index) => {
+  // 1. Build words dataset
+  wordsDictionaryData = REAL_VIETNAMESE_WORDS.map((word, index) => {
     const ph = getPhonetics(word);
     const tc = encodeWord(word);
     const b60 = timeToBase60(tc);
-    return {
+    
+    // Calculate 5-digit number (total seconds)
+    const h = parseInt(tc.substring(0, 2), 10);
+    const m = parseInt(tc.substring(2, 4), 10);
+    const s = parseInt(tc.substring(4, 6), 10);
+    const totSec = h * 3600 + m * 60 + s;
+    const time5 = totSec.toString().padStart(5, '0');
+
+    const item = {
       no: index + 1,
       word,
       consonant: ph.consonant || 'Ø',
@@ -284,10 +296,85 @@ function buildDictionaryData() {
       tone: ph.tone,
       toneName: TONE_NAMES[ph.tone],
       b60,
-      time: tc
+      time: tc,
+      time5,
+      totSec,
+      hasWord: true
     };
+
+    if (!time6ToWordMap.has(tc)) {
+      time6ToWordMap.set(tc, item);
+    }
+    return item;
   });
-  filteredDictData = [...dictionaryData];
+
+  // 2. Build 10,000 continuous numbers sequence (00000 - 09999)
+  all10kData = [];
+  for (let N = 0; N < 10000; N++) {
+    const h = Math.floor(N / 3600);
+    const rem = N % 3600;
+    const m = Math.floor(rem / 60);
+    const s = rem % 60;
+
+    const hh = h.toString().padStart(2, '0');
+    const mm = m.toString().padStart(2, '0');
+    const ss = s.toString().padStart(2, '0');
+    const tc = `${hh}${mm}${ss}`;
+    const time5 = N.toString().padStart(5, '0');
+
+    const c1 = BASE60_MAPPING[h] || '?';
+    const c2 = BASE60_MAPPING[m] || '?';
+    const c3 = BASE60_MAPPING[s] || '?';
+    const b60 = `${c1}${c2}${c3}`;
+
+    const existing = time6ToWordMap.get(tc);
+    if (existing) {
+      all10kData.push({
+        no: N + 1,
+        word: existing.word,
+        consonant: existing.consonant,
+        rhyme: existing.rhyme,
+        tone: existing.tone,
+        toneName: existing.toneName,
+        b60,
+        time: tc,
+        time5,
+        totSec: N,
+        hasWord: true
+      });
+    } else {
+      // Decode slot properties
+      let cons = CONSONANTS_BASE[h] !== undefined ? (CONSONANTS_BASE[h] || 'Ø') : 'Ø';
+      const s2 = Math.floor(s / 6);
+      const s1 = s % 6;
+      const toneName = TONE_NAMES[s1] || '-';
+      let rhyme = '-';
+
+      if (s2 === 0) rhyme = RHYMES_BASE[m] || '-';
+      else if (s2 === 1) rhyme = RHYMES_EXTRA_1[m] || '-';
+      else if (s2 === 2) rhyme = RHYMES_EXTRA_2[m] || '-';
+      else if (s2 === 3) { cons = CONSONANTS_EXTRA[h] || cons; rhyme = RHYMES_BASE[m] || '-'; }
+      else if (s2 === 4) { cons = CONSONANTS_EXTRA[h] || cons; rhyme = RHYMES_EXTRA_1[m] || '-'; }
+      else if (s2 === 5) { cons = CONSONANTS_EXTRA[h] || cons; rhyme = RHYMES_EXTRA_2[m] || '-'; }
+
+      all10kData.push({
+        no: N + 1,
+        word: '—',
+        consonant: cons,
+        rhyme: rhyme,
+        tone: s1,
+        toneName: toneName,
+        b60,
+        time: tc,
+        time5,
+        totSec: N,
+        hasWord: false
+      });
+    }
+  }
+
+  currentDataset = wordsDictionaryData;
+  filteredDictData = [...currentDataset];
 }
 
 function initMultiSelect(containerId, dataList, selectedSet) {
@@ -346,11 +433,13 @@ function applyDictFilters() {
   const fWord = document.getElementById('filter-word')?.value.trim().toLowerCase() || '';
   const fB60 = document.getElementById('filter-b60')?.value.trim().toLowerCase() || '';
   const fTime = document.getElementById('filter-time')?.value.trim() || '';
+  const fTime5 = document.getElementById('filter-time5')?.value.trim() || '';
 
-  filteredDictData = dictionaryData.filter(item => {
+  filteredDictData = currentDataset.filter(item => {
     if (fWord && !item.word.toLowerCase().includes(fWord)) return false;
     if (fB60 && !item.b60.toLowerCase().includes(fB60)) return false;
     if (fTime && !item.time.includes(fTime)) return false;
+    if (fTime5 && !item.time5.includes(fTime5)) return false;
 
     if (selectedCons.size > 0 && !selectedCons.has(item.consonant)) return false;
     if (selectedRhymes.size > 0 && !selectedRhymes.has(item.rhyme)) return false;
@@ -361,6 +450,9 @@ function applyDictFilters() {
 
   // Sorting
   filteredDictData.sort((a, b) => {
+    if (sortCol === 'time5' || sortCol === 'totSec') {
+      return sortAsc ? a.totSec - b.totSec : b.totSec - a.totSec;
+    }
     let valA = a[sortCol];
     let valB = b[sortCol];
     if (typeof valA === 'string') {
@@ -387,7 +479,8 @@ function renderDictTable() {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   if (currentPage > totalPages) currentPage = totalPages;
 
-  statBar.textContent = `Tổng cộng: ${total.toLocaleString()} từ | Trang ${currentPage} / ${totalPages}`;
+  const modeName = document.getElementById('dict-view-mode')?.value === 'all10k' ? '10.000 số liên tục' : 'Từ thực tế';
+  statBar.textContent = `[${modeName}] Tổng: ${total.toLocaleString()} mục | Trang ${currentPage} / ${totalPages}`;
   pageInfo.textContent = `Trang ${currentPage} / ${totalPages}`;
   btnPrev.disabled = currentPage === 1;
   btnNext.disabled = currentPage === totalPages;
@@ -398,14 +491,23 @@ function renderDictTable() {
 
   pageData.forEach(item => {
     const tr = document.createElement('tr');
+    if (!item.hasWord) {
+      tr.style.opacity = '0.55';
+    }
+
+    const wordDisplay = item.hasWord
+      ? `<span style="font-weight:bold; color:#fff;">${item.word}</span>`
+      : `<span style="color:#555; font-style:italic;">—</span>`;
+
     tr.innerHTML = `
       <td style="color:#555;">${item.no}</td>
-      <td style="font-weight:bold; color:#fff;">${item.word}</td>
+      <td>${wordDisplay}</td>
       <td style="color:#00ffff;">${item.consonant}</td>
       <td style="color:#ffea00;">${item.rhyme}</td>
       <td style="color:#ff55ff;">${item.toneName}</td>
       <td><span style="color:#00ff66; font-weight:bold; background:#001a00; border:1px solid #004400; padding:1px 5px; border-radius:3px;">${item.b60}</span></td>
       <td style="color:#00ffff; font-family:monospace;">${item.time}</td>
+      <td style="color:#ffaa00; font-family:monospace; font-weight:bold;">${item.time5}</td>
     `;
     tbody.appendChild(tr);
   });
@@ -446,9 +548,21 @@ document.addEventListener('DOMContentLoaded', () => {
   initMultiSelect('ms-rhymes', allRhymesList, selectedRhymes);
   initMultiSelect('ms-tones', allTones, selectedTones);
 
-  ['filter-word', 'filter-b60', 'filter-time'].forEach(id => {
+  ['filter-word', 'filter-b60', 'filter-time', 'filter-time5'].forEach(id => {
     document.getElementById(id)?.addEventListener('input', applyDictFilters);
   });
+
+  const viewModeSelect = document.getElementById('dict-view-mode');
+  if (viewModeSelect) {
+    viewModeSelect.addEventListener('change', () => {
+      if (viewModeSelect.value === 'all10k') {
+        currentDataset = all10kData;
+      } else {
+        currentDataset = wordsDictionaryData;
+      }
+      applyDictFilters();
+    });
+  }
 
   document.querySelectorAll('th .th-title[data-col]').forEach(el => {
     el.addEventListener('click', () => {
