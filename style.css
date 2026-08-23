@@ -1250,57 +1250,74 @@ body.sandbox-mode #sandbox-debug-container {
   background: #000;
   border: 1px solid #0f0;
   border-radius: 6px;
-  padding: 15px;
-  min-height: 90px;
+  padding: 12px 14px;
+  min-height: 95px;
   font-size: 15px;
-  line-height: 1.6;
-  color: #aaa;
-  word-break: break-word;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 14px 10px;
   text-align: left;
 }
 
 .speed-word {
-  display: inline-block;
-  margin-right: 5px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
   position: relative;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
+  user-select: none;
+  cursor: default;
 }
 
-.speed-word.active {
-  color: #fff;
-  border-bottom: 2px solid #0ff;
+.speed-b60-top {
+  font-size: 11px;
+  font-family: monospace;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  color: #555;
+  margin-bottom: 3px;
+  transition: all 0.15s ease;
 }
 
-.speed-word.correct {
-  color: #0f0;
+.speed-vi-bot {
+  font-size: 15px;
+  color: #777;
+  transition: all 0.15s ease;
+  border-bottom: 2px solid transparent;
+}
+
+.speed-word.active .speed-b60-top {
+  color: #ffea00 !important;
+  font-size: 12.5px;
+  text-shadow: 0 0 8px rgba(255, 234, 0, 0.7);
+  transform: scale(1.1);
+}
+
+.speed-word.active .speed-vi-bot {
+  color: #fff !important;
+  font-weight: bold;
+  border-bottom: 2px solid #00ffff !important;
+}
+
+.speed-word.correct .speed-b60-top {
+  color: #00ff66 !important;
+  text-shadow: 0 0 5px rgba(0, 255, 102, 0.4);
+}
+
+.speed-word.correct .speed-vi-bot {
+  color: #00ff66 !important;
   font-weight: bold;
 }
 
-.speed-word.wrong {
-  color: #f00;
+.speed-word.wrong .speed-b60-top {
+  color: #ff3333 !important;
+}
+
+.speed-word.wrong .speed-vi-bot {
+  color: #ff3333 !important;
   text-decoration: line-through;
-}
-
-.speed-word.show-hint::before {
-  content: "(" attr(data-b60) ")";
-  position: absolute;
-  top: -18px;
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: 11px;
-  color: #ff0;
-  white-space: nowrap;
-  animation: hintPop 0.3s ease forwards;
-}
-
-@keyframes hintPop {
-  0% { opacity: 0; transform: translate(-50%, 5px); }
-  100% { opacity: 1; transform: translate(-50%, 0); }
-}
-
-.speed-word-current {
-  background: rgba(0, 255, 0, 0.2);
-  border-bottom: 2px solid #0f0;
 }
 
 /* EXP Toast */

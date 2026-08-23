@@ -3343,7 +3343,12 @@ const gameState = {
     selPreset.addEventListener('change', () => {
       const box = document.getElementById('speed-prompt-box');
       if (box && !speedActive) {
-        box.textContent = presetTexts[selPreset.value] || presetTexts.cadao;
+        const textPrompt = presetTexts[selPreset.value] || presetTexts.cadao;
+        const words = textPrompt.trim().split(/\s+/);
+        box.innerHTML = words.map((w, idx) => {
+          const b60 = timeToBase60(encodeWord(w));
+          return `<span class="speed-word ${idx === 0 ? 'active' : ''}" data-b60="${b60}"><span class="speed-b60-top">${b60}</span><span class="speed-vi-bot">${w}</span></span>`;
+        }).join('');
       }
     });
 
@@ -3388,7 +3393,7 @@ const gameState = {
 
     if (promptBox) {
       promptBox.innerHTML = speedWords.map((item, idx) => 
-        `<span class="speed-word ${idx === 0 ? 'active' : ''}" id="speed-word-${idx}" data-b60="${item.b60}">${item.word}</span>`
+        `<span class="speed-word ${idx === 0 ? 'active' : ''}" id="speed-word-${idx}" data-b60="${item.b60}"><span class="speed-b60-top">${item.b60}</span><span class="speed-vi-bot">${item.word}</span></span>`
       ).join('');
     }
 
@@ -3418,10 +3423,7 @@ const gameState = {
     
     const currentSpan = document.getElementById(`speed-word-${speedCurrentIndex}`);
     if (currentSpan) {
-      currentSpan.classList.remove('show-hint');
-      speedHintTimer = setTimeout(() => {
-        currentSpan.classList.add('show-hint');
-      }, 2000);
+      currentSpan.classList.add('active');
     }
   }
 
@@ -3437,7 +3439,7 @@ const gameState = {
       speedTotalB60Keys += target.b60.length;
       speedTotalNormalKeys += target.word.length;
       
-      currentSpan.classList.remove('active', 'show-hint');
+      currentSpan.classList.remove('active', 'wrong');
       currentSpan.classList.add('correct');
       
       speedCurrentIndex++;
