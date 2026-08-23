@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VSecretNote - Ma Trận & Từ Điển Mật Mã Base60</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/snk.css" />
+  <style>
+    body { padding: 12px 16px; font-family: 'Space Mono', monospace, sans-serif; background: #050805; color: #00ff66; margin: 0; min-height: 100vh; }
+    .page-container { max-width: 1300px; margin: 0 auto; }
+    
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #004422; padding-bottom: 10px; }
+    .header-title { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: bold; color: #00ffcc; letter-spacing: 1px; }
+    
+    /* Top Tab Switcher */
+    .tab-nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    .tab-btn { background: #000; color: #777; border: 1px solid #333; padding: 6px 14px; font-family: inherit; font-size: 12px; font-weight: bold; border-radius: 4px; cursor: pointer; transition: all 0.15s ease; }
+    .tab-btn:hover { color: #fff; border-color: #00ff66; }
+    .tab-btn.active { color: #000; background: #00ff66; border-color: #00ff66; box-shadow: 0 0 10px rgba(0, 255, 102, 0.4); }
+    
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.2s ease-out; }
+
+    /* MATRIX TAB STYLES */
+    .control-bar { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .search-box { flex: 1; min-width: 180px; background: #000; color: #00ff66; border: 1px solid #00ff66; padding: 6px 10px; font-family: inherit; font-size: 13px; border-radius: 4px; box-sizing: border-box; }
+    .search-box::placeholder { color: #006622; }
+    
+    .legend-bar { display: flex; gap: 8px; align-items: center; font-size: 11px; margin-bottom: 10px; color: #888; flex-wrap: wrap; background: rgba(0,20,10,0.6); padding: 6px 10px; border-radius: 4px; border: 1px solid #003315; }
+    .legend-badge { padding: 2px 6px; border-radius: 3px; font-family: inherit; font-weight: bold; }
+    
+    .table-wrapper { width: 100%; border: 1px solid #004422; border-radius: 4px; overflow-x: auto; margin-bottom: 15px; background: #000; }
+    table.matrix-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    table.matrix-table th { border: 1px solid #003315; padding: 8px 4px; text-align: center; background: #00150a; color: #00ff66; font-size: 12px; font-weight: bold; }
+    table.matrix-table td { border: 1px solid #002210; padding: 4px 2px; text-align: center; font-size: 11px; vertical-align: middle; }
+    table.matrix-table tr:nth-child(even) td { background: #020a05; }
+    table.matrix-table tr:hover td { background: #002510; }
+
+    .code-badge {
+      display: block; width: 100%; box-sizing: border-box; font-family: inherit; font-size: 11px; font-weight: bold; padding: 2px 0; border-radius: 2px; text-decoration: none; text-align: center; line-height: 1.2; transition: all 0.15s ease; cursor: pointer;
+    }
+    .code-badge.base-p1 { color: #00ff66; background: #001a00; border: 1px solid #004400; }
+    .code-badge.base-p1:hover { color: #fff; background: #005500; border-color: #00ff66; box-shadow: 0 0 6px #00ff66; }
+    .code-badge.base-p2 { color: #ffea00; background: #1a1600; border: 1px solid #554400; }
+    .code-badge.base-p2:hover { color: #fff; background: #554400; border-color: #ffea00; box-shadow: 0 0 6px #ffea00; }
+    .code-badge.base-p3 { color: #ff55ff; background: #1a001a; border: 1px solid #550055; }
+    .code-badge.base-p3:hover { color: #fff; background: #550055; border-color: #ff55ff; box-shadow: 0 0 6px #ff55ff; }
+    .code-badge.extra-p { color: #00ffff; background: #00151a; border: 1px solid #004455; }
+    .code-badge.extra-p:hover { color: #fff; background: #004455; border-color: #00ffff; box-shadow: 0 0 6px #00ffff; }
+    .code-badge.disabled-code { color: #333; background: #050505; border: 1px solid #111; opacity: 0.25; cursor: default; pointer-events: none; }
+
+    .rhyme-code-badge { display: inline-block; font-size: 11px; font-weight: bold; padding: 2px 5px; border-radius: 3px; cursor: pointer; }
+    .code-b1 { color: #00ff66; background: #002200; border: 1px solid #004400; }
+    .code-b2 { color: #ffea00; background: #221d00; border: 1px solid #554400; }
+    .code-b3 { color: #ff55ff; background: #220022; border: 1px solid #550055; }
+
+    /* DICTIONARY TAB STYLES */
+    table.dict-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; table-layout: fixed; }
+    table.dict-table td { border: 1px solid #003315; padding: 6px 8px; text-align: left; overflow: hidden; text-overflow: ellipsis; font-size: 12px; }
+    table.dict-table th { border: 1px solid #003315; padding: 6px 8px; text-align: left; background: #00150a; color: #aaa; vertical-align: top; font-size: 12px; }
+    .th-title { cursor: pointer; display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .th-title:hover { color: #fff; }
+    .col-filter { width: 100%; box-sizing: border-box; background: #000; color: #00ff66; border: 1px solid #004422; padding: 4px 6px; font-family: inherit; font-size: 11px; border-radius: 2px; }
+    
+    .ms-container { position: relative; width: 100%; }
+    .ms-header { background: #000; color: #00ff66; border: 1px solid #004422; padding: 4px 6px; font-size: 11px; cursor: pointer; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; user-select: none; border-radius: 2px; }
+    .ms-dropdown { display: none; position: absolute; top: 100%; left: 0; min-width: 150px; background: #051008; border: 1px solid #00ff66; z-index: 20; max-height: 250px; padding: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.8); border-radius: 4px; }
+    .ms-options { max-height: 180px; overflow-y: auto; }
+    .ms-container.open .ms-dropdown { display: flex; flex-direction: column; }
+    .ms-search { width: 100%; box-sizing: border-box; background: #000; color: #00ff66; border: 1px solid #004422; padding: 4px; font-family: inherit; font-size: 11px; margin-bottom: 5px; border-radius: 2px; }
+    .ms-option { display: flex; align-items: center; gap: 5px; padding: 2px 0; font-size: 11px; color: #aaa; cursor: pointer; margin: 0; }
+    .ms-option:hover { color: #fff; }
+    
+    .pagination { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+    .pagination button { background: #000; color: #00ff66; border: 1px solid #00ff66; padding: 5px 12px; cursor: pointer; font-family: inherit; font-size: 12px; border-radius: 3px; font-weight: bold; }
+    .pagination button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <header>
+      <div class="header-title">
+        <span>⚡ VSECRETNOTE BASE60 MATRIX & DICTIONARY</span>
+      </div>
+      
+      <div class="tab-nav">
+        <button class="tab-btn active" id="tab-btn-matrix" data-target="tab-matrix">📊 MA TRẬN VẦN (RHYMES)</button>
+        <button class="tab-btn" id="tab-btn-dict" data-target="tab-dict">📖 TỪ ĐIỂN TRA CỨU (5.000+ TỪ)</button>
+        <a href="/" class="tab-btn" style="text-decoration:none; color:#00ffcc; border-color:#00ffcc;">🏠 VỀ TRANG CHÍNH</a>
+      </div>
+    </header>
+
+    <!-- ==================== TAB 1: MA TRẬN VẦN ==================== -->
+    <div id="tab-matrix" class="tab-content active">
+      <div class="control-bar">
+        <input type="text" id="matrix-search" class="search-box" placeholder="🔍 Tìm theo Vần (vd: anh, ui, uông) hoặc Mã vần (W, j)..." autocomplete="off" />
+        <select id="matrix-table-filter" class="cyber-select" style="background:#000; color:#00ff66; border:1px solid #00ff66; padding:5px 8px; border-radius:4px;">
+          <option value="all">Tất cả 3 Bảng (155 Vần)</option>
+          <option value="0">Bảng 1 (60 Vần Cơ Bản)</option>
+          <option value="1">Bảng 2 (60 Vần Mở Rộng 1)</option>
+          <option value="2">Bảng 3 (35 Vần Mở Rộng 2)</option>
+        </select>
+        <button id="matrix-sort-btn" class="cyber-btn-small" style="border:1px solid #00ff66; background:#000; color:#00ff66; cursor:pointer; padding:5px 10px; border-radius:4px; font-family:inherit;">Sắp xếp: Theo STT</button>
+        <span id="matrix-stat" class="stat-text" style="font-size:12px; color:#888;">Đang tải...</span>
+      </div>
+
+      <div class="legend-bar">
+        <strong style="color:#00ffcc;">Quy ước mã dấu ($C_3$):</strong>
+        <span class="legend-badge code-badge base-p1" style="display:inline-block; width:auto; padding:2px 6px;">Bảng 1: Telex thường (z s f r x j)</span>
+        <span class="legend-badge code-badge base-p2" style="display:inline-block; width:auto; padding:2px 6px;">Bảng 2: Telex HOA (Z S F R X J)</span>
+        <span class="legend-badge code-badge base-p3" style="display:inline-block; width:auto; padding:2px 6px;">Bảng 3: Nguyên âm (a e i u w y)</span>
+        <span class="legend-badge code-badge extra-p" style="display:inline-block; width:auto; padding:2px 6px;">PA Phụ: VNI (0-5, 6-C, A-Y)</span>
+      </div>
+
+      <div class="table-wrapper">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th style="width: 32px;">STT</th>
+              <th style="width: 55px;">Vần</th>
+              <th style="width: 45px;">Mã</th>
+              <th style="width: 14%;">0. =Bằng</th>
+              <th style="width: 14%;">1. ✓Sắc</th>
+              <th style="width: 14%;">2. `Huyền</th>
+              <th style="width: 14%;">3. ˀHỏi</th>
+              <th style="width: 14%;">4. ~Ngã</th>
+              <th style="width: 14%;">5. •Nặng</th>
+            </tr>
+          </thead>
+          <tbody id="matrix-body">
+            <!-- Injected by JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ==================== TAB 2: TỪ ĐIỂN TRA CỨU ==================== -->
+    <div id="tab-dict" class="tab-content">
+      <div class="stat-bar" id="dict-stat-bar" style="margin-bottom:8px; font-size:12px; color:#888;">Đang tải danh sách từ điển...</div>
+      
+      <div class="table-wrapper">
+        <table class="dict-table">
+          <thead>
+            <tr>
+              <th style="width: 55px;">
+                <div class="th-title" data-col="no">STT <span class="sort-icon" id="sort-no">▲</span></div>
+              </th>
+              <th style="width: 18%;">
+                <div class="th-title" data-col="word">Từ Tiếng Việt <span class="sort-icon" id="sort-word"></span></div>
+                <input type="text" class="col-filter" id="filter-word" placeholder="Lọc từ..." />
+              </th>
+              <th style="width: 13%;">
+                <div class="th-title">Phụ âm</div>
+                <div class="ms-container" id="ms-cons">
+                  <div class="ms-header" id="ms-cons-header">Tất cả</div>
+                  <div class="ms-dropdown">
+                    <input type="text" class="ms-search" id="ms-cons-search" placeholder="Tìm PA..." />
+                    <div class="ms-options" id="ms-cons-options"></div>
+                  </div>
+                </div>
+              </th>
+              <th style="width: 15%;">
+                <div class="th-title">Vần</div>
+                <div class="ms-container" id="ms-rhymes">
+                  <div class="ms-header" id="ms-rhymes-header">Tất cả</div>
+                  <div class="ms-dropdown">
+                    <input type="text" class="ms-search" id="ms-rhymes-search" placeholder="Tìm Vần..." />
+                    <div class="ms-options" id="ms-rhymes-options"></div>
+                  </div>
+                </div>
+              </th>
+              <th style="width: 13%;">
+                <div class="th-title">Thanh điệu</div>
+                <div class="ms-container" id="ms-tones">
+                  <div class="ms-header" id="ms-tones-header">Tất cả</div>
+                  <div class="ms-dropdown">
+                    <input type="text" class="ms-search" id="ms-tones-search" placeholder="Tìm Dấu..." />
+                    <div class="ms-options" id="ms-tones-options"></div>
+                  </div>
+                </div>
+              </th>
+              <th style="width: 110px;">
+                <div class="th-title" data-col="b60">Mã Base60 <span class="sort-icon" id="sort-b60"></span></div>
+                <input type="text" class="col-filter" id="filter-b60" placeholder="Lọc mã..." />
+              </th>
+              <th style="width: 110px;">
+                <div class="th-title" data-col="time">Mã 6 Số <span class="sort-icon" id="sort-time"></span></div>
+                <input type="text" class="col-filter" id="filter-time" placeholder="HH:MM:SS..." />
+              </th>
+            </tr>
+          </thead>
+          <tbody id="dict-table-body">
+            <!-- Injected by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination">
+        <button id="btn-prev-page" disabled>◀ Trang Trước</button>
+        <span id="page-info" style="font-size:12px; color:#888;">Trang 1 / 1</span>
+        <button id="btn-next-page">Trang Sau ▶</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module" src="/dict-matrix.js"></script>
+</body>
+</html>

@@ -43,7 +43,8 @@
             </div>
 
             <button id="btn-share-link" class="cyber-btn" title="Chia sẻ link" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0;">&#128279;</button>
-            <button id="btn-activity-log" class="cyber-btn" title="Activity Log" style="border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0;">&#128202;</button>
+            <a href="/dict-matrix.html" target="_blank" class="cyber-btn" title="Ma Trận & Từ Điển Base60" style="border-color: #00ff66; color: #00ff66; background: #000; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0; text-decoration: none;">📊</a>
+            <button id="btn-activity-log" class="cyber-btn" title="Activity Log" style="display: none !important; border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 15px; width: 36px; height: 36px; border-radius: 5px; align-items: center; justify-content: center; padding: 0;">&#128202;</button>
             <button id="btn-sandbox-hashtag" class="cyber-btn" style="display: none !important; border-color: #0f0; color: #0f0; background: #000; cursor: pointer; font-size: 16px; font-weight: bold; width: 36px; height: 36px; border-radius: 5px; align-items: center; justify-content: center; padding: 0;">#</button>
           </div>
 </div>
@@ -433,42 +434,6 @@
         </section>
 
         <!-- BẢNG TỪ ĐIỂN -->
-        <section class="dictionary-box" style="position: relative;">
-          <div style="display:flex; flex-direction: column; gap: 10px; margin-bottom: 15px;">
-             <div style="display:flex; justify-content: space-between; align-items: center; gap: 10px;">
-               <h2 class="dict-title" style="margin-bottom:0;">DICTIONARY MATRIX</h2>
-               <button id="btn-search-dict" class="cyber-btn" style="background: #000; color: var(--neon-green); border: 1px solid var(--neon-green); cursor: pointer; padding: 5px 15px; font-weight: bold; border-radius: 4px; white-space: nowrap;">
-                 🔍 TRA TỪ NỮA
-               </button>
-             </div>
-             <div class="dict-controls" style="display:flex; flex-direction: column; gap: 10px; width: 100%;">
-               <select id="sel-dict-mode" class="cyber-select" style="width: 100%;">
-                 <option value="base">Chế độ: Phụ âm & Vần</option>
-                 <option value="two-digit">Chế độ: Từ 2 số (00-99)</option>
-                 <option value="short-words">Chế độ: Từ siêu ngắn (Ngoại lệ)</option>
-                 <option value="english">Chế độ: Tiếng Anh & Phím tắt</option>
-               </select>
-               <div id="dict-sub-controls" style="display:flex; flex-wrap: wrap; gap: 10px;">
-                 <select id="sel-consonant" class="cyber-select">
-                   <option value="base">Phụ âm: CƠ BẢN (24)</option>
-                   <option value="extra">Phụ âm: MỞ RỘNG (8)</option>
-                 </select>
-                 <select id="sel-rhyme" class="cyber-select">
-                   <option value="base">Vần: CƠ BẢN (60)</option>
-                   <option value="extra1">Vần: MỞ RỘNG 1 (60)</option>
-                   <option value="extra2">Vần: MỞ RỘNG 2 (35)</option>
-                 </select>
-                 <select id="sel-short-block" class="cyber-select" style="display:none;"></select>
-               </div>
-             </div>
-          </div>
-          <div class="consonant-grid" id="consonant-grid">
-            <!-- Consonants injected by JS -->
-          </div>
-          <div class="rhyme-matrix" id="rhyme-matrix">
-            <div class="matrix-placeholder">SELECT A CONSONANT TO INITIALIZE MATRIX...</div>
-          </div>
-        </section>
       </div>
 
       <div id="status-panel" class="status-panel">
@@ -503,22 +468,6 @@
         </div>
       </div>
     </div>
-  
-  <div id="lookup-modal" class="cyber-modal-overlay" style="display: none;">
-    <div class="cyber-modal-box" style="margin: auto; max-width: 500px; width: 90%; border: 2px solid var(--neon-green); background: #050505; color: var(--neon-green); font-family: 'Fira Code', monospace; box-shadow: 0 0 15px var(--neon-green); position: relative;">
-      <span id="close-lookup" class="close-btn" style="position: absolute; right: 10px; top: 10px; cursor: pointer; font-size: 20px;">&times;</span>
-      <h2 style="text-align: center; margin-top: 20px; border-bottom: 1px solid var(--neon-green); padding-bottom: 10px;">TRA CỨU TỪ ĐIỂN</h2>
-      
-      <div style="padding: 20px;">
-        <input type="text" id="lookup-input" class="cyber-input" placeholder="Nhập từ cần tra (vd: đá)..." style="width: 100%; box-sizing: border-box; padding: 10px; margin-bottom: 15px; font-size: 16px; border: 1px solid var(--neon-green); background: #000; color: #fff;">
-        
-        <div id="lookup-results" style="min-height: 200px;">
-          <!-- Results injected here -->
-        </div>
-      </div>
-    </div>
-  </div>
-
 
     <!-- Floating Context Menu -->
     <div id="floating-context-menu" style="display: none; position: absolute; z-index: 10000; gap: 6px; background: rgba(0, 15, 0, 0.95); border: 1px solid #0f0; padding: 6px; border-radius: 4px; box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); flex-direction: row; align-items: center;">

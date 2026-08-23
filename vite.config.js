@@ -13,7 +13,8 @@ export default defineConfig({
         main: resolve(import.meta.dirname, 'index.html'),
         demo: resolve(import.meta.dirname, 'demo.html'),
         dict: resolve(import.meta.dirname, 'dict.html'),
-        matrix: resolve(import.meta.dirname, 'matrix.html')
+        matrix: resolve(import.meta.dirname, 'matrix.html'),
+        dict_matrix: resolve(import.meta.dirname, 'dict-matrix.html')
       }
     }
   }
