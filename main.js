@@ -1874,7 +1874,18 @@ let currentConfirmCallback = null;
 function showCyberModal(msg, isConfirm, callback) {
   if (!modalOverlay) return;
   const interactiveContainer = document.getElementById('cyber-modal-interactive-b60');
-  
+  const viTextEl = document.getElementById('cyber-modal-vi-text');
+  const headerEl = document.getElementById('cyber-modal-header');
+
+  if (headerEl) {
+    headerEl.innerHTML = isConfirm ? '[ ⚠️ XÁC NHẬN HÀNH ĐỘNG ]' : '[ ⚡ THÔNG BÁO HỆ THỐNG ]';
+    headerEl.style.color = isConfirm ? '#ffaa00' : '#00ffcc';
+  }
+
+  if (viTextEl) {
+    viTextEl.textContent = msg;
+  }
+
   if (interactiveContainer) {
     interactiveContainer.innerHTML = '';
     const tokens = msg.split(TOKEN_REGEX);
@@ -1890,6 +1901,7 @@ function showCyberModal(msg, isConfirm, callback) {
         span.textContent = b60;
         span.dataset.text = removeAccents(token);
         span.dataset.time = tc;
+        span.title = `${token} [${tc}]`;
         
         span.addEventListener('click', (e) => {
           e.stopPropagation();
@@ -1905,10 +1917,29 @@ function showCyberModal(msg, isConfirm, callback) {
   }
 
   if (isConfirm) {
-    if (modalBtnNo) modalBtnNo.style.display = 'inline-block';
+    if (modalBtnNo) {
+      modalBtnNo.style.display = 'inline-block';
+      modalBtnNo.textContent = '[ ✕ HỦY ]';
+      modalBtnNo.style.borderColor = '#ff5555';
+      modalBtnNo.style.color = '#ff5555';
+    }
+    if (modalBtnYes) {
+      modalBtnYes.textContent = '[ 🗑️ XÓA ]';
+      modalBtnYes.style.background = '#ff3333';
+      modalBtnYes.style.borderColor = '#ff3333';
+      modalBtnYes.style.color = '#ffffff';
+      modalBtnYes.style.boxShadow = '0 0 12px rgba(255, 51, 51, 0.4)';
+    }
     currentConfirmCallback = callback;
   } else {
     if (modalBtnNo) modalBtnNo.style.display = 'none';
+    if (modalBtnYes) {
+      modalBtnYes.textContent = '[ ✓ ĐÃ HIỂU ]';
+      modalBtnYes.style.background = '#00ff66';
+      modalBtnYes.style.borderColor = '#00ff66';
+      modalBtnYes.style.color = '#000000';
+      modalBtnYes.style.boxShadow = '0 0 10px rgba(0, 255, 102, 0.4)';
+    }
     currentConfirmCallback = null;
   }
   

@@ -163,12 +163,13 @@
 }
 
 .cyber-modal-box {
-  background: var(--bg-color);
+  background: #000;
   border: 1px solid var(--neon-green);
-  box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+  border-radius: 8px;
+  box-shadow: 0 0 25px rgba(0, 255, 0, 0.25);
   width: 90%;
-  max-width: 400px;
-  padding: 15px;
+  max-width: 440px;
+  padding: 18px 20px;
   position: relative;
   overflow: hidden;
 }
@@ -185,15 +186,17 @@
 .cyber-modal-header {
   color: var(--neon-green);
   font-weight: bold;
-  border-bottom: 1px solid #333;
-  padding-bottom: 5px;
+  border-bottom: 1px solid #222;
+  padding-bottom: 8px;
   margin-bottom: 15px;
   text-align: center;
+  font-size: 13px;
+  letter-spacing: 1px;
 }
 
 .cyber-modal-content {
-  margin-bottom: 20px;
-  font-family: 'Courier New', Courier, monospace;
+  margin-bottom: 15px;
+  font-family: inherit;
 }
 
 .cyber-modal-line {
@@ -219,8 +222,9 @@
 
 .cyber-modal-actions {
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 10px;
 }
 
 @keyframes fadeIn {
@@ -232,12 +236,16 @@
 /* Modal Interactive Styles */
 .modal-interactive-container {
   font-family: 'Space Mono', monospace;
-  font-size: 16px;
-  line-height: 1.8;
+  font-size: 13px;
+  line-height: 1.6;
   color: var(--neon-green);
   text-align: center;
-  margin: 20px 0;
+  margin: 10px 0;
   word-wrap: break-word;
+  background: rgba(0, 255, 100, 0.04);
+  border: 1px dashed rgba(0, 255, 100, 0.25);
+  border-radius: 4px;
+  padding: 8px 10px;
 }
 
 .interactive-b60-word {
