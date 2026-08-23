@@ -3633,6 +3633,7 @@ function initMnemonicTutor() {
   const sameConsEl = document.getElementById('tutor-same-cons');
   const sameRhymeEl = document.getElementById('tutor-same-rhyme');
   const sameRhymeToneEl = document.getElementById('tutor-same-rhyme-tone');
+  const sameLettersEl = document.getElementById('tutor-same-letters');
 
   if (!tutorCard) return;
 
@@ -3649,11 +3650,14 @@ function initMnemonicTutor() {
   const consIndex = new Map();
   const rhymeIndex = new Map();
   const rhymeToneIndex = new Map();
+  const wordRankMap = new Map();
   let isIndexed = false;
 
   function buildTutorIndex() {
     if (isIndexed) return;
     const realList = typeof REAL_VIETNAMESE_WORDS !== 'undefined' ? REAL_VIETNAMESE_WORDS : [];
+    realList.forEach((rw, idx) => wordRankMap.set(rw, idx));
+
     for (const rw of realList) {
       const rEnc = encodeWord(rw);
       if (rEnc.startsWith('[')) continue;
@@ -3854,6 +3858,39 @@ function initMnemonicTutor() {
     const sameRhyme = (rhymeIndex.get(c2) || []).filter(item => item.word !== word).slice(0, 5);
     const sameRhymeTone = (rhymeToneIndex.get(c2 + '_' + c3) || []).filter(item => item.word !== word).slice(0, 5);
 
+    // 4. Case Variants (Biến thể HOA/thường cùng bộ ký tự)
+    const p1 = [c1.toLowerCase(), c1.toUpperCase()];
+    const p2 = [c2.toLowerCase(), c2.toUpperCase()];
+    const p3 = [c3.toLowerCase(), c3.toUpperCase()];
+    const u1 = [...new Set(p1)];
+    const u2 = [...new Set(p2)];
+    const u3 = [...new Set(p3)];
+
+    const caseVariants = [];
+    const seenWords = new Set();
+    seenWords.add(word);
+
+    for (let x1 of u1) {
+      for (let x2 of u2) {
+        for (let x3 of u3) {
+          const candCode = x1 + x2 + x3;
+          if (candCode === b60) continue;
+          const time = base60ToTime(candCode);
+          if (/^\d{6}$/.test(time)) {
+            const dec = decodeWord(time);
+            if (dec && !dec.includes('?') && !dec.startsWith('[') && !seenWords.has(dec)) {
+              const rank = wordRankMap.has(dec) ? wordRankMap.get(dec) : 99999;
+              seenWords.add(dec);
+              caseVariants.push({ word: dec, b60: candCode, rank });
+            }
+          }
+        }
+      }
+    }
+    // Ưu tiên từ phổ biến của tiếng Việt lên trước
+    caseVariants.sort((a, b) => a.rank - b.rank);
+    const topCaseVariants = caseVariants.slice(0, 6);
+
     function renderChips(container, list, color) {
       if (!container) return;
       if (!list || list.length === 0) {
@@ -3868,6 +3905,7 @@ function initMnemonicTutor() {
     renderChips(sameConsEl, sameCons, '#00ffff');
     renderChips(sameRhymeEl, sameRhyme, '#ffea00');
     renderChips(sameRhymeToneEl, sameRhymeTone, '#00ff66');
+    renderChips(sameLettersEl, topCaseVariants, '#ff77ff');
   }
 
   // --- 2. DEBOUNCE & SPACE TRIGGER FOR 60FPS TYPING ---
