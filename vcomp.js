@@ -18,7 +18,7 @@ export const removeVietnameseTones = (str) => {
   return [clean, tone];
 };
 
-const extractPhonetics = (word) => {
+export const extractPhonetics = (word) => {
   word = word.toLowerCase();
   const [cleanWord, tone] = removeVietnameseTones(word);
   
@@ -288,3 +288,4 @@ export function base60ToTime(base60Str) {
 }
 
 export const TOKEN_REGEX = /(<[^>]+>|\[[^\]]+\]|[a-zA-Z0-9_'\u00C0-\u024F\u1E00-\u1EFF]+)/;
+

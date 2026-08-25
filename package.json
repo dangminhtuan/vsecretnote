@@ -28,6 +28,7 @@
     "vite": "^8.0.12"
   },
   "dependencies": {
-    "jsdom": "^29.1.1"
+    "jsdom": "^29.1.1",
+    "opentype.js": "^2.0.0"
   }
 }

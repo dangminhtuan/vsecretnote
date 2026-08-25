@@ -1,0 +1,26 @@
+languagesystem DFLT dflt;
+languagesystem latn dflt;
+
+@base60 = [b60_z b60_s b60_f b60_r b60_x b60_j b60_Z b60_S b60_F b60_R b60_X b60_J b60_a b60_e b60_i b60_u b60_w b60_y b60_0 b60_1 b60_2 b60_3 b60_4 b60_5 b60_6 b60_7 b60_8 b60_9 b60_B b60_C b60_A b60_E b60_I b60_U b60_W b60_Y b60_c b60_d b60_g b60_G b60_k b60_K b60_h b60_v b60_D b60_m b60_n b60_b b60_l b60_Q b60_N b60_L b60_p b60_q b60_t b60_T b60_H b60_M b60_P b60_V];
+@pos1 = [b60_z.pos1 b60_s.pos1 b60_f.pos1 b60_r.pos1 b60_x.pos1 b60_j.pos1 b60_Z.pos1 b60_S.pos1 b60_F.pos1 b60_R.pos1 b60_X.pos1 b60_J.pos1 b60_a.pos1 b60_e.pos1 b60_i.pos1 b60_u.pos1 b60_w.pos1 b60_y.pos1 b60_0.pos1 b60_1.pos1 b60_2.pos1 b60_3.pos1 b60_4.pos1 b60_5.pos1 b60_6.pos1 b60_7.pos1 b60_8.pos1 b60_9.pos1 b60_B.pos1 b60_C.pos1 b60_A.pos1 b60_E.pos1 b60_I.pos1 b60_U.pos1 b60_W.pos1 b60_Y.pos1 b60_c.pos1 b60_d.pos1 b60_g.pos1 b60_G.pos1 b60_k.pos1 b60_K.pos1 b60_h.pos1 b60_v.pos1 b60_D.pos1 b60_m.pos1 b60_n.pos1 b60_b.pos1 b60_l.pos1 b60_Q.pos1 b60_N.pos1 b60_L.pos1 b60_p.pos1 b60_q.pos1 b60_t.pos1 b60_T.pos1 b60_H.pos1 b60_M.pos1 b60_P.pos1 b60_V.pos1];
+@pos2 = [b60_z.pos2 b60_s.pos2 b60_f.pos2 b60_r.pos2 b60_x.pos2 b60_j.pos2 b60_Z.pos2 b60_S.pos2 b60_F.pos2 b60_R.pos2 b60_X.pos2 b60_J.pos2 b60_a.pos2 b60_e.pos2 b60_i.pos2 b60_u.pos2 b60_w.pos2 b60_y.pos2 b60_0.pos2 b60_1.pos2 b60_2.pos2 b60_3.pos2 b60_4.pos2 b60_5.pos2 b60_6.pos2 b60_7.pos2 b60_8.pos2 b60_9.pos2 b60_B.pos2 b60_C.pos2 b60_A.pos2 b60_E.pos2 b60_I.pos2 b60_U.pos2 b60_W.pos2 b60_Y.pos2 b60_c.pos2 b60_d.pos2 b60_g.pos2 b60_G.pos2 b60_k.pos2 b60_K.pos2 b60_h.pos2 b60_v.pos2 b60_D.pos2 b60_m.pos2 b60_n.pos2 b60_b.pos2 b60_l.pos2 b60_Q.pos2 b60_N.pos2 b60_L.pos2 b60_p.pos2 b60_q.pos2 b60_t.pos2 b60_T.pos2 b60_H.pos2 b60_M.pos2 b60_P.pos2 b60_V.pos2];
+@pos3 = [b60_z.pos3 b60_s.pos3 b60_f.pos3 b60_r.pos3 b60_x.pos3 b60_j.pos3 b60_Z.pos3 b60_S.pos3 b60_F.pos3 b60_R.pos3 b60_X.pos3 b60_J.pos3 b60_a.pos3 b60_e.pos3 b60_i.pos3 b60_u.pos3 b60_w.pos3 b60_y.pos3 b60_0.pos3 b60_1.pos3 b60_2.pos3 b60_3.pos3 b60_4.pos3 b60_5.pos3 b60_6.pos3 b60_7.pos3 b60_8.pos3 b60_9.pos3 b60_B.pos3 b60_C.pos3 b60_A.pos3 b60_E.pos3 b60_I.pos3 b60_U.pos3 b60_W.pos3 b60_Y.pos3 b60_c.pos3 b60_d.pos3 b60_g.pos3 b60_G.pos3 b60_k.pos3 b60_K.pos3 b60_h.pos3 b60_v.pos3 b60_D.pos3 b60_m.pos3 b60_n.pos3 b60_b.pos3 b60_l.pos3 b60_Q.pos3 b60_N.pos3 b60_L.pos3 b60_p.pos3 b60_q.pos3 b60_t.pos3 b60_T.pos3 b60_H.pos3 b60_M.pos3 b60_P.pos3 b60_V.pos3];
+@pos3_t = [b60_z.pos3_t b60_s.pos3_t b60_f.pos3_t b60_r.pos3_t b60_x.pos3_t b60_j.pos3_t b60_Z.pos3_t b60_S.pos3_t b60_F.pos3_t b60_R.pos3_t b60_X.pos3_t b60_J.pos3_t b60_a.pos3_t b60_e.pos3_t b60_i.pos3_t b60_u.pos3_t b60_w.pos3_t b60_y.pos3_t b60_0.pos3_t b60_1.pos3_t b60_2.pos3_t b60_3.pos3_t b60_4.pos3_t b60_5.pos3_t b60_6.pos3_t b60_7.pos3_t b60_8.pos3_t b60_9.pos3_t b60_B.pos3_t b60_C.pos3_t b60_A.pos3_t b60_E.pos3_t b60_I.pos3_t b60_U.pos3_t b60_W.pos3_t b60_Y.pos3_t b60_c.pos3_t b60_d.pos3_t b60_g.pos3_t b60_G.pos3_t b60_k.pos3_t b60_K.pos3_t b60_h.pos3_t b60_v.pos3_t b60_D.pos3_t b60_m.pos3_t b60_n.pos3_t b60_b.pos3_t b60_l.pos3_t b60_Q.pos3_t b60_N.pos3_t b60_L.pos3_t b60_p.pos3_t b60_q.pos3_t b60_t.pos3_t b60_T.pos3_t b60_H.pos3_t b60_M.pos3_t b60_P.pos3_t b60_V.pos3_t];
+@pos3_a = [b60_z.pos3_a b60_s.pos3_a b60_f.pos3_a b60_r.pos3_a b60_x.pos3_a b60_j.pos3_a b60_Z.pos3_a b60_S.pos3_a b60_F.pos3_a b60_R.pos3_a b60_X.pos3_a b60_J.pos3_a b60_a.pos3_a b60_e.pos3_a b60_i.pos3_a b60_u.pos3_a b60_w.pos3_a b60_y.pos3_a b60_0.pos3_a b60_1.pos3_a b60_2.pos3_a b60_3.pos3_a b60_4.pos3_a b60_5.pos3_a b60_6.pos3_a b60_7.pos3_a b60_8.pos3_a b60_9.pos3_a b60_B.pos3_a b60_C.pos3_a b60_A.pos3_a b60_E.pos3_a b60_I.pos3_a b60_U.pos3_a b60_W.pos3_a b60_Y.pos3_a b60_c.pos3_a b60_d.pos3_a b60_g.pos3_a b60_G.pos3_a b60_k.pos3_a b60_K.pos3_a b60_h.pos3_a b60_v.pos3_a b60_D.pos3_a b60_m.pos3_a b60_n.pos3_a b60_b.pos3_a b60_l.pos3_a b60_Q.pos3_a b60_N.pos3_a b60_L.pos3_a b60_p.pos3_a b60_q.pos3_a b60_t.pos3_a b60_T.pos3_a b60_H.pos3_a b60_M.pos3_a b60_P.pos3_a b60_V.pos3_a];
+
+feature calt {
+    # 1. Chữ Hoa đầu từ (Tiền tố 'o')
+    sub prefix_o @base60' @base60 @base60 by @pos1;
+    sub prefix_o @pos1 @base60' @base60 by @pos2;
+    sub prefix_o @pos1 @pos2 @base60' by @pos3_t;
+
+    # 2. CHỮ HOA TOÀN TỪ (Tiền tố 'O')
+    sub prefix_O @base60' @base60 @base60 by @pos1;
+    sub prefix_O @pos1 @base60' @base60 by @pos2;
+    sub prefix_O @pos1 @pos2 @base60' by @pos3_a;
+
+    # 3. Chữ thường tiêu chuẩn (Không tiền tố)
+    sub @base60' @base60 @base60 by @pos1;
+    sub @pos1 @base60' @base60 by @pos2;
+    sub @pos2 @base60' by @pos3;
+} calt;

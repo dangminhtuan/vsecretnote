@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Font Base60</title>
+    <style>
+        @font-face {
+            font-family: 'CyberVietnamese';
+            src: url('/CyberVietnamese-Regular.ttf') format('truetype');
+        }
+        body {
+            background: #0d1117; color: #c9d1d9;
+            font-family: sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        .b60-text {
+            font-family: 'CyberVietnamese';
+            font-size: 150px;
+            color: #58a6ff;
+            background: #161b22;
+            padding: 20px;
+            border-radius: 12px;
+            display: inline-block;
+            border: 1px solid #30363d;
+            /* Enable standard ligatures and contextual alternates */
+            font-variant-ligatures: normal;
+            font-feature-settings: "calt" 1;
+        }
+        input {
+            font-size: 24px; padding: 10px; margin: 20px;
+            background: #161b22; color: white; border: 1px solid #58a6ff;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Font Cyber Vietnamese (Contextual Alternates)</h1>
+    <p>Gõ 3 ký tự Base60 (VD: cpf, cpz) để xem font tự động xếp thành khối vuông.</p>
+    
+    <input type="text" id="inp" value="cpf" maxlength="15" />
+    <br/>
+    <div class="b60-text" id="out">cpf</div>
+
+    <script>
+        const inp = document.getElementById('inp');
+        const out = document.getElementById('out');
+        inp.addEventListener('input', (e) => {
+            out.textContent = e.target.value;
+        });
+    </script>
+</body>
+</html>

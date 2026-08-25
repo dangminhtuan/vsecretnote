@@ -1,0 +1,6 @@
+languagesystem DFLT dflt;
+languagesystem latn dflt;
+
+feature calt {
+    sub b60_z' b60_z by b60_s;
+} calt;

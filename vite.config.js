@@ -4,7 +4,7 @@ import { resolve } from 'path';
 export default defineConfig({
   server: {
     host: '0.0.0.0',
-    port: 5173,
+    port: 5199,
     strictPort: true
   },
   build: {
@@ -14,8 +14,10 @@ export default defineConfig({
         demo: resolve(import.meta.dirname, 'demo.html'),
         dict: resolve(import.meta.dirname, 'dict.html'),
         matrix: resolve(import.meta.dirname, 'matrix.html'),
-        dict_matrix: resolve(import.meta.dirname, 'dict-matrix.html')
+        dict_matrix: resolve(import.meta.dirname, 'dict-matrix.html'), font_maker: resolve(import.meta.dirname, 'font-maker.html')
       }
     }
   }
 });
+
+

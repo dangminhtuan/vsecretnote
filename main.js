@@ -67,6 +67,51 @@ function getUtf8ByteLength(str) {
   return new Blob([str]).size;
 }
 
+let isCaseSupportEnabled = localStorage.getItem('pref_view_case') === 'true';
+
+function formatB60WithCase(b60, originalWord) {
+  if (!isCaseSupportEnabled || !b60 || b60.startsWith('[') || !originalWord) return b60;
+  const isAllCaps = originalWord.length > 0 && originalWord === originalWord.toUpperCase() && /[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ]/.test(originalWord);
+  const isTitle = originalWord.length > 0 && originalWord[0] === originalWord[0].toUpperCase() && /[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ]/.test(originalWord[0]) && !isAllCaps;
+  
+  if (isAllCaps) return 'O' + b60;
+  if (isTitle) return 'o' + b60;
+  return b60;
+}
+
+function updateCyberFontDisplay() {
+  const preview = document.getElementById('cyber-font-preview');
+  if (!preview) return;
+  const b60 = txtCompressed ? txtCompressed.value : '';
+  // Giữ nguyên khoảng trắng để font's calt feature tách đúng từng nhóm 3 ký tự
+  preview.textContent = b60;
+
+  // Cập nhật byte counter
+  const bytesEl = document.getElementById('cyber-font-bytes');
+  const barEl = document.getElementById('cyber-font-bar');
+  if (!bytesEl || !barEl) return;
+
+  const rawBytes = getUtf8ByteLength(txtDecrypted ? txtDecrypted.value : '');
+  const currentBytes = getUtf8ByteLength(b60); // tính kể cả khoảng trắng
+
+  if (rawBytes === 0) {
+    bytesEl.textContent = currentBytes > 0 ? currentBytes + ' B' : '';
+    barEl.style.width = '0%';
+    return;
+  }
+  const pct = Math.round((currentBytes / rawBytes) * 100);
+  bytesEl.textContent = `${currentBytes}/${rawBytes}B=${pct}%`;
+  if (pct < 100) {
+    barEl.style.background = '#0f0';
+    barEl.style.width = Math.min(100, pct) + '%';
+  } else if (pct === 100) {
+    barEl.style.background = '#aa0';
+    barEl.style.width = '100%';
+  } else {
+    barEl.style.background = '#f00';
+    barEl.style.width = '100%';
+  }
+}
 
 
 function toCamelCase(str) {
@@ -130,7 +175,8 @@ function updateCompressionStats() {
     let currentBytes = 0;
     if (ta.id === 'text-input') {
       currentBytes = rawBytes;
-    } else if (ta.id.includes('compressed')) {
+    } else if (ta.id === 'compressed-continuous-input') {
+      // Liên tiếp: không có khoảng trắng, strip để đếm chính xác
       currentBytes = getUtf8ByteLength(ta.value.replace(/\s+/g, ''));
     } else {
       currentBytes = getUtf8ByteLength(ta.value);
@@ -239,7 +285,8 @@ function syncFromDecrypted() {
     if (!token) return;
     if (token.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
       const timeCode = encodeWord(token);
-      const b60Code = timeToBase60(timeCode);
+      let b60Code = timeToBase60(timeCode);
+      b60Code = formatB60WithCase(b60Code, token);
       encryptedParts.push(timeCode);
       compressedParts.push(b60Code);
       cvnss4Parts.push(encodeCVNSS4Word(token));
@@ -271,6 +318,8 @@ function syncFromDecrypted() {
   renderBreakdown(breakdownPairs);
   saveCurrentNote();
   if (typeof window.updateMnemonicTutorFromDecrypted === 'function') window.updateMnemonicTutorFromDecrypted();
+  if (typeof updateCompressionStats === 'function') updateCompressionStats();
+  updateCyberFontDisplay();
 }
 
 function syncFromTime() {
@@ -358,8 +407,14 @@ function syncFromCompressedContinuous() {
   }
   
   const chunks = [];
-  for (let i = 0; i < val.length; i += 3) {
-    chunks.push(val.substring(i, i + 3));
+  for (let i = 0; i < val.length;) {
+    if (val[i] === 'o' || val[i] === 'O') {
+      chunks.push(val.substring(i, i + 4));
+      i += 4;
+    } else {
+      chunks.push(val.substring(i, i + 3));
+      i += 3;
+    }
   }
   
   if (txtCompressed) {
@@ -405,7 +460,8 @@ function syncFromCVNSS4() {
         
         // Then re-encode to time code and b60
         const timeCode = typeof encodeWord === 'function' ? encodeWord(decoded) : '';
-        const b60 = typeof timeToBase60 === 'function' ? timeToBase60(timeCode) : '';
+        let b60 = typeof timeToBase60 === 'function' ? timeToBase60(timeCode) : '';
+        b60 = formatB60WithCase(b60, decoded);
         allTimeParts.push(timeCode);
         allCompressedParts.push(b60);
       } else {
@@ -467,8 +523,18 @@ function syncFromCompressed() {
     tokens.forEach(token => {
       if (!token) return;
       if (token.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
-        const timeCode = base60ToTime(token);
-        const decoded = decodeWord(timeCode);
+        let coreToken = token;
+        let casePrefix = '';
+        if (token.length === 4 && (token.startsWith('o') || token.startsWith('O'))) {
+          casePrefix = token[0];
+          coreToken = token.slice(1);
+        }
+        const timeCode = base60ToTime(coreToken);
+        let decoded = decodeWord(timeCode);
+        if (decoded && !decoded.startsWith('[')) {
+          if (casePrefix === 'o') decoded = decoded.charAt(0).toUpperCase() + decoded.slice(1);
+          else if (casePrefix === 'O') decoded = decoded.toUpperCase();
+        }
         allTimeParts.push(timeCode);
         allDecryptedParts.push(decoded);
         allCvnss4Parts.push(encodeCVNSS4Word(decoded));
@@ -499,6 +565,8 @@ function syncFromCompressed() {
   renderBreakdown(allBreakdownPairs);
   saveCurrentNote();
   if (typeof window.updateMnemonicTutorFromDecrypted === 'function') window.updateMnemonicTutorFromDecrypted();
+  if (typeof updateCompressionStats === 'function') updateCompressionStats();
+  updateCyberFontDisplay();
 }
 
 // ===== FAKE VIETNAMESE & 5 DIGITS LOGIC =====
@@ -2619,6 +2687,21 @@ if (chkViewToolbar) {
   });
 }
 
+// 4. Toggle Case Support (Chữ Hoa o/O)
+const chkViewCase = document.getElementById('chk-view-case');
+if (chkViewCase) {
+  chkViewCase.checked = isCaseSupportEnabled;
+  chkViewCase.addEventListener('change', () => {
+    isCaseSupportEnabled = chkViewCase.checked;
+    localStorage.setItem('pref_view_case', isCaseSupportEnabled ? 'true' : 'false');
+    if (txtDecrypted && txtDecrypted.value.trim()) {
+      syncFromDecrypted();
+    } else if (txtCompressed && txtCompressed.value.trim()) {
+      syncFromCompressed();
+    }
+  });
+}
+
 // ===== 🔗 SHARE LINK =====
 document.getElementById('btn-share-link')?.addEventListener('click', () => {
   const b60Val = txtCompressed?.value?.trim();
@@ -2653,6 +2736,229 @@ document.getElementById('btn-close-activity-log')?.addEventListener('click', () 
   const panel = document.getElementById('activity-log-panel');
   if (panel) panel.style.display = 'none';
 });
+
+// ===== ✨ PROMPT MACHINE =====
+const PM_TOOLS = [
+  { id: 'mj',       label: 'Midjourney', emoji: '🎨', color: '#58a6ff' },
+  { id: 'flux',     label: 'Flux',       emoji: '⚡', color: '#a78bfa' },
+  { id: 'dalle',    label: 'ChatGPT',    emoji: '🤖', color: '#00ff66' },
+  { id: 'gemini',   label: 'Gemini',     emoji: '♊', color: '#4dd0e1' },
+  { id: 'ideogram', label: 'Ideogram',   emoji: '💡', color: '#fbbf24' },
+  { id: 'firefly',  label: 'Firefly',    emoji: '🔥', color: '#fb923c' },
+  { id: 'sd',       label: 'Stable Diff',emoji: '🖥️', color: '#e879f9' },
+  { id: 'bing',     label: 'Bing',       emoji: '🔍', color: '#38bdf8' },
+];
+
+const PM_STYLES = [
+  { id: 'vn_romance',label: 'Tình Yêu VN (30 & 20)', emoji: '👩‍❤️‍👨' },
+  { id: 'romantic', label: 'Ngôn tình',   emoji: '💕' },
+  { id: 'scifi',    label: 'Viễn tưởng',  emoji: '🚀' },
+  { id: 'cyberpunk',label: 'Cyberpunk',   emoji: '⚡' },
+  { id: 'hologram', label: 'Hologram',    emoji: '🔮' },
+  { id: 'anime',    label: 'Anime',       emoji: '🌸' },
+  { id: 'fantasy',  label: 'Dark Fantasy',emoji: '🧙' },
+  { id: 'luxury',   label: 'Sang trọng',  emoji: '💎' },
+  { id: 'vintage',  label: 'Cổ điển',     emoji: '🏛️' },
+  { id: 'lofi',     label: 'Lofi',        emoji: '🌊' },
+  { id: 'sexy',     label: 'Gợi cảm',     emoji: '🔞' },
+  { id: 'nature',   label: 'Thiên nhiên', emoji: '🌿' },
+  { id: 'pixel',    label: 'Pixel Art',   emoji: '👾' },
+  { id: 'gothic',   label: 'Gothic',      emoji: '🎭' },
+  { id: 'popart',   label: 'Pop Art',     emoji: '☀️' },
+];
+
+const PM_RATIOS = [
+  { id: '1:1',   label: '1:1',   emoji: '⬛', hint: 'Vuông',        sdSize: '1024×1024' },
+  { id: '9:16',  label: '9:16',  emoji: '📱', hint: 'Story/Dọc',    sdSize: '768×1344'  },
+  { id: '16:9',  label: '16:9',  emoji: '🖥️', hint: 'Ngang rộng',  sdSize: '1344×768'  },
+  { id: '4:3',   label: '4:3',   emoji: '🖼️', hint: 'Ngang vừa',   sdSize: '1152×864'  },
+  { id: '3:4',   label: '3:4',   emoji: '📄', hint: 'Dọc vừa',     sdSize: '864×1152'  },
+  { id: '21:9',  label: '21:9',  emoji: '🎬', hint: 'Cinematic',    sdSize: '1536×656'  },
+  { id: '3:2',   label: '3:2',   emoji: '📷', hint: 'Ảnh ngang',   sdSize: '1216×832'  },
+  { id: '2:3',   label: '2:3',   emoji: '📐', hint: 'Ảnh dọc',     sdSize: '832×1216'  },
+];
+
+let pm_selectedTool = 'gemini';
+let pm_selectedStyle = 'vn_romance';
+let pm_selectedRatio = '1:1';
+let pm_selectedBlocksPerRow = 0;
+
+function pm_buildPrompt(tool, style, ratio, blocksPerRow) {
+  ratio = ratio || pm_selectedRatio || '1:1';
+  blocksPerRow = blocksPerRow !== undefined ? blocksPerRow : pm_selectedBlocksPerRow;
+  const b60Code = (txtCompressed && txtCompressed.value.trim()) ? txtCompressed.value.trim() : '???';
+  const ratioData = PM_RATIOS.find(r => r.id === ratio) || PM_RATIOS[0];
+  
+  let layoutInstruction = 'keep the same count and layout as the reference';
+  if (blocksPerRow > 0) {
+    layoutInstruction = `arrange the cipher blocks neatly in rows, with exactly ${blocksPerRow} blocks per row`;
+  }
+
+  const CIPHER_CORE = `CRITICAL INSTRUCTION FOR GLYPH REPLICATION:
+1. STRICT 1:1 GLYPH FIDELITY: Closely copy every single cipher glyph block from the attached reference screenshot. Each block is a precise 2×2 square matrix containing 4 specific quadrant characters (top-left, top-right, bottom-left, bottom-right).
+2. ANTI-HALLUCINATION: Do NOT replace or abstract any letters, digits, or symbols into random decorative slashes, asterisks, or "%" percentage marks. Every stroke (letters, numbers, ⊘, /, \\, =, dots, arcs, and enclosing boundary boxes) must be drawn with extreme precision matching the reference image.
+3. SINGLE INSTANCE (NO DUPLICATION): Render EXACTLY ONE single instance of this text sequence. Do NOT duplicate, stack, repeat, or draw a second copy of these blocks anywhere in the image.
+4. NO HUMAN LANGUAGE: Do NOT render readable Vietnamese or standard prose. Only render these exact geometric cipher blocks.
+5. LAYOUT: Reproduce ALL cipher blocks visible in the reference image — ${layoutInstruction}. Position this single set cleanly in the center or lower-center foreground. (Reference string: "${b60Code}")`;
+
+  const STYLES = {
+    vn_romance:`[COMPOSITION: Background = Romantic Scene, Foreground Overlay = Exact Cipher Blocks]
+A deeply romantic, cinematic, and emotional scene featuring an attractive, stylish 30-year-old Vietnamese man and a gorgeous, radiant 20-year-old Vietnamese woman sharing an intimate, tender romantic moment (gentle eye contact, warm embrace). Atmospheric golden hour backlight, soft warm bokeh on a rooftop or balcony, dreamy cinematic depth of field.
+OVERLAY: Superimpose EXACTLY ONE SINGLE ROW of the cipher glyph blocks from the reference screenshot across the lower foreground in crisp, razor-sharp glowing warm gold neon with clean vector edges. Do not repeat or duplicate the row. Do not distort, blur, or stylize the anatomy of the glyphs — every quadrant symbol must match the screenshot 100% legibly and accurately. Photorealistic, authentic modern Vietnamese beauty, highly detailed, 8k resolution.`,
+    scifi:    `Pure black OLED background (#050d0a). Cipher glyphs as glowing electric cyan (#58a6ff) and emerald green (#00ff66) neon vector shapes. Subtle sci-fi HUD grid lines overlay. Strong neon bloom glow effect. Minimalist space technology aesthetic. Hyper-detailed, 8k resolution.`,
+    cyberpunk:`Rain-slicked neon-drenched cyberpunk alley background. Cipher glyphs in harsh magenta and cyan neon with wet street reflections. Flickering glitch artifacts. Dystopian Blade Runner noir atmosphere. Dark, gritty, cinematic.`,
+    hologram: `Dark void space background. Cipher glyphs rendered as shimmering iridescent holographic light projections floating in mid-air. Prismatic rainbow diffraction halos. Transparent glassmorphic panel effect. Futuristic AR/VR interface aesthetic.`,
+    romantic: `Dreamy soft-focus bokeh background in rose gold and sakura pink gradient tones. Cipher glyphs as warm luminescent gold and blush pink light sigils. Delicate falling cherry blossom petals. Gentle watercolor wash texture. Sweet romance novel cover aesthetic.`,
+    anime:    `Clean cel-shaded anime illustration style. Vivid saturated colors on gradient sky background. Cipher glyphs as sharp black ink outlines with vivid flat color fills. Dynamic manga speed-line effects. J-pop album cover aesthetic.`,
+    fantasy:  `Ancient mossy stone dungeon wall background. Cipher glyphs glowing with ethereal blue-purple arcane magical fire and mystical energy spirals. Floating mystical rune inscriptions. Moonlit gothic cathedral atmosphere. Dark fantasy spellbook page aesthetic.`,
+    luxury:   `Polished jet-black marble with brushed 24k gold leaf vein background. Cipher glyphs as premium engraved gold relief embossing. Champagne, platinum and obsidian color palette. Minimalist luxury high-fashion editorial aesthetic.`,
+    vintage:  `Aged cream parchment or dark mahogany wood texture background. Cipher glyphs as deep letterpress copper plate etchings. Sepia and rich amber tones. Art Deco geometric ornamental borders and embellishments. 1920s typographic grand poster aesthetic.`,
+    lofi:     `Soft muted pastel gradient background (lavender, peach, sage mint). Cipher glyphs in gentle warm tones. Cozy film grain and light leak texture overlay. Lo-fi chill beats album artwork aesthetic. Vaporwave sunset color palette.`,
+    sexy:     `Dramatic single spotlight against deep black studio background. Cipher glyphs as sleek polished chrome or liquid mercury metallic forms. Chiaroscuro shadow play. Crimson red and obsidian black color palette. Sultry high-fashion lingerie editorial aesthetic. Mysterious and seductive.`,
+    nature:   `Lush emerald tropical rainforest canopy background with golden-hour dappled light. Cipher glyphs as intricate bioluminescent leaf-vein patterns and glowing moss script. Deep green, amber, and violet organic palette. National Geographic fine art nature photography aesthetic.`,
+    pixel:    `Retro 8-bit pixel art style on a dark grid background. Cipher glyphs as chunky blocky pixel characters with 4-color NES dithering. Bright GameBoy green or vibrant NES color palette. Retro video game title screen aesthetic.`,
+    gothic:   `Victorian gothic graveyard night background with black roses, crumbling stone, spider webs and dripping candle wax. Cipher glyphs as bone-white tombstone epitaph engravings in bas-relief. Deep black and dark crimson blood palette. Tim Burton meets Edgar Allan Poe aesthetic.`,
+    popart:   `Bold flat-color blocked background in primary colors (bright yellow, red, cobalt blue). Cipher glyphs as thick black Lichtenstein-style comic book halftone outlines with solid flat color fills. Roy Lichtenstein Pop Art silkscreen print aesthetic. High contrast, energetic, bold.`,
+  };
+
+  // Chỉ các tham số THỰC SỰ đưa vào prompt (được copy)
+  const TOOL_PROMPT_PARAMS = {
+    mj:       `\n\n--ar ${ratio} --style raw --v 6.1 --q 2 --no text, words, letters, vietnamese, latin`,
+    flux:     `\n\nAspect ratio: ${ratio}.\nNegative prompt: text, words, letters, vietnamese text, latin alphabet, readable characters, typography, watermark`,
+    dalle:    `\n\nOutput format: ${ratio} aspect ratio (${ratioData.hint}).`,
+    gemini:   `\n\nOutput image aspect ratio: ${ratio} (${ratioData.hint}).`,
+    ideogram: `\n\nAspect ratio: ${ratio}.\nNegative prompt: text, words, vietnamese, latin, readable letters, typography, watermark`,
+    firefly:  `\n\nOutput aspect ratio: ${ratio} (${ratioData.hint}).`,
+    sd:       `\n\nNegative prompt: (text:1.6), (words:1.5), (letters:1.5), (vietnamese:1.6), (latin:1.5), (readable:1.5), watermark, signature, blurry\nSteps: 30, CFG Scale: 7, Sampler: DPM++ 2M Karras, Size: ${ratioData.sdSize}`,
+    bing:     `\n\nOutput format: ${ratio} aspect ratio (${ratioData.hint}).`,
+  };
+
+
+  const styleDesc = STYLES[style] || STYLES.scifi;
+  const params = TOOL_PROMPT_PARAMS[tool] || '';
+
+  return `${CIPHER_CORE}\n\nAesthetic: ${styleDesc}${params}`;
+
+}
+
+function pm_renderSelectors() {
+  const toolEl = document.getElementById('ai-tool-selector');
+  const styleEl = document.getElementById('ai-style-selector');
+  const ratioEl = document.getElementById('ai-ratio-selector');
+  if (!toolEl || !styleEl) return;
+
+  const btnBase = `display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:4px 9px;font-size:11px;font-family:monospace;cursor:pointer;border:1px solid;transition:all 0.15s;white-space:nowrap;`;
+
+  toolEl.innerHTML = PM_TOOLS.map(t => {
+    const active = t.id === pm_selectedTool;
+    const col = t.color;
+    return `<button onclick="pm_selectTool('${t.id}')" style="${btnBase}background:${active ? col : 'transparent'};color:${active ? '#000' : col};border-color:${col};font-weight:${active ? 'bold' : 'normal'};">${t.emoji} ${t.label}</button>`;
+  }).join('');
+
+  styleEl.innerHTML = PM_STYLES.map(s => {
+    const active = s.id === pm_selectedStyle;
+    return `<button onclick="pm_selectStyle('${s.id}')" style="${btnBase}background:${active ? '#ff00ea' : 'transparent'};color:${active ? '#000' : '#cc88cc'};border-color:${active ? '#ff00ea' : '#441144'};font-weight:${active ? 'bold' : 'normal'};">${s.emoji} ${s.label}</button>`;
+  }).join('');
+
+  if (ratioEl) {
+    ratioEl.innerHTML = PM_RATIOS.map(r => {
+      const active = r.id === pm_selectedRatio;
+      return `<button onclick="pm_selectRatio('${r.id}')" style="${btnBase}background:${active ? '#facc15' : 'transparent'};color:${active ? '#000' : '#a38b20'};border-color:${active ? '#facc15' : '#3a2e05'};font-weight:${active ? 'bold' : 'normal'};">${r.emoji} ${r.label} <span style="font-size:9px;opacity:0.7;">${r.hint}</span></button>`;
+    }).join('');
+  }
+}
+
+function pm_refreshPrompt() {
+  const el = document.getElementById('ai-prompt-content');
+  if (el) el.value = pm_buildPrompt(pm_selectedTool, pm_selectedStyle, pm_selectedRatio, pm_selectedBlocksPerRow);
+
+  const hintEl = document.getElementById('ai-prompt-hint');
+  if (hintEl) hintEl.textContent = PM_TOOL_HINTS[pm_selectedTool] || '';
+  
+  const blockRange = document.getElementById('ai-blocks-per-row');
+  const blockVal = document.getElementById('ai-blocks-per-row-val');
+  if (blockRange && blockVal) {
+    blockRange.value = pm_selectedBlocksPerRow;
+    blockVal.textContent = pm_selectedBlocksPerRow === 0 ? 'Tự động' : pm_selectedBlocksPerRow;
+  }
+}
+
+window.pm_selectBlocksPerRow = function(val) {
+  pm_selectedBlocksPerRow = parseInt(val, 10);
+  pm_refreshPrompt();
+};
+
+window.pm_selectTool = function(id) {
+  pm_selectedTool = id;
+  pm_renderSelectors();
+  pm_refreshPrompt();
+};
+
+window.pm_selectStyle = function(id) {
+  pm_selectedStyle = id;
+  pm_renderSelectors();
+  pm_refreshPrompt();
+};
+
+window.pm_selectRatio = function(id) {
+  pm_selectedRatio = id;
+  pm_renderSelectors();
+  pm_refreshPrompt();
+};
+
+
+
+const btnGenAIPrompt = document.getElementById('btn-gen-ai-prompt');
+const aiPromptModal = document.getElementById('ai-prompt-modal');
+const aiPromptContent = document.getElementById('ai-prompt-content');
+const btnCopyAIPrompt = document.getElementById('btn-copy-ai-prompt');
+const btnCloseAIPrompt = document.getElementById('btn-close-ai-prompt');
+const btnCancelAIPrompt = document.getElementById('btn-cancel-ai-prompt');
+
+if (btnGenAIPrompt && aiPromptModal) {
+  btnGenAIPrompt.addEventListener('click', () => {
+    if (toolsDropdownMenu) {
+      toolsDropdownMenu.style.display = 'none';
+      if (btnToolsMenu) btnToolsMenu.style.background = '#000';
+    }
+    aiPromptModal.style.display = 'flex';
+    pm_renderSelectors();
+    pm_refreshPrompt();
+  });
+
+  const pm_close = () => {
+    aiPromptModal.style.display = 'none';
+    if (btnCopyAIPrompt) {
+      btnCopyAIPrompt.textContent = '📋 SAO CHÉP PROMPT';
+      btnCopyAIPrompt.style.background = '#ff00ea';
+      btnCopyAIPrompt.style.color = '#000';
+    }
+  };
+
+  if (btnCloseAIPrompt) btnCloseAIPrompt.addEventListener('click', pm_close);
+  if (btnCancelAIPrompt) btnCancelAIPrompt.addEventListener('click', pm_close);
+  aiPromptModal.addEventListener('click', e => { if (e.target === aiPromptModal) pm_close(); });
+
+  if (btnCopyAIPrompt) {
+    btnCopyAIPrompt.addEventListener('click', async () => {
+      const text = document.getElementById('ai-prompt-content')?.value || '';
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch {
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+      }
+      btnCopyAIPrompt.textContent = '✓ ĐÃ SAO CHÉP!';
+      btnCopyAIPrompt.style.background = '#00ff66';
+      btnCopyAIPrompt.style.color = '#000';
+      setTimeout(() => {
+        btnCopyAIPrompt.textContent = '📋 SAO CHÉP PROMPT';
+        btnCopyAIPrompt.style.background = '#ff00ea';
+      }, 2000);
+    });
+  }
+}
+
 
 document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => {
   const txt = document.getElementById('text-input');

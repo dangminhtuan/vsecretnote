@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cyber Vietnamese Font Maker</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    @font-face {
+      font-family: 'CyberVietnamese';
+      src: url('/CyberVietnamese-Regular.ttf?v=4') format('truetype');
+    }
+    body {
+      background: #0d1117; color: #c9d1d9;
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+      margin: 0; padding: 10px 8px;
+      display: flex; flex-direction: column; align-items: center;
+      min-height: 100vh;
+    }
+    h1  { color: #58a6ff; margin: 0 0 4px; font-size: 16px; text-align: center; }
+    p   { color: #8b949e; margin: 0 0 10px; font-size: 11px; text-align: center; }
+
+    /* Bố cục 1 khối duy nhất */
+    .variant {
+      background: #161b22; border: 1px solid #30363d;
+      border-radius: 8px; padding: 10px;
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      margin-bottom: 10px;
+      width: 100%; max-width: 380px;
+    }
+
+    svg.canvas {
+      background: #000; border: 1px solid #30363d;
+      box-shadow: 0 0 15px rgba(88,166,255,0.1); border-radius: 4px;
+      max-width: 100%; height: auto;
+    }
+    .grid-line { stroke: #1c2128; stroke-width: 8; }
+    
+    /* Khung bọc viền khi viết HOA toàn chữ */
+    .caps-frame { fill: none; stroke: #c9d1d9; stroke-width: 20; display: none; }
+    /* Vòng tròn "o" ở góc Dấu (Trên-Phải) khi viết Hoa chữ đầu */
+    .title-frame { fill: none; stroke: #c9d1d9; stroke-width: 25; display: none; }
+
+    /* Inputs */
+    .inputs {
+      background: #161b22; border: 1px solid #30363d; border-radius: 8px;
+      padding: 10px; width: 100%; max-width: 380px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .input-row { display: flex; align-items: center; gap: 6px; }
+    .input-row label { font-size: 11px; color: #8b949e; width: 68px; flex-shrink: 0; text-align: right; }
+    .input-row input, .input-row select {
+      flex: 1; padding: 6px 8px; min-width: 0;
+      background: #0d1117; border: 1px solid #30363d;
+      color: #c9d1d9; border-radius: 4px;
+      font-size: 14px; font-family: monospace;
+    }
+    .input-row input:focus, .input-row select:focus { outline: none; border-color: #58a6ff; }
+    #input-word { font-family: 'Segoe UI', sans-serif; text-align: center; font-size: 15px; }
+    #input-b60  { color: #7ee787; letter-spacing: 0.3em; text-indent: 0.3em; font-size: 16px; text-align: center; }
+    #input-time { color: #79c0ff; letter-spacing: 0.2em; text-indent: 0.2em; font-size: 14px; text-align: center; }
+
+    /* Buttons Toolbar */
+    .toolbar {
+      display: flex; flex-direction: column; gap: 6px;
+      width: 100%; max-width: 380px; margin-top: 4px;
+    }
+    .btn-group-tones {
+      display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px;
+    }
+    .btn-group-cases {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    }
+    button {
+      background: #21262d; border: 1px solid #30363d; color: #c9d1d9;
+      padding: 8px 2px; border-radius: 6px; font-size: 11px;
+      cursor: pointer; transition: all .15s; font-family: inherit;
+      white-space: nowrap; text-align: center; outline: none;
+      touch-action: manipulation;
+    }
+    .btn-group-cases button { padding: 8px 4px; font-size: 12px; }
+    button:hover { background: #30363d; border-color: #8b949e; }
+    button:active { background: #282e33; }
+    button.active { background: #58a6ff; color: #000; border-color: #58a6ff; font-weight: bold; }
+    
+    #status { font-size: 11px; color: #8b949e; margin-top: 6px; text-align: center; }
+
+    /* Legend */
+    .legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 12px; font-size: 10px; color: #8b949e; margin-top: 2px; }
+    .legend span::before { content: '■ '; }
+    .leg-pa   { color: #ff7b72; } .leg-pa::before   { color: #ff7b72; }
+    .leg-van  { color: #7ee787; } .leg-van::before  { color: #7ee787; }
+    .leg-dau  { color: #79c0ff; } .leg-dau::before  { color: #79c0ff; }
+    .leg-mark { color: #ffd700; } .leg-mark::before { color: #ffd700; }
+  </style>
+</head>
+<body>
+  <h1>Base60 Block Typeface Generator</h1>
+  <p>Cấu trúc 4 Khối: Dấu hình học trực quan & Tối ưu khoảng trống</p>
+
+  <div class="displays" style="display: flex; gap: 10px; width: 100%; max-width: 380px; margin-bottom: 10px;">
+    <div class="variant" style="flex: 1; margin: 0; padding: 8px;">
+      <div style="font-size: 11px; color: #8b949e; margin-bottom: 6px;">Bản vẽ SVG</div>
+      <svg id="svg-main" class="canvas" width="100%" viewBox="0 0 1000 1000">
+        <!-- Khung viền Hoa / HOA -->
+        <rect class="caps-frame" id="frame-allcaps" x="15" y="15" width="970" height="970" rx="30" />
+        <!-- Chữ 'o' bọc ngoài dấu thanh (Tâm lệch về góc dưới trái của ô c3) -->
+        <circle class="title-frame" id="frame-titlecase" cx="690" cy="310" r="150" />
+        <!-- Lưới -->
+        <line x1="500" y1="0" x2="500" y2="1000" class="grid-line" stroke-dasharray="16,16"/>
+        <line x1="0" y1="500" x2="1000" y2="500" class="grid-line" stroke-dasharray="16,16"/>
+      </svg>
+    </div>
+    <div class="variant" style="flex: 1; margin: 0; padding: 8px;">
+      <div style="font-size: 11px; color: #8b949e; margin-bottom: 6px;">Font TTF thực tế</div>
+      <div id="ttf-preview" style="font-family: 'CyberVietnamese'; font-variant-ligatures: normal; font-feature-settings: 'calt' 1; font-size: 160px; color: #58a6ff; line-height: 1; display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 1; background: #000; border: 1px solid #30363d; border-radius: 4px; overflow: hidden; letter-spacing: 0;">cpf</div>
+    </div>
+  </div>
+  <div class="legend" style="width: 100%; max-width: 380px; margin-bottom: 10px;">
+    <span class="leg-dau">c3 (↖)</span>
+    <span class="leg-mark">Dấu (↗)</span>
+    <span class="leg-pa">Phụ âm (↙)</span>
+    <span class="leg-van">Vần (↘)</span>
+  </div>
+
+  <div class="inputs">
+    <div class="input-row">
+      <label>Phông chữ</label>
+      <select id="sel-font">
+        <option value="/Rajdhani-Bold.ttf">Rajdhani (Vuông, Tương lai) - Mặc định</option>
+        <option value="/ShareTechMono.ttf">Share Tech (Vuông, Tech)</option>
+        <option value="/ChakraPetch-Bold.ttf">Chakra Petch (Bold, Cyber)</option>
+        <option value="/SpaceMono-Bold.ttf">Space Mono (Geometric, Code)</option>
+        <option value="/Audiowide-Regular.ttf">Audiowide (Cyber, Rộng)</option>
+        <option value="/CutiveMono-Regular.ttf">Cutive Mono (Đánh chữ, Mảnh)</option>
+        <option value="/VT323-Regular.ttf">VT323 (Pixel, Retro 8-bit)</option>
+        <option value="/RobotoMono.ttf">Roboto Mono (Tròn trịa)</option>
+      </select>
+    </div>
+    <div class="input-row">
+      <label>Tiếng Việt</label>
+      <input type="text" id="input-word" value="cào" placeholder="gõ từ tiếng Việt" />
+    </div>
+    <div class="input-row">
+      <label>Mã Base60</label>
+      <input type="text" id="input-b60" maxlength="4" placeholder="VD: oCpf" />
+    </div>
+    <div class="input-row">
+      <label>Mã Time</label>
+      <input type="text" id="input-time" maxlength="6" placeholder="VD: 112402" />
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="btn-group-tones" id="group-tone">
+      <button onclick="setTone(0)" data-val="0">Ngang</button>
+      <button onclick="setTone(1)" data-val="1">Sắc</button>
+      <button onclick="setTone(2)" data-val="2">Huyền</button>
+      <button onclick="setTone(3)" data-val="3">Hỏi</button>
+      <button onclick="setTone(4)" data-val="4">Ngã</button>
+      <button onclick="setTone(5)" data-val="5">Nặng</button>
+    </div>
+    <div class="btn-group-cases" id="group-case">
+      <button onclick="setCase('LOWER')" data-val="LOWER">chữ thường</button>
+      <button onclick="setCase('TITLE')" data-val="TITLE">chữ Hoa</button>
+      <button onclick="setCase('ALL')" data-val="ALL">CHỮ HOA</button>
+    </div>
+  </div>
+
+  <div id="status">Đang tải font...</div>
+
+  <script type="module" src="./font-maker.js?v=7"></script>
+</body>
+</html>

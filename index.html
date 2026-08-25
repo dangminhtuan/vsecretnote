@@ -7,6 +7,26 @@
     <title>TimeCypher - Vietnamese Encoder</title>
     <link rel="stylesheet" href="/style.css" />
     <link rel="stylesheet" href="/snk.css" />
+    <style>
+      @font-face {
+        font-family: 'CyberVietnamese';
+        src: url('/CyberVietnamese-Regular.ttf?v=4') format('truetype');
+      }
+      #cyber-font-preview {
+        font-family: 'CyberVietnamese';
+        font-feature-settings: 'calt' 1;
+        font-variant-ligatures: normal;
+        letter-spacing: 0;
+        word-spacing: -0.45em; /* kéo các block lại gần nhau */
+        font-size: 48px;
+        line-height: 1.05;
+        color: #58a6ff;
+        overflow-wrap: anywhere;
+        padding: 4px 4px 2px;
+        min-height: 56px;
+        display: block;
+      }
+    </style>
   </head>
   <body>
     <div id="matrix-canvas-container">
@@ -39,6 +59,11 @@
                   <input type="checkbox" id="chk-view-toolbar" checked style="accent-color: #ffaa00; width: 14px; height: 14px; cursor: pointer;">
                   <span>📋 Thanh Copy nổi</span>
                 </label>
+
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: #eee; cursor: pointer; user-select: none;">
+                  <input type="checkbox" id="chk-view-case" style="accent-color: #58a6ff; width: 14px; height: 14px; cursor: pointer;">
+                  <span>🔠 Hỗ trợ Chữ Hoa (o/O)</span>
+                </label>
               </div>
             </div>
 
@@ -70,6 +95,11 @@
                 <button id="btn-activity-log" class="cyber-menu-item" style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #ffaa00; background: transparent; border: none; cursor: pointer; padding: 6px 8px; border-radius: 4px; text-align: left; width: 100%; font-family: inherit;">
                   <span>📈</span>
                   <span>Nhật ký hoạt động (Log)</span>
+                </button>
+
+                <button id="btn-gen-ai-prompt" class="cyber-menu-item" style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #ff00ea; background: transparent; border: none; cursor: pointer; padding: 6px 8px; border-radius: 4px; text-align: left; width: 100%; font-family: inherit; border-top: 1px dashed #441144; margin-top: 2px; padding-top: 8px;">
+                  <span>✨</span>
+                  <span>Sinh Prompt AI vẽ ảnh</span>
                 </button>
               </div>
             </div>
@@ -290,8 +320,78 @@
             <textarea id="compressed-input" placeholder="Mã nén siêu ngắn..." spellcheck="false"></textarea>
           </div>
 
+          <!-- Cyber Font Preview -->
+          <div class="input-group" style="background: #000; border: 1px solid #1e3a5f; border-radius: 6px; padding: 6px 10px;">
+            <div class="label-row" style="margin-bottom: 2px;">
+              <label style="color: #58a6ff; letter-spacing: 1px;">CYBER FONT [TTF PREVIEW]</label>
+            </div>
+            <span id="cyber-font-preview"></span>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 2px; margin-bottom: 4px; justify-content: flex-end;">
+              <div style="flex: 1; height: 3px; background: #222; border-radius: 1px; overflow: hidden;">
+                <div id="cyber-font-bar" style="width: 0%; height: 100%; background: #0f0; transition: width 0.3s ease, background 0.3s ease;"></div>
+              </div>
+              <span id="cyber-font-bytes" style="font-size: 11px; font-family: monospace; color: #888; min-width: 80px;"></span>
+            </div>
+          </div>
 
-  
+          <!-- ✨ PROMPT MACHINE - Bottom Sheet -->
+          <div id="ai-prompt-modal" style="display: none; position: fixed; inset: 0; z-index: 10002; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); align-items: flex-start; justify-content: center;">
+            <div style="background: #090d14; border: 1px solid #ff00ea; border-top: none; box-shadow: 0 8px 40px rgba(255,0,234,0.35); border-radius: 0 0 14px 14px; width: 100%; max-width: 560px; display: flex; flex-direction: column; max-height: 90vh;">
+              
+              <!-- Header -->
+              <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px 8px; border-bottom: 1px solid #1e0d2e; flex-shrink: 0;">
+                <span style="color: #ff00ea; font-size: 13px; font-weight: bold; font-family: monospace; letter-spacing: 1.5px;">✨ PROMPT MACHINE</span>
+                <button id="btn-close-ai-prompt" style="background: transparent; border: none; color: #666; font-size: 18px; cursor: pointer; padding: 0 4px; line-height: 1;">✕</button>
+              </div>
+
+              <!-- Scrollable content -->
+              <div style="overflow-y: auto; padding: 10px 14px; display: flex; flex-direction: column; gap: 10px; flex: 1;">
+
+                <!-- AI Tool selector -->
+                <div>
+                  <div style="font-size: 9px; color: #888; font-family: monospace; margin-bottom: 6px; letter-spacing: 1.5px; text-transform: uppercase;">🤖 AI Tool</div>
+                  <div id="ai-tool-selector" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
+                </div>
+
+                <!-- Style selector -->
+                <div>
+                  <div style="font-size: 9px; color: #888; font-family: monospace; margin-bottom: 6px; letter-spacing: 1.5px; text-transform: uppercase;">🎨 Phong Cách</div>
+                  <div id="ai-style-selector" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
+                </div>
+
+                <!-- Aspect ratio selector -->
+                <div>
+                  <div style="font-size: 9px; color: #888; font-family: monospace; margin-bottom: 6px; letter-spacing: 1.5px; text-transform: uppercase;">📐 Tỷ Lệ Output</div>
+                  <div id="ai-ratio-selector" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
+                </div>
+
+                <!-- Blocks per row selector -->
+                <div>
+                  <div style="font-size: 9px; color: #888; font-family: monospace; margin-bottom: 6px; letter-spacing: 1.5px; text-transform: uppercase;">🔲 Số block mỗi dòng: <span id="ai-blocks-per-row-val" style="color: #ff00ea; font-weight: bold;">Tự động</span></div>
+                  <input type="range" id="ai-blocks-per-row" min="0" max="12" value="0" style="width: 100%; accent-color: #ff00ea; cursor: pointer;" oninput="if(window.pm_selectBlocksPerRow) window.pm_selectBlocksPerRow(this.value)">
+                  <div style="display: flex; justify-content: space-between; font-size: 8px; color: #555; font-family: monospace; margin-top: 2px;">
+                    <span>Tự động (1 hàng)</span>
+                    <span>12</span>
+                  </div>
+                </div>
+
+                <!-- Generated prompt -->
+                <div>
+                  <div style="font-size: 9px; color: #888; font-family: monospace; margin-bottom: 4px; letter-spacing: 1.5px; text-transform: uppercase;">📝 Prompt đã sinh</div>
+                  <textarea id="ai-prompt-content" readonly style="width: 100%; height: 130px; background: #010810; color: #a5f3fc; border: 1px solid #1a3344; border-radius: 5px; padding: 8px; font-size: 10px; font-family: monospace; line-height: 1.5; resize: vertical; box-sizing: border-box; outline: none;"></textarea>
+                  <div id="ai-prompt-hint" style="margin-top: 5px; font-size: 10px; color: #88aacc; font-family: monospace; line-height: 1.5; min-height: 14px;"></div>
+                </div>
+
+              </div>
+
+              <!-- Footer actions -->
+              <div style="display: flex; gap: 8px; padding: 10px 14px 16px; border-top: 1px solid #1e0d2e; flex-shrink: 0;">
+                <button id="btn-copy-ai-prompt" style="flex: 1; background: #ff00ea; color: #000; font-weight: bold; border: none; border-radius: 7px; padding: 11px 8px; font-size: 13px; cursor: pointer; font-family: monospace; letter-spacing: 0.5px;">📋 SAO CHÉP PROMPT</button>
+                <button id="btn-cancel-ai-prompt" style="background: #111; color: #666; border: 1px solid #333; border-radius: 7px; padding: 11px 14px; font-size: 12px; cursor: pointer;">Đóng</button>
+              </div>
+            </div>
+          </div>
+
 
           <!-- CVNSS4 Encrypted -->
           <div class="input-group">
