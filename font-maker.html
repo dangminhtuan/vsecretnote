@@ -98,35 +98,57 @@
   <h1>Base60 Block Typeface Generator</h1>
   <p>Cấu trúc 4 Khối: Dấu hình học trực quan & Tối ưu khoảng trống</p>
 
-  <div class="displays" style="display: flex; gap: 10px; width: 100%; max-width: 380px; margin-bottom: 10px;">
-    <div class="variant" style="flex: 1; margin: 0; padding: 8px;">
-      <div style="font-size: 11px; color: #8b949e; margin-bottom: 6px;">Bản vẽ SVG</div>
-      <svg id="svg-main" class="canvas" width="100%" viewBox="0 0 1000 1000">
-        <!-- Khung viền Hoa / HOA -->
-        <rect class="caps-frame" id="frame-allcaps" x="15" y="15" width="970" height="970" rx="30" />
-        <!-- Chữ 'o' bọc ngoài dấu thanh (Tâm lệch về góc dưới trái của ô c3) -->
-        <circle class="title-frame" id="frame-titlecase" cx="690" cy="310" r="150" />
-        <!-- Lưới -->
+  <div class="displays" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; max-width: 460px; margin-bottom: 10px;">
+    <!-- Loại 0: Gốc -->
+    <div class="variant" style="margin: 0; padding: 6px;">
+      <div style="font-size: 10px; color: #58a6ff; font-weight: bold; margin-bottom: 4px;">0. Gốc (C3 ↖ | Dấu ↗)</div>
+      <svg id="svg-type0" class="canvas" width="100%" viewBox="0 0 1000 1000">
         <line x1="500" y1="0" x2="500" y2="1000" class="grid-line" stroke-dasharray="16,16"/>
         <line x1="0" y1="500" x2="1000" y2="500" class="grid-line" stroke-dasharray="16,16"/>
       </svg>
     </div>
-    <div class="variant" style="flex: 1; margin: 0; padding: 8px;">
-      <div style="font-size: 11px; color: #8b949e; margin-bottom: 6px;">Font TTF thực tế</div>
-      <div id="ttf-preview" style="font-family: 'CyberVietnamese'; font-variant-ligatures: normal; font-feature-settings: 'calt' 1; font-size: 160px; color: #58a6ff; line-height: 1; display: flex; align-items: center; justify-content: center; width: 100%; aspect-ratio: 1; background: #000; border: 1px solid #30363d; border-radius: 4px; overflow: hidden; letter-spacing: 0;">cpf</div>
+
+    <!-- Loại 1: Đảo trên -->
+    <div class="variant" style="margin: 0; padding: 6px;">
+      <div style="font-size: 10px; color: #ff7b72; font-weight: bold; margin-bottom: 4px;">1. Đảo Trên (Dấu ↖ | C3 ↗)</div>
+      <svg id="svg-type1" class="canvas" width="100%" viewBox="0 0 1000 1000">
+        <line x1="500" y1="0" x2="500" y2="1000" class="grid-line" stroke-dasharray="16,16"/>
+        <line x1="0" y1="500" x2="1000" y2="500" class="grid-line" stroke-dasharray="16,16"/>
+      </svg>
+    </div>
+
+    <!-- Loại 2: C3 tại 6 vị trí quanh C1 C2 -->
+    <div class="variant" style="margin: 0; padding: 6px;">
+      <div style="font-size: 10px; color: #7ee787; font-weight: bold; margin-bottom: 4px;">2. C3 tại 6 vị trí (Ko dấu)</div>
+      <svg id="svg-type2" class="canvas" width="100%" viewBox="0 0 1000 1000">
+        <!-- Lưới hướng dẫn mờ -->
+        <rect x="200" y="250" width="600" height="500" fill="none" stroke="#1c2128" stroke-dasharray="8,8" stroke-width="4"/>
+      </svg>
+    </div>
+
+    <!-- Loại 3: Dấu tại 6 vị trí quanh C1 C2 (Bỏ C3) -->
+    <div class="variant" style="margin: 0; padding: 6px;">
+      <div style="font-size: 10px; color: #ffd700; font-weight: bold; margin-bottom: 4px;">3. Dấu 6 vị trí (Bỏ C3)</div>
+      <svg id="svg-type3" class="canvas" width="100%" viewBox="0 0 1000 1000">
+        <rect x="200" y="250" width="600" height="500" fill="none" stroke="#1c2128" stroke-dasharray="8,8" stroke-width="4"/>
+      </svg>
     </div>
   </div>
-  <div class="legend" style="width: 100%; max-width: 380px; margin-bottom: 10px;">
-    <span class="leg-dau">c3 (↖)</span>
-    <span class="leg-mark">Dấu (↗)</span>
-    <span class="leg-pa">Phụ âm (↙)</span>
-    <span class="leg-van">Vần (↘)</span>
+
+  <div style="font-size: 9px; color: #8b949e; margin-bottom: 8px; text-align: center; font-family: monospace;">
+    Sơ đồ 6 vị trí: ↖ Ngã &nbsp; ↗ Sắc &nbsp; ⬅ Huyền &nbsp; ➡ Hỏi &nbsp; ↙ Nặng &nbsp; ↘ Bằng
   </div>
+
 
   <div class="inputs">
     <div class="input-row">
       <label>Phông chữ</label>
       <select id="sel-font">
+        <option value="/Megrim.ttf">✨ Megrim (Siêu tối giản - Chữ A là ^, thanh mảnh)</option>
+        <option value="/MajorMonoDisplay-Regular.ttf">✨ Major Mono (Kỷ nguyên tương lai, tối giản)</option>
+        <option value="/Michroma-Regular.ttf">✨ Michroma (Phong cách NASA / Sci-fi)</option>
+        <option value="/Wallpoet-Regular.ttf">✨ Wallpoet (Stencil tối giản)</option>
+        <option value="/Plaster-Regular.ttf">✨ Plaster (Khối hình học tối giản)</option>
         <option value="/Rajdhani-Bold.ttf">Rajdhani (Vuông, Tương lai) - Mặc định</option>
         <option value="/ShareTechMono.ttf">Share Tech (Vuông, Tech)</option>
         <option value="/ChakraPetch-Bold.ttf">Chakra Petch (Bold, Cyber)</option>

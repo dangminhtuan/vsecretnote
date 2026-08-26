@@ -3099,7 +3099,7 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
       if (choicesEl) {
         choicesEl.style.display = 'flex';
         choicesEl.innerHTML = options.map(opt => 
-          `<button class="cyber-btn" style="background:#000;color:#0ff;border-color:#0ff;font-size:11px;padding:3px 6px;height:24px;border-radius:4px;min-width:35px;" onclick="handleTopLeftQuiz('${opt}', '${correctB60}', '${correctFullCode}', this)">${opt}</button>`
+          `<button class="cyber-btn" style="background:#000;color:#0ff;border-color:#0ff;font-size:11px;padding:3px 6px;height:24px;border-radius:4px;min-width:35px;text-transform:none;letter-spacing:normal;" onclick="handleTopLeftQuiz('${opt}', '${correctB60}', '${correctFullCode}', this)">${opt}</button>`
         ).join('');
       }
     });
@@ -3218,7 +3218,7 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
       const btn = document.createElement('button');
       btn.className = 'cyber-btn';
       btn.textContent = opt;
-      btn.style.cssText = 'padding:3px 12px;font-size:13px;font-weight:bold;cursor:pointer;border:1px solid #0f0;color:#0f0;background:#000;border-radius:4px;font-family:monospace;transition:all 0.15s;text-transform:none;';
+      btn.style.cssText = 'padding:3px 12px;font-size:13px;font-weight:bold;cursor:pointer;border:1px solid #0f0;color:#0f0;background:#000;border-radius:4px;font-family:monospace;transition:all 0.15s;text-transform:none;letter-spacing:normal;';
       btn.addEventListener('pointerdown', (e) => {
         e.stopPropagation(); e.preventDefault();
         if (quizAnswered) return;
