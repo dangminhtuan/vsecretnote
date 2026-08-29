@@ -89,9 +89,22 @@
       <div class="tab-nav">
         <button class="tab-btn active" id="tab-btn-matrix" data-target="tab-matrix">📊 MA TRẬN VẦN (RHYMES)</button>
         <button class="tab-btn" id="tab-btn-dict" data-target="tab-dict">📖 TỪ ĐIỂN TRA CỨU (5.000+ TỪ)</button>
+        <a href="/PersonalDictionary.zip" download="PersonalDictionary.zip" class="tab-btn" style="text-decoration:none; color:#38bdf8; border-color:#38bdf8;">📥 TẢI TỪ ĐIỂN GBOARD</a>
         <a href="/" class="tab-btn" style="text-decoration:none; color:#00ffcc; border-color:#00ffcc;">🏠 VỀ TRANG CHÍNH</a>
       </div>
     </header>
+
+    <!-- ==================== ⚡ SMART OMNIBOX TRỢ GIẢNG & TRA CỨU NHANH ==================== -->
+    <div id="smart-omnibox-container" style="background: rgba(0, 20, 15, 0.9); border: 1px solid #00ffcc; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; box-shadow: 0 0 15px rgba(0, 255, 204, 0.15);">
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <span style="font-size: 16px; color: #00ffcc;">⚡</span>
+        <input type="text" id="smart-omnibox-input" class="search-box" style="flex: 1; min-width: 220px; font-size: 13px; border-color: #00ffcc; background: #000; color: #00ffcc; padding: 7px 10px;" placeholder="💡 Gõ thử: b1..b6, c1, c2, '=', 't', 'w', 'thành', 'TW2' để tra nhanh..." autocomplete="off" />
+        <button id="btn-clear-omnibox" class="cyber-btn-small" style="display: none; background: #000; color: #ff5555; border: 1px solid #ff5555; cursor: pointer; padding: 5px 10px; border-radius: 4px;">✕ Xóa</button>
+      </div>
+      <div id="smart-omnibox-result" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #004433; animation: fadeIn 0.15s ease-out;">
+        <!-- Injected dynamically by JS -->
+      </div>
+    </div>
 
     <!-- ==================== TAB 1: MA TRẬN VẦN ==================== -->
     <div id="tab-matrix" class="tab-content active">

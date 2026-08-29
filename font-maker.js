@@ -81,26 +81,39 @@ function getToneIndex(c3char) {
   return idx % 6; 
 }
 
-function getToneMarkPath(tone, zone) {
-  // Thay vì canh giữa ô, đẩy Ký hiệu dấu về góc Dưới-Trái (Co cụm vào tâm)
-  const cx = zone.x + zone.w * 0.35; 
-  const cy = zone.y + zone.h * 0.65;
-  const r  = Math.min(zone.w, zone.h) * 0.35; 
+function getToneMarkPath(tone, zone, isQuadrantTopRight = false, isQuadrantTopLeft = false) {
+  let cx = zone.x + zone.w * 0.5; 
+  let cy = zone.y + zone.h * 0.5;
+  const r = Math.min(zone.w, zone.h) * 0.38; 
+
+  // Co cụm hướng tâm:
+  // Nếu là góc Trên-Phải (↗) -> Dồn Trái (X) và Xuống (Y) về phía tâm giữa
+  if (isQuadrantTopRight) {
+    cx = zone.x + zone.w * 0.40; 
+    cy = zone.y + zone.h * 0.60;
+  }
+  // Nếu là góc Trên-Trái (↖) (Loại 1) -> Dồn Phải (X) và Xuống (Y) về phía tâm giữa
+  else if (isQuadrantTopLeft) {
+    cx = zone.x + zone.w * 0.60; 
+    cy = zone.y + zone.h * 0.60;
+  }
 
   switch (tone) {
-    case 0: // Ngang — Dấu bằng (=) gồm 2 gạch song song
-      return `M${cx-r*0.4} ${cy-r*0.35} L${cx+r*0.4} ${cy-r*0.35} M${cx-r*0.4} ${cy+r*0.35} L${cx+r*0.4} ${cy+r*0.35}`;
+    case 0: // Ngang — Dấu bằng (=) gồm 2 gạch song song thanh mảnh, tách rời rõ ràng
+      const gap = r * 0.40;
+      const len = r * 0.65;
+      return `M${cx - len} ${cy - gap} L${cx + len} ${cy - gap} M${cx - len} ${cy + gap} L${cx + len} ${cy + gap}`;
     case 1: // Sắc ´ — chéo lên phải /
-      return `M${cx-r*0.6} ${cy+r*0.7} L${cx+r*0.6} ${cy-r*0.7}`;
+      return `M${cx - r*0.6} ${cy + r*0.7} L${cx + r*0.6} ${cy - r*0.7}`;
     case 2: // Huyền ` — chéo xuống phải \
-      return `M${cx-r*0.6} ${cy-r*0.7} L${cx+r*0.6} ${cy+r*0.7}`;
-    case 3: // Hỏi ̉ — móc cong (không chấm)
-      return `M${cx-r*0.4} ${cy-r*0.2} C${cx-r*0.4} ${cy-r*0.9} ${cx+r*0.5} ${cy-r*0.9} ${cx+r*0.5} ${cy-r*0.1} C${cx+r*0.5} ${cy+r*0.4} ${cx} ${cy+r*0.2} ${cx} ${cy+r*0.8}`;
-    case 4: // Ngã ˜ — sóng ngã cổ điển
-      return `M${cx-r*0.7} ${cy+r*0.2} Q${cx-r*0.3} ${cy-r*0.7} ${cx} ${cy} Q${cx+r*0.3} ${cy+r*0.7} ${cx+r*0.7} ${cy-r*0.2}`;
+      return `M${cx - r*0.6} ${cy - r*0.7} L${cx + r*0.6} ${cy + r*0.7}`;
+    case 3: // Hỏi ̉ — móc cong
+      return `M${cx - r*0.4} ${cy - r*0.2} C${cx - r*0.4} ${cy - r*0.9} ${cx + r*0.5} ${cy - r*0.9} ${cx + r*0.5} ${cy - r*0.1} C${cx + r*0.5} ${cy + r*0.4} ${cx} ${cy + r*0.2} ${cx} ${cy + r*0.8}`;
+    case 4: // Ngã ˜ — sóng ngã
+      return `M${cx - r*0.7} ${cy + r*0.2} Q${cx - r*0.3} ${cy - r*0.7} ${cx} ${cy} Q${cx + r*0.3} ${cy + r*0.7} ${cx + r*0.7} ${cy - r*0.2}`;
     case 5: // Nặng . — chấm vuông
-      const size = r*0.45;
-      return `M${cx-size/2} ${cy-size/2} h${size} v${size} h-${size} Z`;
+      const size = r * 0.5;
+      return `M${cx - size/2} ${cy - size/2} h${size} v${size} h-${size} Z`;
     default: return '';
   }
 }
@@ -135,25 +148,59 @@ function updateButtonStates(originalWord, c3char) {
 function updateCapitalization(originalWord) {
   const allCapsFrame = document.getElementById('frame-allcaps');
   const titleFrame = document.getElementById('frame-titlecase');
-  allCapsFrame.style.display = 'none';
-  titleFrame.style.display = 'none';
-
-  if (!originalWord) return;
-
-  if (originalWord.length > 0 && originalWord === originalWord.toUpperCase() && /[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ]/.test(originalWord)) {
-    allCapsFrame.style.display = 'block';
-  } 
-  else if (originalWord.length > 0 && originalWord[0] === originalWord[0].toUpperCase() && /[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ]/.test(originalWord[0])) {
-    titleFrame.style.display = 'block';
-  }
+  if (allCapsFrame) allCapsFrame.style.display = 'none';
+  if (titleFrame) titleFrame.style.display = 'none';
 }
 
-// ─── Render ───────────────────────────────────────────────────────────────
-function renderSVG(b60, originalWord) {
-  const svg = document.getElementById('svg-main');
-  svg.querySelectorAll('.glyph-path,.tone-mark').forEach(el => el.remove());
+// ─── 6 Vị trí không gian quanh trục C1-C2 ───────────────────────────
+// Sơ đồ:   ↖ Ngã(4)     ↗ Sắc(1)
+//        ⬅ Huyền(2) [C1] [C2] ➡ Hỏi(3)
+//          ↙ Nặng(5)    ↘ Bằng(0)
+
+const POS_6_ZONES = {
+  // C1 và C2 ở trung tâm (Lệch sang trái một chút để chừa chỗ cho cột bên phải)
+  c1: { x: 40, y: 260, w: 340, h: 480, ax: 1, ay: 0 },
+  c2: { x: 400, y: 260, w: 340, h: 480, ax: -1, ay: 0 },
   
-  updateCapitalization(originalWord);
+  // 6 vị trí quanh góc trên và phải (Giữ C1 làm mỏ neo cố định ở góc dưới-trái)
+  0: { x: 40,  y: 40,  w: 340, h: 200, ax: 0, ay: 1 },  // 0: Trên C1 (dồn xuống)
+  1: { x: 400, y: 40,  w: 340, h: 200, ax: 0, ay: 1 },  // 1: Trên C2 (dồn xuống)
+  2: { x: 760, y: 40,  w: 200, h: 200, ax: -1, ay: 1 }, // 2: Góc Trên-Phải (dồn trái, xuống)
+  3: { x: 760, y: 260, w: 200, h: 480, ax: -1, ay: 0 }, // 3: Bên Phải (dồn trái)
+  4: { x: 760, y: 760, w: 200, h: 200, ax: -1, ay: -1 },// 4: Góc Dưới-Phải (dồn trái, lên)
+  5: { x: 400, y: 760, w: 340, h: 200, ax: 0, ay: -1 }, // 5: Dưới C2 (dồn lên)
+};
+
+function addGlyphToSVG(svg, char, zone, color) {
+  const d = getGlyphPath(char, zone);
+  if (!d) return;
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('d', d);
+  path.setAttribute('fill', color);
+  path.classList.add('glyph-path');
+  svg.appendChild(path);
+}
+
+function addToneToSVG(svg, toneIdx, zone, isQuadrantTopRight = false, isQuadrantTopLeft = false) {
+  const td = getToneMarkPath(toneIdx, zone, isQuadrantTopRight, isQuadrantTopLeft);
+  if (!td) return;
+  // Stroke-width co giãn theo tỷ lệ ô (khoảng 10% chiều nhỏ nhất)
+  const strokeW = Math.max(18, Math.min(zone.w, zone.h) * 0.10);
+  const el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  el.setAttribute('d', td);
+  el.setAttribute('fill', toneIdx === 5 ? TONE_COLOR : 'none');
+  el.setAttribute('stroke', TONE_COLOR);
+  el.setAttribute('stroke-width', toneIdx === 5 ? '0' : strokeW.toFixed(1));
+  el.setAttribute('stroke-linecap', 'round');
+  el.classList.add('tone-mark');
+  svg.appendChild(el);
+}
+
+function renderAllSVGs(b60, originalWord) {
+  ['svg-type0', 'svg-type1', 'svg-type2'].forEach(id => {
+    const svg = document.getElementById(id);
+    if (svg) svg.querySelectorAll('.glyph-path,.tone-mark').forEach(el => el.remove());
+  });
 
   if (!baseFont || !b60 || (b60.length !== 3 && b60.length !== 4) || b60.startsWith('[')) return;
 
@@ -161,33 +208,55 @@ function renderSVG(b60, originalWord) {
   if (cleanB60.length !== 3) return;
 
   const [c1, c2, c3] = [cleanB60[0], cleanB60[1], cleanB60[2]];
-  const chars = [c1, c2, c3];
-
-  [0, 1, 2].forEach(i => {
-    const d = getGlyphPath(chars[i], ZONES[i]);
-    if (!d) return;
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    path.setAttribute('d', d);
-    path.setAttribute('fill', COLORS[i]);
-    path.classList.add('glyph-path');
-    svg.appendChild(path);
-  });
-
   const toneIdx = getToneIndex(c3);
-  if (toneIdx >= 0) {
-    const td = getToneMarkPath(toneIdx, TONE_ZONE);
-    if (td) {
-      const el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      el.setAttribute('d', td);
-      el.setAttribute('fill', toneIdx === 5 ? TONE_COLOR : 'none');
-      el.setAttribute('stroke', TONE_COLOR);
-      el.setAttribute('stroke-width', '60');
-      el.setAttribute('stroke-linecap', toneIdx === 4 || toneIdx === 5 || toneIdx === 0 ? 'square' : 'round');
-      el.classList.add('tone-mark');
-      svg.appendChild(el);
+
+  // ─── 0. Loại Gốc (C3 ↖ | Dấu ↗) ───
+  const svg0 = document.getElementById('svg-type0');
+  if (svg0) {
+    addGlyphToSVG(svg0, c1, ZONES[0], COLORS[0]); // c1 (↙)
+    addGlyphToSVG(svg0, c2, ZONES[1], COLORS[1]); // c2 (↘)
+    addGlyphToSVG(svg0, c3, ZONES[2], COLORS[2]); // c3 (↖)
+    if (toneIdx >= 0) addToneToSVG(svg0, toneIdx, TONE_ZONE, true, false); // Dấu (↗ co cụm hướng tâm)
+  }
+
+  // ─── 1. Loại Đảo Trên (Dấu ↖ | C3 ↗) ───
+  const svg1 = document.getElementById('svg-type1');
+  if (svg1) {
+    addGlyphToSVG(svg1, c1, ZONES[0], COLORS[0]); // c1 (↙)
+    addGlyphToSVG(svg1, c2, ZONES[1], COLORS[1]); // c2 (↘)
+    // Đảo: C3 sang góc Trên-Phải (↗), Dấu sang góc Trên-Trái (↖)
+    const c3ZoneInverted = { x: 550, y: 50, w: 400, h: 400, ax: -1, ay: 1 };
+    const toneZoneInverted = { x: 50, y: 50, w: 400, h: 400 };
+    addGlyphToSVG(svg1, c3, c3ZoneInverted, COLORS[2]);
+    if (toneIdx >= 0) addToneToSVG(svg1, toneIdx, toneZoneInverted, false, true); // Dấu (↖ co cụm hướng tâm)
+  }
+
+  // ─── 2. Loại Dấu 6 vị trí (Bỏ hoàn toàn C3, mã hóa 2D không gian) ───
+  const svg2 = document.getElementById('svg-type2');
+  if (svg2) {
+    addGlyphToSVG(svg2, c1, POS_6_ZONES.c1, COLORS[0]); // C1 giữa-trái
+    addGlyphToSVG(svg2, c2, POS_6_ZONES.c2, COLORS[1]); // C2 giữa-phải
+    
+    // Khôi phục giá trị thực sự của c3:
+    // ss = s2 * 6 + s1 (Trong đó s1 = hình dáng dấu, s2 = vị trí)
+    const ss = BASE60_SS.indexOf(c3);
+    if (ss >= 0 && ss < 36) { // Tiếng Việt (0-35)
+      const s1 = ss % 6; // Tone -> Hình dáng của dấu (0-5)
+      const s2 = Math.floor(ss / 6); // Nhóm vần -> Vị trí của dấu (0-5)
+      
+      if (POS_6_ZONES[s2]) {
+        // Vẽ dấu với hình dáng `s1` tại tọa độ vùng `s2`
+        addToneToSVG(svg2, s1, POS_6_ZONES[s2], false, false);
+      }
+    } else if (ss >= 36) { // Từ tiếng Anh, fallback
+      // Hiển thị C3 bình thường ở giữa trên cùng (tạm tính là vị trí số 1 / Sắc)
+      if (POS_6_ZONES[1]) {
+        addGlyphToSVG(svg2, c3, POS_6_ZONES[1], COLORS[2]);
+      }
     }
   }
 }
+
 
 // ─── Inputs ───────────────────────────────────────────────────────────────
 const inWord = document.getElementById('input-word');
@@ -202,9 +271,10 @@ function sync(word, b60, time) {
   if (document.activeElement !== inB60)  inB60.value = b60;
   if (document.activeElement !== inTime) inTime.value = time;
   
-  renderSVG(b60, inWord.value.trim()); 
+  renderAllSVGs(b60, inWord.value.trim()); 
   const cleanB60 = (b60 && (b60.startsWith('o') || b60.startsWith('O'))) ? b60.slice(1) : b60;
   updateButtonStates(inWord.value.trim(), cleanB60 ? cleanB60[2] : null);
+
   
   const preview = document.getElementById('ttf-preview');
   if (preview) preview.textContent = b60 || '';

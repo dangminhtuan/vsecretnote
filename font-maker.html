@@ -117,26 +117,17 @@
       </svg>
     </div>
 
-    <!-- Loại 2: C3 tại 6 vị trí quanh C1 C2 -->
-    <div class="variant" style="margin: 0; padding: 6px;">
-      <div style="font-size: 10px; color: #7ee787; font-weight: bold; margin-bottom: 4px;">2. C3 tại 6 vị trí (Ko dấu)</div>
-      <svg id="svg-type2" class="canvas" width="100%" viewBox="0 0 1000 1000">
-        <!-- Lưới hướng dẫn mờ -->
-        <rect x="200" y="250" width="600" height="500" fill="none" stroke="#1c2128" stroke-dasharray="8,8" stroke-width="4"/>
-      </svg>
-    </div>
-
-    <!-- Loại 3: Dấu tại 6 vị trí quanh C1 C2 (Bỏ C3) -->
-    <div class="variant" style="margin: 0; padding: 6px;">
-      <div style="font-size: 10px; color: #ffd700; font-weight: bold; margin-bottom: 4px;">3. Dấu 6 vị trí (Bỏ C3)</div>
-      <svg id="svg-type3" class="canvas" width="100%" viewBox="0 0 1000 1000">
+    <!-- Loại 2: Dấu tại 6 vị trí quanh C1 C2 (Bỏ C3) -->
+    <div class="variant" style="margin: 0; padding: 6px; grid-column: span 2;">
+      <div style="font-size: 12px; color: #ffd700; font-weight: bold; margin-bottom: 4px; text-align: center;">2. Dấu 6 vị trí (Bỏ C3, mã hóa 2D không gian)</div>
+      <svg id="svg-type2" class="canvas" width="100%" viewBox="0 0 1000 1000" style="max-height: 250px; display: block; margin: auto;">
         <rect x="200" y="250" width="600" height="500" fill="none" stroke="#1c2128" stroke-dasharray="8,8" stroke-width="4"/>
       </svg>
     </div>
   </div>
 
   <div style="font-size: 9px; color: #8b949e; margin-bottom: 8px; text-align: center; font-family: monospace;">
-    Sơ đồ 6 vị trí: ↖ Ngã &nbsp; ↗ Sắc &nbsp; ⬅ Huyền &nbsp; ➡ Hỏi &nbsp; ↙ Nặng &nbsp; ↘ Bằng
+    Vị trí: 0:Trên-C1 &nbsp; 1:Trên-C2 &nbsp; 2:Góc-Trên-Phải &nbsp; 3:Bên-Phải &nbsp; 4:Góc-Dưới-Phải &nbsp; 5:Dưới-C2
   </div>
 
 

@@ -4,7 +4,11 @@ import {
   REAL_VIETNAMESE_WORDS, ENGLISH_DICT,
   BASE60_MAPPING
 } from './data.js';
-import { removeVietnameseTones, encodeWord, timeToBase60 } from './vcomp.js';
+import {
+  removeVietnameseTones, encodeWord, decodeWord,
+  timeToBase60, base60ToTime,
+  BASE60_HH, BASE60_HH_EXTRA, BASE60_SS
+} from './vcomp.js';
 
 // ==========================================
 // 1. TAB SWITCHER
@@ -685,6 +689,211 @@ window.jumpToDictionary = function({ rhyme, toneName, consGroup, consonant, word
   if (dictTab) dictTab.scrollIntoView({ behavior: 'smooth', block: 'start' });
 };
 
+function evaluateOmnibox(query) {
+  query = (query || '').trim();
+  if (!query) return null;
+  
+  const qLower = query.toLowerCase();
+
+  // 1. Check 6 Tone Tables: b1 -> b6
+  if (/^b[1-6]$/i.test(query)) {
+    const s2 = parseInt(query.substring(1), 10) - 1;
+    const tones = BASE60_SS.slice(s2 * 6, s2 * 6 + 6);
+    const tableNames = [
+      'B1: PA Chính + Vần B1 (Telex thường)',
+      'B2: PA Chính + Vần B2 (Telex HOA)',
+      'B3: PA Chính + Vần B3 (Nguyên âm thường)',
+      'B4: PA Phụ + Vần B1 (VNI 1: 0-5)',
+      'B5: PA Phụ + Vần B2 (VNI 2: 6-9+BC)',
+      'B6: PA Phụ + Vần B3 (Nguyên âm HOA)'
+    ];
+    const toneLabels = ['0: Ngang', '1: Sắc', '2: Huyền', '3: Hỏi', '4: Ngã', '5: Nặng'];
+    return {
+      title: `📋 ${tableNames[s2]}`,
+      html: tones.map((code, idx) => `<span style="display:inline-block; margin:2px 4px; padding:3px 8px; background:#002211; border:1px solid #00ffcc; border-radius:4px; color:#fff;"><b>${code}</b> <span style="color:#88d; font-size:11px;">(${toneLabels[idx]})</span></span>`).join('')
+    };
+  }
+
+  // 2. Check Consonant tables: c1, c2
+  if (qLower === 'c1') {
+    const c1Clean = CONSONANTS_BASE.map((c, idx) => {
+      const code = BASE60_HH[idx];
+      if (!c) return `Ø➔<b>${code}</b>`;
+      return c === code ? `<b>${c}</b>` : `${c}➔<b>${code}</b>`;
+    }).join(', ');
+    return {
+      title: '📋 24 Phụ Âm Chính (Bảng c1)',
+      html: `<div style="line-height:1.7; color:#eee; font-size:12.5px;">${c1Clean}</div>`
+    };
+  }
+
+  if (qLower === 'c2') {
+    const c2Clean = CONSONANTS_EXTRA.filter(c => c).map((c, idx) => {
+      const code = BASE60_HH_EXTRA[idx];
+      return c === code ? `<b>${c}</b>` : `${c}➔<b>${code}</b>`;
+    }).join(', ');
+    return {
+      title: '📋 7 Phụ Âm Phụ (Bảng c2)',
+      html: `<div style="line-height:1.7; color:#eee; font-size:13px;">${c2Clean}</div>`
+    };
+  }
+
+  // 3. Check Tone symbols: =, /, \, ?, ~, .
+  const toneSymbolsMap = {
+    '=': { name: 'Dấu Ngang (=)', idx: 0 },
+    '/': { name: 'Dấu Sắc (/)', idx: 1 },
+    '\\': { name: 'Dấu Huyền (\\)', idx: 2 },
+    '?': { name: 'Dấu Hỏi (?)', idx: 3 },
+    '~': { name: 'Dấu Ngã (~)', idx: 4 },
+    '.': { name: 'Dấu Nặng (.)', idx: 5 }
+  };
+  if (toneSymbolsMap[query]) {
+    const { name, idx } = toneSymbolsMap[query];
+    const codes = [];
+    for (let s2 = 0; s2 < 6; s2++) {
+      codes.push(`B${s2+1}: <b>${BASE60_SS[s2 * 6 + idx]}</b>`);
+    }
+    return {
+      title: `⚡ ${name} ở 6 Bảng Mã`,
+      html: `<div style="display:flex; gap:8px; flex-wrap:wrap; font-size:12.5px;">${codes.map(c => `<span style="padding:3px 8px; background:#002211; border:1px solid #00ffcc; border-radius:4px;">${c}</span>`).join('')}</div>`
+    };
+  }
+
+  // 4. Check Single Letter: a-z / A-Z
+  if (/^[a-zA-Z]$/.test(query)) {
+    const char = query.toLowerCase();
+    const upper = query.toUpperCase();
+
+    // PA
+    const paList = [];
+    CONSONANTS_BASE.forEach((c, idx) => {
+      const code = BASE60_HH[idx];
+      if (code === char || code === upper) {
+        const n = c || 'Ø';
+        paList.push(n === code ? `<b>${n}</b>` : `${n}➔<b>${code}</b>`);
+      }
+    });
+    CONSONANTS_EXTRA.forEach((c, idx) => {
+      if (!c) return;
+      const code = BASE60_HH_EXTRA[idx];
+      if (code === char || code === upper) {
+        paList.push(c === code ? `[Phụ] <b>${c}</b>` : `[Phụ] ${c}➔<b>${code}</b>`);
+      }
+    });
+
+    // Vần
+    const vList = [];
+    [char, upper].forEach(k => {
+      const mmIdx = BASE60_MAPPING.indexOf(k);
+      if (mmIdx !== -1) {
+        const r1 = RHYMES_BASE[mmIdx] || '-';
+        const r2 = RHYMES_EXTRA_1[mmIdx] || '-';
+        const r3 = RHYMES_EXTRA_2[mmIdx] || '-';
+        vList.push(`<b>${k}</b>: B1=${r1} | B2=${r2} | B3=${r3}`);
+      }
+    });
+
+    // Dấu
+    const toneList = [];
+    const toneNames = ['Ngang', 'Sắc', 'Huyền', 'Hỏi', 'Ngã', 'Nặng'];
+    [char, upper].forEach(k => {
+      const ssIdx = BASE60_SS.indexOf(k);
+      if (ssIdx !== -1 && ssIdx < 36) {
+        const bIdx = Math.floor(ssIdx / 6) + 1;
+        const tName = toneNames[ssIdx % 6];
+        toneList.push(`<b>${k}</b> (B${bIdx} ${tName})`);
+      }
+    });
+
+    return {
+      title: `🔤 Phím [ ${upper} / ${char} ] trong Ma Trận TimeCypher`,
+      html: `
+        <div style="display:flex; flex-direction:column; gap:5px; font-size:12.5px;">
+          ${paList.length > 0 ? `<div><span style="color:#ffaa00; font-weight:bold;">Phụ âm:</span> ${paList.join(', ')}</div>` : ''}
+          ${vList.length > 0 ? `<div><span style="color:#00ffcc; font-weight:bold;">Vần:</span> ${vList.join(' · ')}</div>` : ''}
+          ${toneList.length > 0 ? `<div><span style="color:#ff55ff; font-weight:bold;">Dấu thanh:</span> ${toneList.join(', ')}</div>` : ''}
+        </div>
+      `
+    };
+  }
+
+  // 5. Check if Vietnamese word
+  const encoded = encodeWord(query);
+  if (encoded && !encoded.startsWith('[')) {
+    const b60 = timeToBase60(encoded);
+    const ph = getPhonetics(query);
+    return {
+      title: `📖 Từ Tiếng Việt: <b style="color:#fff; font-size:14px;">"${query}"</b> ➔ Mã Base60: <span style="color:#00ff66; font-size:16px; font-weight:bold; background:#002200; padding:2px 7px; border:1px solid #00ff66; border-radius:3px;">${b60}</span>`,
+      html: `
+        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; font-size:12.5px;">
+          <span>Mã 6 Số: <b style="color:#00ffff;">${encoded}</b></span>
+          <span>Phụ âm: <b style="color:#ffaa00;">${ph.consonant || 'Ø'}</b></span>
+          <span>Vần: <b style="color:#ffea00;">${ph.rhyme}</b></span>
+          <span>Dấu: <b style="color:#ff55ff;">${TONE_NAMES[ph.tone]}</b></span>
+          <button class="cyber-btn-small" style="background:#00ffcc; color:#000; border:none; padding:3px 9px; cursor:pointer; font-weight:bold; border-radius:3px;" onclick="window.jumpToDictionary({ word: '${query}' })">🔍 Xem trong Từ Điển</button>
+        </div>
+      `
+    };
+  }
+
+  // 6. Check if Base60 code (length 3)
+  if (query.length === 3) {
+    const decoded = decodeWord(base60ToTime(query));
+    if (decoded && !decoded.startsWith('[ERR') && !decoded.startsWith('[')) {
+      return {
+        title: `🔐 Mã Base60: <b style="color:#00ff66; font-size:15px;">"${query}"</b> ➔ Từ Tiếng Việt: <span style="color:#fff; font-size:16px; font-weight:bold; background:#002211; padding:2px 7px; border:1px solid #00ffcc; border-radius:3px;">${decoded}</span>`,
+        html: `
+          <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; font-size:12.5px;">
+            <span>Mã 6 số: <b style="color:#00ffff;">${base60ToTime(query)}</b></span>
+            <button class="cyber-btn-small" style="background:#00ffcc; color:#000; border:none; padding:3px 9px; cursor:pointer; font-weight:bold; border-radius:3px;" onclick="window.jumpToDictionary({ word: '${decoded}' })">🔍 Xem trong Từ Điển</button>
+          </div>
+        `
+      };
+    }
+  }
+
+  return null;
+}
+
+function initSmartOmnibox() {
+  const input = document.getElementById('smart-omnibox-input');
+  const resultDiv = document.getElementById('smart-omnibox-result');
+  const btnClear = document.getElementById('btn-clear-omnibox');
+
+  if (!input || !resultDiv) return;
+
+  const handleInput = () => {
+    const val = input.value.trim();
+    if (btnClear) btnClear.style.display = val ? 'inline-block' : 'none';
+
+    if (!val) {
+      resultDiv.style.display = 'none';
+      resultDiv.innerHTML = '';
+      return;
+    }
+
+    const res = evaluateOmnibox(val);
+    if (res) {
+      resultDiv.innerHTML = `
+        <div style="color:#00ffcc; font-weight:bold; font-size:13px; margin-bottom:6px;">${res.title}</div>
+        <div>${res.html}</div>
+      `;
+      resultDiv.style.display = 'block';
+    } else {
+      resultDiv.style.display = 'none';
+    }
+  };
+
+  input.addEventListener('input', handleInput);
+  if (btnClear) {
+    btnClear.addEventListener('click', () => {
+      input.value = '';
+      handleInput();
+      input.focus();
+    });
+  }
+}
+
 function checkUrlParams() {
   const params = new URLSearchParams(window.location.search);
   const rhyme = params.get('rhyme');
@@ -711,5 +920,6 @@ function checkUrlParams() {
   });
 
   renderDictTable();
+  initSmartOmnibox();
   checkUrlParams();
 });
