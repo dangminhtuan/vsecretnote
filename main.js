@@ -2988,23 +2988,67 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
 (function() {
   const LOOKAHEAD_MINUTES = 3; // Dò trước 3 phút
 
+  const HOLY_HOUR_CODES = {
+    // 1. Trục 24 giờ kép (HH == MM)
+    '0000': '000005', // cạ
+    '0101': '010123', // phạc
+    '0202': '020205', // gạch
+    '0303': '030320', // tài
+    '0404': '040429', // thiệt
+    '0505': '050520', // tràn
+    '0606': '060627', // xỉn
+    '0707': '070700', // hôn
+    '0808': '080801', // vú
+    '0909': '090900', // dâm
+    '1010': '101001', // mút (mms)
+    '1111': '111105', // chịch
+    '1212': '121200', // rên
+    '1313': '131301', // sướng
+    '1414': '141401', // nứng
+    '1515': '151501', // bướm
+    '1616': '161601', // liếm
+    '1717': '171700', // chim
+    '1818': '181802', // sờ
+    '1919': '191900', // ôm
+    '2020': '202005', // ngực
+    '2121': '212101', // nhấp (yys)
+    '2222': '222202', // lồn
+    '2323': '232305', // nghạnh
+
+    // 2. Thế số Đảo / Gánh (Mirror)
+    '0609': '060907', // khít (KDS)
+    '0906': '090605', // dạng
+    '1221': '122105', // rập
+    '2112': '211208', // nhoài
+    '1331': '133100', // săm
+    '1441': '144104', // nẫu
+    '0110': '011001', // đút (dms)
+    '0440': '044023', // thật
+    '0550': '055000', // kê
+
+    // 3. Thế số Sảnh Tiến (Straight)
+    '0123': '012317', // được
+    '1234': '123407', // rớt (r3S)
+    '2345': '234503', // nghẻm
+    '0234': '023423', // quặp
+    '0345': '034501', // ghém
+    '0012': '001214', // cuồng
+
+    // 4. Thế số Cặp Đôi (Pairs)
+    '1122': '112202', // chồn
+    '2211': '221101', // lích (lick)
+    '1020': '102007', // móp (liên tưởng bóp)
+    '2010': '201012', // nguôi
+    '0816': '081608'  // vòi
+  };
+
   function isSpecialTime(h, m) {
     const hh = String(h).padStart(2, '0');
     const mm = String(m).padStart(2, '0');
-
-    // Lặp đôi: 07:07, 11:11, 13:13 (hh === mm)
-    if (hh === mm) return { type: 'lặp', label: `${hh}:${mm}` };
-
-    // Lặp chéo: 11:22, 11:33, 22:11 (mỗi nhóm tự có chữ số lặp đôi)
-    if (hh[0] === hh[1] && mm[0] === mm[1]) return { type: 'lặp', label: `${hh}:${mm}` };
-
-    // Đảo: 13:31, 12:21
-    if (hh === mm.split('').reverse().join('')) return { type: 'đảo', label: `${hh}:${mm}` };
-
-    // Tiến: 01:23, 12:34
-    const digits = [hh[0], hh[1], mm[0], mm[1]].map(Number);
-    if (digits[1] === digits[0]+1 && digits[2] === digits[0]+2 && digits[3] === digits[0]+3) return { type: 'tiến', label: `${hh}:${mm}` };
-
+    const code = `${hh}${mm}`;
+    if (HOLY_HOUR_CODES[code]) {
+      return { type: 'thiêng', label: `${hh}:${mm}`, code };
+    }
     return null;
   }
 
@@ -3061,7 +3105,6 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
       if (choicesEl && choicesEl.style.display !== 'none') {
         choicesEl.style.display = 'none';
         if (actionsEl) actionsEl.style.display = 'flex';
-        // Force update UI lại
         const d = new Date();
         const fh = d.getHours(), fm = d.getMinutes();
         const code = String(fh).padStart(2, '0') + String(fm).padStart(2, '0');
@@ -3072,25 +3115,21 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
         return;
       }
 
-      // Xác định giờ thiêng mục tiêu
+      // Xác định giờ thiêng mục tiêu từ danh sách chọn lọc HOLY_HOUR_CODES
+      const holyTimes = Object.keys(HOLY_HOUR_CODES).sort();
       let targetCode = display.dataset.timecode;
       const d = new Date();
       const currentCode = String(d.getHours()).padStart(2, '0') + String(d.getMinutes()).padStart(2, '0');
       
-      // Nếu đang là 🤍 (trái tim) => Tính giờ thiêng gần nhất trong TƯƠNG LAI
-              // Nếu đang là trái tim => Tính giờ thiêng gần nhất
-        if (display.innerHTML.includes('dY ?') || !targetCode) {
-           const futureTimes = Object.keys(HOLY_HOUR_CODES).sort();
-           const nextTime = futureTimes.find(t => t > currentCode) || futureTimes[0];
-           targetCode = nextTime;
-           display.dataset.timecode = targetCode;
-           display.innerHTML = `<span style="font-size:11px;color:#0f0;font-weight:bold;">dY ? ${targetCode.substring(0,2)}:${targetCode.substring(2)}=?</span>`;
-        } else {
-           display.innerHTML = `<span style="font-size:11px;color:#ff0;font-weight:bold;">⭐ ${targetCode.substring(0,2)}:${targetCode.substring(2)}=?</span>`;
-        }
-  
-        // Mở quiz
-        const correctFullCode = typeof HOLY_HOUR_CODES !== 'undefined' && HOLY_HOUR_CODES[targetCode] ? HOLY_HOUR_CODES[targetCode] : targetCode + '00';
+      if (!targetCode || !HOLY_HOUR_CODES[targetCode]) {
+        targetCode = holyTimes.find(t => t >= currentCode) || holyTimes[0];
+        display.dataset.timecode = targetCode;
+      }
+
+      display.innerHTML = `<span style="font-size:11px;color:#ff0;font-weight:bold;">⭐ ${targetCode.substring(0,2)}:${targetCode.substring(2)}=?</span>`;
+
+      // Mở quiz với mã 6 số chuẩn xác 100%
+      const correctFullCode = HOLY_HOUR_CODES[targetCode];
       const correctB60 = timeToBase60(correctFullCode);
       const wrongB60 = generateWrongAnswers(correctB60);
       const options = [correctB60, ...wrongB60].sort(() => Math.random() - 0.5);
@@ -3105,68 +3144,16 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     });
   }
 
-  
-  const HOLY_HOUR_CODES = {
-    // 1. Trục 24 giờ kép (HH == MM)
-    '0000': '000005', // cạ
-    '0101': '010123', // phạc
-    '0202': '020205', // gạch
-    '0303': '030320', // tài
-    '0404': '040429', // thiệt
-    '0505': '050520', // tràn
-    '0606': '060627', // xỉn
-    '0707': '070700', // hôn
-    '0808': '080801', // vú
-    '0909': '090900', // dâm
-    '1010': '101001', // mút (mms)
-    '1111': '111105', // chịch
-    '1212': '121200', // rên
-    '1313': '131301', // sướng
-    '1414': '141401', // nứng
-    '1515': '151501', // bướm
-    '1616': '161601', // liếm
-    '1717': '171700', // chim
-    '1818': '181802', // sờ
-    '1919': '191900', // ôm
-    '2020': '202005', // ngực
-    '2121': '212101', // nhấp (yys)
-    '2222': '222202', // lồn
-    '2323': '232305', // nghạnh
-
-    // 2. Thế số Đảo / Gánh (Mirror)
-    '0609': '060907', // khít (KDS)
-    '0906': '090605', // dạng
-    '1221': '122105', // rập
-    '2112': '211208', // nhoài
-    '1331': '133100', // săm
-    '1441': '144104', // nẫu
-    '0110': '011001', // đút (dms)
-    '0440': '044023', // thật
-    '0550': '055000', // kê
-
-    // 3. Thế số Sảnh Tiến (Straight)
-    '0123': '012317', // được
-    '1234': '123407', // rớt (r3S)
-    '2345': '234503', // nghẻm
-    '0234': '023423', // quặp
-    '0345': '034501', // ghém
-    '0012': '001214', // cuồng
-
-    // 4. Thế số Cặp Đôi (Pairs)
-    '1122': '112202', // chồn
-    '2211': '221101', // lích (lick)
-    '1020': '102007', // móp (liên tưởng bóp)
-    '2010': '201012', // nguôi
-    '0816': '081608'  // vòi
-  };
-
   function getSpecialTimeInfo(fh, fm) {
     const hh2 = String(fh).padStart(2, '0');
     const mm2 = String(fm).padStart(2, '0');
     const timeCode = `${hh2}${mm2}`;
+    const fullCode = HOLY_HOUR_CODES[timeCode];
     let decodedWord = '', b60 = '';
-    try { decodedWord = decodeWord(timeCode) || ''; } catch(e) {}
-    try { b60 = timeToBase60(timeCode) || ''; } catch(e) {}
+    if (fullCode) {
+      try { decodedWord = decodeWord(fullCode) || ''; } catch(e) {}
+      try { b60 = timeToBase60(fullCode) || ''; } catch(e) {}
+    }
     const validWord = decodedWord && !decodedWord.includes('?') && !decodedWord.startsWith('[');
     return { timeCode, decodedWord: validWord ? decodedWord : '', b60 };
   }

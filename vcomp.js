@@ -182,11 +182,6 @@ export const decodeWord = (code) => {
   
   if (!rhyme && consonant === '') return '[ERR:RHYME]';
   
-  let decodedS1 = s1;
-  if (/[cpt]$|ch$/.test(rhyme)) {
-    if (decodedS1 === 0) decodedS1 = 1;
-  }
-
   let prefix = consonant;
   if (consonant === 'gi' && rhyme) {
     if (rhyme.startsWith('iê')) {
@@ -196,7 +191,7 @@ export const decodeWord = (code) => {
     }
   }
 
-  const tonedRhyme = applyTone(rhyme || '', decodedS1);
+  const tonedRhyme = applyTone(rhyme || '', s1);
   return prefix + tonedRhyme;
 };
 
