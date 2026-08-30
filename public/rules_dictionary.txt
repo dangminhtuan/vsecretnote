@@ -1,0 +1,42 @@
+# Gboard Dictionary version:2
+# Gboard Dictionary format:shortcut	word	language_tag	pos_tag
+b1	01 [B1] z s f r x j (Telex thường (z s f r x j))		
+b2	02 [B2] Z S F R X J (Telex HOA (Z S F R X J))		
+b3	03 [B3] a e i u w y (Nguyên âm thường (a e i u w y))		
+b4	04 [B4] 0 1 2 3 4 5 (VNI 1 (0 1 2 3 4 5))		
+b5	05 [B5] 6 7 8 9 B C (VNI 2 (6 7 8 9 B C))		
+b6	06 [B6] A E I U W Y (Nguyên âm HOA (A E I U W Y))		
+cm	07 [PA-Chính] 24 PA Chính: c, đ➔d, g, gh➔G, gi➔j, k, kh➔K, h, v, d➔D, m, ch➔C, r, s, n, b, l, ch➔Q, s➔S, Ø➔z, ng➔N, nh➔y, l➔L, ngh➔W		
+cp	08 [PA-Phụ] 7 PA Phụ: p, ph➔f, qu➔q, t, th➔T, tr➔R, x		
+dz	09 [Dấu-Ngang] z Z a 0 6 A (B1..B6)		
+ds	10 [Dấu-Sắc] s S e 1 7 E (B1..B6)		
+df	11 [Dấu-Huyền] f F i 2 8 I (B1..B6)		
+dr	12 [Dấu-Hỏi] r R u 3 9 U (B1..B6)		
+dx	13 [Dấu-Ngã] x X w 4 B W (B1..B6)		
+dj	14 [Dấu-Nặng] j J y 5 C Y (B1..B6)		
+av	15 [A] Vần: a: êt/-/- | A: âu/oap/uênh | Dấu: a (B3 Ngang), A (B6 Ngang)		
+b	16 [B] PA: b | Vần: b: ươm/oe/uy | B: ây/oat/uya | Dấu: B (B5 Ngã)		
+c	17 [C] PA: c, ch➔C | Vần: c: a/iêc/ua | C: ich/oa/uôn | Dấu: C (B5 Nặng)		
+d	18 [D] PA: đ➔d, d➔D | Vần: d: ac/iên/uât | D: âm/it/uôc		
+ev	19 [E] Vần: e: êu/-/- | E: e/oay/uych | Dấu: e (B3 Sắc), E (B6 Sắc)		
+f	20 [F] PA: ph➔f | Vần: f: ap/ôc/ươn | F: ec/oeo/uyn | Dấu: f (B1 Huyền), F (B2 Huyền)		
+g	21 [G] PA: g, gh➔G | Vần: g: ach/iêng/uc | G: ai/iêp/uê		
+h	22 [H] PA: h | Vần: h: ôn/iêu/uân | H: em/oem/uynh		
+iv	23 [I] Vần: i: i/-/- | I: en/oen/uyp | Dấu: i (B3 Huyền), I (B6 Huyền)		
+j	24 [J] PA: gi➔j | Vần: j: am/iêt/ui | J: eo/oet/uyt | Dấu: j (B1 Nặng), J (B2 Nặng)		
+k	25 [K] PA: k, kh➔K | Vần: k: an/iu/um | K: ang/in/un		
+l	26 [L] PA: l, l➔L | Vần: l: iêm/oi/uyên | L: ôn/oăn/ưn		
+m	27 [M] PA: m | Vần: m: ut/inh/uôi | M: ep/ooc/uyu		
+n	28 [N] PA: n, ng➔N | Vần: n: ưng/oc/up | N: ưc/op/ưi		
+p	29 [P] PA: p | Vần: p: ao/ô/ươi | P: et/oong/yn		
+q	30 [Q] PA: ch➔Q, qu➔q | Vần: q: at/ôi/ươp | Q: im/om/uyêt		
+r	31 [R] PA: r, tr➔R | Vần: r: ên/oai/uông | R: ă/ôt/ưu | Dấu: r (B1 Hỏi), R (B2 Hỏi)		
+s	32 [S] PA: s, s➔S | Vần: s: ương/oan/uôt | S: ơ/on/ư | Dấu: s (B1 Sắc), S (B2 Sắc)		
+t	33 [T] PA: t, th➔T | Vần: t: au/ông/ươt | T: ay/ôp/ưt		
+uv	34 [U] Vần: u: ia/-/- | U: ê/oăc/ynh | Dấu: u (B3 Hỏi), U (B6 Hỏi)		
+v	35 [V] PA: v | Vần: v: u/ip/ung | V: êch/oăm/yt		
+w	36 [W] PA: ngh➔W | Vần: w: -/-/- | W: anh/oăng/ươc | Dấu: w (B3 Ngã), W (B6 Ngã)		
+x	37 [X] PA: x | Vần: x: ăc/ơi/y | X: êm/oăt/yêng | Dấu: x (B1 Ngã), X (B2 Ngã)		
+yv	38 [Y] PA: nh➔y | Vần: y: âp/ot/ưm | Y: ênh/iê/ăk | Dấu: y (B3 Nặng), Y (B6 Nặng)		
+z	39 [Z] PA: Ø➔z | Vần: z: ôm/ong/ưa | Z: êp/eng/n | Dấu: z (B1 Ngang), Z (B2 Ngang)		
+ov	40 [Vần O] Vần 'o' ➔ Mã: 4 (Bảng 2, Index 35) | Ví dụ: cho ➔ C4Z, bò ➔ b4F, cỏ ➔ c4R, to ➔ T4Z		
