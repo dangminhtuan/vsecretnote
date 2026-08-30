@@ -714,55 +714,75 @@ function evaluateOmnibox(query) {
     };
   }
 
-  // 2. Check Consonant tables: c1, c2
-  if (qLower === 'c1') {
+  // 2. Check Consonant tables: cm / c1, cp / c2
+  if (qLower === 'cm' || qLower === 'c1' || qLower === 'pa1') {
     const c1Clean = CONSONANTS_BASE.map((c, idx) => {
       const code = BASE60_HH[idx];
       if (!c) return `Ø➔<b>${code}</b>`;
       return c === code ? `<b>${c}</b>` : `${c}➔<b>${code}</b>`;
     }).join(', ');
     return {
-      title: '📋 24 Phụ Âm Chính (Bảng c1)',
+      title: '📋 24 Phụ Âm Chính (Bảng cm / c1)',
       html: `<div style="line-height:1.7; color:#eee; font-size:12.5px;">${c1Clean}</div>`
     };
   }
 
-  if (qLower === 'c2') {
+  if (qLower === 'cp' || qLower === 'cp2' || qLower === 'c2' || qLower === 'pa2') {
     const c2Clean = CONSONANTS_EXTRA.filter(c => c).map((c, idx) => {
       const code = BASE60_HH_EXTRA[idx];
       return c === code ? `<b>${c}</b>` : `${c}➔<b>${code}</b>`;
     }).join(', ');
     return {
-      title: '📋 7 Phụ Âm Phụ (Bảng c2)',
+      title: '📋 7 Phụ Âm Phụ (Bảng cp / c2)',
       html: `<div style="line-height:1.7; color:#eee; font-size:13px;">${c2Clean}</div>`
     };
   }
 
-  // 3. Check Tone symbols: =, /, \, ?, ~, .
+  // 3. Check Tone shortcuts: dz, ds, df, dr, dx, dj and symbols (= / \ ? ~ .)
   const toneSymbolsMap = {
-    '=': { name: 'Dấu Ngang (=)', idx: 0 },
-    '/': { name: 'Dấu Sắc (/)', idx: 1 },
-    '\\': { name: 'Dấu Huyền (\\)', idx: 2 },
-    '?': { name: 'Dấu Hỏi (?)', idx: 3 },
-    '~': { name: 'Dấu Ngã (~)', idx: 4 },
-    '.': { name: 'Dấu Nặng (.)', idx: 5 }
+    'dz': { name: 'Dấu Ngang (0)', idx: 0 },
+    '=': { name: 'Dấu Ngang (0)', idx: 0 },
+    'ds': { name: 'Dấu Sắc (1)', idx: 1 },
+    '/': { name: 'Dấu Sắc (1)', idx: 1 },
+    'df': { name: 'Dấu Huyền (2)', idx: 2 },
+    '\\': { name: 'Dấu Huyền (2)', idx: 2 },
+    'dr': { name: 'Dấu Hỏi (3)', idx: 3 },
+    '?': { name: 'Dấu Hỏi (3)', idx: 3 },
+    'dx': { name: 'Dấu Ngã (4)', idx: 4 },
+    '~': { name: 'Dấu Ngã (4)', idx: 4 },
+    'dj': { name: 'Dấu Nặng (5)', idx: 5 },
+    '.': { name: 'Dấu Nặng (5)', idx: 5 }
   };
-  if (toneSymbolsMap[query]) {
-    const { name, idx } = toneSymbolsMap[query];
+  if (toneSymbolsMap[qLower] || toneSymbolsMap[query]) {
+    const { name, idx } = toneSymbolsMap[qLower] || toneSymbolsMap[query];
     const codes = [];
     for (let s2 = 0; s2 < 6; s2++) {
       codes.push(`B${s2+1}: <b>${BASE60_SS[s2 * 6 + idx]}</b>`);
     }
     return {
-      title: `⚡ ${name} ở 6 Bảng Mã`,
+      title: `⚡ ${name} ở 6 Bảng Mã (Shortcut: d + telex)`,
       html: `<div style="display:flex; gap:8px; flex-wrap:wrap; font-size:12.5px;">${codes.map(c => `<span style="padding:3px 8px; background:#002211; border:1px solid #00ffcc; border-radius:4px;">${c}</span>`).join('')}</div>`
     };
   }
 
-  // 4. Check Single Letter: a-z / A-Z
-  if (/^[a-zA-Z]$/.test(query)) {
-    const char = query.toLowerCase();
-    const upper = query.toUpperCase();
+  // 4. Check Vowel/Letter Shortcuts: av, ev, iv, uv, yv or single letters
+  let targetChar = null;
+  if (/^[aeiuy]v$/i.test(query)) {
+    targetChar = query[0].toLowerCase();
+  } else if (/^[a-z]$/i.test(query)) {
+    targetChar = query.toLowerCase();
+  }
+
+  if (targetChar) {
+    if (targetChar === 'o') {
+      return {
+        title: '🚫 Ký tự [ O / o ] trong Base60',
+        html: '<div style="color:#ffaa00; font-size:12.5px;">Chữ <b>O/o</b> đã bị loại trừ khỏi hệ thống Base60 để tránh nhầm lẫn tuyệt đối với <b>Số 0</b>!</div>'
+      };
+    }
+
+    const char = targetChar;
+    const upper = char.toUpperCase();
 
     // PA
     const paList = [];
