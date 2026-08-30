@@ -40,3 +40,13 @@ x	37 [X] PA: x | Vần: x: ăc/ơi/y | X: êm/oăt/yêng | Dấu: x (B1 Ngã), X
 yv	38 [Y] PA: nh➔y | Vần: y: âp/ot/ưm | Y: ênh/iê/ăk | Dấu: y (B3 Nặng), Y (B6 Nặng)		
 z	39 [Z] PA: Ø➔z | Vần: z: ôm/ong/ưa | Z: êp/eng/n | Dấu: z (B1 Ngang), Z (B2 Ngang)		
 ov	40 [Vần O] Vần 'o' ➔ Mã: 4 (Bảng 2, Index 35) | Ví dụ: cho ➔ C4Z, bò ➔ b4F, cỏ ➔ c4R, to ➔ T4Z		
+0	41 [Số 0] Vần: 0: ăm/ơm/yêm | Dấu: 0 (B4 Ngang)		
+1	42 [Số 1] Vần: 1: ăn/ơn/yên | Dấu: 1 (B4 Sắc)		
+2	43 [Số 2] Vần: 2: ăng/ơp/yêt | Dấu: 2 (B4 Huyền)		
+3	44 [Số 3] Vần: 3: ăp/ơt/yêu | Dấu: 3 (B4 Hỏi)		
+4	45 [Số 4] Vần: 4: ăt/o/ươu | Dấu: 4 (B4 Ngã)		
+5	46 [Số 5] Vần: 5: â/oac/uôm | Dấu: 5 (B4 Nặng)		
+6	47 [Số 6] Vần: 6: âc/oach/uơ | Dấu: 6 (B5 Ngang)		
+7	48 [Số 7] Vần: 7: ân/oam/uâng | Dấu: 7 (B5 Sắc)		
+8	49 [Số 8] Vần: 8: âng/oang/uây | Dấu: 8 (B5 Huyền)		
+9	50 [Số 9] Vần: 9: ât/oanh/uêch | Dấu: 9 (B5 Hỏi)		

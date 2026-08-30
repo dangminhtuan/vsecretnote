@@ -858,7 +858,42 @@ function evaluateOmnibox(query) {
     };
   }
 
-  // 5. Check if Vietnamese word
+  // 5. Check Single Digit: 0-9 or 0v-9v
+  let targetDigit = null;
+  if (/^[0-9]v$/i.test(query)) {
+    targetDigit = query[0];
+  } else if (/^[0-9]$/.test(query)) {
+    targetDigit = query;
+  }
+
+  if (targetDigit !== null) {
+    const d = targetDigit;
+    const mmIdx = BASE60_MAPPING.indexOf(d);
+    const r1 = RHYMES_BASE[mmIdx] || '-';
+    const r2 = RHYMES_EXTRA_1[mmIdx] || '-';
+    const r3 = RHYMES_EXTRA_2[mmIdx] || '-';
+
+    const toneList = [];
+    const toneNames = ['Ngang', 'Sắc', 'Huyền', 'Hỏi', 'Ngã', 'Nặng'];
+    const ssIdx = BASE60_SS.indexOf(d);
+    if (ssIdx !== -1 && ssIdx < 36) {
+      const bIdx = Math.floor(ssIdx / 6) + 1;
+      const tName = toneNames[ssIdx % 6];
+      toneList.push(`<b>${d}</b> (B${bIdx} ${tName})`);
+    }
+
+    return {
+      title: `🔢 Chữ số [ ${d} ] trong Base60 (Vị trí Phút mm=${mmIdx})`,
+      html: `
+        <div style="display:flex; flex-direction:column; gap:5px; font-size:12.5px;">
+          <div><span style="color:#00ffcc; font-weight:bold;">Vần (B1/B2/B3):</span> <b>${d}</b>: ${r1} / ${r2} / ${r3}</div>
+          ${toneList.length > 0 ? `<div><span style="color:#ff55ff; font-weight:bold;">Dấu thanh:</span> ${toneList.join(', ')}</div>` : ''}
+        </div>
+      `
+    };
+  }
+
+  // 6. Check if Vietnamese word
   const encoded = encodeWord(query);
   if (encoded && !encoded.startsWith('[')) {
     const b60 = timeToBase60(encoded);
