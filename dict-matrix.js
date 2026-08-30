@@ -741,16 +741,24 @@ function evaluateOmnibox(query) {
   // 3. Check Tone shortcuts: dz, ds, df, dr, dx, dj and symbols (= / \ ? ~ .)
   const toneSymbolsMap = {
     'dz': { name: 'Dấu Ngang (0)', idx: 0 },
+    'dn': { name: 'Dấu Ngang (0)', idx: 0 },
+    'd0': { name: 'Dấu Ngang (0)', idx: 0 },
     '=': { name: 'Dấu Ngang (0)', idx: 0 },
     'ds': { name: 'Dấu Sắc (1)', idx: 1 },
+    'd1': { name: 'Dấu Sắc (1)', idx: 1 },
     '/': { name: 'Dấu Sắc (1)', idx: 1 },
     'df': { name: 'Dấu Huyền (2)', idx: 2 },
+    'dh': { name: 'Dấu Huyền (2)', idx: 2 },
+    'd2': { name: 'Dấu Huyền (2)', idx: 2 },
     '\\': { name: 'Dấu Huyền (2)', idx: 2 },
     'dr': { name: 'Dấu Hỏi (3)', idx: 3 },
+    'd3': { name: 'Dấu Hỏi (3)', idx: 3 },
     '?': { name: 'Dấu Hỏi (3)', idx: 3 },
     'dx': { name: 'Dấu Ngã (4)', idx: 4 },
+    'd4': { name: 'Dấu Ngã (4)', idx: 4 },
     '~': { name: 'Dấu Ngã (4)', idx: 4 },
     'dj': { name: 'Dấu Nặng (5)', idx: 5 },
+    'd5': { name: 'Dấu Nặng (5)', idx: 5 },
     '.': { name: 'Dấu Nặng (5)', idx: 5 }
   };
   if (toneSymbolsMap[qLower] || toneSymbolsMap[query]) {
