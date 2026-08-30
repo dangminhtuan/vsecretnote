@@ -188,15 +188,49 @@
         
         <div class="dl-dropdown">
           <button class="tab-btn" id="dl-btn" onclick="document.getElementById('dl-menu').classList.toggle('show'); this.classList.toggle('active')">📥 TẢI TỪ ĐIỂN GBOARD ▾</button>
-          <div class="dl-content" id="dl-menu">
-            <a href="/PersonalDictionary_1Way.zip" download="PersonalDictionary_1Way.zip" class="dl-item" onclick="document.getElementById('dl-menu').classList.remove('show'); document.getElementById('dl-btn').classList.remove('active')">
-              <span class="dl-title">🛡️ Bản 1 Chiều (Chỉ Dịch Xuôi)</span>
-              <span class="dl-desc">Gõ Mã ➔ Từ. Không làm ảnh hưởng đến thói quen gõ tiếng Việt hàng ngày.</span>
-            </a>
-            <a href="/PersonalDictionary_2Way.zip" download="PersonalDictionary_2Way.zip" class="dl-item" onclick="document.getElementById('dl-menu').classList.remove('show'); document.getElementById('dl-btn').classList.remove('active')">
-              <span class="dl-title">⚔️ Bản 2 Chiều (Ép Phải Học)</span>
-              <span class="dl-desc">Gõ Từ ➔ Mã. Chủ động thay thế từ thường bằng mã Base60 để rèn luyện trí nhớ.</span>
-            </a>
+          <div class="dl-content" id="dl-menu" style="padding: 12px; color: #fff; min-width: 290px; box-sizing: border-box;">
+            <div style="font-weight: bold; margin-bottom: 10px; color: #38bdf8; text-align: left; font-size: 11.5px; border-bottom: 1px dashed #003315; padding-bottom: 6px;">⚙️ TÙY CHỌN MODULE TỰ CHỌN:</div>
+            
+            <div style="display: flex; flex-direction: column; gap: 8px; text-align: left; margin-bottom: 12px;">
+              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
+                <input type="checkbox" id="chk-r" checked style="margin-top: 3px; cursor: pointer;" />
+                <div>
+                  <strong style="color: #00ffcc; font-size: 11.5px;">[R] Quy tắc ma trận</strong>
+                  <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">~50 quy tắc ma trận học thuộc (Bảng dấu, Phụ âm, 10 số...)</span>
+                </div>
+              </label>
+
+              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
+                <input type="checkbox" id="chk-f" checked style="margin-top: 3px; cursor: pointer;" />
+                <div>
+                  <strong style="color: #00ffcc; font-size: 11.5px;">[F] Dịch xuôi (Base60 ➔ Từ)</strong>
+                  <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ mã Base60 sẽ gợi ý ra chữ tiếng Việt hàng ngày.</span>
+                </div>
+              </label>
+
+              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
+                <input type="checkbox" id="chk-b" style="margin-top: 3px; cursor: pointer;" />
+                <div>
+                  <strong style="color: #ffaa00; font-size: 11.5px;">[B] Dịch ngược (Từ ➔ Base60)</strong>
+                  <span style="display: block; font-size: 9.5px; color: #ffbb66; line-height: 1.3;">Ép học! Bàn phím tự động thế từ thường bằng mã Base60.</span>
+                </div>
+              </label>
+
+              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
+                <input type="checkbox" id="chk-l" checked style="margin-top: 3px; cursor: pointer;" />
+                <div>
+                  <strong style="color: #00ffcc; font-size: 11.5px;">[L] Học tập (Từ + 'l' ➔ Giải nghĩa)</strong>
+                  <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ thêm chữ l để hiện công thức giải nghĩa phím tắt (ví dụ: thànhl).</span>
+                </div>
+              </label>
+            </div>
+
+            <div style="border-top: 1px solid #003315; padding-top: 10px; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; width: 100%;">
+              <a href="#" id="dl-link" class="tab-btn" style="background: #38bdf8 !important; color: #000000 !important; border-color: #38bdf8 !important; text-decoration: none; width: 100%; justify-content: center; height: 36px; min-height: 36px; display: inline-flex;" download>
+                📥 TẢI TỪ ĐIỂN (.ZIP)
+              </a>
+              <span id="dl-filename" style="font-size: 9.5px; color: #888; text-align: center; font-family: monospace; display: block;">Gboard_Dict_R_F_L.zip</span>
+            </div>
           </div>
         </div>
 
@@ -349,7 +383,7 @@
     window.addEventListener('click', function(e) {
       const btn = document.getElementById('dl-btn');
       const menu = document.getElementById('dl-menu');
-      if (btn && menu && !btn.contains(e.target)) {
+      if (btn && menu && !btn.contains(e.target) && !menu.contains(e.target)) {
         menu.classList.remove('show');
         btn.classList.remove('active');
       }

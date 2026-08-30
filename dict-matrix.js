@@ -995,6 +995,43 @@ function checkUrlParams() {
     }
   });
 
+  // ==========================================
+  // DYNAMIC GBOARD DICTIONARY COMBINATIONS
+  // ==========================================
+  function updateGboardDownloadLink() {
+    const chkR = document.getElementById('chk-r');
+    const chkF = document.getElementById('chk-f');
+    const chkB = document.getElementById('chk-b');
+    const chkL = document.getElementById('chk-l');
+    if (!chkR || !chkF || !chkB || !chkL) return;
+
+    const activeKeys = [];
+    if (chkR.checked) activeKeys.push('R');
+    if (chkF.checked) activeKeys.push('F');
+    if (chkB.checked) activeKeys.push('B');
+    if (chkL.checked) activeKeys.push('L');
+
+    const activeStr = activeKeys.length > 0 ? activeKeys.join('_') : 'EMPTY';
+    const zipName = `Gboard_Dict_${activeStr}.zip`;
+
+    const dlLink = document.getElementById('dl-link');
+    const dlFilename = document.getElementById('dl-filename');
+    if (dlLink) {
+      dlLink.href = `/${zipName}`;
+      dlLink.download = zipName;
+    }
+    if (dlFilename) {
+      dlFilename.textContent = zipName;
+    }
+  }
+
+  ['chk-r', 'chk-f', 'chk-b', 'chk-l'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', updateGboardDownloadLink);
+  });
+  
+  // Chạy lần đầu khởi tạo
+  updateGboardDownloadLink();
+
   renderDictTable();
   initSmartOmnibox();
   checkUrlParams();
