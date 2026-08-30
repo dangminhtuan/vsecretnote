@@ -765,7 +765,20 @@ function evaluateOmnibox(query) {
     };
   }
 
-  // 4. Check Vowel/Letter Shortcuts: av, ev, iv, uv, yv or single letters
+  // 4. Check Vowel/Letter Shortcuts: av, ev, iv, uv, yv, ov or single letters
+  if (qLower === 'ov') {
+    return {
+      title: '📖 Vần [ O ] trong Tiếng Việt ➔ Mã Base60: 4',
+      html: `
+        <div style="font-size:12.5px; line-height:1.7; color:#eee;">
+          <div>• <b>Vần 'o'</b> nằm ở <b>Bảng 2 (Index 35)</b> ➔ Mã ký tự Base60 là: <b style="color:#00ffcc; font-size:15px;">4</b></div>
+          <div>• <b>Ví dụ:</b> <i>cho</i> ➔ <b style="color:#00ff66;">C4Z</b> | <i>bò</i> ➔ <b style="color:#00ff66;">b4F</b> | <i>cỏ</i> ➔ <b style="color:#00ff66;">c4R</b> | <i>to</i> ➔ <b style="color:#00ff66;">T4Z</b></div>
+          <div style="color:#aaa; font-size:11.5px;">(Lưu ý: Mặt chữ O/o không dùng trong Base60 để tránh nhầm với số 0).</div>
+        </div>
+      `
+    };
+  }
+
   let targetChar = null;
   if (/^[aeiuy]v$/i.test(query)) {
     targetChar = query[0].toLowerCase();
@@ -777,7 +790,7 @@ function evaluateOmnibox(query) {
     if (targetChar === 'o') {
       return {
         title: '🚫 Ký tự [ O / o ] trong Base60',
-        html: '<div style="color:#ffaa00; font-size:12.5px;">Chữ <b>O/o</b> đã bị loại trừ khỏi hệ thống Base60 để tránh nhầm lẫn tuyệt đối với <b>Số 0</b>!</div>'
+        html: '<div style="color:#ffaa00; font-size:12.5px;">Chữ <b>O/o</b> đã bị loại trừ khỏi hệ thống Base60 để tránh nhầm với <b>Số 0</b>! Để tra vần <i>o</i>, hãy gõ <b>ov</b>.</div>'
       };
     }
 

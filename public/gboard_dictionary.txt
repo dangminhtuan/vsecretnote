@@ -39,6 +39,7 @@ w	36 [W] PA: ngh➔W | Vần: w: -/-/- | W: anh/oăng/ươc | Dấu: w (B3 Ngã)
 x	37 [X] PA: x | Vần: x: ăc/ơi/y | X: êm/oăt/yêng | Dấu: x (B1 Ngã), X (B2 Ngã)		
 yv	38 [Y] PA: nh➔y | Vần: y: âp/ot/ưm | Y: ênh/iê/ăk | Dấu: y (B3 Nặng), Y (B6 Nặng)		
 z	39 [Z] PA: Ø➔z | Vần: z: ôm/ong/ưa | Z: êp/eng/n | Dấu: z (B1 Ngang), Z (B2 Ngang)		
+ov	40 [Vần O] Vần 'o' ➔ Mã: 4 (Bảng 2, Index 35) | Ví dụ: cho ➔ C4Z, bò ➔ b4F, cỏ ➔ c4R, to ➔ T4Z		
 vcf	và		
 ccu	của		
 c4S	có		
