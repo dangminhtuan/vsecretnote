@@ -55,6 +55,143 @@ function getPhonetics(word) {
   return { consonant, rhyme, tone };
 }
 
+// Helper: Strip all diacritics & tones
+function stripAllAccents(str) {
+  return str
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase();
+}
+
+// Helper: Vowel Telex table
+const VOWEL_TELEX = {
+  'á': { base: 'a', tone: 's' }, 'à': { base: 'a', tone: 'f' }, 'ả': { base: 'a', tone: 'r' }, 'ã': { base: 'a', tone: 'x' }, 'ạ': { base: 'a', tone: 'j' },
+  'ắ': { base: 'aw', tone: 's' }, 'ằ': { base: 'aw', tone: 'f' }, 'ẳ': { base: 'aw', tone: 'r' }, 'ẵ': { base: 'aw', tone: 'x' }, 'ặ': { base: 'aw', tone: 'j' }, 'ă': { base: 'aw', tone: '' },
+  'ấ': { base: 'aa', tone: 's' }, 'ầ': { base: 'aa', tone: 'f' }, 'ẩ': { base: 'aa', tone: 'r' }, 'ẫ': { base: 'aa', tone: 'x' }, 'ậ': { base: 'aa', tone: 'j' }, 'â': { base: 'aa', tone: '' },
+  'é': { base: 'e', tone: 's' }, 'è': { base: 'e', tone: 'f' }, 'ẻ': { base: 'e', tone: 'r' }, 'ẽ': { base: 'e', tone: 'x' }, 'ẹ': { base: 'e', tone: 'j' },
+  'ế': { base: 'ee', tone: 's' }, 'ề': { base: 'ee', tone: 'f' }, 'ể': { base: 'ee', tone: 'r' }, 'ễ': { base: 'ee', tone: 'x' }, 'ệ': { base: 'ee', tone: 'j' }, 'ê': { base: 'ee', tone: '' },
+  'í': { base: 'i', tone: 's' }, 'ì': { base: 'i', tone: 'f' }, 'ỉ': { base: 'i', tone: 'r' }, 'ĩ': { base: 'i', tone: 'x' }, 'ị': { base: 'i', tone: 'j' },
+  'ó': { base: 'o', tone: 's' }, 'ò': { base: 'o', tone: 'f' }, 'ỏ': { base: 'o', tone: 'r' }, 'õ': { base: 'o', tone: 'x' }, 'ọ': { base: 'o', tone: 'j' },
+  'ố': { base: 'oo', tone: 's' }, 'ồ': { base: 'oo', tone: 'f' }, 'ổ': { base: 'oo', tone: 'r' }, 'ỗ': { base: 'oo', tone: 'x' }, 'ộ': { base: 'oo', tone: 'j' }, 'ô': { base: 'oo', tone: '' },
+  'ớ': { base: 'ow', tone: 's' }, 'ờ': { base: 'ow', tone: 'f' }, 'ở': { base: 'ow', tone: 'r' }, 'ỡ': { base: 'ow', tone: 'x' }, 'ợ': { base: 'ow', tone: 'j' }, 'ơ': { base: 'ow', tone: '' },
+  'ú': { base: 'u', tone: 's' }, 'ù': { base: 'u', tone: 'f' }, 'ủ': { base: 'u', tone: 'r' }, 'ũ': { base: 'u', tone: 'x' }, 'ụ': { base: 'u', tone: 'j' },
+  'ứ': { base: 'uw', tone: 's' }, 'ừ': { base: 'uw', tone: 'f' }, 'ử': { base: 'uw', tone: 'r' }, 'ữ': { base: 'uw', tone: 'x' }, 'ự': { base: 'uw', tone: 'j' }, 'ư': { base: 'uw', tone: '' },
+  'ý': { base: 'y', tone: 's' }, 'ỳ': { base: 'y', tone: 'f' }, 'ỷ': { base: 'y', tone: 'r' }, 'ỹ': { base: 'y', tone: 'x' }, 'ỵ': { base: 'y', tone: 'j' },
+  'đ': { base: 'dd', tone: '' }
+};
+
+function toTelex(word) {
+  let tone = '';
+  let res = '';
+  for (let i = 0; i < word.length; i++) {
+    const ch = word[i].toLowerCase();
+    if (VOWEL_TELEX[ch]) {
+      res += VOWEL_TELEX[ch].base;
+      if (VOWEL_TELEX[ch].tone) tone = VOWEL_TELEX[ch].tone;
+    } else {
+      res += ch;
+    }
+  }
+  return res + tone;
+}
+
+// Helper: VNI tones
+const VNI_TONES = {
+  'á': 1, 'à': 2, 'ả': 3, 'ã': 4, 'ạ': 5,
+  'ắ': 1, 'ằ': 2, 'ẳ': 3, 'ẵ': 4, 'ặ': 5,
+  'ấ': 1, 'ầ': 2, 'ẩ': 3, 'ẫ': 4, 'ậ': 5,
+  'é': 1, 'è': 2, 'ẻ': 3, 'ẽ': 4, 'ẹ': 5,
+  'ế': 1, 'ề': 2, 'ể': 3, 'ễ': 4, 'ệ': 5,
+  'í': 1, 'ì': 2, 'ỉ': 3, 'ĩ': 4, 'ị': 5,
+  'ó': 1, 'ò': 2, 'ỏ': 3, 'õ': 4, 'ọ': 5,
+  'ố': 1, 'ồ': 2, 'ổ': 3, 'ỗ': 4, 'ộ': 5,
+  'ớ': 1, 'ờ': 2, 'ở': 3, 'ỡ': 4, 'ợ': 5,
+  'ú': 1, 'ù': 2, 'ủ': 3, 'ũ': 4, 'ụ': 5,
+  'ứ': 1, 'ừ': 2, 'ử': 3, 'ữ': 4, 'ự': 5,
+  'ý': 1, 'ỳ': 2, 'ỷ': 3, 'ỹ': 4, 'ỵ': 5
+};
+
+function toVniList(word) {
+  const w = word.toLowerCase();
+  let baseChars = '';
+  let hatNums = [];
+  let toneNum = 0;
+  let hasDd = false;
+
+  for (let i = 0; i < w.length; i++) {
+    const ch = w[i];
+    if (ch === 'đ') {
+      baseChars += 'd';
+      hasDd = true;
+    } else if (/[ăắằẳẵặ]/.test(ch)) {
+      baseChars += 'a';
+      hatNums.push(8);
+      if (VNI_TONES[ch]) toneNum = VNI_TONES[ch];
+    } else if (/[âấầẩẫậ]/.test(ch)) {
+      baseChars += 'a';
+      hatNums.push(6);
+      if (VNI_TONES[ch]) toneNum = VNI_TONES[ch];
+    } else if (/[êếềểễệ]/.test(ch)) {
+      baseChars += 'e';
+      hatNums.push(6);
+      if (VNI_TONES[ch]) toneNum = VNI_TONES[ch];
+    } else if (/[ôốồổỗộ]/.test(ch)) {
+      baseChars += 'o';
+      hatNums.push(6);
+      if (VNI_TONES[ch]) toneNum = VNI_TONES[ch];
+    } else if (/[ơớờởỡợ]/.test(ch)) {
+      baseChars += 'o';
+      hatNums.push(7);
+      if (VNI_TONES[ch]) toneNum = VNI_TONES[ch];
+    } else if (/[ưứừửữự]/.test(ch)) {
+      baseChars += 'u';
+      hatNums.push(7);
+      if (VNI_TONES[ch]) toneNum = VNI_TONES[ch];
+    } else if (VNI_TONES[ch]) {
+      const unaccentedVowel = ch.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      baseChars += unaccentedVowel;
+      toneNum = VNI_TONES[ch];
+    } else {
+      baseChars += ch;
+    }
+  }
+
+  const results = new Set();
+  let endNums = '';
+  if (hasDd) endNums += '9';
+  hatNums.forEach(n => endNums += n.toString());
+  if (toneNum) endNums += toneNum.toString();
+  if (endNums) results.add(baseChars + endNums);
+
+  if (hatNums.length > 1) {
+    const compactHats = [...new Set(hatNums)];
+    let compactNums = (hasDd ? '9' : '') + compactHats.join('') + (toneNum ? toneNum.toString() : '');
+    if (compactNums) results.add(baseChars + compactNums);
+  }
+
+  if (hasDd && toneNum) {
+    results.add(baseChars + '9' + toneNum);
+  }
+
+  if (toneNum && hatNums.length === 0 && !hasDd) {
+    results.add(baseChars + toneNum);
+  }
+
+  return Array.from(results);
+}
+
+function getRhymeBaseCode(rhymeStr) {
+  let idx = RHYMES_BASE.indexOf(rhymeStr);
+  if (idx !== -1) return BASE60_MAPPING[idx] + 'z';
+  idx = RHYMES_EXTRA_1.indexOf(rhymeStr);
+  if (idx !== -1) return BASE60_MAPPING[idx] + 'Z';
+  idx = RHYMES_EXTRA_2.indexOf(rhymeStr);
+  if (idx !== -1) return BASE60_MAPPING[idx] + 'a';
+  return '';
+}
+
 // Map key: `${rhyme}|${tone}|${groupKey}` -> array of { word, b60, ph }
 const wordCache = new Map();
 
@@ -893,7 +1030,7 @@ function evaluateOmnibox(query) {
     };
   }
 
-  // 6. Check if Vietnamese word
+  // 6. Check if Vietnamese word (with diacritics)
   const encoded = encodeWord(query);
   if (encoded && !encoded.startsWith('[')) {
     const b60 = timeToBase60(encoded);
@@ -912,7 +1049,7 @@ function evaluateOmnibox(query) {
     };
   }
 
-  // 6. Check if Base60 code (length 3)
+  // 7. Check if Base60 code (length 3)
   if (query.length === 3) {
     const decoded = decodeWord(base60ToTime(query));
     if (decoded && !decoded.startsWith('[ERR') && !decoded.startsWith('[')) {
@@ -926,6 +1063,74 @@ function evaluateOmnibox(query) {
         `
       };
     }
+  }
+
+  // 8. Check if Telex or VNI shortcut
+  for (const w of REAL_VIETNAMESE_WORDS) {
+    if (w === 'pết' || w === 'pềt') continue;
+    const tlx = toTelex(w);
+    const vniList = toVniList(w);
+    if (tlx === qLower || vniList.includes(qLower)) {
+      const enc = encodeWord(w);
+      if (enc && !enc.startsWith('[')) {
+        const b60 = timeToBase60(enc);
+        const matchType = tlx === qLower ? 'Telex' : 'VNI';
+        return {
+          title: `⚡ Tra cứu ${matchType}: <b style="color:#00ffcc; font-size:14px;">"${query}"</b> ➔ Từ: <b style="color:#fff;">"${w}"</b> | Mã Base60: <span style="color:#00ff66; font-size:16px; font-weight:bold; background:#002200; padding:2px 7px; border:1px solid #00ff66; border-radius:3px;">${b60}</span>`,
+          html: `
+            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; font-size:12.5px;">
+              <span>Gõ Telex: <b style="color:#38bdf8;">${tlx}</b></span>
+              <span>Gõ VNI: <b style="color:#38bdf8;">${vniList[0] || '-'}</b></span>
+              <button class="cyber-btn-small" style="background:#00ffcc; color:#000; border:none; padding:3px 9px; cursor:pointer; font-weight:bold; border-radius:3px;" onclick="window.jumpToDictionary({ word: '${w}' })">🔍 Xem trong Từ Điển</button>
+            </div>
+          `
+        };
+      }
+    }
+  }
+
+  // 9. Check if Unaccented Cluster (vd: muon, thanh, toan, duoc)
+  const matchedWords = [];
+  REAL_VIETNAMESE_WORDS.forEach(w => {
+    if (w === 'pết' || w === 'pềt') return;
+    if (stripAllAccents(w) === qLower) {
+      matchedWords.push(w);
+    }
+  });
+
+  if (matchedWords.length > 0) {
+    const rhymeMap = new Map();
+    const wordBadges = [];
+
+    matchedWords.forEach(w => {
+      const enc = encodeWord(w);
+      if (!enc || enc.startsWith('[')) return;
+      const b60 = timeToBase60(enc);
+      const ph = getPhonetics(w);
+      if (ph.rhyme && !rhymeMap.has(ph.rhyme)) {
+        const code = getRhymeBaseCode(ph.rhyme);
+        if (code) rhymeMap.set(ph.rhyme, code);
+      }
+      wordBadges.push(`<span style="background:#00150a; border:1px solid #004422; padding:2px 6px; border-radius:3px; cursor:pointer;" onclick="window.jumpToDictionary({ word: '${w}' })"><b style="color:#fff;">${w}</b> <span style="color:#00ff66; font-size:11px;">(${b60})</span></span>`);
+    });
+
+    const formulas = [];
+    rhymeMap.forEach((code, rhyme) => {
+      formulas.push(`<b style="color:#00ffcc;">${rhyme}</b>=<span style="color:#ffea00; font-weight:bold;">${code}</span>`);
+    });
+
+    return {
+      title: `🎓 Cụm Từ Không Dấu: <b style="color:#ffaa00; font-size:15px;">"${query}"</b> ➔ Công Thức Gốc: <span style="color:#00ffcc; font-size:14px; background:#002215; padding:3px 8px; border:1px solid #00ffcc; border-radius:3px;">${formulas.join(' &nbsp;|&nbsp; ') || 'Không xác định'}</span>`,
+      html: `
+        <div style="display:flex; flex-direction:column; gap:8px; font-size:12px;">
+          <div style="color:#aaa; font-size:11px;">💡 Nhẩm nhanh: Lấy mã vần ở trên ghép với dấu thanh bạn muốn (ở Bảng tương ứng) để ra mã Base60.</div>
+          <div style="display:flex; gap:6px; flex-wrap:wrap; align-items:center;">
+            <span style="color:#888;">Các từ trong cụm:</span>
+            ${wordBadges.join(' ')}
+          </div>
+        </div>
+      `
+    };
   }
 
   return null;
