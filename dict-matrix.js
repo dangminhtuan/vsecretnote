@@ -113,10 +113,10 @@ const VNI_TONES = {
   'ý': 1, 'ỳ': 2, 'ỷ': 3, 'ỹ': 4, 'ỵ': 5
 };
 
-function toVniList(word) {
+function toCanonicalVni(word) {
   const w = word.toLowerCase();
   let baseChars = '';
-  let hatNums = [];
+  let hatNum = 0;
   let toneNum = 0;
   let hasDd = false;
 
@@ -127,27 +127,27 @@ function toVniList(word) {
       hasDd = true;
     } else if (/[ăắằẳẵặ]/.test(ch)) {
       baseChars += 'a';
-      hatNums.push(8);
+      hatNum = 8;
       if (VNI_TONES[ch]) toneNum = VNI_TONES[ch];
     } else if (/[âấầẩẫậ]/.test(ch)) {
       baseChars += 'a';
-      hatNums.push(6);
+      hatNum = 6;
       if (VNI_TONES[ch]) toneNum = VNI_TONES[ch];
     } else if (/[êếềểễệ]/.test(ch)) {
       baseChars += 'e';
-      hatNums.push(6);
+      hatNum = 6;
       if (VNI_TONES[ch]) toneNum = VNI_TONES[ch];
     } else if (/[ôốồổỗộ]/.test(ch)) {
       baseChars += 'o';
-      hatNums.push(6);
+      hatNum = 6;
       if (VNI_TONES[ch]) toneNum = VNI_TONES[ch];
     } else if (/[ơớờởỡợ]/.test(ch)) {
       baseChars += 'o';
-      hatNums.push(7);
+      hatNum = 7;
       if (VNI_TONES[ch]) toneNum = VNI_TONES[ch];
     } else if (/[ưứừửữự]/.test(ch)) {
       baseChars += 'u';
-      hatNums.push(7);
+      hatNum = 7;
       if (VNI_TONES[ch]) toneNum = VNI_TONES[ch];
     } else if (VNI_TONES[ch]) {
       const unaccentedVowel = ch.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
@@ -158,28 +158,14 @@ function toVniList(word) {
     }
   }
 
-  const results = new Set();
-  let endNums = '';
-  if (hasDd) endNums += '9';
-  hatNums.forEach(n => endNums += n.toString());
-  if (toneNum) endNums += toneNum.toString();
-  if (endNums) results.add(baseChars + endNums);
+  if (!hatNum && !toneNum && !hasDd) return null;
 
-  if (hatNums.length > 1) {
-    const compactHats = [...new Set(hatNums)];
-    let compactNums = (hasDd ? '9' : '') + compactHats.join('') + (toneNum ? toneNum.toString() : '');
-    if (compactNums) results.add(baseChars + compactNums);
-  }
+  let suffix = '';
+  if (hasDd) suffix += '9';
+  if (hatNum) suffix += hatNum.toString();
+  if (toneNum) suffix += toneNum.toString();
 
-  if (hasDd && toneNum) {
-    results.add(baseChars + '9' + toneNum);
-  }
-
-  if (toneNum && hatNums.length === 0 && !hasDd) {
-    results.add(baseChars + toneNum);
-  }
-
-  return Array.from(results);
+  return baseChars + suffix;
 }
 
 function getRhymeBaseCode(rhymeStr) {
@@ -1069,10 +1055,10 @@ function evaluateOmnibox(query) {
   for (const w of REAL_VIETNAMESE_WORDS) {
     if (w === 'pết' || w === 'pềt') continue;
     const tlx = toTelex(w);
-    const vniList = toVniList(w);
+    const vni = toCanonicalVni(w);
     const unaccented = stripAllAccents(w);
-    // Chỉ khớp Telex nếu từ thực sự có phím dấu Telex
-    if ((tlx === qLower && tlx !== unaccented) || vniList.includes(qLower)) {
+    // Chỉ khớp Telex/VNI nếu từ thực sự có phím dấu
+    if ((tlx === qLower && tlx !== unaccented) || (vni && vni === qLower)) {
       const enc = encodeWord(w);
       if (enc && !enc.startsWith('[')) {
         const b60 = timeToBase60(enc);
@@ -1082,7 +1068,7 @@ function evaluateOmnibox(query) {
           html: `
             <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; font-size:12.5px;">
               <span>Gõ Telex: <b style="color:#38bdf8;">${tlx}</b></span>
-              <span>Gõ VNI: <b style="color:#38bdf8;">${vniList[0] || '-'}</b></span>
+              <span>Gõ VNI: <b style="color:#38bdf8;">${vni || '-'}</b></span>
               <button class="cyber-btn-small" style="background:#00ffcc; color:#000; border:none; padding:3px 9px; cursor:pointer; font-weight:bold; border-radius:3px;" onclick="window.jumpToDictionary({ word: '${w}' })">🔍 Xem trong Từ Điển</button>
             </div>
           `
