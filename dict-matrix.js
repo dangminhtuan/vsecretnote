@@ -1070,11 +1070,13 @@ function evaluateOmnibox(query) {
     if (w === 'pết' || w === 'pềt') continue;
     const tlx = toTelex(w);
     const vniList = toVniList(w);
-    if (tlx === qLower || vniList.includes(qLower)) {
+    const unaccented = stripAllAccents(w);
+    // Chỉ khớp Telex nếu từ thực sự có phím dấu Telex
+    if ((tlx === qLower && tlx !== unaccented) || vniList.includes(qLower)) {
       const enc = encodeWord(w);
       if (enc && !enc.startsWith('[')) {
         const b60 = timeToBase60(enc);
-        const matchType = tlx === qLower ? 'Telex' : 'VNI';
+        const matchType = (tlx === qLower && tlx !== unaccented) ? 'Telex' : 'VNI';
         return {
           title: `⚡ Tra cứu ${matchType}: <b style="color:#00ffcc; font-size:14px;">"${query}"</b> ➔ Từ: <b style="color:#fff;">"${w}"</b> | Mã Base60: <span style="color:#00ff66; font-size:16px; font-weight:bold; background:#002200; padding:2px 7px; border:1px solid #00ff66; border-radius:3px;">${b60}</span>`,
           html: `
@@ -1089,11 +1091,12 @@ function evaluateOmnibox(query) {
     }
   }
 
-  // 9. Check if Unaccented Cluster (vd: muon, thanh, toan, duoc)
+  // 9. Check if Unaccented Cluster (vd: muon, muonz, thanh, thanhz, xem, xemz)
+  const targetUnaccented = (qLower.endsWith('z') && qLower.length > 2) ? qLower.slice(0, -1) : qLower;
   const matchedWords = [];
   REAL_VIETNAMESE_WORDS.forEach(w => {
     if (w === 'pết' || w === 'pềt') return;
-    if (stripAllAccents(w) === qLower) {
+    if (stripAllAccents(w) === targetUnaccented || stripAllAccents(w) === qLower) {
       matchedWords.push(w);
     }
   });
