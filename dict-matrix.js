@@ -828,7 +828,7 @@ function evaluateOmnibox(query) {
       'B3: PA Chính + Vần B3 (Nguyên âm thường)',
       'B4: PA Phụ + Vần B1 (VNI 1: 0-5)',
       'B5: PA Phụ + Vần B2 (VNI 2: 6-9+BC)',
-      'B6: PA Phụ + Vần B3 (Nguyên âm HOA)'
+      'B6: PA Phụ + Vần B3 (Nguyên âm A, E, o, U, W, Y)'
     ];
     const toneLabels = ['0: Ngang', '1: Sắc', '2: Huyền', '3: Hỏi', '4: Ngã', '5: Nặng'];
     return {

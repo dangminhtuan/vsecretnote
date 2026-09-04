@@ -4353,7 +4353,7 @@ function initMnemonicTutor() {
     else if (s2 === 2) { toneMnemonic = `dấu <b>${toneName}</b> kiểu Nguyên âm (<b style="color:#ff55ff">${c3}</b>) ở Bảng 3`; toneTableLabel = `Dấu ${toneName} ➜ [ <b style="color:#ff55ff">${c3}</b> ] (Nguyên âm B3)`; }
     else if (s2 === 3) { toneMnemonic = `dấu <b>${toneName}</b> kiểu VNI (<b style="color:#ff55ff">${c3}</b>) cho PA phụ B1`; toneTableLabel = `Dấu ${toneName} ➜ [ <b style="color:#ff55ff">${c3}</b> ] (VNI B1)`; }
     else if (s2 === 4) { toneMnemonic = `dấu <b>${toneName}</b> kiểu VNI cao (<b style="color:#ff55ff">${c3}</b>) cho PA phụ B2`; toneTableLabel = `Dấu ${toneName} ➜ [ <b style="color:#ff55ff">${c3}</b> ] (VNI B2)`; }
-    else if (s2 === 5) { toneMnemonic = `dấu <b>${toneName}</b> kiểu Nguyên âm HOA (<b style="color:#ff55ff">${c3}</b>) cho PA phụ B3`; toneTableLabel = `Dấu ${toneName} ➜ [ <b style="color:#ff55ff">${c3}</b> ] (Nguyên âm HOA B3)`; }
+    else if (s2 === 5) { toneMnemonic = `dấu <b>${toneName}</b> kiểu Nguyên âm (A, E, o, U, W, Y) (<b style="color:#ff55ff">${c3}</b>) cho PA phụ B3`; toneTableLabel = `Dấu ${toneName} ➜ [ <b style="color:#ff55ff">${c3}</b> ] (Nguyên âm A, E, o, U, W, Y)`; }
 
     const consDesc = consonant === '' ? 'nguyên âm đầu (không có phụ âm)' : `phụ âm <b>"${consonant}"</b> mã là <b style="color:#00ffff">${c1}</b>`;
     const rhymeTableName = rhymeTable === 0 ? 'B1' : (rhymeTable === 1 ? 'B2' : 'B3');

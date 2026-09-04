@@ -5,12 +5,12 @@ b2	02 [B2] Z S F R X J (Telex HOA (Z S F R X J))
 b3	03 [B3] a e i u w y (Nguyên âm thường (a e i u w y))		
 b4	04 [B4] 0 1 2 3 4 5 (VNI 1 (0 1 2 3 4 5))		
 b5	05 [B5] 6 7 8 9 B C (VNI 2 (6 7 8 9 B C))		
-b6	06 [B6] A E I U W Y (Nguyên âm HOA (A E I U W Y))		
+b6	06 [B6] A E o U W Y (Nguyên âm A, E, o, U, W, Y)		
 cm	07 [PA-Chính] 24 PA Chính: c, đ➔d, g, gh➔G, gi➔j, k, kh➔K, h, v, d➔D, m, ch➔C, r, s, n, b, l, ch➔Q, s➔S, Ø➔z, ng➔N, nh➔y, l➔L, ngh➔W		
 cp	08 [PA-Phụ] 7 PA Phụ: p, ph➔f, qu➔q, t, th➔T, tr➔R, x		
 dz	09 [Dấu-Ngang] z Z a 0 6 A (B1..B6)		
 ds	10 [Dấu-Sắc] s S e 1 7 E (B1..B6)		
-df	11 [Dấu-Huyền] f F i 2 8 I (B1..B6)		
+df	11 [Dấu-Huyền] f F i 2 8 o (B1..B6)		
 dr	12 [Dấu-Hỏi] r R u 3 9 U (B1..B6)		
 dx	13 [Dấu-Ngã] x X w 4 B W (B1..B6)		
 dj	14 [Dấu-Nặng] j J y 5 C Y (B1..B6)		
@@ -22,31 +22,32 @@ ev	19 [E] Vần: e: êu/-/- | E: e/oay/uych | Dấu: e (B3 Sắc), E (B6 Sắc)
 f	20 [F] PA: ph➔f | Vần: f: ap/ôc/ươn | F: ec/oeo/uyn | Dấu: f (B1 Huyền), F (B2 Huyền)		
 g	21 [G] PA: g, gh➔G | Vần: g: ach/iêng/uc | G: ai/iêp/uê		
 h	22 [H] PA: h | Vần: h: ôn/iêu/uân | H: em/oem/uynh		
-iv	23 [I] Vần: i: i/-/- | I: en/oen/uyp | Dấu: i (B3 Huyền), I (B6 Huyền)		
+iv	23 [I] Vần: i: i/-/- | Dấu: i (B3 Huyền) | Tiền tố Hoa: I (Title Case), O (UPPERCASE)		
 j	24 [J] PA: gi➔j | Vần: j: am/iêt/ui | J: eo/oet/uyt | Dấu: j (B1 Nặng), J (B2 Nặng)		
 k	25 [K] PA: k, kh➔K | Vần: k: an/iu/um | K: ang/in/un		
 l	26 [L] PA: l, l➔L | Vần: l: iêm/oi/uyên | L: ôn/oăn/ưn		
 m	27 [M] PA: m | Vần: m: ut/inh/uôi | M: ep/ooc/uyu		
 n	28 [N] PA: n, ng➔N | Vần: n: ưng/oc/up | N: ưc/op/ưi		
-p	29 [P] PA: p | Vần: p: ao/ô/ươi | P: et/oong/yn		
-q	30 [Q] PA: ch➔Q, qu➔q | Vần: q: at/ôi/ươp | Q: im/om/uyêt		
-r	31 [R] PA: r, tr➔R | Vần: r: ên/oai/uông | R: ă/ôt/ưu | Dấu: r (B1 Hỏi), R (B2 Hỏi)		
-s	32 [S] PA: s, s➔S | Vần: s: ương/oan/uôt | S: ơ/on/ư | Dấu: s (B1 Sắc), S (B2 Sắc)		
-t	33 [T] PA: t, th➔T | Vần: t: au/ông/ươt | T: ay/ôp/ưt		
-uv	34 [U] Vần: u: ia/-/- | U: ê/oăc/ynh | Dấu: u (B3 Hỏi), U (B6 Hỏi)		
-v	35 [V] PA: v | Vần: v: u/ip/ung | V: êch/oăm/yt		
-w	36 [W] PA: ngh➔W | Vần: w: -/-/- | W: anh/oăng/ươc | Dấu: w (B3 Ngã), W (B6 Ngã)		
-x	37 [X] PA: x | Vần: x: ăc/ơi/y | X: êm/oăt/yêng | Dấu: x (B1 Ngã), X (B2 Ngã)		
-yv	38 [Y] PA: nh➔y | Vần: y: âp/ot/ưm | Y: ênh/iê/ăk | Dấu: y (B3 Nặng), Y (B6 Nặng)		
-z	39 [Z] PA: Ø➔z | Vần: z: ôm/ong/ưa | Z: êp/eng/n | Dấu: z (B1 Ngang), Z (B2 Ngang)		
-ov	40 [Vần O] Vần 'o' ➔ Mã: 4 (Bảng 2, Index 35) | Ví dụ: cho ➔ C4Z, bò ➔ b4F, cỏ ➔ c4R, to ➔ T4Z		
-0	41 [Số 0] Vần: 0: ăm/ơm/yêm | Dấu: 0 (B4 Ngang)		
-1	42 [Số 1] Vần: 1: ăn/ơn/yên | Dấu: 1 (B4 Sắc)		
-2	43 [Số 2] Vần: 2: ăng/ơp/yêt | Dấu: 2 (B4 Huyền)		
-3	44 [Số 3] Vần: 3: ăp/ơt/yêu | Dấu: 3 (B4 Hỏi)		
-4	45 [Số 4] Vần: 4: ăt/o/ươu | Dấu: 4 (B4 Ngã)		
-5	46 [Số 5] Vần: 5: â/oac/uôm | Dấu: 5 (B4 Nặng)		
-6	47 [Số 6] Vần: 6: âc/oach/uơ | Dấu: 6 (B5 Ngang)		
-7	48 [Số 7] Vần: 7: ân/oam/uâng | Dấu: 7 (B5 Sắc)		
-8	49 [Số 8] Vần: 8: âng/oang/uây | Dấu: 8 (B5 Huyền)		
-9	50 [Số 9] Vần: 9: ât/oanh/uêch | Dấu: 9 (B5 Hỏi)		
+ov	29 [O] Vần: o: en/oen/uyp | Dấu: o (B6 Huyền)		
+p	30 [P] PA: p | Vần: p: ao/ô/ươi | P: et/oong/yn		
+q	31 [Q] PA: ch➔Q, qu➔q | Vần: q: at/ôi/ươp | Q: im/om/uyêt		
+r	32 [R] PA: r, tr➔R | Vần: r: ên/oai/uông | R: ă/ôt/ưu | Dấu: r (B1 Hỏi), R (B2 Hỏi)		
+s	33 [S] PA: s, s➔S | Vần: s: ương/oan/uôt | S: ơ/on/ư | Dấu: s (B1 Sắc), S (B2 Sắc)		
+t	34 [T] PA: t, th➔T | Vần: t: au/ông/ươt | T: ay/ôp/ưt		
+uv	35 [U] Vần: u: ia/-/- | U: ê/oăc/ynh | Dấu: u (B3 Hỏi), U (B6 Hỏi)		
+v	36 [V] PA: v | Vần: v: u/ip/ung | V: êch/oăm/yt		
+w	37 [W] PA: ngh➔W | Vần: w: -/-/- | W: anh/oăng/ươc | Dấu: w (B3 Ngã), W (B6 Ngã)		
+x	38 [X] PA: x | Vần: x: ăc/ơi/y | X: êm/oăt/yêng | Dấu: x (B1 Ngã), X (B2 Ngã)		
+yv	39 [Y] PA: nh➔y | Vần: y: âp/ot/ưm | Y: ênh/iê/ăk | Dấu: y (B3 Nặng), Y (B6 Nặng)		
+z	40 [Z] PA: Ø➔z | Vần: z: ôm/ong/ưa | Z: êp/eng/n | Dấu: z (B1 Ngang), Z (B2 Ngang)		
+ov	41 [Vần O & Ký tự o] Vần 'o' Tiếng Việt ➔ Mã: 4 (Index 35, ví dụ cho➔C4Z, to➔T4Z) | Ký tự Base60 'o' ➔ Vần: en (đen➔doz), Dấu: B6 Huyền		
+0	42 [Số 0] Vần: 0: ăm/ơm/yêm | Dấu: 0 (B4 Ngang)		
+1	43 [Số 1] Vần: 1: ăn/ơn/yên | Dấu: 1 (B4 Sắc)		
+2	44 [Số 2] Vần: 2: ăng/ơp/yêt | Dấu: 2 (B4 Huyền)		
+3	45 [Số 3] Vần: 3: ăp/ơt/yêu | Dấu: 3 (B4 Hỏi)		
+4	46 [Số 4] Vần: 4: ăt/o/ươu | Dấu: 4 (B4 Ngã)		
+5	47 [Số 5] Vần: 5: â/oac/uôm | Dấu: 5 (B4 Nặng)		
+6	48 [Số 6] Vần: 6: âc/oach/uơ | Dấu: 6 (B5 Ngang)		
+7	49 [Số 7] Vần: 7: ân/oam/uâng | Dấu: 7 (B5 Sắc)		
+8	50 [Số 8] Vần: 8: âng/oang/uây | Dấu: 8 (B5 Huyền)		
+9	51 [Số 9] Vần: 9: ât/oanh/uêch | Dấu: 9 (B5 Hỏi)		

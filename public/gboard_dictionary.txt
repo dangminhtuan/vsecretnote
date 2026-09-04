@@ -5,12 +5,12 @@ b2	02 [B2] Z S F R X J (Telex HOA (Z S F R X J))
 b3	03 [B3] a e i u w y (Nguyên âm thường (a e i u w y))		
 b4	04 [B4] 0 1 2 3 4 5 (VNI 1 (0 1 2 3 4 5))		
 b5	05 [B5] 6 7 8 9 B C (VNI 2 (6 7 8 9 B C))		
-b6	06 [B6] A E I U W Y (Nguyên âm HOA (A E I U W Y))		
+b6	06 [B6] A E o U W Y (Nguyên âm A, E, o, U, W, Y)		
 cm	07 [PA-Chính] 24 PA Chính: c, đ➔d, g, gh➔G, gi➔j, k, kh➔K, h, v, d➔D, m, ch➔C, r, s, n, b, l, ch➔Q, s➔S, Ø➔z, ng➔N, nh➔y, l➔L, ngh➔W		
 cp	08 [PA-Phụ] 7 PA Phụ: p, ph➔f, qu➔q, t, th➔T, tr➔R, x		
 dz	09 [Dấu-Ngang] z Z a 0 6 A (B1..B6)		
 ds	10 [Dấu-Sắc] s S e 1 7 E (B1..B6)		
-df	11 [Dấu-Huyền] f F i 2 8 I (B1..B6)		
+df	11 [Dấu-Huyền] f F i 2 8 o (B1..B6)		
 dr	12 [Dấu-Hỏi] r R u 3 9 U (B1..B6)		
 dx	13 [Dấu-Ngã] x X w 4 B W (B1..B6)		
 dj	14 [Dấu-Nặng] j J y 5 C Y (B1..B6)		
@@ -22,34 +22,35 @@ ev	19 [E] Vần: e: êu/-/- | E: e/oay/uych | Dấu: e (B3 Sắc), E (B6 Sắc)
 f	20 [F] PA: ph➔f | Vần: f: ap/ôc/ươn | F: ec/oeo/uyn | Dấu: f (B1 Huyền), F (B2 Huyền)		
 g	21 [G] PA: g, gh➔G | Vần: g: ach/iêng/uc | G: ai/iêp/uê		
 h	22 [H] PA: h | Vần: h: ôn/iêu/uân | H: em/oem/uynh		
-iv	23 [I] Vần: i: i/-/- | I: en/oen/uyp | Dấu: i (B3 Huyền), I (B6 Huyền)		
+iv	23 [I] Vần: i: i/-/- | Dấu: i (B3 Huyền) | Tiền tố Hoa: I (Title Case), O (UPPERCASE)		
 j	24 [J] PA: gi➔j | Vần: j: am/iêt/ui | J: eo/oet/uyt | Dấu: j (B1 Nặng), J (B2 Nặng)		
 k	25 [K] PA: k, kh➔K | Vần: k: an/iu/um | K: ang/in/un		
 l	26 [L] PA: l, l➔L | Vần: l: iêm/oi/uyên | L: ôn/oăn/ưn		
 m	27 [M] PA: m | Vần: m: ut/inh/uôi | M: ep/ooc/uyu		
 n	28 [N] PA: n, ng➔N | Vần: n: ưng/oc/up | N: ưc/op/ưi		
-p	29 [P] PA: p | Vần: p: ao/ô/ươi | P: et/oong/yn		
-q	30 [Q] PA: ch➔Q, qu➔q | Vần: q: at/ôi/ươp | Q: im/om/uyêt		
-r	31 [R] PA: r, tr➔R | Vần: r: ên/oai/uông | R: ă/ôt/ưu | Dấu: r (B1 Hỏi), R (B2 Hỏi)		
-s	32 [S] PA: s, s➔S | Vần: s: ương/oan/uôt | S: ơ/on/ư | Dấu: s (B1 Sắc), S (B2 Sắc)		
-t	33 [T] PA: t, th➔T | Vần: t: au/ông/ươt | T: ay/ôp/ưt		
-uv	34 [U] Vần: u: ia/-/- | U: ê/oăc/ynh | Dấu: u (B3 Hỏi), U (B6 Hỏi)		
-v	35 [V] PA: v | Vần: v: u/ip/ung | V: êch/oăm/yt		
-w	36 [W] PA: ngh➔W | Vần: w: -/-/- | W: anh/oăng/ươc | Dấu: w (B3 Ngã), W (B6 Ngã)		
-x	37 [X] PA: x | Vần: x: ăc/ơi/y | X: êm/oăt/yêng | Dấu: x (B1 Ngã), X (B2 Ngã)		
-yv	38 [Y] PA: nh➔y | Vần: y: âp/ot/ưm | Y: ênh/iê/ăk | Dấu: y (B3 Nặng), Y (B6 Nặng)		
-z	39 [Z] PA: Ø➔z | Vần: z: ôm/ong/ưa | Z: êp/eng/n | Dấu: z (B1 Ngang), Z (B2 Ngang)		
-ov	40 [Vần O] Vần 'o' ➔ Mã: 4 (Bảng 2, Index 35) | Ví dụ: cho ➔ C4Z, bò ➔ b4F, cỏ ➔ c4R, to ➔ T4Z		
-0	41 [Số 0] Vần: 0: ăm/ơm/yêm | Dấu: 0 (B4 Ngang)		
-1	42 [Số 1] Vần: 1: ăn/ơn/yên | Dấu: 1 (B4 Sắc)		
-2	43 [Số 2] Vần: 2: ăng/ơp/yêt | Dấu: 2 (B4 Huyền)		
-3	44 [Số 3] Vần: 3: ăp/ơt/yêu | Dấu: 3 (B4 Hỏi)		
-4	45 [Số 4] Vần: 4: ăt/o/ươu | Dấu: 4 (B4 Ngã)		
-5	46 [Số 5] Vần: 5: â/oac/uôm | Dấu: 5 (B4 Nặng)		
-6	47 [Số 6] Vần: 6: âc/oach/uơ | Dấu: 6 (B5 Ngang)		
-7	48 [Số 7] Vần: 7: ân/oam/uâng | Dấu: 7 (B5 Sắc)		
-8	49 [Số 8] Vần: 8: âng/oang/uây | Dấu: 8 (B5 Huyền)		
-9	50 [Số 9] Vần: 9: ât/oanh/uêch | Dấu: 9 (B5 Hỏi)		
+ov	29 [O] Vần: o: en/oen/uyp | Dấu: o (B6 Huyền)		
+p	30 [P] PA: p | Vần: p: ao/ô/ươi | P: et/oong/yn		
+q	31 [Q] PA: ch➔Q, qu➔q | Vần: q: at/ôi/ươp | Q: im/om/uyêt		
+r	32 [R] PA: r, tr➔R | Vần: r: ên/oai/uông | R: ă/ôt/ưu | Dấu: r (B1 Hỏi), R (B2 Hỏi)		
+s	33 [S] PA: s, s➔S | Vần: s: ương/oan/uôt | S: ơ/on/ư | Dấu: s (B1 Sắc), S (B2 Sắc)		
+t	34 [T] PA: t, th➔T | Vần: t: au/ông/ươt | T: ay/ôp/ưt		
+uv	35 [U] Vần: u: ia/-/- | U: ê/oăc/ynh | Dấu: u (B3 Hỏi), U (B6 Hỏi)		
+v	36 [V] PA: v | Vần: v: u/ip/ung | V: êch/oăm/yt		
+w	37 [W] PA: ngh➔W | Vần: w: -/-/- | W: anh/oăng/ươc | Dấu: w (B3 Ngã), W (B6 Ngã)		
+x	38 [X] PA: x | Vần: x: ăc/ơi/y | X: êm/oăt/yêng | Dấu: x (B1 Ngã), X (B2 Ngã)		
+yv	39 [Y] PA: nh➔y | Vần: y: âp/ot/ưm | Y: ênh/iê/ăk | Dấu: y (B3 Nặng), Y (B6 Nặng)		
+z	40 [Z] PA: Ø➔z | Vần: z: ôm/ong/ưa | Z: êp/eng/n | Dấu: z (B1 Ngang), Z (B2 Ngang)		
+ov	41 [Vần O & Ký tự o] Vần 'o' Tiếng Việt ➔ Mã: 4 (Index 35, ví dụ cho➔C4Z, to➔T4Z) | Ký tự Base60 'o' ➔ Vần: en (đen➔doz), Dấu: B6 Huyền		
+0	42 [Số 0] Vần: 0: ăm/ơm/yêm | Dấu: 0 (B4 Ngang)		
+1	43 [Số 1] Vần: 1: ăn/ơn/yên | Dấu: 1 (B4 Sắc)		
+2	44 [Số 2] Vần: 2: ăng/ơp/yêt | Dấu: 2 (B4 Huyền)		
+3	45 [Số 3] Vần: 3: ăp/ơt/yêu | Dấu: 3 (B4 Hỏi)		
+4	46 [Số 4] Vần: 4: ăt/o/ươu | Dấu: 4 (B4 Ngã)		
+5	47 [Số 5] Vần: 5: â/oac/uôm | Dấu: 5 (B4 Nặng)		
+6	48 [Số 6] Vần: 6: âc/oach/uơ | Dấu: 6 (B5 Ngang)		
+7	49 [Số 7] Vần: 7: ân/oam/uâng | Dấu: 7 (B5 Sắc)		
+8	50 [Số 8] Vần: 8: âng/oang/uây | Dấu: 8 (B5 Huyền)		
+9	51 [Số 9] Vần: 9: ât/oanh/uêch | Dấu: 9 (B5 Hỏi)		
 vcf	và		
 ccu	của		
 c4S	có		
@@ -77,7 +78,7 @@ tq6	tôi
 rcz	ra		
 n0z	năm		
 yhF	nhiều		
-tSI	từ		
+tSo	từ		
 vcJ	việc		
 dtF	đồng		
 ycf	nhà		
@@ -385,7 +386,7 @@ ccs	cá
 T70	thân		
 Cly	chuyện		
 dsF	đoàn		
-q1I	quyền		
+q1o	quyền		
 vSj	vợ		
 qk3	quản		
 dtZ	đông		
@@ -431,7 +432,7 @@ mlJ	mọi
 bpz	bao		
 xP1	xét		
 D7x	dẫn		
-RlI	truyền		
+Rlo	truyền		
 bhR	biểu		
 fi1	phí		
 ccz	ca		
@@ -632,7 +633,7 @@ Cas	chết
 glJ	gọi		
 dkf	đàn		
 mhz	môn		
-thI	tuần		
+tho	tuần		
 lUx	lễ		
 Dva	dung		
 gNS	góp		
@@ -825,7 +826,7 @@ NqZ	ngôi
 T21	thắng		
 Dvw	dũng		
 mSS	món		
-TzI	thừa		
+Tzo	thừa		
 zva	ung		
 CTs	cháy		
 Kxs	khắc		
@@ -834,7 +835,7 @@ fU0	phê
 hNJ	họp		
 Ri2	trì		
 tp6	tô		
-qI0	quen		
+qo0	quen		
 vmZ	vinh		
 mdF	miền		
 CSj	chợ		
@@ -1126,7 +1127,7 @@ KAs	khấu
 Ncx	ngã		
 b2z	băng		
 bBz	bây		
-dIz	đen		
+doz	đen		
 npR	nổ		
 hGe	huế		
 xU1	xế		
@@ -1134,7 +1135,7 @@ RvE	trúng
 h8Z	hoang		
 kez	kêu		
 bzw	bữa		
-tvI	tùng		
+tvo	tùng		
 vas	vết		
 DlX	dõi		
 bSf	bờ		
@@ -1201,7 +1202,7 @@ K3s	khắp
 jjz	giam		
 kuz	kia		
 djf	đàm		
-RvI	trùng		
+Rvo	trùng		
 b6j	bậc		
 tjE	túi		
 mGx	mãi		
@@ -1251,7 +1252,7 @@ h4Z	ho
 DKf	dàng		
 gpj	gạo		
 jzJ	giọng		
-hIj	hẹn		
+hoj	hẹn		
 sRS	sốt		
 jcf	già		
 NSZ	ngon		
@@ -1266,7 +1267,7 @@ Dla	duyên
 RG5	trại		
 rds	rác		
 RzA	trưa		
-TlI	thuyền		
+Tlo	thuyền		
 CWs	chánh		
 bvy	bụng		
 mpR	mổ		
@@ -1285,7 +1286,7 @@ lsJ	loạn
 gcz	ga		
 CDs	chấm		
 ycz	nha		
-RSI	trừ		
+RSo	trừ		
 rsy	ruột		
 R95	trật		
 DKs	dáng		
@@ -1311,7 +1312,7 @@ zMs	ép
 C1j	chặn		
 hva	hung		
 TS3	thở		
-dIf	đèn		
+dof	đèn		
 bJs	béo		
 tgE	túc		
 csz	cương		
@@ -1326,14 +1327,14 @@ DQy	duyệt
 fN1	phức		
 skf	sàn		
 spR	sổ		
-KIz	khen		
+Koz	khen		
 Cge	chúc		
 TA2	thầu		
 nSZ	non		
 TbE	thuý		
 DAz	dâu		
 bcs	bá		
-tbI	tuỳ		
+tbo	tuỳ		
 nGz	nai		
 KCa	khuôn		
 lEz	le		
@@ -1369,7 +1370,7 @@ DTe	dứt
 th3	tổn		
 f71	phấn		
 rpf	rào		
-qUI	quỳnh		
+qUo	quỳnh		
 gnS	góc		
 tp1	táo		
 ztS	ống		
@@ -1386,7 +1387,7 @@ c2z	căng
 lpZ	lô		
 K4Z	kho		
 h1r	hẳn		
-TvI	thùng		
+Tvo	thùng		
 tC9	toả		
 tl2	tiềm		
 bRJ	bột		
@@ -1506,7 +1507,7 @@ KtS	khống
 hhf	hồn		
 Tl7	thói		
 sqZ	sôi		
-vIz	ven		
+voz	ven		
 lpe	lưới		
 RC1	trích		
 Tf1	tháp		
@@ -1633,7 +1634,7 @@ dnj	đựng
 DnJ	dọc		
 gWs	gánh		
 c4R	cỏ		
-TbI	thuỳ		
+Tbo	thuỳ		
 WdJ	nghiện		
 vSr	vở		
 dxs	đắc		
@@ -1687,7 +1688,7 @@ fq9	phổi
 TbY	thuỵ		
 xp6	xô		
 yKf	nhàng		
-vIj	vẹn		
+voj	vẹn		
 vca	vua		
 j7j	giận		
 QQf	chìm		
@@ -1740,7 +1741,7 @@ zfS	ốc
 zpr	ảo		
 d3s	đắp		
 DmS	dính		
-nIs	nén		
+nos	nén		
 zds	ác		
 hdR	hiển		
 bUf	bề		
@@ -1770,12 +1771,12 @@ vkj	vạn
 TWE	thước		
 l7s	lấn		
 Rx1	trắc		
-rIf	rèn		
+rof	rèn		
 xg1	xách		
 ddF	điền		
 mpj	mạo		
 b0Z	bơm		
-sIz	sen		
+soz	sen		
 fv0	phu		
 K8S	khoáng		
 jKF	gìn		
@@ -1796,7 +1797,7 @@ nTr	nảy
 KUz	khê		
 lqj	lạt		
 lBz	lây		
-ThI	thuần		
+Tho	thuần		
 h4F	hò		
 f95	phật		
 bKf	bàng		
@@ -1806,7 +1807,7 @@ DjJ	diệt
 rry	ruộng		
 DhJ	diệu		
 rfj	rạp		
-fvI	phùng		
+fvo	phùng		
 dux	đĩa		
 Tp6	thô		
 Tx1	thắc		
@@ -1912,7 +1913,7 @@ zzs	ốm
 dDf	đầm		
 KxZ	khơi		
 b1z	băn		
-mIz	men		
+moz	men		
 vBz	vây		
 dCj	địch		
 KLZ	khoăn		
@@ -1967,7 +1968,7 @@ hhx	hỗn
 lmS	lính		
 T11	thắn		
 T41	thắt		
-RkI	trùm		
+Rko	trùm		
 cTz	cay		
 lbw	luỹ		
 CWz	chanh		
@@ -2000,7 +2001,7 @@ lqZ	lôi
 rSx	rỡ		
 g4s	gắt		
 xt6	xông		
-GIz	ghen		
+Goz	ghen		
 tU0	tê		
 hrJ	hoại		
 dTe	đứt		
@@ -2204,7 +2205,7 @@ DGJ	diệp
 Cja	chui		
 bDs	bấm		
 jkf	giàn		
-CIz	chen		
+Coz	chen		
 hnS	hóc		
 c1s	cắn		
 rEx	rẽ		
@@ -2270,7 +2271,7 @@ lJs	léo
 xp2	xào		
 lgs	lách		
 DqF	dồi		
-xI0	xen		
+xo0	xen		
 d1j	đặn		
 m2s	mắng		
 Kpz	khao		
@@ -2296,7 +2297,7 @@ Ctz	chau
 tA1	tấu		
 sny	sụp		
 nfj	nạp		
-CIs	chén		
+Cos	chén		
 bNS	bóp		
 zte	ướt		
 dJf	đèo		
@@ -2327,7 +2328,7 @@ TC6	thoa
 tzY	tựa		
 ySJ	nhọn		
 ty1	tấp		
-bIz	ben		
+boz	ben		
 rps	ráo		
 lyS	lót		
 dUj	đệ		
@@ -2354,7 +2355,7 @@ ti0	ti
 C8S	choáng		
 tq1	tát		
 b4e	bướu		
-WIj	nghẹn		
+Woj	nghẹn		
 Cif	chì		
 dvy	đụng		
 tS0	tơ		
@@ -2414,7 +2415,7 @@ nkr	nản
 yhj	nhộn		
 hsS	hoán		
 nAz	nâu		
-qxI	quỳ		
+qxo	quỳ		
 hsf	hường		
 tp3	tảo		
 n3s	nắp		
@@ -2446,7 +2447,7 @@ NGf	ngài
 Kir	khỉ		
 Rj7	triết		
 tC6	toa		
-tlI	tuyền		
+tlo	tuyền		
 tmC	tịnh		
 R16	trơn		
 slR	sỏi		
@@ -2594,7 +2595,7 @@ zve	úng
 mAj	mậu		
 cCy	cuộn		
 mdJ	miện		
-bIs	bén		
+bos	bén		
 vSf	vờ		
 z9s	ất		
 Kcz	kha		
@@ -2617,7 +2618,7 @@ dhs	đốn
 Cpr	chảo		
 vzX	võng		
 mdZ	miên		
-lIs	lén		
+los	lén		
 znz	ưng		
 vxw	vỹ		
 g4j	gặt		
@@ -2636,7 +2637,7 @@ snf	sừng
 NKf	ngàng		
 CJs	chéo		
 ynJ	nhọc		
-WIx	nghẽn		
+Wox	nghẽn		
 lnS	lóc		
 yGs	nhái		
 vks	ván		
@@ -2660,7 +2661,7 @@ Tp5	thạo
 dcr	đả		
 niz	ni		
 gKz	gang		
-lIz	len		
+loz	len		
 bYz	bênh		
 zDf	ầm		
 sFs	séc		
@@ -2696,10 +2697,10 @@ bce	búa
 sAs	sấu		
 spf	sào		
 mvz	mu		
-hIz	hen		
+hoz	hen		
 SSf	sờ		
 l8X	loãng		
-CIf	chèn		
+Cof	chèn		
 DTz	day		
 nSS	nón		
 ryj	rập		
@@ -2811,7 +2812,7 @@ NSy	ngự
 TU2	thề		
 zra	uông		
 vKy	vụn		
-tI0	ten		
+to0	ten		
 dpz	đao		
 b4J	bọ		
 ypR	nhổ		
@@ -2914,7 +2915,7 @@ NDx	ngẫm
 CDy	chuộc		
 gqJ	gội		
 c7s	cấn		
-tIE	tuýp		
+toE	tuýp		
 b4Z	bo		
 nxj	nặc		
 kMs	kép		
@@ -2957,7 +2958,7 @@ hWF	hoằng
 jKf	giàng		
 mKZ	min		
 ycj	nhạ		
-xrI	xuồng		
+xro	xuồng		
 th7	tiếu		
 mfe	mướn		
 f46	pho		
@@ -2965,7 +2966,7 @@ DGy	duệ
 jxj	giặc		
 lfa	lươn		
 clX	cõi		
-TI0	then		
+To0	then		
 N4S	ngó		
 tu3	tỉa		
 sza	sưa		
@@ -3054,7 +3055,7 @@ r0f	rằm
 czF	còng		
 tE3	tẻ		
 Css	chướng		
-xkI	xùm		
+xko	xùm		
 Dlz	diêm		
 xh5	xộn		
 Ngs	ngách		
@@ -3096,7 +3097,7 @@ RqB	trỗi
 mtF	mồng		
 KTz	khay		
 Dky	dụm		
-kIf	kèn		
+kof	kèn		
 bmR	bỉnh		
 riz	ri		
 vzy	vựa		
@@ -3164,7 +3165,7 @@ Ngy	ngục
 Ra5	trệt		
 zsS	oán		
 c1j	cặn		
-rIz	ren		
+roz	ren		
 D7s	dấn		
 v4F	vò		
 yDz	nhâm		
@@ -3195,7 +3196,7 @@ T03	thẳm
 rvi	rùng		
 Cpz	chao		
 TP1	thét		
-fI0	phen		
+fo0	phen		
 khJ	kiệu		
 DxZ	dơi		
 cDe	cuốc		
@@ -3204,7 +3205,7 @@ yjz	nham
 v3J	vợt		
 sks	sán		
 mje	múi		
-kIs	kén		
+kos	kén		
 bnz	bưng		
 Tn2	thừng		
 hrZ	hoai		
@@ -3215,7 +3216,7 @@ Nkj	ngạn
 scs	sá		
 lHz	lem		
 mYz	mênh		
-trI	tuồng		
+tro	tuồng		
 j2z	giăng		
 g0S	gớm		
 jDs	giấm		
@@ -3251,7 +3252,7 @@ bQr	bỉm
 dEx	đẽ		
 TK8	thìn		
 mSZ	mon		
-yIj	nhẹn		
+yoj	nhẹn		
 yrj	nhện		
 n1s	nắn		
 lbj	lượm		
@@ -3379,7 +3380,7 @@ ThE	thuấn
 Tz6	thong		
 zix	ĩ		
 hzF	hòng		
-vIs	vén		
+vos	vén		
 nzZ	nong		
 tRC	tột		
 RnC	trọc		
@@ -3404,7 +3405,7 @@ ySx	nhỡ
 yps	nháo		
 spJ	sộ		
 mCs	mích		
-DIz	den		
+Doz	den		
 lQj	lịm		
 l0z	lăm		
 rve	rúng		
@@ -3425,7 +3426,7 @@ NfS	ngốc
 bBf	bầy		
 TQ9	thỏm		
 lgj	lạch		
-hIf	hèn		
+hof	hèn		
 jir	gỉ		
 yys	nhấp		
 lBj	lậy		
@@ -3435,7 +3436,7 @@ jki	giùm
 mpf	mào		
 cms	cút		
 mlZ	moi		
-tCI	tuồn		
+tCo	tuồn		
 t1C	tợn		
 N7r	ngẩn		
 mij	mị		
@@ -3496,7 +3497,7 @@ yBf	nhầy
 tcA	tua		
 gcj	gạ		
 xjA	xui		
-xI1	xén		
+xo1	xén		
 nzz	nôm		
 mUx	mễ		
 CgZ	chiêng		
@@ -3527,7 +3528,7 @@ Rs1	trướng
 vJj	vẹo		
 tJ2	tèo		
 xS3	xở		
-WIs	nghén		
+Wos	nghén		
 D4j	dặt		
 mix	mĩ		
 WmX	nghĩnh		
@@ -3568,7 +3569,7 @@ hRJ	hột
 yTs	nháy		
 lJf	lèo		
 KSz	khơ		
-kIz	ken		
+koz	ken		
 RjY	trụi		
 zci	ùa		
 lqF	lồi		
@@ -3578,9 +3579,9 @@ hbF	hoè
 vms	vút		
 bcr	bả		
 TBC	thoạt		
-lIr	lẻn		
+lor	lẻn		
 lds	lác		
-zIs	én		
+zos	én		
 zzS	óng		
 vUs	vế		
 sDx	sẫm		
@@ -3612,13 +3613,13 @@ xs6	xoan
 mqe	mướp		
 m4Z	mo		
 czs	cốm		
-txI	tỳ		
+txo	tỳ		
 Kha	khuân		
 l8Z	loang		
 xh6	xiêu		
 x41	xắt		
 KEx	khẽ		
-fI2	phèn		
+fo2	phèn		
 NrZ	ngoai		
 Tk6	thiu		
 R01	trắm		
@@ -3689,7 +3690,7 @@ sra	suông
 pk0	pan		
 yCF	nhoà		
 dts	đáu		
-bIf	bèn		
+bof	bèn		
 ylS	nhói		
 r0z	răm		
 zrR	oải		
@@ -3850,7 +3851,7 @@ CDJ	chịt
 v1f	vằn		
 sDs	sấm		
 yhr	nhổn		
-yIz	nhen		
+yoz	nhen		
 lSi	lừ		
 ymR	nhỉnh		
 CkZ	chiu		
@@ -3878,7 +3879,7 @@ nmJ	nịnh
 yJx	nhẽo		
 DqZ	dôi		
 Czi	chừa		
-tkI	tùm		
+tko	tùm		
 NnS	ngóc		
 mKe	mún		
 x49	xỏ		
@@ -3997,7 +3998,7 @@ bls	biếm
 yge	nhúc		
 K7s	khấn		
 h7s	hấn		
-TI5	thẹn		
+To5	thẹn		
 q82	quầng		
 lvf	lù		
 byj	bập		
@@ -4014,7 +4015,7 @@ xJ1	xéo
 zze	ứa		
 tDY	tuộc		
 Rd5	trạc		
-fKI	phùn		
+fKo	phùn		
 fK2	phàng		
 rne	rúp		
 NlZ	ngoi		
@@ -4066,7 +4067,7 @@ N8r	ngẩng
 zTs	áy		
 dmX	đĩnh		
 lju	lủi		
-zIz	en		
+zoz	en		
 jDy	giuộc		
 rSj	rợ		
 lEj	lẹ		
@@ -4080,7 +4081,7 @@ kmF	kình
 Kkf	khàn		
 ngy	nục		
 mpS	mố		
-RRI	trừu		
+RRo	trừu		
 mur	mỉa		
 gcr	gả		
 cNJ	cọp		
@@ -4103,7 +4104,7 @@ cjj	cạm
 hKi	hùn		
 l1f	lằn		
 CKi	chùn		
-bIj	bẹn		
+boj	bẹn		
 xnY	xụp		
 mUf	mề		
 nca	nua		
@@ -4119,7 +4120,7 @@ xH1	xém
 CJz	cheo		
 vgZ	viêng		
 DhZ	diêu		
-hIZ	hoen		
+hoZ	hoen		
 bEj	bẹ		
 NBs	ngấy		
 mEs	mé		
@@ -4480,7 +4481,7 @@ lPj	lẹt
 bQX	bõm		
 tGE	tuế		
 kEs	ké		
-jIz	gien		
+joz	gien		
 qW5	quạnh		
 hds	hác		
 Tc7	thiếc		
@@ -4500,7 +4501,7 @@ Kez	khêu
 kVs	kếch		
 DlF	dòi		
 yKw	nhũn		
-vIr	vẻn		
+vor	vẻn		
 ySw	nhữ		
 c5w	cuỗm		
 Cnr	chửng		
@@ -4512,7 +4513,7 @@ qS0	quơ
 jsz	giương		
 xz3	xổm		
 lQf	lìm		
-lIf	lèn		
+lof	lèn		
 dgS	điếng		
 fS1	phớ		
 gAx	gẫu		
@@ -4540,7 +4541,7 @@ ycS	nhiếc
 Ddy	duật		
 rkS	ríu		
 hYz	hênh		
-RrI	truồng		
+Rro	truồng		
 yka	nhum		
 yQZ	nhom		
 nuz	nia		
@@ -4575,13 +4576,13 @@ T47	thó
 tx8	tời		
 mhF	miều		
 lzJ	lọng		
-KIf	khèn		
+Kof	khèn		
 rca	rua		
 qc5	quạ		
 TWY	thược		
 r0s	rắm		
 Nny	ngụp		
-RfI	trườn		
+Rfo	trườn		
 TQ1	thím		
 cTJ	cộp		
 Tp8	thồ		
@@ -4597,8 +4598,8 @@ Kcf	khà
 hcu	hủa		
 stR	sổng		
 pZ6	peng		
-WIf	nghèn		
-xGI	xuề		
+Wof	nghèn		
+xGo	xuề		
 WPs	nghét		
 lxS	lới		
 KpS	khố		
@@ -4709,10 +4710,10 @@ b0x	bẵm
 xt8	xồng		
 fB0	phây		
 mQZ	mom		
-lIx	lẽn		
-bIx	bẽn		
+lox	lẽn		
+box	bẽn		
 vWz	vanh		
-pI0	pen		
+po0	pen		
 ytZ	nhông		
 yHj	nhẹm		
 lZZ	leng		
@@ -4799,7 +4800,7 @@ dBx	đẫy
 R17	trớn		
 hlF	hòi		
 s1F	sờn		
-tAI	tuềnh		
+tAo	tuềnh		
 gRJ	gột		
 lPs	lét		
 rKZ	rin		
@@ -4833,7 +4834,7 @@ Te2	thều
 rpj	rạo		
 nDJ	nịt		
 NFF	ngoèo		
-mIf	mèn		
+mof	mèn		
 DNj	dực		
 DzX	dõng		
 ltf	làu		
@@ -4905,7 +4906,7 @@ dzR	đỏng
 tQ3	tỉm		
 llS	lói		
 Ktz	khau		
-RKI	trùn		
+RKo	trùn		
 Rp5	trạo		
 sMS	soóc		
 zxS	ới		
@@ -4917,7 +4918,7 @@ CPj	chẹt
 brj	bện		
 tF1	téc		
 szX	sõng		
-rIs	rén		
+ros	rén		
 yvi	nhùng		
 gAf	gầu		
 Dxj	dặc		
@@ -5061,7 +5062,7 @@ CGs	chái
 bge	búc		
 rej	rệu		
 rGs	rái		
-qI2	quèn		
+qo2	quèn		
 NAs	ngấu		
 gSZ	gon		
 dSi	đừ		
@@ -5083,7 +5084,7 @@ jYZ	giê
 cvy	cụng		
 xD2	xầm		
 l1Z	lơn		
-TrI	thuồng		
+Tro	thuồng		
 TC7	thoá		
 svS	síp		
 ft0	phau		
@@ -5101,7 +5102,7 @@ NWj	ngạnh
 nWj	nạnh		
 lbf	lườm		
 ljr	lảm		
-xlI	xuyền		
+xlo	xuyền		
 RjA	trui		
 qUE	quýnh		
 b6s	bấc		
@@ -5119,7 +5120,7 @@ ymj	nhụt
 nrj	nện		
 lHj	lẹm		
 KYz	khênh		
-RI4	trẽn		
+Ro4	trẽn		
 ste	sướt		
 lpr	lảo		
 h9Z	hoanh		
@@ -5139,7 +5140,7 @@ cTs	cáy
 bba	buy		
 l1F	lờn		
 tJ7	toét		
-yIR	nhoẻn		
+yoR	nhoẻn		
 kDS	kít		
 hlw	huyễn		
 hHz	hem		
@@ -5258,7 +5259,7 @@ sUj	sệ
 rba	ruy		
 rNs	rức		
 qE3	quẻ		
-WIz	nghen		
+Woz	nghen		
 KSZ	khon		
 hJe	huýt		
 hhr	hổn		
@@ -5286,7 +5287,7 @@ zja	ui
 nAx	nẫu		
 mnz	mưng		
 Kby	khuỵ		
-TSI	thừ		
+TSo	thừ		
 Tu0	thia		
 NKs	ngáng		
 lQZ	lom		
@@ -5300,7 +5301,7 @@ DUr	dể
 Czr	chổm		
 TzB	thõng		
 lcw	lũa		
-KIZ	khoen		
+KoZ	khoen		
 Kef	khều		
 jcj	giạ		
 DJj	dẹo		
@@ -5329,7 +5330,7 @@ bKj	bạng
 Tg8	thiềng		
 tZ5	tệp		
 sTJ	sộp		
-sIr	sẻn		
+sor	sẻn		
 fs1	phướng		
 fh0	phôn		
 p20	păng		
@@ -5355,7 +5356,7 @@ Dlf	diềm
 sce	súa		
 NSj	ngợ		
 N1f	ngằn		
-mIs	mén		
+mos	mén		
 lSu	lử		
 lPZ	loong		
 KBr	khẩy		
@@ -5405,7 +5406,7 @@ bhF	biều
 xz2	xồm		
 vHj	vẹm		
 tzE	tứa		
-TcI	thùa		
+Tco	thùa		
 nux	nĩa		
 gDz	gâm		
 zEs	é		
@@ -5444,11 +5445,11 @@ CHx	chẽm
 tKA	tun		
 Te3	thểu		
 pp8	pồ		
-KIs	khén		
+Kos	khén		
 hvS	híp		
 dce	đúa		
 Dds	dác		
-CIj	chẹn		
+Coj	chẹn		
 lDe	luốc		
 Kvf	khù		
 czf	cồm		
@@ -5476,7 +5477,7 @@ lGJ	liệp
 hhu	huẩn		
 hES	hoáy		
 xzU	xửa		
-xI3	xẻn		
+xo3	xẻn		
 tFA	tuyn		
 mHs	mém		
 lfs	láp		
@@ -5503,7 +5504,7 @@ svx	sũ
 ydJ	nhiện		
 lWF	loằng		
 zEf	è		
-cIZ	coen		
+coZ	coen		
 bki	bùm		
 vgy	vục		
 TCA	thuôn		
@@ -5573,7 +5574,7 @@ blZ	boi
 bTs	báy		
 xA3	xẩu		
 vAf	vầu		
-RmI	truồi		
+Rmo	truồi		
 tD5	tậm		
 yKS	nhín		
 lij	lị		
@@ -5708,7 +5709,7 @@ pt6	pông
 nQz	nim		
 lzz	lôm		
 h9R	hoảnh		
-xcI	xùa		
+xco	xùa		
 x98	xoành		
 x6C	xoạch		
 xpC	xộ		
@@ -5789,20 +5790,20 @@ D3J	dợt
 cPS	coóng		
 vYj	vệnh		
 Tn0	thưng		
-TI2	thèn		
+To2	thèn		
 Tq1	thát		
 r1Z	rơn		
 nlJ	nọi		
 lHa	luynh		
 Kka	khum		
 h5J	hoạc		
-dIr	đẻn		
+dor	đẻn		
 bjz	bam		
 xSY	xự		
 vMS	voóc		
 tmE	tuối		
 tN5	tực		
-TfI	thườn		
+Tfo	thườn		
 TW7	thoắng		
 rDJ	rịt		
 fC5	phịch		
@@ -5844,7 +5845,7 @@ s2x	sẵng
 nbZ	noe		
 hgZ	hiêng		
 jys	giấp		
-RI0	tren		
+Ro0	tren		
 tk6	tiu		
 rUs	rế		
 ydF	nhiền		
@@ -5963,7 +5964,7 @@ zxw	ỹ
 vQz	vim		
 zsf	ường		
 TlY	thuyện		
-TI3	thẻn		
+To3	thẻn		
 sRJ	sột		
 sYs	sếnh		
 rur	rỉa		
@@ -5975,11 +5976,11 @@ y2r	nhẳng
 yKs	nháng		
 jtz	giau		
 DzS	dóng		
-dIs	đén		
+dos	đén		
 btJ	bộng		
 xrA	xuông		
 xKA	xun		
-tmI	tuồi		
+tmo	tuồi		
 tQB	tõm		
 tkC	tịu		
 TrU	thuổng		
@@ -5990,7 +5991,7 @@ fj3	phảm
 ndX	niễn		
 Nbf	ngườm		
 hmy	huội		
-GIf	ghèn		
+Gof	ghèn		
 DCZ	doa		
 DSf	dờ		
 C4J	chọ		
@@ -6052,7 +6053,7 @@ DBx	dẫy
 DTs	dáy		
 d7z	đân		
 C7j	chận		
-xSI	xừ		
+xSo	xừ		
 t9E	tuếch		
 Ru3	trỉa		
 Tk2	thàn		
@@ -6106,7 +6107,7 @@ RSY	trự
 Re5	trệu		
 tK8	tìn		
 te0	têu		
-tI4	tẽn		
+to4	tẽn		
 tk5	tạn		
 sfJ	sộc		
 sFj	sẹc		
@@ -6184,7 +6185,7 @@ zEj	ẹ
 DKa	dun		
 d4X	đõ		
 cSS	cón		
-CIx	chẽn		
+Cox	chẽn		
 CKr	chảng		
 c4j	cặt		
 blf	biềm		
@@ -6263,7 +6264,7 @@ bsz	bương
 bKF	bìn		
 zje	úi		
 tY1	tếnh		
-tI1	tén		
+to1	tén		
 slu	suyển		
 sPJ	soọng		
 fs3	phưởng		
@@ -6358,7 +6359,7 @@ sHz	sem
 pKA	pun		
 pf7	pốc		
 fT7	phốp		
-nIz	nen		
+noz	nen		
 KhR	khiểu		
 KYj	khệnh		
 hce	húa		
@@ -6403,7 +6404,7 @@ bYs	bếnh
 bfs	báp		
 v3s	vắp		
 zKe	ún		
-tzI	từa		
+tzo	từa		
 tz7	tóng		
 r7z	rân		
 fg5	phạch		
@@ -6469,7 +6470,7 @@ gBr	gẩy
 Dms	dút		
 Dss	dướng		
 dSe	đứ		
-xjI	xùi		
+xjo	xùi		
 xJ5	xẹo		
 x70	xân		
 RbU	truỷ		
@@ -6488,7 +6489,7 @@ nis	ní
 ynf	nhừng		
 yTz	nhay		
 N5S	ngoác		
-nIf	nèn		
+nof	nèn		
 mmS	mính		
 lPR	loỏng		
 KLa	khưn		
@@ -6580,7 +6581,7 @@ RjW	trũi
 Ts7	thoán		
 TK7	thín		
 TQ2	thìm		
-tI2	tèn		
+to2	tèn		
 sje	súi		
 sMJ	soọc		
 r2r	rẳng		
@@ -6621,7 +6622,7 @@ bpa	bươi
 zTz	ay		
 xm9	xỉnh		
 xh7	xiếu		
-vIf	vèn		
+vof	vèn		
 Rf7	trốc		
 Ts9	thoản		
 sPZ	soong		
@@ -6713,7 +6714,7 @@ x08	xờm
 ttE	tướt		
 RKA	trun		
 RfC	trộc		
-THI	thuỳnh		
+THo	thuỳnh		
 TRY	thựu		
 Tn3	thửng		
 Tz0	thôm		
@@ -6905,7 +6906,7 @@ f25	phặng
 pE1	pé		
 p82	pầng		
 p10	păn		
-nIe	nuýp		
+noe	nuýp		
 n4F	nò		
 ySX	nhõn		
 y7J	nhoạm		
@@ -6926,11 +6927,11 @@ K9j	khật
 K2f	khằng		
 hny	hụp		
 hku	hủm		
-hIs	hén		
+hos	hén		
 h1x	hẵn		
 gju	gủi		
 ggs	gách		
-zIr	ẻn		
+zor	ẻn		
 dmj	đụt		
 Dvu	dủng		
 Dyi	dừm		
@@ -6938,7 +6939,7 @@ Djw	dũi
 Dhe	duấn		
 DPZ	doong		
 drx	đễn		
-DIf	dèn		
+Dof	dèn		
 Djr	dảm		
 cfa	cươn		
 cmu	cuổi		
@@ -6960,7 +6961,7 @@ q37	quớt
 qfC	quộc		
 qp2	quào		
 pLA	pưn		
-pcI	pùa		
+pco	pùa		
 fs4	phưỡng		
 pJ0	peo		
 pW2	pành		
@@ -7011,7 +7012,7 @@ R22	trằng
 RG2	trài		
 tu2	tìa		
 TRE	thứu		
-TkI	thùm		
+Tko	thùm		
 Tz7	thóng		
 Tp4	thão		
 stJ	sộng		
@@ -7026,7 +7027,7 @@ q61	quấc
 qd1	quác		
 ps6	poan		
 pk6	piu		
-fcI	phùa		
+fco	phùa		
 fg8	phiềng		
 p00	păm		
 z1F	ờn		
@@ -7086,14 +7087,14 @@ z8z	âng
 zjf	àm		
 xtY	xượt		
 xsE	xuốt		
-xfI	xườn		
+xfo	xườn		
 xn5	xựng		
 xhE	xuấn		
 x3C	xợt		
 x06	xơm		
 xz1	xốm		
 xQ8	xòm		
-xI8	xoèn		
+xo8	xoèn		
 x96	xoanh		
 xF5	xẹc		
 xB5	xậy		
@@ -7119,7 +7120,7 @@ T16	thơn
 TS9	thỏn		
 TsC	thoạn		
 TkC	thịu		
-TI1	thén		
+To1	thén		
 TH1	thém		
 T45	thặt		
 tt5	tạu		
@@ -7185,7 +7186,7 @@ KsF	khoàn
 K1r	khẳn		
 K0s	khắm		
 KGf	khài		
-kIj	kẹn		
+koj	kẹn		
 krs	kến		
 kXs	kếm		
 zKS	ín		
