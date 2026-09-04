@@ -204,7 +204,7 @@ function renderAllSVGs(b60, originalWord) {
 
   if (!baseFont || !b60 || (b60.length !== 3 && b60.length !== 4) || b60.startsWith('[')) return;
 
-  const cleanB60 = (b60.startsWith('o') || b60.startsWith('O')) ? b60.slice(1) : b60;
+  const cleanB60 = (b60.startsWith('I') || b60.startsWith('O')) ? b60.slice(1) : b60;
   if (cleanB60.length !== 3) return;
 
   const [c1, c2, c3] = [cleanB60[0], cleanB60[1], cleanB60[2]];
@@ -272,7 +272,7 @@ function sync(word, b60, time) {
   if (document.activeElement !== inTime) inTime.value = time;
   
   renderAllSVGs(b60, inWord.value.trim()); 
-  const cleanB60 = (b60 && (b60.startsWith('o') || b60.startsWith('O'))) ? b60.slice(1) : b60;
+  const cleanB60 = (b60 && (b60.startsWith('I') || b60.startsWith('O'))) ? b60.slice(1) : b60;
   updateButtonStates(inWord.value.trim(), cleanB60 ? cleanB60[2] : null);
 
   
@@ -303,7 +303,7 @@ function fromWord() {
   const isTitle = w[0] === w[0].toUpperCase() && /[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ]/.test(w[0]) && !isAllCaps;
   
   if (isAllCaps) b60 = 'O' + b60;
-  else if (isTitle) b60 = 'o' + b60;
+  else if (isTitle) b60 = 'I' + b60;
 
   sync(w, b60, tc);
 }
@@ -313,7 +313,7 @@ function fromB60() {
   
   let prefix = '';
   let coreB60 = b60;
-  if (b60.startsWith('o') || b60.startsWith('O')) {
+  if (b60.startsWith('I') || b60.startsWith('O')) {
     prefix = b60[0];
     coreB60 = b60.slice(1);
   }
@@ -322,7 +322,7 @@ function fromB60() {
   const tc = base60ToTime(coreB60);
   let decoded = tc ? decodeWord(tc) : '';
   if (decoded && !decoded.startsWith('[')) {
-    if (prefix === 'o') decoded = decoded.charAt(0).toUpperCase() + decoded.slice(1);
+    if (prefix === 'I') decoded = decoded.charAt(0).toUpperCase() + decoded.slice(1);
     else if (prefix === 'O') decoded = decoded.toUpperCase();
   }
   sync(decoded, b60, tc || '');

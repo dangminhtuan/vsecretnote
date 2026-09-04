@@ -75,7 +75,7 @@ function formatB60WithCase(b60, originalWord) {
   const isTitle = originalWord.length > 0 && originalWord[0] === originalWord[0].toUpperCase() && /[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ]/.test(originalWord[0]) && !isAllCaps;
   
   if (isAllCaps) return 'O' + b60;
-  if (isTitle) return 'o' + b60;
+  if (isTitle) return 'I' + b60;
   return b60;
 }
 
@@ -408,7 +408,7 @@ function syncFromCompressedContinuous() {
   
   const chunks = [];
   for (let i = 0; i < val.length;) {
-    if (val[i] === 'o' || val[i] === 'O') {
+    if (val[i] === 'I' || val[i] === 'O') {
       chunks.push(val.substring(i, i + 4));
       i += 4;
     } else {
@@ -525,14 +525,14 @@ function syncFromCompressed() {
       if (token.match(/^[a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+$/)) {
         let coreToken = token;
         let casePrefix = '';
-        if (token.length === 4 && (token.startsWith('o') || token.startsWith('O'))) {
+        if (token.length === 4 && (token.startsWith('I') || token.startsWith('O'))) {
           casePrefix = token[0];
           coreToken = token.slice(1);
         }
         const timeCode = base60ToTime(coreToken);
         let decoded = decodeWord(timeCode);
         if (decoded && !decoded.startsWith('[')) {
-          if (casePrefix === 'o') decoded = decoded.charAt(0).toUpperCase() + decoded.slice(1);
+          if (casePrefix === 'I') decoded = decoded.charAt(0).toUpperCase() + decoded.slice(1);
           else if (casePrefix === 'O') decoded = decoded.toUpperCase();
         }
         allTimeParts.push(timeCode);
@@ -2687,7 +2687,7 @@ if (chkViewToolbar) {
   });
 }
 
-// 4. Toggle Case Support (Chữ Hoa o/O)
+// 4. Toggle Case Support (Chữ Hoa I/O)
 const chkViewCase = document.getElementById('chk-view-case');
 if (chkViewCase) {
   chkViewCase.checked = isCaseSupportEnabled;

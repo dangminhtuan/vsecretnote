@@ -214,8 +214,8 @@ export const BASE60_SS = [
   '0', '1', '2', '3', '4', '5',
   // s2=4 (Extra 1 Rhyme + Extra PA): VNI cao 6-9+BC
   '6', '7', '8', '9', 'B', 'C',
-  // s2=5 (Extra 2 Rhyme + Extra PA): Nguyên âm HOA
-  'A', 'E', 'I', 'U', 'W', 'Y',
+  // s2=5 (Extra 2 Rhyme + Extra PA): Nguyên âm HOA (+ o)
+  'A', 'E', 'o', 'U', 'W', 'Y',
   // 36..59: English dictionary slots (24 chars)
   'c', 'd', 'g', 'G', 'k', 'K', 'h', 'v', 'D', 'm', 'n', 'b', 'l', 'Q', 'N', 'L', 'p', 'q', 't', 'T', 'H', 'M', 'P', 'V'
 ];

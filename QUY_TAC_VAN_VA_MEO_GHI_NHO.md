@@ -33,7 +33,7 @@ Index: 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39
 Char:   N  y  L  W  p  f  q  t  T  R  x  0  1  2  3  4  5  6  7  8
 
 Index: 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59
-Char:   9  A  B  E  F  H  I  J  M  P  U  V  X  Y  Z  a  e  i  u  w
+Char:   9  A  B  E  F  H  o  J  M  P  U  V  X  Y  Z  a  e  i  u  w
 ```
 
 ---
@@ -51,7 +51,7 @@ Char:   9  A  B  E  F  H  I  J  M  P  U  V  X  Y  Z  a  e  i  u  w
 | **Phụ âm Chính** | **Bảng 3 (B3)** | **`a`** | **`e`** | **`i`** | **`u`** | **`w`** | **`y`** | **Nguyên âm thường đối xứng** |
 | **Phụ âm Phụ** | **Bảng 1 (B1)** | **`0`** | **`1`** | **`2`** | **`3`** | **`4`** | **`5`** | **VNI 0-5** |
 | **Phụ âm Phụ** | **Bảng 2 (B2)** | **`6`** | **`7`** | **`8`** | **`9`** | **`B`** | **`C`** | **VNI cao (6-9, B, C)** |
-| **Phụ âm Phụ** | **Bảng 3 (B3)** | **`A`** | **`E`** | **`I`** | **`U`** | **`W`** | **`Y`** | **Nguyên âm HOA đối xứng** |
+| **Phụ âm Phụ** | **Bảng 3 (B3)** | **`A`** | **`E`** | **`o`** | **`U`** | **`W`** | **`Y`** | **Nguyên âm HOA (+ o)** |
 
 ---
 
@@ -93,7 +93,7 @@ Trong kiến trúc 3 Bảng, các vần ở **KHÁC BẢNG NHAU** hoàn toàn c�
 | **hôn** | `ôn` *(B1)* | `070700` | **`hhz`** | Đuôi **`z`** (Telex thường) $\rightarrow$ Tra mã `h` ở **Bảng 1** $\rightarrow$ Ra **`ôn`** |
 | **chiếu** | `iêu` *(B2)* | `110707` | **`ChS`** | Đuôi **`S`** (Telex HOA) $\rightarrow$ Tra mã `h` ở **Bảng 2** $\rightarrow$ Ra **`iêu`** |
 | **chuẩn** | `uân` *(B3)* | `110715` | **`Chu`** | Đuôi **`u`** (Nguyên âm thường) $\rightarrow$ Tra mã `h` ở **Bảng 3** $\rightarrow$ Ra **`uân`** |
-| **thuần** | `uân` *(B3)* | `040732` | **`ThI`** | Đuôi **`I`** (Nguyên âm HOA) $\rightarrow$ Tra mã `h` ở **Bảng 3** $\rightarrow$ Ra **`uân`** |
+| **thuần** | `uân` *(B3)* | `040732` | **`Tho`** | Đuôi **`o`** (Nguyên âm HOA + o) $\rightarrow$ Tra mã `h` ở **Bảng 3** $\rightarrow$ Ra **`uân`** |
 
 ---
 
