@@ -2,31 +2,37 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>VSecretNote - Bảng Thần Chú & Tra Cứu Base60 Mnemonic</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/snk.css" />
   <style>
     :root {
-      --bg-dark: #050805;
-      --panel-bg: #0a110a;
+      --bg-dark: #050a06;
+      --panel-bg: #09140c;
+      --card-bg: #0b180e;
+      --card-bg-alt: #08120b;
       --neon-green: #00ff66;
       --neon-cyan: #00ffcc;
       --neon-gold: #ffea00;
       --neon-magenta: #ff55ff;
       --neon-blue: #38bdf8;
-      --border-green: #004422;
+      --text-bright: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-green: #00552b;
       --border-glow: rgba(0, 255, 102, 0.4);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    
     body {
-      padding: 12px 16px;
+      padding: 10px 12px;
       font-family: 'Space Mono', 'Consolas', monospace, sans-serif;
       background: var(--bg-dark);
-      color: #e0e0e0;
+      color: var(--text-bright);
       min-height: 100vh;
-      line-height: 1.4;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
     }
 
     .page-container {
@@ -34,12 +40,12 @@
       margin: 0 auto;
     }
 
-    /* HEADER & NAVIGATION */
+    /* HEADER & TOP NAV - HIGH CONTRAST & MOBILE FIRST */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       flex-wrap: wrap;
       gap: 10px;
       border-bottom: 1px solid var(--border-green);
@@ -49,58 +55,62 @@
     .header-title {
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-size: 16px;
+      gap: 8px;
+      font-size: 15px;
       font-weight: bold;
       color: var(--neon-cyan);
-      letter-spacing: 1px;
-      text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
     }
 
     .header-title .badge {
       background: #002b18;
       border: 1px solid var(--neon-green);
       color: var(--neon-green);
-      font-size: 11px;
-      padding: 2px 8px;
+      font-size: 10.5px;
+      padding: 2px 6px;
       border-radius: 4px;
+      white-space: nowrap;
     }
 
-    .tab-nav {
+    .mn-top-nav {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
-    .tab-btn {
+    /* SCOPED BUTTONS TO NEVER CLASH WITH GLOBAL CSS */
+    .mn-top-btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      background: #000;
-      padding: 8px 14px;
+      background: #020d05 !important;
+      padding: 7px 11px;
       font-family: inherit;
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: bold;
       border-radius: 4px;
       cursor: pointer;
       text-decoration: none;
       transition: all 0.15s ease;
-      color: #aaa;
-      border: 1px solid #222;
+      color: var(--text-bright) !important;
+      border: 1px solid #1a4425 !important;
+      white-space: nowrap;
     }
 
-    .tab-btn:hover {
-      color: #fff;
-      border-color: var(--neon-green);
-      background: #001a08;
+    .mn-top-btn:hover {
+      color: #fff !important;
+      border-color: var(--neon-green) !important;
+      background: #002610 !important;
       box-shadow: 0 0 8px rgba(0, 255, 102, 0.3);
     }
 
-    .tab-btn.active {
-      color: #000;
-      background: var(--neon-green);
-      border-color: var(--neon-green);
-      box-shadow: 0 0 12px rgba(0, 255, 102, 0.6);
+    .mn-top-btn.active {
+      color: #000000 !important;
+      background: var(--neon-green) !important;
+      border-color: var(--neon-green) !important;
+      box-shadow: 0 0 12px rgba(0, 255, 102, 0.6) !important;
+      font-weight: 900 !important;
     }
 
     /* LIVE SEARCH & DECODER TOOLBAR */
@@ -108,41 +118,44 @@
       background: var(--panel-bg);
       border: 1px solid var(--neon-green);
       border-radius: 6px;
-      padding: 12px 16px;
-      margin-bottom: 14px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
       box-shadow: 0 0 15px rgba(0, 255, 102, 0.15);
     }
 
     .search-panel-title {
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: bold;
       color: var(--neon-green);
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       margin-bottom: 8px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .search-bar-row {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
     }
 
     .search-input {
       flex: 1;
-      background: #000;
+      background: #000000;
       color: var(--neon-green);
-      border: 1px solid #006633;
-      padding: 10px 14px;
+      border: 1px solid #008844;
+      padding: 9px 12px;
       font-family: inherit;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: bold;
       border-radius: 4px;
       outline: none;
       transition: border-color 0.15s, box-shadow 0.15s;
+      min-width: 0;
     }
 
     .search-input:focus {
@@ -151,15 +164,16 @@
     }
 
     .search-btn {
-      background: #002211;
+      background: #003318;
       color: var(--neon-green);
       border: 1px solid var(--neon-green);
-      padding: 10px 16px;
+      padding: 9px 14px;
       font-family: inherit;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: bold;
       border-radius: 4px;
       cursor: pointer;
+      white-space: nowrap;
       transition: all 0.15s;
     }
 
@@ -169,15 +183,16 @@
     }
 
     .clear-btn {
-      background: #220000;
-      color: #ff5555;
-      border: 1px solid #660000;
-      padding: 10px 14px;
+      background: #330000;
+      color: #ff6666;
+      border: 1px solid #880000;
+      padding: 9px 12px;
       font-family: inherit;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: bold;
       border-radius: 4px;
       cursor: pointer;
+      white-space: nowrap;
     }
 
     .clear-btn:hover {
@@ -187,17 +202,17 @@
 
     /* RESULT BANNER */
     .lookup-result-box {
-      margin-top: 10px;
-      padding: 10px 12px;
+      margin-top: 8px;
+      padding: 8px 10px;
       background: #020703;
-      border: 1px dashed #00552b;
+      border: 1px dashed var(--neon-green);
       border-radius: 4px;
-      font-size: 13px;
+      font-size: 12.5px;
       display: none;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
     }
 
     .lookup-result-box.show {
@@ -207,52 +222,52 @@
     .result-main {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
     .result-token-code {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
       color: var(--neon-gold);
       background: #111;
-      padding: 4px 10px;
+      padding: 3px 8px;
       border-radius: 4px;
       border: 1px solid var(--neon-gold);
-      box-shadow: 0 0 8px rgba(255, 234, 0, 0.4);
+      box-shadow: 0 0 8px rgba(255, 234, 0, 0.3);
     }
 
     .result-token-word {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: bold;
       color: var(--neon-cyan);
     }
 
     .result-details {
-      color: #bbb;
-      font-size: 12px;
+      color: #cbd5e1;
+      font-size: 11.5px;
     }
 
     /* QUICK PILLS */
     .quick-chips-row {
       display: flex;
-      gap: 6px;
-      margin-top: 10px;
+      gap: 5px;
+      margin-top: 8px;
       flex-wrap: wrap;
       align-items: center;
     }
 
     .quick-chip-label {
-      font-size: 11px;
-      color: #666;
+      font-size: 10.5px;
+      color: #888;
       font-weight: bold;
       text-transform: uppercase;
     }
 
     .quick-chip {
-      background: #000;
+      background: #030d06;
       color: var(--neon-cyan);
-      border: 1px solid #004433;
+      border: 1px solid #005538;
       padding: 3px 8px;
       border-radius: 12px;
       font-size: 11px;
@@ -261,43 +276,38 @@
     }
 
     .quick-chip:hover {
-      background: #00221a;
+      background: #00281b;
       border-color: var(--neon-cyan);
       color: #fff;
     }
 
     /* CHEAT SHEET BANNER */
     .cheat-banner {
-      background: linear-gradient(90deg, #091a10 0%, #061118 100%);
+      background: linear-gradient(90deg, #07150c 0%, #050d14 100%);
       border: 1px solid #006644;
       border-radius: 6px;
-      padding: 10px 14px;
-      margin-bottom: 14px;
+      padding: 8px 12px;
+      margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .cheat-left {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+      gap: 8px;
     }
 
     .cheat-title {
       color: var(--neon-gold);
-      font-size: 12px;
+      font-size: 11.5px;
       font-weight: bold;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
     }
 
     .cheat-quote {
       color: #fff;
-      font-size: 13px;
+      font-size: 12.5px;
       font-weight: bold;
+      margin-top: 2px;
     }
 
     .cheat-quote span {
@@ -307,47 +317,295 @@
 
     .cheat-rules {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-wrap: wrap;
     }
 
     .cheat-tag {
-      background: #000;
-      padding: 4px 8px;
+      background: #020a05;
+      padding: 3px 7px;
       border-radius: 3px;
-      font-size: 11px;
+      font-size: 10.5px;
       border: 1px solid #004422;
-      color: #99ffbb;
+      color: #a7f3d0;
     }
 
-    /* FILTER TABS */
-    .filter-tab-btn {
+    /* CONTROLS & FILTER BAR */
+    .filter-bar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .filter-tabs-group {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .mn-filter-btn {
       background: #000;
-      color: #888;
-      border: 1px solid #003315;
-      padding: 6px 12px;
+      color: var(--text-muted);
+      border: 1px solid #1a4425;
+      padding: 5px 10px;
       border-radius: 4px;
       font-family: inherit;
       font-size: 11px;
       font-weight: bold;
       cursor: pointer;
       transition: all 0.15s;
+      white-space: nowrap;
     }
 
-    .filter-tab-btn:hover {
+    .mn-filter-btn:hover {
       color: #fff;
       border-color: var(--neon-green);
-      background: #001a0a;
+      background: #001f0a;
     }
 
-    .filter-tab-btn.active {
-      color: #000;
-      background: var(--neon-green);
+    .mn-filter-btn.active {
+      color: #000000 !important;
+      background: var(--neon-green) !important;
+      border-color: var(--neon-green) !important;
+      font-weight: 900 !important;
+    }
+
+    /* VIEW SWITCHER (CARDS VS TABLE) */
+    .view-toggle-group {
+      display: flex;
+      gap: 4px;
+      background: #000;
+      border: 1px solid #1a4425;
+      padding: 2px;
+      border-radius: 4px;
+    }
+
+    .view-toggle-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 4px 8px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: bold;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .view-toggle-btn.active {
+      background: #004422;
+      color: var(--neon-cyan);
+    }
+
+    /* ============================================================
+       MOBILE FIRST CARDS VIEW (NO HORIZONTAL SCROLL / NO ZOOM)
+       ============================================================ */
+    .cards-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .mn-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-green);
+      border-radius: 6px;
+      padding: 10px 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mn-card:hover {
       border-color: var(--neon-green);
-      box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+      background: #0d1e11;
     }
 
-    /* MASTER TABLE */
+    .mn-card.highlight-row {
+      border-color: var(--neon-green) !important;
+      background: #0e2815 !important;
+      box-shadow: 0 0 16px rgba(0, 255, 102, 0.4) !important;
+    }
+
+    .card-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #003318;
+      padding-bottom: 6px;
+    }
+
+    .card-keys-badges {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-key-box {
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 4px;
+    }
+
+    .card-key-box.lower {
+      background: #002200;
+      color: var(--neon-green);
+      border: 1px solid #005500;
+      box-shadow: 0 0 6px rgba(0, 255, 102, 0.2);
+    }
+
+    .card-key-box.upper {
+      background: #241c00;
+      color: var(--neon-gold);
+      border: 1px solid #665000;
+      box-shadow: 0 0 6px rgba(255, 234, 0, 0.2);
+    }
+
+    .card-cat-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      background: #020a05;
+      color: #94a3b8;
+      border: 1px solid #003318;
+    }
+
+    /* CARD BRANCHES (THƯỜNG & HOA) */
+    .card-branches {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .card-branch-row {
+      background: #040c06;
+      border: 1px solid #002b14;
+      border-radius: 4px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .card-branch-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+
+    .card-branch-phrase {
+      font-size: 13px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .card-branch-phrase.lower-accent { color: var(--neon-green); }
+    .card-branch-phrase.upper-accent { color: var(--neon-gold); }
+
+    .card-rhymes-list {
+      display: flex;
+      gap: 3px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .card-samples-list {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+      margin-top: 2px;
+    }
+
+    .sample-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #000;
+      border: 1px solid #004422;
+      padding: 2px 6px;
+      border-radius: 3px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .sample-chip:hover {
+      border-color: var(--neon-green);
+      background: #002211;
+      box-shadow: 0 0 6px rgba(0, 255, 102, 0.4);
+    }
+
+    .sample-chip .word { color: #ffffff; font-weight: bold; font-size: 11.5px; }
+    .sample-chip .code { color: var(--neon-gold); font-size: 11.5px; }
+
+    /* STORY BOX IN CARD */
+    .card-story-box {
+      background: #030c06;
+      border: 1px dashed #004d26;
+      border-radius: 4px;
+      padding: 8px 10px;
+      font-size: 12px;
+      color: #f1f5f9;
+      line-height: 1.5;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .card-story-text {
+      flex: 1;
+    }
+
+    .card-story-text em {
+      color: var(--neon-green);
+      font-style: normal;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .card-story-text strong {
+      color: var(--neon-gold);
+    }
+
+    .speak-btn {
+      background: #002211;
+      border: 1px solid #00552b;
+      color: var(--neon-cyan);
+      cursor: pointer;
+      font-size: 13px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .speak-btn:hover {
+      background: var(--neon-cyan);
+      color: #000;
+    }
+
+    /* ============================================================
+       DESKTOP TABLE VIEW
+       ============================================================ */
     .table-container {
       width: 100%;
       border: 1px solid var(--border-green);
@@ -355,6 +613,7 @@
       overflow-x: auto;
       background: #000;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+      display: none; /* Controlled by toggle / responsive */
     }
 
     table.mnemonic-table {
@@ -383,189 +642,28 @@
       vertical-align: middle;
       background: #020703;
       transition: background 0.15s ease;
+      color: #f1f5f9;
     }
 
-    table.mnemonic-table tr:nth-child(even) td {
-      background: #030a05;
-    }
-
-    table.mnemonic-table tr:hover td {
-      background: #002410;
-    }
-
+    table.mnemonic-table tr:nth-child(even) td { background: #030a05; }
+    table.mnemonic-table tr:hover td { background: #002410; }
     table.mnemonic-table tr.highlight-row td {
       background: #003818 !important;
       border-color: var(--neon-green);
       box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.4);
     }
 
-    /* KEY PAIR CELL */
-    .key-pair-badge {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      min-width: 50px;
-    }
-
-    .key-char-lower {
-      font-size: 18px;
-      font-weight: bold;
-      color: var(--neon-green);
-      background: #001a00;
-      border: 1px solid #004400;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-    }
-
-    .key-char-upper {
-      font-size: 18px;
-      font-weight: bold;
-      color: var(--neon-gold);
-      background: #1a1600;
-      border: 1px solid #554400;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 4px;
-    }
-
-    .key-divider {
-      width: 80%;
-      height: 1px;
-      background: #003318;
-    }
-
-    /* MNEMONIC SENTENCE CELL */
-    .mnemonic-cell {
-      min-width: 220px;
-    }
-
-    .mnemonic-sub-row {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 3px 0;
-    }
-
-    .mnemonic-sub-row .label-tag {
-      font-size: 10px;
-      font-weight: bold;
-      padding: 1px 4px;
-      border-radius: 2px;
-      min-width: 20px;
-      text-align: center;
-    }
-
-    .label-tag.tag-lower {
-      background: #002200;
-      color: var(--neon-green);
-      border: 1px solid #004400;
-    }
-
-    .label-tag.tag-upper {
-      background: #221a00;
-      color: var(--neon-gold);
-      border: 1px solid #554400;
-    }
-
-    .mnemonic-phrase {
-      font-size: 13px;
-      font-weight: bold;
-      color: #ffffff;
-      letter-spacing: 0.3px;
-    }
-
-    .mnemonic-phrase span.accent {
-      color: var(--neon-cyan);
-    }
-
-    /* RHYMES CELL */
-    .rhymes-cell {
-      min-width: 140px;
-      font-size: 11px;
-    }
-
+    /* RHYME BADGES */
     .rhyme-badge {
       display: inline-block;
       padding: 1px 5px;
       border-radius: 3px;
       font-weight: bold;
-      margin: 1px;
+      font-size: 10.5px;
     }
-
-    .rhyme-b1 { background: #001a00; color: #00ff66; border: 1px solid #003300; }
-    .rhyme-b2 { background: #1a1600; color: #ffea00; border: 1px solid #443300; }
-    .rhyme-b3 { background: #1a001a; color: #ff55ff; border: 1px solid #440044; }
-
-    /* SAMPLES CELL */
-    .samples-cell {
-      min-width: 230px;
-    }
-
-    .sample-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      background: #000;
-      border: 1px solid #004422;
-      padding: 2px 6px;
-      border-radius: 3px;
-      margin: 2px;
-      cursor: pointer;
-      transition: all 0.15s;
-    }
-
-    .sample-chip:hover {
-      border-color: var(--neon-green);
-      background: #002211;
-      box-shadow: 0 0 6px rgba(0, 255, 102, 0.4);
-    }
-
-    .sample-chip .word { color: #fff; font-weight: bold; font-size: 11px; }
-    .sample-chip .code { color: var(--neon-gold); font-size: 11px; }
-
-    /* STORY CELL */
-    .story-cell {
-      min-width: 320px;
-      font-size: 12px;
-      color: #cfd8dc;
-      line-height: 1.5;
-      text-align: left;
-    }
-
-    .story-cell em {
-      color: var(--neon-green);
-      font-style: normal;
-      font-weight: bold;
-      text-decoration: underline;
-    }
-
-    .story-cell strong {
-      color: var(--neon-gold);
-    }
-
-    /* ACTION BUTTON */
-    .speak-btn {
-      background: transparent;
-      border: none;
-      color: #555;
-      cursor: pointer;
-      font-size: 14px;
-      margin-left: 6px;
-      transition: color 0.15s;
-    }
-
-    .speak-btn:hover {
-      color: var(--neon-cyan);
-    }
+    .rhyme-b1 { background: #002200; color: #00ff66; border: 1px solid #005500; }
+    .rhyme-b2 { background: #221a00; color: #ffea00; border: 1px solid #665000; }
+    .rhyme-b3 { background: #220022; color: #ff55ff; border: 1px solid #660066; }
 
     /* FOOTER */
     footer {
@@ -573,7 +671,7 @@
       padding: 12px 0;
       border-top: 1px solid #003315;
       font-size: 11px;
-      color: #666;
+      color: #94a3b8;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -581,10 +679,26 @@
       gap: 10px;
     }
 
-    @media (max-width: 900px) {
-      .header-title { font-size: 14px; }
-      .tab-nav { width: 100%; }
+    /* RESPONSIVE BREAKPOINTS */
+    @media (min-width: 769px) {
+      /* On Desktop: default to Table view unless user toggles */
+      .cards-container.desktop-hidden { display: none; }
+      .table-container.desktop-visible { display: block; }
+    }
+
+    @media (max-width: 768px) {
+      .header-title { font-size: 13.5px; }
+      .mn-top-nav { width: 100%; justify-content: flex-start; }
+      .mn-top-btn { font-size: 10.5px; padding: 6px 9px; }
       .cheat-banner { flex-direction: column; align-items: flex-start; }
+      .search-bar-row { flex-wrap: wrap; }
+      .search-input { width: 100%; }
+      .search-btn, .clear-btn { flex: 1; text-align: center; }
+      
+      /* Force Cards view on mobile for 100% readability */
+      .table-container { display: none !important; }
+      .cards-container { display: flex !important; }
+      .view-toggle-group { display: none; } /* Hide table toggle on narrow screens */
     }
   </style>
 </head>
@@ -594,29 +708,29 @@
     <!-- HEADER -->
     <header>
       <div class="header-title">
-        <span>⚡ TIMECYPHER MNEMONIC MASTER</span>
-        <span class="badge">LƯỠNG LONG NHẤT THỂ</span>
+        <span>⚡ BASE60 MNEMONIC MASTER</span>
+        <span class="badge">60 KÝ TỰ • TOÀN DIỆN</span>
       </div>
-      <div class="tab-nav">
-        <a href="/" class="tab-btn">🏠 TRANG CHỦ</a>
-        <a href="/dict-matrix.html" class="tab-btn">📊 MA TRẬN & TỪ ĐIỂN</a>
-        <a href="/mnemonic.html" class="tab-btn active">⚡ BẢNG THẦN CHÚ</a>
-        <a href="/#quiz" class="tab-btn">🎯 TRẮC NGHIỆM</a>
+      <div class="mn-top-nav">
+        <a href="/" class="mn-top-btn">🏠 TRANG CHỦ</a>
+        <a href="/dict-matrix.html" class="mn-top-btn">📊 MA TRẬN & TỪ ĐIỂN</a>
+        <a href="/mnemonic.html" class="mn-top-btn active">⚡ BẢNG THẦN CHÚ</a>
+        <a href="/#quiz" class="mn-top-btn">🎯 TRẮC NGHIỆM</a>
       </div>
     </header>
 
     <!-- LIVE SEARCH & DECODER TOOLBAR -->
     <div class="search-panel">
       <div class="search-panel-title">
-        <span>🔍 THANH TRA CỨU 2 CHIỀU THẦN TỐC (GÕ TỪ RA MÃ / GÕ MÃ RA TỪ & HIGHLIGHT DÒNG)</span>
-        <span id="lookup-status" style="font-size:11px; color:#00ff66;">⚡ Local API Online</span>
+        <span>🔍 TRA CỨU 2 CHIỀU THẦN TỐC (GÕ TỪ RA MÃ / GÕ MÃ RA TỪ & HIGHLIGHT DÒNG)</span>
+        <span id="lookup-status" style="font-size:11px; color:var(--neon-green);">⚡ Local API Online</span>
       </div>
       <div class="search-bar-row">
         <input 
           type="text" 
           id="search-input" 
           class="search-input" 
-          placeholder="Nhập từ tiếng Việt (vd: bướm, toát, cây...) hoặc mã Base60 (vd: bbs, tB7, cBz, CCj)..." 
+          placeholder="Gõ từ tiếng Việt (vd: bướm, toát, tắm...) hoặc mã (vd: bbs, tB7, t01)..." 
           autocomplete="off" 
           spellcheck="false"
         />
@@ -628,7 +742,7 @@
       <div id="lookup-result-box" class="lookup-result-box">
         <div class="result-main">
           <span class="result-token-code" id="res-code">---</span>
-          <span style="color:#555;">➔</span>
+          <span style="color:#666;">➔</span>
           <span class="result-token-word" id="res-word">---</span>
           <span class="result-details" id="res-details">---</span>
         </div>
@@ -643,9 +757,9 @@
         <button class="quick-chip" data-query="cây">cây (cBz)</button>
         <button class="quick-chip" data-query="chịch">chịch (CCj)</button>
         <button class="quick-chip" data-query="dâm">dâm (DDz)</button>
-        <button class="quick-chip" data-query="khít">khít (KDS)</button>
-        <button class="quick-chip" data-query="sướng">sướng (sss)</button>
-        <button class="quick-chip" data-query="xuân">xuân (xhA)</button>
+        <button class="quick-chip" data-query="tắm">tắm (t01 - số 0)</button>
+        <button class="quick-chip" data-query="cắt">cắt (c4s - số 4)</button>
+        <button class="quick-chip" data-query="đen">đen (doz - chữ o)</button>
         <button class="quick-chip" data-query="7pa">7 Phụ Âm Phụ</button>
       </div>
     </div>
@@ -662,17 +776,30 @@
         <div class="cheat-tag"><strong>B6</strong> (Vần B3): Dấu = <strong>Nguyên âm HOA (+o)</strong></div>
       </div>
     </div>
-    <!-- FILTER BAR -->
-    <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
-      <span style="font-size: 11px; color: #888; font-weight: bold; text-transform: uppercase;">Bộ lọc danh mục:</span>
-      <button class="filter-tab-btn active" data-filter="all">🌐 TẤT CẢ (60 KÝ TỰ / 30 HÀNG)</button>
-      <button class="filter-tab-btn" data-filter="alpha">🔤 CHỮ CÁI (24 CẶP)</button>
-      <button class="filter-tab-btn" data-filter="number">🔢 KÝ TỰ SỐ 0-9 (5 CẶP)</button>
-      <button class="filter-tab-btn" data-filter="special">🌟 NGUYÊN ÂM ĐẶC BIỆT (o / i)</button>
+
+    <!-- CONTROLS & FILTER BAR -->
+    <div class="filter-bar-container">
+      <div class="filter-tabs-group">
+        <span style="font-size: 11px; color: var(--text-muted); font-weight: bold; text-transform: uppercase;">Bộ lọc:</span>
+        <button class="mn-filter-btn active" data-filter="all">🌐 TẤT CẢ (60 KÝ TỰ)</button>
+        <button class="mn-filter-btn" data-filter="alpha">🔤 CHỮ CÁI (24 CẶP)</button>
+        <button class="mn-filter-btn" data-filter="number">🔢 KÝ TỰ SỐ 0-9 (5 CẶP)</button>
+        <button class="mn-filter-btn" data-filter="special">🌟 NGUYÊN ÂM (o / i)</button>
+      </div>
+
+      <div class="view-toggle-group">
+        <button class="view-toggle-btn active" id="btn-view-cards" title="Chế độ xem Thẻ (Mobile Friendly)">🗂️ DẠNG THẺ</button>
+        <button class="view-toggle-btn" id="btn-view-table" title="Chế độ xem Bảng (Desktop)">📊 DẠNG BẢNG</button>
+      </div>
     </div>
 
-    <!-- MASTER MNEMONIC TABLE -->
-    <div class="table-container">
+    <!-- 1. MOBILE FRIENDLY CARDS CONTAINER (KHÔNG CẦN CUỘN NGANG HOẶC ZOOM) -->
+    <div class="cards-container" id="cards-container">
+      <!-- Populated by JavaScript -->
+    </div>
+
+    <!-- 2. DESKTOP TABLE CONTAINER (CHỈ HIỂN THỊ KHI CHỌN HOẶC MÀN HÌNH RỘNG) -->
+    <div class="table-container" id="table-container">
       <table class="mnemonic-table" id="mnemonic-table">
         <thead>
           <tr>

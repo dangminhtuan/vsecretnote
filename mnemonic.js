@@ -601,6 +601,98 @@ export const MNEMONIC_DATA = [
 
 let currentFilter = 'all';
 
+export function renderCards(data = MNEMONIC_DATA, filter = currentFilter) {
+  const container = document.getElementById('cards-container');
+  if (!container) return;
+
+  const filtered = data.filter(item => {
+    if (filter === 'all') return true;
+    return item.category === filter;
+  });
+
+  const catLabels = {
+    alpha: '🔤 Chữ Cái',
+    number: '🔢 Ký Tự Số',
+    special: '🌟 Nguyên Âm Lẻ'
+  };
+
+  container.innerHTML = filtered.map(item => {
+    const cardId = `card-${item.lower}-${item.upper}`;
+    const lowerSamples = item.samples.slice(0, 3);
+    const upperSamples = item.samples.slice(3);
+
+    return `
+      <div class="mn-card" id="${cardId}" data-lower="${item.lower}" data-upper="${item.upper}" data-cat="${item.category}">
+        <!-- Top row: Keys & Category -->
+        <div class="card-top-row">
+          <div class="card-keys-badges">
+            <span class="card-key-box lower">${item.lower}</span>
+            <span style="color:#666; font-size:12px;">•</span>
+            <span class="card-key-box upper">${item.upper}</span>
+            <span style="color:#f8fafc; font-size:12.5px; font-weight:bold; margin-left:4px;">
+              ${item.lowerPhrase.split('➔')[0].trim()} • ${item.upperPhrase.split('➔')[0].trim()}
+            </span>
+          </div>
+          <span class="card-cat-badge">${catLabels[item.category] || 'Ma Trận'}</span>
+        </div>
+
+        <!-- Branches: Lower & Upper -->
+        <div class="card-branches">
+          <!-- Nhánh Thường -->
+          <div class="card-branch-row">
+            <div class="card-branch-header">
+              <div class="card-branch-phrase lower-accent">phím [ ${item.lower} ]: ${item.lowerPhrase}</div>
+              <div class="card-rhymes-list">
+                <span class="rhyme-badge rhyme-b1">${item.lowerRhymes[0] || 'Ø'}</span>
+                <span class="rhyme-badge rhyme-b2">${item.lowerRhymes[1] || 'Ø'}</span>
+                <span class="rhyme-badge rhyme-b3">${item.lowerRhymes[2] || 'Ø'}</span>
+              </div>
+            </div>
+            <div class="card-samples-list">
+              ${lowerSamples.map(s => `
+                <span class="sample-chip" data-word="${s.word}" data-code="${s.code}" title="Bấm để nạp vào ô tra cứu">
+                  <span class="word">${s.word}</span>
+                  <span style="color:#666;">➔</span>
+                  <span class="code">${s.code}</span>
+                </span>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Nhánh HOA -->
+          <div class="card-branch-row">
+            <div class="card-branch-header">
+              <div class="card-branch-phrase upper-accent">phím [ ${item.upper} ]: ${item.upperPhrase}</div>
+              <div class="card-rhymes-list">
+                <span class="rhyme-badge rhyme-b1">${item.upperRhymes[0] || 'Ø'}</span>
+                <span class="rhyme-badge rhyme-b2">${item.upperRhymes[1] || 'Ø'}</span>
+                <span class="rhyme-badge rhyme-b3">${item.upperRhymes[2] || 'Ø'}</span>
+              </div>
+            </div>
+            <div class="card-samples-list">
+              ${upperSamples.map(s => `
+                <span class="sample-chip" data-word="${s.word}" data-code="${s.code}" title="Bấm để nạp vào ô tra cứu">
+                  <span class="word">${s.word}</span>
+                  <span style="color:#666;">➔</span>
+                  <span class="code">${s.code}</span>
+                </span>
+              `).join('')}
+            </div>
+          </div>
+        </div>
+
+        <!-- Story (High Contrast Box) -->
+        <div class="card-story-box">
+          <div class="card-story-text">
+            💡 <strong>Ý nghĩa liên tưởng:</strong> ${item.story}
+          </div>
+          <button class="speak-btn" title="Đọc to câu chuyện này" data-text="${item.story.replace(/<[^>]*>/g, '')}">🔊 Nghe</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
 export function renderTable(data = MNEMONIC_DATA, filter = currentFilter) {
   const tbody = document.getElementById('mnemonic-tbody');
   if (!tbody) return;
@@ -656,7 +748,7 @@ export function renderTable(data = MNEMONIC_DATA, filter = currentFilter) {
           ${item.samples.map(s => `
             <span class="sample-chip" data-word="${s.word}" data-code="${s.code}" title="Bấm để nạp vào ô tra cứu">
               <span class="word">${s.word}</span>
-              <span style="color:#555;">➔</span>
+              <span style="color:#666;">➔</span>
               <span class="code">${s.code}</span>
             </span>
           `).join('')}
@@ -670,6 +762,11 @@ export function renderTable(data = MNEMONIC_DATA, filter = currentFilter) {
       </tr>
     `;
   }).join('');
+}
+
+export function renderViews(data = MNEMONIC_DATA, filter = currentFilter) {
+  renderCards(data, filter);
+  renderTable(data, filter);
 }
 
 // Interactive lookup via Local API
@@ -707,7 +804,7 @@ export async function performLookup(query) {
 
       document.getElementById('res-mnemonic').textContent = data.mnemonic || '';
 
-      // Highlight corresponding row in table
+      // Highlight corresponding row / card
       highlightMatchingRow(code, breakdown);
     }
   } catch (err) {
@@ -716,8 +813,8 @@ export async function performLookup(query) {
 }
 
 export function clearHighlights() {
-  document.querySelectorAll('tr.highlight-row').forEach(tr => {
-    tr.classList.remove('highlight-row');
+  document.querySelectorAll('.highlight-row').forEach(el => {
+    el.classList.remove('highlight-row');
   });
 }
 
@@ -735,13 +832,27 @@ export function highlightMatchingRow(code, breakdown) {
 
   const targetLower = c2Char.toLowerCase();
   
-  // Find matching row either by lower or upper
-  let tr = document.querySelector(`tr[data-lower="${c2Char}"]`) || 
-           document.querySelector(`tr[data-upper="${c2Char}"]`) ||
-           document.querySelector(`tr[data-lower="${targetLower}"]`);
-
+  // Find matching table row
+  const tr = document.querySelector(`tr[data-lower="${c2Char}"]`) || 
+             document.querySelector(`tr[data-upper="${c2Char}"]`) ||
+             document.querySelector(`tr[data-lower="${targetLower}"]`);
   if (tr) {
     tr.classList.add('highlight-row');
+  }
+
+  // Find matching card
+  const card = document.querySelector(`.mn-card[data-lower="${c2Char}"]`) || 
+               document.querySelector(`.mn-card[data-upper="${c2Char}"]`) ||
+               document.querySelector(`.mn-card[data-lower="${targetLower}"]`);
+  if (card) {
+    card.classList.add('highlight-row');
+  }
+
+  // Scroll active view into view
+  const isCardVisible = window.getComputedStyle(document.getElementById('cards-container')).display !== 'none';
+  if (isCardVisible && card) {
+    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  } else if (tr) {
     tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 }
@@ -758,7 +869,7 @@ export function speakText(text) {
 
 // Attach event listeners
 export function initApp() {
-  renderTable();
+  renderViews();
 
   const searchInput = document.getElementById('search-input');
   const searchBtn = document.getElementById('search-btn');
@@ -789,13 +900,33 @@ export function initApp() {
   });
 
   // Filter tabs
-  document.querySelectorAll('.filter-tab-btn').forEach(btn => {
+  document.querySelectorAll('.mn-filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.mn-filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       currentFilter = btn.getAttribute('data-filter') || 'all';
-      renderTable(MNEMONIC_DATA, currentFilter);
+      renderViews(MNEMONIC_DATA, currentFilter);
     });
+  });
+
+  // View Switcher (Cards vs Table)
+  const btnCards = document.getElementById('btn-view-cards');
+  const btnTable = document.getElementById('btn-view-table');
+  const cardsContainer = document.getElementById('cards-container');
+  const tableContainer = document.getElementById('table-container');
+
+  btnCards?.addEventListener('click', () => {
+    btnCards.classList.add('active');
+    btnTable?.classList.remove('active');
+    if (cardsContainer) cardsContainer.style.display = 'flex';
+    if (tableContainer) tableContainer.style.display = 'none';
+  });
+
+  btnTable?.addEventListener('click', () => {
+    btnTable.classList.add('active');
+    btnCards?.classList.remove('active');
+    if (cardsContainer) cardsContainer.style.display = 'none';
+    if (tableContainer) tableContainer.style.display = 'block';
   });
 
   // Quick pills
@@ -819,8 +950,8 @@ export function initApp() {
     });
   });
 
-  // Clickable sample chips in table
-  document.getElementById('mnemonic-tbody')?.addEventListener('click', (e) => {
+  // Event delegation for chips & sound buttons (works for both Cards & Table)
+  document.addEventListener('click', (e) => {
     const chip = e.target.closest('.sample-chip');
     if (chip) {
       const word = chip.getAttribute('data-word');
