@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VSecretNote - Bảng Thần Chú & Tra Cứu Base60 Mnemonic</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/snk.css" />
+  <style>
+    :root {
+      --bg-dark: #050805;
+      --panel-bg: #0a110a;
+      --neon-green: #00ff66;
+      --neon-cyan: #00ffcc;
+      --neon-gold: #ffea00;
+      --neon-magenta: #ff55ff;
+      --neon-blue: #38bdf8;
+      --border-green: #004422;
+      --border-glow: rgba(0, 255, 102, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      padding: 12px 16px;
+      font-family: 'Space Mono', 'Consolas', monospace, sans-serif;
+      background: var(--bg-dark);
+      color: #e0e0e0;
+      min-height: 100vh;
+      line-height: 1.4;
+    }
+
+    .page-container {
+      max-width: 1350px;
+      margin: 0 auto;
+    }
+
+    /* HEADER & NAVIGATION */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid var(--border-green);
+      padding-bottom: 10px;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      color: var(--neon-cyan);
+      letter-spacing: 1px;
+      text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+    }
+
+    .header-title .badge {
+      background: #002b18;
+      border: 1px solid var(--neon-green);
+      color: var(--neon-green);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .tab-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #000;
+      padding: 8px 14px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      color: #aaa;
+      border: 1px solid #222;
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+      border-color: var(--neon-green);
+      background: #001a08;
+      box-shadow: 0 0 8px rgba(0, 255, 102, 0.3);
+    }
+
+    .tab-btn.active {
+      color: #000;
+      background: var(--neon-green);
+      border-color: var(--neon-green);
+      box-shadow: 0 0 12px rgba(0, 255, 102, 0.6);
+    }
+
+    /* LIVE SEARCH & DECODER TOOLBAR */
+    .search-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--neon-green);
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 0 15px rgba(0, 255, 102, 0.15);
+    }
+
+    .search-panel-title {
+      font-size: 12px;
+      font-weight: bold;
+      color: var(--neon-green);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .search-bar-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .search-input {
+      flex: 1;
+      background: #000;
+      color: var(--neon-green);
+      border: 1px solid #006633;
+      padding: 10px 14px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: bold;
+      border-radius: 4px;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+
+    .search-input:focus {
+      border-color: var(--neon-green);
+      box-shadow: 0 0 10px var(--border-glow);
+    }
+
+    .search-btn {
+      background: #002211;
+      color: var(--neon-green);
+      border: 1px solid var(--neon-green);
+      padding: 10px 16px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .search-btn:hover {
+      background: var(--neon-green);
+      color: #000;
+    }
+
+    .clear-btn {
+      background: #220000;
+      color: #ff5555;
+      border: 1px solid #660000;
+      padding: 10px 14px;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .clear-btn:hover {
+      background: #ff3333;
+      color: #000;
+    }
+
+    /* RESULT BANNER */
+    .lookup-result-box {
+      margin-top: 10px;
+      padding: 10px 12px;
+      background: #020703;
+      border: 1px dashed #00552b;
+      border-radius: 4px;
+      font-size: 13px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .lookup-result-box.show {
+      display: flex;
+    }
+
+    .result-main {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .result-token-code {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--neon-gold);
+      background: #111;
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--neon-gold);
+      box-shadow: 0 0 8px rgba(255, 234, 0, 0.4);
+    }
+
+    .result-token-word {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--neon-cyan);
+    }
+
+    .result-details {
+      color: #bbb;
+      font-size: 12px;
+    }
+
+    /* QUICK PILLS */
+    .quick-chips-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .quick-chip-label {
+      font-size: 11px;
+      color: #666;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .quick-chip {
+      background: #000;
+      color: var(--neon-cyan);
+      border: 1px solid #004433;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .quick-chip:hover {
+      background: #00221a;
+      border-color: var(--neon-cyan);
+      color: #fff;
+    }
+
+    /* CHEAT SHEET BANNER */
+    .cheat-banner {
+      background: linear-gradient(90deg, #091a10 0%, #061118 100%);
+      border: 1px solid #006644;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .cheat-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .cheat-title {
+      color: var(--neon-gold);
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .cheat-quote {
+      color: #fff;
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .cheat-quote span {
+      color: var(--neon-green);
+      text-decoration: underline;
+    }
+
+    .cheat-rules {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .cheat-tag {
+      background: #000;
+      padding: 4px 8px;
+      border-radius: 3px;
+      font-size: 11px;
+      border: 1px solid #004422;
+      color: #99ffbb;
+    }
+
+    /* FILTER TABS */
+    .filter-tab-btn {
+      background: #000;
+      color: #888;
+      border: 1px solid #003315;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 11px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .filter-tab-btn:hover {
+      color: #fff;
+      border-color: var(--neon-green);
+      background: #001a0a;
+    }
+
+    .filter-tab-btn.active {
+      color: #000;
+      background: var(--neon-green);
+      border-color: var(--neon-green);
+      box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+    }
+
+    /* MASTER TABLE */
+    .table-container {
+      width: 100%;
+      border: 1px solid var(--border-green);
+      border-radius: 6px;
+      overflow-x: auto;
+      background: #000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+    }
+
+    table.mnemonic-table {
+      width: 100%;
+      border-collapse: collapse;
+      table-layout: auto;
+      font-size: 12px;
+    }
+
+    table.mnemonic-table th {
+      background: #04140a;
+      color: var(--neon-green);
+      padding: 10px 8px;
+      border: 1px solid #003318;
+      text-align: center;
+      font-size: 12px;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    table.mnemonic-table td {
+      border: 1px solid #002210;
+      padding: 8px;
+      vertical-align: middle;
+      background: #020703;
+      transition: background 0.15s ease;
+    }
+
+    table.mnemonic-table tr:nth-child(even) td {
+      background: #030a05;
+    }
+
+    table.mnemonic-table tr:hover td {
+      background: #002410;
+    }
+
+    table.mnemonic-table tr.highlight-row td {
+      background: #003818 !important;
+      border-color: var(--neon-green);
+      box-shadow: inset 0 0 10px rgba(0, 255, 102, 0.4);
+    }
+
+    /* KEY PAIR CELL */
+    .key-pair-badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-width: 50px;
+    }
+
+    .key-char-lower {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--neon-green);
+      background: #001a00;
+      border: 1px solid #004400;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+
+    .key-char-upper {
+      font-size: 18px;
+      font-weight: bold;
+      color: var(--neon-gold);
+      background: #1a1600;
+      border: 1px solid #554400;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 4px;
+    }
+
+    .key-divider {
+      width: 80%;
+      height: 1px;
+      background: #003318;
+    }
+
+    /* MNEMONIC SENTENCE CELL */
+    .mnemonic-cell {
+      min-width: 220px;
+    }
+
+    .mnemonic-sub-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 0;
+    }
+
+    .mnemonic-sub-row .label-tag {
+      font-size: 10px;
+      font-weight: bold;
+      padding: 1px 4px;
+      border-radius: 2px;
+      min-width: 20px;
+      text-align: center;
+    }
+
+    .label-tag.tag-lower {
+      background: #002200;
+      color: var(--neon-green);
+      border: 1px solid #004400;
+    }
+
+    .label-tag.tag-upper {
+      background: #221a00;
+      color: var(--neon-gold);
+      border: 1px solid #554400;
+    }
+
+    .mnemonic-phrase {
+      font-size: 13px;
+      font-weight: bold;
+      color: #ffffff;
+      letter-spacing: 0.3px;
+    }
+
+    .mnemonic-phrase span.accent {
+      color: var(--neon-cyan);
+    }
+
+    /* RHYMES CELL */
+    .rhymes-cell {
+      min-width: 140px;
+      font-size: 11px;
+    }
+
+    .rhyme-badge {
+      display: inline-block;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-weight: bold;
+      margin: 1px;
+    }
+
+    .rhyme-b1 { background: #001a00; color: #00ff66; border: 1px solid #003300; }
+    .rhyme-b2 { background: #1a1600; color: #ffea00; border: 1px solid #443300; }
+    .rhyme-b3 { background: #1a001a; color: #ff55ff; border: 1px solid #440044; }
+
+    /* SAMPLES CELL */
+    .samples-cell {
+      min-width: 230px;
+    }
+
+    .sample-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: #000;
+      border: 1px solid #004422;
+      padding: 2px 6px;
+      border-radius: 3px;
+      margin: 2px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .sample-chip:hover {
+      border-color: var(--neon-green);
+      background: #002211;
+      box-shadow: 0 0 6px rgba(0, 255, 102, 0.4);
+    }
+
+    .sample-chip .word { color: #fff; font-weight: bold; font-size: 11px; }
+    .sample-chip .code { color: var(--neon-gold); font-size: 11px; }
+
+    /* STORY CELL */
+    .story-cell {
+      min-width: 320px;
+      font-size: 12px;
+      color: #cfd8dc;
+      line-height: 1.5;
+      text-align: left;
+    }
+
+    .story-cell em {
+      color: var(--neon-green);
+      font-style: normal;
+      font-weight: bold;
+      text-decoration: underline;
+    }
+
+    .story-cell strong {
+      color: var(--neon-gold);
+    }
+
+    /* ACTION BUTTON */
+    .speak-btn {
+      background: transparent;
+      border: none;
+      color: #555;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 6px;
+      transition: color 0.15s;
+    }
+
+    .speak-btn:hover {
+      color: var(--neon-cyan);
+    }
+
+    /* FOOTER */
+    footer {
+      margin-top: 20px;
+      padding: 12px 0;
+      border-top: 1px solid #003315;
+      font-size: 11px;
+      color: #666;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .header-title { font-size: 14px; }
+      .tab-nav { width: 100%; }
+      .cheat-banner { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    
+    <!-- HEADER -->
+    <header>
+      <div class="header-title">
+        <span>⚡ TIMECYPHER MNEMONIC MASTER</span>
+        <span class="badge">LƯỠNG LONG NHẤT THỂ</span>
+      </div>
+      <div class="tab-nav">
+        <a href="/" class="tab-btn">🏠 TRANG CHỦ</a>
+        <a href="/dict-matrix.html" class="tab-btn">📊 MA TRẬN & TỪ ĐIỂN</a>
+        <a href="/mnemonic.html" class="tab-btn active">⚡ BẢNG THẦN CHÚ</a>
+        <a href="/#quiz" class="tab-btn">🎯 TRẮC NGHIỆM</a>
+      </div>
+    </header>
+
+    <!-- LIVE SEARCH & DECODER TOOLBAR -->
+    <div class="search-panel">
+      <div class="search-panel-title">
+        <span>🔍 THANH TRA CỨU 2 CHIỀU THẦN TỐC (GÕ TỪ RA MÃ / GÕ MÃ RA TỪ & HIGHLIGHT DÒNG)</span>
+        <span id="lookup-status" style="font-size:11px; color:#00ff66;">⚡ Local API Online</span>
+      </div>
+      <div class="search-bar-row">
+        <input 
+          type="text" 
+          id="search-input" 
+          class="search-input" 
+          placeholder="Nhập từ tiếng Việt (vd: bướm, toát, cây...) hoặc mã Base60 (vd: bbs, tB7, cBz, CCj)..." 
+          autocomplete="off" 
+          spellcheck="false"
+        />
+        <button id="search-btn" class="search-btn">TRA CỨU</button>
+        <button id="clear-btn" class="clear-btn">✖ XÓA</button>
+      </div>
+
+      <!-- LOOKUP RESULT BOX -->
+      <div id="lookup-result-box" class="lookup-result-box">
+        <div class="result-main">
+          <span class="result-token-code" id="res-code">---</span>
+          <span style="color:#555;">➔</span>
+          <span class="result-token-word" id="res-word">---</span>
+          <span class="result-details" id="res-details">---</span>
+        </div>
+        <div id="res-mnemonic" style="font-size:12px; color:var(--neon-green); font-weight:bold;"></div>
+      </div>
+
+      <!-- QUICK PILLS -->
+      <div class="quick-chips-row">
+        <span class="quick-chip-label">Gợi ý kiểm tra:</span>
+        <button class="quick-chip" data-query="bướm">bướm (bbs)</button>
+        <button class="quick-chip" data-query="toát">toát (tB7)</button>
+        <button class="quick-chip" data-query="cây">cây (cBz)</button>
+        <button class="quick-chip" data-query="chịch">chịch (CCj)</button>
+        <button class="quick-chip" data-query="dâm">dâm (DDz)</button>
+        <button class="quick-chip" data-query="khít">khít (KDS)</button>
+        <button class="quick-chip" data-query="sướng">sướng (sss)</button>
+        <button class="quick-chip" data-query="xuân">xuân (xhA)</button>
+        <button class="quick-chip" data-query="7pa">7 Phụ Âm Phụ</button>
+      </div>
+    </div>
+
+    <!-- CHEAT BANNER: 7 PHỤ ÂM PHỤ -->
+    <div class="cheat-banner" id="extra-consonants-banner">
+      <div class="cheat-left">
+        <div class="cheat-title">🚨 7 PHỤ ÂM PHỤ KÍCH HOẠT BẢNG 4, 5, 6 (p, ph, qu, t, th, tr, x)</div>
+        <div class="cheat-quote">Khẩu quyết 7 chữ: 🍺 <span>"Phê Pha Quá, Tôi Thấy Trời Xoay!"</span></div>
+      </div>
+      <div class="cheat-rules">
+        <div class="cheat-tag"><strong>B4</strong> (Vần B1): Dấu = <strong>VNI 0..5</strong></div>
+        <div class="cheat-tag"><strong>B5</strong> (Vần B2): Dấu = <strong>VNI 6..9, B, C</strong></div>
+        <div class="cheat-tag"><strong>B6</strong> (Vần B3): Dấu = <strong>Nguyên âm HOA (+o)</strong></div>
+      </div>
+    </div>
+    <!-- FILTER BAR -->
+    <div style="display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; align-items: center;">
+      <span style="font-size: 11px; color: #888; font-weight: bold; text-transform: uppercase;">Bộ lọc danh mục:</span>
+      <button class="filter-tab-btn active" data-filter="all">🌐 TẤT CẢ (60 KÝ TỰ / 30 HÀNG)</button>
+      <button class="filter-tab-btn" data-filter="alpha">🔤 CHỮ CÁI (24 CẶP)</button>
+      <button class="filter-tab-btn" data-filter="number">🔢 KÝ TỰ SỐ 0-9 (5 CẶP)</button>
+      <button class="filter-tab-btn" data-filter="special">🌟 NGUYÊN ÂM ĐẶC BIỆT (o / i)</button>
+    </div>
+
+    <!-- MASTER MNEMONIC TABLE -->
+    <div class="table-container">
+      <table class="mnemonic-table" id="mnemonic-table">
+        <thead>
+          <tr>
+            <th style="width: 70px;">Cặp Phím</th>
+            <th style="width: 260px;">Câu Thần Chú 6 Từ (Thường ➔ HOA)</th>
+            <th style="width: 170px;">6 Vần Tương Ứng (B1 ➔ B2 ➔ B3)</th>
+            <th style="width: 250px;">Ví Dụ & Mã Nén Cụ Thể (Local API)</th>
+            <th>Ý Nghĩa Liên Tưởng Để Không Bao Giờ Quên</th>
+          </tr>
+        </thead>
+        <tbody id="mnemonic-tbody">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      <div>Hệ Thống Huấn Luyện Trí Nhớ TimeCypher Base60 • VSecretNote Engine</div>
+      <div style="color:var(--neon-green);">API Endpoint: <code>http://localhost:5173/api/lookup</code></div>
+    </footer>
+
+  </div>
+
+  <script type="module" src="/mnemonic.js"></script>
+</body>
+</html>
