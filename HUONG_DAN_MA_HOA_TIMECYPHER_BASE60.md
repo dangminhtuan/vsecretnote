@@ -12,7 +12,8 @@
 5. [Ký Tự 3 ($C_3$ - Giây SS): Dấu Thanh & Cơ Chế Phân Bảng](#5-ký-tự-3-c_3---giây-ss-dấu-thanh--cơ-chế-phân-bảng)
 6. [Khoang Chứa 24 Slot Dôi Dư: Mã Hóa 34.560 Từ Tiếng Anh](#6-khoang-chứa-24-slot-dôi-dư-mã-hóa-34560-từ-tiếng-anh)
 7. [Cơ Chế Đánh Dấu Chữ Hoa (Title Case & ALL CAPS)](#7-cơ-chế-đánh-dấu-chữ-hoa-title-case--all-caps)
-8. [Mổ Xẻ Chi Tiết Từng Từ Thực Tế (Walkthrough Examples)](#8-mổ-xẻ-chi-tiết-từng-từ-thực-tế-walkthrough-examples)
+8. [Các Quyết Định Kiến Trúc & Góc Chuyên Sâu (Architecture FAQs)](#8-các-quyết-định-kiến-trúc--góc-chuyên-sâu-architecture-faqs)
+9. [Mổ Xẻ Chi Tiết Từng Từ Thực Tế (Walkthrough Examples)](#9-mổ-xẻ-chi-tiết-từng-từ-thực-tế-walkthrough-examples)
 
 ---
 
@@ -168,15 +169,78 @@ $$60 - 36 = \mathbf{24 \text{ slots}}$$
 
 ## 7. CƠ CHẾ ĐÁNH DẤU CHỮ HOA (TITLE CASE & ALL CAPS)
 
-Do mã nén chuẩn của từ viết thường luôn có độ dài đúng **3 ký tự**, hệ thống sử dụng tiền tố để hỗ trợ văn bản viết hoa:
+Do mã nén chuẩn của từ viết thường luôn có độ dài đúng **3 ký tự**, hệ thống sử dụng tiền tố (prefix) 1 ký tự để hỗ trợ văn bản viết hoa mà không làm ảnh hưởng tới không gian 60 ký tự Base60 chuẩn:
 
-* **Viết hoa chữ cái đầu (Title Case, vd: `Việt`):** Thêm tiền tố **`o` [chữ o-thường]** $\rightarrow$ Mã dài 4 ký tự: **`ovjJ`**.
-* **Viết HOA TOÀN BỘ (ALL CAPS, vd: `VIỆT`):** Thêm tiền tố **`O` [chữ O-HOA]** $\rightarrow$ Mã dài 4 ký tự: **`OvjJ`**.
-* **Giải mã:** Trình giải mã kiểm tra nếu mã có 4 ký tự bắt đầu bằng `o` hoặc `O` thì tự động trả về định dạng chữ hoa tương ứng.
+* **Viết hoa chữ cái đầu (Title Case, vd: `Việt`, `Đen`):** Thêm tiền tố **`I` [chữ i-ngắn HOA]** $\rightarrow$ Mã dài 4 ký tự: **`IvjJ`** *(Việt)*, **`Idoz`** *(Đen)*.
+* **Viết HOA TOÀN BỘ (ALL CAPS, vd: `VIỆT`, `ĐEN`):** Thêm tiền tố **`O` [chữ O-HOA]** $\rightarrow$ Mã dài 4 ký tự: **`OvjJ`** *(VIỆT)*, **`Odoz`** *(ĐEN)*.
+* **Cơ chế nhận diện không gian kín (Zero Collision):**
+  * Vì cả `I` [i-ngắn HOA] và `O` [O-HOA] đều **được đưa ra ngoài bảng 60 ký tự Base60**, nên bất kỳ token nào dài 4 ký tự bắt đầu bằng `I` hoặc `O` đều được giải mã ngay lập tức là từ viết hoa.
+  * Khi nén chuỗi liên tục không dấu cách (Continuous Compression), thuật toán quét: nếu gặp `I` hoặc `O` ở đầu, nó cắt ngay 4 ký tự (`Ixxx` hoặc `Oxxx`); nếu là ký tự khác, nó cắt đều đặn từng khối 3 ký tự (`xxx`).
+  * Nhờ đó, chữ `I` hoa đứng ở đầu từ không bao giờ bị nhầm lẫn với chữ `l` [chữ l-dài thường] trong thân mã 3 ký tự!
 
 ---
 
-## 8. MỔ XẺ CHI TIẾT TỪNG TỪ THỰC TẾ (WALKTHROUGH EXAMPLES)
+## 8. CÁC QUYẾT ĐỊNH KIẾN TRÚC & GÓC CHUYÊN SÂU (ARCHITECTURE FAQS)
+
+Hệ thống TimeCypher không gán ký tự ngẫu nhiên mà tuân thủ nghiêm ngặt **Toán học Ánh xạ 1-1 (Bijective Mapping)** và **Ngữ âm học Tiếng Việt (Vietnamese Phonology)**. Dưới đây là lời giải cho những thắc mắc kiến trúc cốt lõi:
+
+### ❓ 8.1. Tại sao có thể dùng các phụ âm cuối bảng như `w, y` và `W, Y` làm dấu thanh?
+Nhiều người nhìn vào bảng chữ cái Latin hiện đại thường nghĩ `w, y` là phụ âm thuần túy, nhưng trong ngôn ngữ học và văn hóa gõ tiếng Việt:
+1. **`y` bản chất là một nguyên âm:** Trong tiếng Việt, `y` chính là "i-dài" (như trong *tai - tay, mai - may, ý chí, y tế*). `y` đảm nhận vai trò hạt nhân âm tiết hoặc bán nguyên âm tương đương `i`.
+2. **`w` là đại diện nguyên âm kinh điển trong bộ gõ Telex:** Phím `w` là biểu tượng gõ các nguyên âm có móc (`ư`, `ơ`). Trong ký âm quốc tế (IPA), âm /w/ là bán nguyên âm môi-vòm (labial-velar approximant) gắn liền với nguyên âm /u/.
+3. **Tạo thành "Họ 6 nguyên âm" khép kín cho 6 thanh điệu:** Tiếng Việt có đúng 6 thanh điệu (Ngang, Sắc, Huyền, Hỏi, Ngã, Nặng). Để thiết lập bảng dấu cho nhóm vần B3, hệ thống cần đúng 6 ký tự mang tính nguyên âm:
+   * **Bảng 3 (Nguyên âm thường):** `a`, `e`, `i`, `u`, `w`, `y`
+   * **Bảng 6 (Nguyên âm HOA):** `A`, `E`, `o`, `U`, `W`, `Y`
+4. **Mẹo liên tưởng trực quan:** Người học chỉ cần một phản xạ tự nhiên: *Hễ thấy ký tự thứ 3 ($C_3$) mang dáng dấp họ nguyên âm (kể cả `w, y`), từ đó 100% thuộc về Bảng Vần 3 (B3)*.
+
+---
+
+### ❓ 8.2. Tại sao chữ `H` [H-HOA] không được dùng làm dấu và bị "khóa" ở kho tiếng Anh?
+Điều này bắt nguồn từ **nguyên lý toán học bất biến trong giải mã Base60**:
+
+1. **Nguyên lý Ánh xạ 1-1 (Bijective Mapping):**
+   Ký tự thứ ba $C_3$ trong chuỗi nén 3 ký tự đại diện cho giây $SS \in [0..59]$:
+   * **Index 00 đến 35 (36 slot đầu):** Dành riêng cho Tiếng Việt ($6 \text{ bảng dấu} \times 6 \text{ thanh điệu} = 36$).
+   * **Index 36 đến 59 (24 slot cuối):** Dành riêng cho 34.560 từ Tiếng Anh / từ mượn quốc tế.
+
+2. **Cơ chế tra cứu theo chỉ số (Array Index Lookup):**
+   Khi giải mã một từ, máy tính tra cứu vị trí của $C_3$ trong mảng `BASE60_SS`:
+   ```javascript
+   const ss = BASE60_SS.indexOf(C3); // Tìm chỉ số của ký tự thứ 3
+   ```
+   Hàm `indexOf` chỉ trả về **vị trí đầu tiên** mà nó tìm thấy. Nếu một ký tự xuất hiện từ 2 lần trở lên trong mảng `BASE60_SS`, hệ thống sẽ bị xung đột giải mã (collision) ngay lập tức!
+
+3. **Chữ `H` đã được quy hoạch cố định tại Index 56 của Tiếng Anh:**
+   ```javascript
+   // 24 slot tiếng Anh (index 36..59):
+   'c', 'd', 'g', 'G', 'k', 'K', 'h', 'v', 'D', 'm', 'n', 'b', 
+   'l', 'Q', 'N', 'L', 'p', 'q', 't', 'T', 'H', 'M', 'P', 'V'
+   //                                        ▲
+   //                                   Index 56 là chữ H
+   ```
+   * **Ví dụ va chạm thực tế nếu gượng ép dùng `H` làm Dấu Huyền Bảng 6 (Index 32):**
+     * **Input A (Tiếng Việt):** Từ `thuần` mã hóa thành `ThH` (với $H$ ở vị trí 32 làm Dấu Huyền B6).
+     * **Input B (Tiếng Anh):** Một từ tiếng Anh ở slot 56 được mã hóa kết thúc bằng ký tự `H`.
+     * **Hậu quả:** Khi máy gặp chuỗi có đuôi `H`, hàm `indexOf('H')` luôn trả về 32 (dấu Huyền tiếng Việt) $\rightarrow$ Từ tiếng Anh ở slot 56 bị "đè bẹp" và tê liệt vĩnh viễn, không bao giờ giải mã ngược lại được!
+
+---
+
+### ❓ 8.3. Tại sao hoán đổi `o` [o thường] và `I` [I hoa] là "nước cờ hoàn hảo"?
+Sự hoán đổi này giải quyết trọn vẹn 3 bài toán kiến trúc lớn cùng một lúc:
+
+1. **Bảo toàn trọn vẹn tính "Nguyên âm" cho Bảng 6:**
+   Khi đưa `o` vào thay cho `I`, Bảng 6 trở thành: `A, E, o, U, W, Y`. Toàn bộ 6 ký tự đều mang bản chất nguyên âm tự nhiên, thuần khiết và đồng bộ với Bảng 3 (`a, e, i, u, w, y`).
+2. **Không làm xáo trộn 24 slot Tiếng Anh:**
+   Chữ `o` [chữ o-thường] trước đây hoàn toàn đứng ngoài Base60. Việc đưa `o` vào vị trí trống của `I` diễn ra nội bộ trong 36 slot tiếng Việt, không đụng chạm đến bất kỳ vị trí nào của 24 ký tự tiếng Anh (chữ `H` ở slot 56 vẫn yên vị an toàn).
+3. **Triệt tiêu nhầm lẫn thị giác giữa `I` và `l` trên thiết bị di động:**
+   * Trên các font chữ Sans-serif (Roboto, Google Sans, Inter), chữ `I` [chữ i-ngắn HOA] và chữ `l` [chữ l-dài thường] đều hiển thị thành **1 nét sổ thẳng đứng (`|`)**.
+   * Nếu để `I` trong Base60, từ `đen` $\rightarrow$ mã nén là `dIz` sẽ cực kỳ dễ bị nhìn nhầm thành `dlz`.
+   * Bằng cách đưa `o` vào thay thế: `đen` $\rightarrow$ mã nén là **`doz`**, cực kỳ thanh thoát và rõ ràng.
+   * Chữ `I` hoa bước ra ngoài làm **tiền tố viết hoa Title Case** (`Idoz` $\rightarrow$ `Đen`, `IvjJ` $\rightarrow$ `Việt`). Vì luôn đứng ở đầu khối 4 ký tự, người dùng nhận diện ngay đây là ký tự chức năng viết hoa, không bao giờ nhầm với chữ `l` trong thân mã 3 ký tự!
+
+---
+
+## 9. MỔ XẺ CHI TIẾT TỪNG TỪ THỰC TẾ (WALKTHROUGH EXAMPLES)
 
 ### 📌 Ví dụ 1: Từ `đen` $\longrightarrow$ Mã `doz`
 1. **Phụ âm đầu `đ`:** Thuộc nhóm Phụ âm chính $\rightarrow$ Ký tự $C_1$ = **`d`**.
@@ -208,6 +272,20 @@ $$\Rightarrow \mathbf{d} + \mathbf{W} + \mathbf{y} = \mathbf{dWy}$$
 2. **Vần `anh`:** Nằm ở Bảng 1 $\rightarrow$ Ký tự $C_2$ = **`W`**.
 3. **Dấu Huyền (B1 - Phụ âm phụ):** Phụ âm phụ + Bảng 1 + Dấu Huyền $\rightarrow$ Ký tự $C_3$ = **`2`** (VNI 0-5).
 $$\Rightarrow \mathbf{T} + \mathbf{W} + \mathbf{2} = \mathbf{TW2}$$
+
+---
+
+### 📌 Ví dụ 5: Từ viết hoa chữ cái đầu `Việt` $\longrightarrow$ Mã `IvjJ`
+1. **Mã thường của `việt`:** Phụ âm `v` ($C_1$=`v`) + vần `iêt` Bảng 2 ($C_2$=`j`) + Dấu Nặng B2 ($C_3$=`J`) $\rightarrow$ `vjJ`.
+2. **Ký tự viết hoa đầu (Title Case):** Thêm tiền tố **`I` [chữ i-ngắn HOA]** phía trước.
+$$\Rightarrow \mathbf{I} + \mathbf{vjJ} = \mathbf{IvjJ}$$
+
+---
+
+### 📌 Ví dụ 6: Từ viết HOA TOÀN BỘ `ĐEN` $\longrightarrow$ Mã `Odoz`
+1. **Mã thường của `đen`:** `doz`.
+2. **Ký tự viết HOA TOÀN BỘ (ALL CAPS):** Thêm tiền tố **`O` [chữ O-HOA]** phía trước.
+$$\Rightarrow \mathbf{O} + \mathbf{doz} = \mathbf{Odoz}$$
 
 ---
 
