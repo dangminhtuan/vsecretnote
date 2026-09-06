@@ -1,0 +1,300 @@
+/* ===================================================
+   ⚡ VSECRETNOTE - ADAPTIVE 4-SLOT NAVIGATION SYSTEM
+   =================================================== */
+
+.vsn-nav-header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  width: 100% !important;
+  padding: 8px 12px !important;
+  margin-bottom: 16px !important;
+  border-bottom: 1px solid rgba(0, 255, 102, 0.3) !important;
+  background: rgba(5, 12, 8, 0.85) !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 6px !important;
+  box-sizing: border-box !important;
+  position: relative !important;
+  z-index: 1000 !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+}
+
+/* VẾ TRÁI: LOGO & TÊN TRANG HIỆN TẠI */
+.vsn-brand-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.vsn-logo-title {
+  font-family: 'Share Tech Mono', 'Space Mono', 'Consolas', monospace;
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #00ff66;
+  text-shadow: 0 0 10px rgba(0, 255, 102, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.vsn-current-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(0, 255, 204, 0.12);
+  border: 1px solid #00ffcc;
+  color: #00ffcc;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
+  white-space: nowrap;
+}
+
+/* VẾ PHẢI: 4 SLOTS ĐIỀU HƯỚNG THÍCH ỨNG */
+.vsn-slots-nav {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+.vsn-slot-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #020d06;
+  padding: 6px 11px;
+  font-family: 'Share Tech Mono', 'Space Mono', 'Consolas', monospace;
+  font-size: 11.5px;
+  font-weight: bold;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.18s ease;
+  white-space: nowrap;
+  user-select: none;
+  position: relative;
+}
+
+/* SLOT 1: NÚT GHIM (PINNED) */
+.vsn-slot-btn.slot-pinned {
+  color: #ffea00 !important;
+  border: 1px solid #ffea00 !important;
+  background: rgba(255, 234, 0, 0.06);
+}
+.vsn-slot-btn.slot-pinned:hover {
+  background: rgba(255, 234, 0, 0.18) !important;
+  box-shadow: 0 0 10px rgba(255, 234, 0, 0.4);
+}
+
+/* SLOT 2: THƯỜNG DÙNG TOÀN CỤC (GLOBAL FREQUENT) */
+.vsn-slot-btn.slot-global {
+  color: #00ffcc !important;
+  border: 1px solid #00ffcc !important;
+  background: rgba(0, 255, 204, 0.06);
+}
+.vsn-slot-btn.slot-global:hover {
+  background: rgba(0, 255, 204, 0.18) !important;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+}
+
+/* SLOT 3: THƯỜNG DÙNG THEO NGỮ CẢNH (CONTEXTUAL FREQUENT) */
+.vsn-slot-btn.slot-context {
+  color: #00ff66 !important;
+  border: 1px solid #00ff66 !important;
+  background: rgba(0, 255, 102, 0.06);
+}
+.vsn-slot-btn.slot-context:hover {
+  background: rgba(0, 255, 102, 0.18) !important;
+  box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+}
+
+/* SLOT 4: BẢNG CHỌN TẤT CẢ (ALL HUB LAUNCHER) */
+.vsn-slot-btn.slot-launcher {
+  color: #f8fafc !important;
+  border: 1px solid #2d6a4f !important;
+  background: #06190f;
+}
+.vsn-slot-btn.slot-launcher:hover,
+.vsn-slot-btn.slot-launcher.active {
+  color: #00ffcc !important;
+  border-color: #00ffcc !important;
+  background: #082818 !important;
+  box-shadow: 0 0 10px rgba(0, 255, 204, 0.35);
+}
+
+/* SLOT TAG INDICATOR */
+.vsn-slot-tag {
+  font-size: 9px;
+  padding: 1px 4px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  font-weight: 900;
+  line-height: 1;
+}
+.slot-pinned .vsn-slot-tag { background: #ffea00; color: #000; }
+.slot-global .vsn-slot-tag { background: #00ffcc; color: #000; }
+.slot-context .vsn-slot-tag { background: #00ff66; color: #000; }
+.slot-launcher .vsn-slot-tag { background: #2d6a4f; color: #fff; }
+
+/* POPUP LAUNCHER / ALL PAGES HUB */
+.vsn-launcher-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 12px;
+  width: 340px;
+  background: rgba(3, 14, 8, 0.98);
+  border: 1px solid #00ffcc;
+  box-shadow: 0 8px 32px rgba(0, 255, 204, 0.3), 0 0 12px rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 10002;
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  animation: vsnFadeIn 0.18s ease;
+}
+
+@keyframes vsnFadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.vsn-popover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #0f3d20;
+}
+
+.vsn-popover-title {
+  font-size: 11px;
+  font-weight: bold;
+  color: #00ffcc;
+  letter-spacing: 1px;
+  font-family: inherit;
+}
+
+.vsn-popover-tip {
+  font-size: 9.5px;
+  color: #88aa99;
+  font-style: italic;
+}
+
+.vsn-pages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  max-height: 380px;
+  overflow-y: auto;
+}
+
+.vsn-page-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 9px;
+  border-radius: 5px;
+  background: #05180d;
+  border: 1px solid #0c3319;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.vsn-page-item:hover {
+  border-color: #00ff66;
+  background: #0b2917;
+  transform: translateX(2px);
+}
+
+.vsn-page-item.current-page {
+  border-color: #00ffcc;
+  background: rgba(0, 255, 204, 0.1);
+}
+
+.vsn-page-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.vsn-page-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.vsn-page-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.vsn-page-title {
+  font-size: 12px;
+  font-weight: bold;
+  color: #f1f5f9;
+}
+
+.vsn-page-desc {
+  font-size: 10px;
+  color: #8da498;
+}
+
+.vsn-pin-action-btn {
+  background: transparent;
+  border: 1px solid transparent;
+  color: #557766;
+  font-size: 14px;
+  cursor: pointer;
+  padding: 4px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+  line-height: 1;
+}
+
+.vsn-pin-action-btn:hover {
+  color: #ffea00;
+  border-color: #ffea00;
+  background: rgba(255, 234, 0, 0.15);
+  transform: scale(1.15);
+}
+
+.vsn-pin-action-btn.is-pinned {
+  color: #ffea00;
+  text-shadow: 0 0 8px rgba(255, 234, 0, 0.7);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .vsn-nav-header {
+    flex-direction: column;
+    align-items: stretch !important;
+  }
+  .vsn-slots-nav {
+    justify-content: space-between;
+    width: 100%;
+  }
+  .vsn-slot-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 6px 4px;
+    font-size: 10px;
+  }
+  .vsn-launcher-popover {
+    left: 10px;
+    right: 10px;
+    width: auto;
+  }
+}

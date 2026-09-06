@@ -6,6 +6,7 @@
   <title>VSecretNote - Kỳ Quan Đối Xứng & Mã Lặp Base60 (Twins & Triples)</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/snk.css" />
+  <link rel="stylesheet" href="/nav-system.css" />
   <style>
     :root {
       --bg-dark: #050a06;
@@ -758,7 +759,7 @@
 <body>
   <div class="tw-page">
     <!-- HEADER -->
-    <header>
+    <header id="vsn-twins-header">
       <div class="tw-header-title">
         <span>⚡ VSecretNote</span>
         <span class="badge">Kỳ Quan Đối Xứng Base60</span>
@@ -1258,6 +1259,10 @@
     } else {
       switchView('table');
     }
+  </script>
+  <script type="module">
+    import { initVsnNavigation } from '/nav-system.js';
+    initVsnNavigation('#vsn-twins-header');
   </script>
 </body>
 </html>

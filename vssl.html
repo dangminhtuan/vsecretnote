@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VSSL — Ngôn ngữ Ký hiệu Tốc ký Tiếng Việt</title>
+<link rel="stylesheet" href="/nav-system.css">
 <style>
 /* ─── CSS VARIABLES & RESET ─────────────────────────────────────────── */
 :root {
@@ -406,8 +407,11 @@ main { padding: 20px; max-width: 1400px; margin: 0 auto; }
 </head>
 <body>
 
-<!-- ─── HEADER ─────────────────────────────────────────────────────────── -->
-<header class="app-header">
+<!-- ─── SYSTEM ADAPTIVE NAV HEADER ──────────────────────────────────── -->
+<header id="vsn-vssl-header"></header>
+
+<!-- ─── LOCAL APP SUB-HEADER ───────────────────────────────────────────── -->
+<div class="app-header" style="border-radius: 8px; margin-bottom: 16px;">
   <span style="font-size:1.5rem">🤟</span>
   <div>
     <h1>VSSL</h1>
@@ -419,8 +423,7 @@ main { padding: 20px; max-width: 1400px; margin: 0 auto; }
     <button class="nav-tab" data-panel="dictionary">📖 Từ điển</button>
     <button class="nav-tab" data-panel="practice">🎯 Luyện tập</button>
   </nav>
-  <a href="/" class="back-link">← VSecretNote</a>
-</header>
+</div>
 
 <!-- ─── MAIN ───────────────────────────────────────────────────────────── -->
 <main>
@@ -1301,6 +1304,9 @@ setTimeout(() => {
   analyzeWord('học');
 }, 100);
 </script>
-
+<script type="module">
+  import { initVsnNavigation } from '/nav-system.js';
+  initVsnNavigation('#vsn-vssl-header');
+</script>
 </body>
 </html>

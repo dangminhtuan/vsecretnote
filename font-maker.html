@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Cyber Vietnamese Font Maker</title>
+  <link rel="stylesheet" href="/nav-system.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     @font-face {
@@ -95,6 +96,7 @@
   </style>
 </head>
 <body>
+  <header id="vsn-font-header" style="width: 100%; max-width: 600px; margin-bottom: 12px;"></header>
   <h1>Base60 Block Typeface Generator</h1>
   <p>Cấu trúc 4 Khối: Dấu hình học trực quan & Tối ưu khoảng trống</p>
 
@@ -183,5 +185,9 @@
   <div id="status">Đang tải font...</div>
 
   <script type="module" src="./font-maker.js?v=7"></script>
+  <script type="module">
+    import { initVsnNavigation } from '/nav-system.js';
+    initVsnNavigation('#vsn-font-header');
+  </script>
 </body>
 </html>

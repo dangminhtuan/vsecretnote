@@ -6,6 +6,7 @@
   <title>VSecretNote - Bảng Thần Chú & Tra Cứu Base60 Mnemonic</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/snk.css" />
+  <link rel="stylesheet" href="/nav-system.css" />
   <style>
     :root {
       --bg-dark: #050a06;
@@ -706,7 +707,7 @@
   <div class="page-container">
     
     <!-- HEADER -->
-    <header>
+    <header id="vsn-mnemonic-header">
       <div class="header-title">
         <span>⚡ BASE60 MNEMONIC MASTER</span>
         <span class="badge">60 KÝ TỰ • TOÀN DIỆN</span>
@@ -826,5 +827,9 @@
   </div>
 
   <script type="module" src="/mnemonic.js"></script>
+  <script type="module">
+    import { initVsnNavigation } from '/nav-system.js';
+    initVsnNavigation('#vsn-mnemonic-header');
+  </script>
 </body>
 </html>

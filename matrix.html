@@ -6,6 +6,7 @@
   <title>TimeCypher Rhyme & Tone Matrix</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/snk.css" />
+  <link rel="stylesheet" href="/nav-system.css" />
   <style>
     body { padding: 8px 6px; font-family: monospace; background: #000; color: #0f0; margin: 0; }
     .matrix-container { max-width: 1000px; margin: 0 auto; }
@@ -222,22 +223,7 @@
 </head>
 <body>
   <div class="matrix-container">
-    <header>
-      <div>
-        <h1 class="glitch" data-text="RHYME MATRIX" style="margin: 0; font-size: 20px;">RHYME MATRIX</h1>
-      </div>
-      <div class="cyber-nav-group">
-        <a href="/" class="cyber-nav-btn" title="Về trang ứng dụng chính">
-          <span class="nav-icon">⚡</span>
-          <span class="nav-text">APP</span>
-        </a>
-        <div class="cyber-nav-divider"></div>
-        <a href="/dict.html" class="cyber-nav-btn btn-cyan" title="Sang trang Từ điển">
-          <span class="nav-icon">📖</span>
-          <span class="nav-text">DICT</span>
-        </a>
-      </div>
-    </header>
+    <header id="vsn-matrix-header"></header>
 
     <div class="control-bar" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
       <div style="position: relative; flex: 1; min-width: 220px; max-width: 340px;">
@@ -278,5 +264,9 @@
   </div>
 
   <script type="module" src="/matrix.js"></script>
+  <script type="module">
+    import { initVsnNavigation } from '/nav-system.js';
+    initVsnNavigation('#vsn-matrix-header');
+  </script>
 </body>
 </html>

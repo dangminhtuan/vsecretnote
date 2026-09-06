@@ -6,18 +6,18 @@
   <title>VSecretNote - Ma Trận & Từ Điển Mật Mã Base60</title>
   <link rel="stylesheet" href="/style.css" />
   <link rel="stylesheet" href="/snk.css" />
+  <link rel="stylesheet" href="/nav-system.css" />
   <style>
     body { padding: 12px 16px; font-family: 'Space Mono', monospace, sans-serif; background: #050805; color: #00ff66; margin: 0; min-height: 100vh; }
     .page-container { max-width: 1300px; margin: 0 auto; }
     
-    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; border-bottom: 1px solid #004422; padding-bottom: 10px; }
-    .header-title { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: bold; color: #00ffcc; letter-spacing: 1px; }
-    
     /* Top Tab Switcher & Dropdown Menu */
     .tab-nav {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 8px;
+      margin-bottom: 12px;
+    }
       min-width: 780px;
     }
     .tab-btn, .tab-nav > a.tab-btn {
@@ -177,86 +177,79 @@
 </head>
 <body>
   <div class="page-container">
-    <header>
-      <div class="header-title">
-        <span>⚡ VSECRETNOTE BASE60 MATRIX & DICTIONARY</span>
-      </div>
+    <header id="vsn-dict-matrix-header"></header>
+    
+    <div class="tab-nav">
+      <button class="tab-btn active" id="tab-btn-matrix" data-target="tab-matrix">📊 MA TRẬN VẦN (RHYMES)</button>
+      <button class="tab-btn" id="tab-btn-dict" data-target="tab-dict">📖 TỪ ĐIỂN TRA CỨU (5.000+ TỪ)</button>
       
-      <div class="tab-nav">
-        <button class="tab-btn active" id="tab-btn-matrix" data-target="tab-matrix">📊 MA TRẬN VẦN (RHYMES)</button>
-        <button class="tab-btn" id="tab-btn-dict" data-target="tab-dict">📖 TỪ ĐIỂN TRA CỨU (5.000+ TỪ)</button>
-        
-        <div class="dl-dropdown">
-          <button class="tab-btn" id="dl-btn" onclick="document.getElementById('dl-menu').classList.toggle('show'); this.classList.toggle('active')">📥 TẢI TỪ ĐIỂN GBOARD ▾</button>
-          <div class="dl-content" id="dl-menu" style="padding: 12px; color: #fff; min-width: 290px; box-sizing: border-box;">
-            <div style="font-weight: bold; margin-bottom: 10px; color: #38bdf8; text-align: left; font-size: 11.5px; border-bottom: 1px dashed #003315; padding-bottom: 6px;">⚙️ TÙY CHỌN MODULE TỰ CHỌN:</div>
-            
-            <div style="display: flex; flex-direction: column; gap: 8px; text-align: left; margin-bottom: 12px;">
-              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
-                <input type="checkbox" id="chk-r" checked style="margin-top: 3px; cursor: pointer;" />
-                <div>
-                  <strong style="color: #00ffcc; font-size: 11.5px;">[R] Quy tắc ma trận</strong>
-                  <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">~50 quy tắc ma trận học thuộc (Bảng dấu, Phụ âm, 10 số...)</span>
-                </div>
-              </label>
-
-              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
-                <input type="checkbox" id="chk-f" checked style="margin-top: 3px; cursor: pointer;" />
-                <div>
-                  <strong style="color: #00ffcc; font-size: 11.5px;">[F] Dịch xuôi (Base60 ➔ Từ)</strong>
-                  <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ mã Base60 sẽ gợi ý ra chữ tiếng Việt hàng ngày.</span>
-                </div>
-              </label>
-
-              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
-                <input type="checkbox" id="chk-b" style="margin-top: 3px; cursor: pointer;" />
-                <div>
-                  <strong style="color: #ffaa00; font-size: 11.5px;">[B] Dịch ngược (Từ ➔ Base60)</strong>
-                  <span style="display: block; font-size: 9.5px; color: #ffbb66; line-height: 1.3;">Ép học! Bàn phím tự động thế từ thường bằng mã Base60.</span>
-                </div>
-              </label>
-
-              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
-                <input type="checkbox" id="chk-l" checked style="margin-top: 3px; cursor: pointer;" />
-                <div>
-                  <strong style="color: #00ffcc; font-size: 11.5px;">[L] Học tập (Từ + 'l' ➔ Giải nghĩa)</strong>
-                  <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ thêm chữ l để hiện công thức giải nghĩa phím tắt (ví dụ: thànhl).</span>
-                </div>
-              </label>
-            </div>
-
-            <div style="border-top: 1px solid #003315; padding-top: 10px; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; width: 100%;">
-              <a href="#" id="dl-link" class="tab-btn" style="background: #38bdf8 !important; color: #000000 !important; border-color: #38bdf8 !important; text-decoration: none; width: 100%; justify-content: center; height: 36px; min-height: 36px; display: inline-flex;" download>
-                📥 TẢI TỪ ĐIỂN TỔ HỢP (.ZIP)
-              </a>
-              <span id="dl-filename" style="font-size: 9.5px; color: #888; text-align: center; font-family: monospace; display: block;">Gboard_Dict_R_F_L.zip</span>
-            </div>
-
-            <!-- PHÂN VÙNG TIỆN ÍCH NGÂN HÀNG & HỌC VẦN ĐỘC LẬP -->
-            <div style="border-top: 1px dashed #004422; margin-top: 10px; padding-top: 8px;">
-              <div style="font-weight: bold; margin-bottom: 6px; color: #ffaa00; text-align: left; font-size: 11px;">⚡ GÓI TIỆN ÍCH NGÂN HÀNG (TẢI NHANH):</div>
-              <div style="display: flex; flex-direction: column; gap: 5px;">
-                <a href="/Gboard_Banking_Telex.zip" download="Gboard_Banking_Telex.zip" class="dl-item" style="padding: 6px 8px; border-radius: 4px; background: rgba(0, 30, 15, 0.6); border: 1px solid #004422; text-decoration: none;">
-                  <span style="color: #00ffcc; font-weight: bold; font-size: 11px; display: block;">⚡ 1. Banking Telex (.zip)</span>
-                  <span style="font-size: 9.5px; color: #888; display: block;">Gõ Telex (muoons) ➔ Chèn thẳng mã Base60</span>
-                </a>
-                <a href="/Gboard_Banking_VNI.zip" download="Gboard_Banking_VNI.zip" class="dl-item" style="padding: 6px 8px; border-radius: 4px; background: rgba(0, 30, 15, 0.6); border: 1px solid #004422; text-decoration: none;">
-                  <span style="color: #00ffcc; font-weight: bold; font-size: 11px; display: block;">⚡ 2. Banking VNI (.zip)</span>
-                  <span style="font-size: 9.5px; color: #888; display: block;">Dồn số cuối (Lớn ➔ Nhỏ: duoc975, muon61, de963)</span>
-                </a>
-                <a href="/Gboard_Learn_NoTone.zip" download="Gboard_Learn_NoTone.zip" class="dl-item" style="padding: 6px 8px; border-radius: 4px; background: rgba(0, 30, 15, 0.6); border: 1px solid #004422; text-decoration: none;">
-                  <span style="color: #ffea00; font-weight: bold; font-size: 11px; display: block;">🎓 3. Học Vần Không Dấu (.zip)</span>
-                  <span style="font-size: 9.5px; color: #888; display: block;">Tự nhiên: muon | Thêm z cho từ có thật: thanhz, xemz</span>
-                </a>
+      <div class="dl-dropdown">
+        <button class="tab-btn" id="dl-btn" onclick="document.getElementById('dl-menu').classList.toggle('show'); this.classList.toggle('active')">📥 TẢI TỪ ĐIỂN GBOARD ▾</button>
+        <div class="dl-content" id="dl-menu" style="padding: 12px; color: #fff; min-width: 290px; box-sizing: border-box;">
+          <div style="font-weight: bold; margin-bottom: 10px; color: #38bdf8; text-align: left; font-size: 11.5px; border-bottom: 1px dashed #003315; padding-bottom: 6px;">⚙️ TÙY CHỌN MODULE TỰ CHỌN:</div>
+          
+          <div style="display: flex; flex-direction: column; gap: 8px; text-align: left; margin-bottom: 12px;">
+            <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
+              <input type="checkbox" id="chk-r" checked style="margin-top: 3px; cursor: pointer;" />
+              <div>
+                <strong style="color: #00ffcc; font-size: 11.5px;">[R] Quy tắc ma trận</strong>
+                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">~50 quy tắc ma trận học thuộc (Bảng dấu, Phụ âm, 10 số...)</span>
               </div>
+            </label>
+
+            <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
+              <input type="checkbox" id="chk-f" checked style="margin-top: 3px; cursor: pointer;" />
+              <div>
+                <strong style="color: #00ffcc; font-size: 11.5px;">[F] Dịch xuôi (Base60 ➔ Từ)</strong>
+                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ mã Base60 sẽ gợi ý ra chữ tiếng Việt hàng ngày.</span>
+              </div>
+            </label>
+
+            <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
+              <input type="checkbox" id="chk-b" style="margin-top: 3px; cursor: pointer;" />
+              <div>
+                <strong style="color: #ffaa00; font-size: 11.5px;">[B] Dịch ngược (Từ ➔ Base60)</strong>
+                <span style="display: block; font-size: 9.5px; color: #ffbb66; line-height: 1.3;">Ép học! Bàn phím tự động thế từ thường bằng mã Base60.</span>
+              </div>
+            </label>
+
+            <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
+              <input type="checkbox" id="chk-l" checked style="margin-top: 3px; cursor: pointer;" />
+              <div>
+                <strong style="color: #00ffcc; font-size: 11.5px;">[L] Học tập (Từ + 'l' ➔ Giải nghĩa)</strong>
+                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ thêm chữ l để hiện công thức giải nghĩa phím tắt (ví dụ: thànhl).</span>
+              </div>
+            </label>
+          </div>
+
+          <div style="border-top: 1px solid #003315; padding-top: 10px; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; width: 100%;">
+            <a href="#" id="dl-link" class="tab-btn" style="background: #38bdf8 !important; color: #000000 !important; border-color: #38bdf8 !important; text-decoration: none; width: 100%; justify-content: center; height: 36px; min-height: 36px; display: inline-flex;" download>
+              📥 TẢI TỪ ĐIỂN TỔ HỢP (.ZIP)
+            </a>
+            <span id="dl-filename" style="font-size: 9.5px; color: #888; text-align: center; font-family: monospace; display: block;">Gboard_Dict_R_F_L.zip</span>
+          </div>
+
+          <!-- PHÂN VÙNG TIỆN ÍCH NGÂN HÀNG & HỌC VẦN ĐỘC LẬP -->
+          <div style="border-top: 1px dashed #004422; margin-top: 10px; padding-top: 8px;">
+            <div style="font-weight: bold; margin-bottom: 6px; color: #ffaa00; text-align: left; font-size: 11px;">⚡ GÓI TIỆN ÍCH NGÂN HÀNG (TẢI NHANH):</div>
+            <div style="display: flex; flex-direction: column; gap: 5px;">
+              <a href="/Gboard_Banking_Telex.zip" download="Gboard_Banking_Telex.zip" class="dl-item" style="padding: 6px 8px; border-radius: 4px; background: rgba(0, 30, 15, 0.6); border: 1px solid #004422; text-decoration: none;">
+                <span style="color: #00ffcc; font-weight: bold; font-size: 11px; display: block;">⚡ 1. Banking Telex (.zip)</span>
+                <span style="font-size: 9.5px; color: #888; display: block;">Gõ Telex (muoons) ➔ Chèn thẳng mã Base60</span>
+              </a>
+              <a href="/Gboard_Banking_VNI.zip" download="Gboard_Banking_VNI.zip" class="dl-item" style="padding: 6px 8px; border-radius: 4px; background: rgba(0, 30, 15, 0.6); border: 1px solid #004422; text-decoration: none;">
+                <span style="color: #00ffcc; font-weight: bold; font-size: 11px; display: block;">⚡ 2. Banking VNI (.zip)</span>
+                <span style="font-size: 9.5px; color: #888; display: block;">Dồn số cuối (Lớn ➔ Nhỏ: duoc975, muon61, de963)</span>
+              </a>
+              <a href="/Gboard_Learn_NoTone.zip" download="Gboard_Learn_NoTone.zip" class="dl-item" style="padding: 6px 8px; border-radius: 4px; background: rgba(0, 30, 15, 0.6); border: 1px solid #004422; text-decoration: none;">
+                <span style="color: #ffea00; font-weight: bold; font-size: 11px; display: block;">🎓 3. Học Vần Không Dấu (.zip)</span>
+                <span style="font-size: 9.5px; color: #888; display: block;">Tự nhiên: muon | Thêm z cho từ có thật: thanhz, xemz</span>
+              </a>
             </div>
           </div>
         </div>
-
-        <a href="/mnemonic.html" class="tab-btn" style="color: #ffea00 !important; border-color: #554400 !important;">⚡ BẢNG THẦN CHÚ</a>
-        <a href="/" class="tab-btn tab-btn-home">🏠 VỀ TRANG CHÍNH</a>
       </div>
-    </header>
+    </div>
 
     <!-- ==================== ⚡ SMART OMNIBOX TRỢ GIẢNG & TRA CỨU NHANH ==================== -->
     <div id="smart-omnibox-container" style="background: rgba(0, 20, 15, 0.9); border: 1px solid #00ffcc; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; box-shadow: 0 0 15px rgba(0, 255, 204, 0.15);">
@@ -398,6 +391,10 @@
   </div>
 
   <script type="module" src="/dict-matrix.js"></script>
+  <script type="module">
+    import { initVsnNavigation } from '/nav-system.js';
+    initVsnNavigation('#vsn-dict-matrix-header');
+  </script>
   <script>
     // Close dropdown when clicking outside
     window.addEventListener('click', function(e) {

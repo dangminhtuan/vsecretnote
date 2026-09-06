@@ -7,6 +7,7 @@
     <title>TimeCypher - Vietnamese Encoder</title>
     <link rel="stylesheet" href="/style.css" />
     <link rel="stylesheet" href="/snk.css" />
+    <link rel="stylesheet" href="/nav-system.css" />
     <style>
       @font-face {
         font-family: 'CyberVietnamese';
@@ -141,7 +142,7 @@
         <div id="mxc-items" style="display:flex; flex-direction:column; gap:5px;"></div>
       </div>
 
-      <header style="display: flex; justify-content: space-between; align-items: center;">
+      <header id="vsn-main-header">
         <div class="logo-container">
           <h1 class="glitch" data-text="TIMECYPHER">TIMECYPHER</h1>
           <p class="subtitle">Secure Vietnamese-to-Time Encoding Protocol</p>
@@ -646,6 +647,10 @@
     </div>
     <script type="module" src="/main.js"></script>
     <script type="module" src="/snk.js"></script>
+    <script type="module">
+      import { initVsnNavigation } from '/nav-system.js';
+      initVsnNavigation('#vsn-main-header');
+    </script>
     <!-- CYBER MODAL SYSTEM -->
     <div id="cyber-modal" class="cyber-modal-overlay" style="display: none;">
       <div class="cyber-modal-box">
