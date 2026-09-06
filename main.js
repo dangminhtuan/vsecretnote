@@ -3168,21 +3168,51 @@ const PM_TOOL_HINTS = {
 };
 
 const PM_STYLES = [
+  // Tình cảm & Đời sống
   { id: 'vn_romance',label: 'Tình Yêu VN (30 & 20)', emoji: '👩‍❤️‍👨' },
-  { id: 'romantic', label: 'Ngôn tình',   emoji: '💕' },
-  { id: 'scifi',    label: 'Viễn tưởng',  emoji: '🚀' },
-  { id: 'cyberpunk',label: 'Cyberpunk',   emoji: '⚡' },
-  { id: 'hologram', label: 'Hologram',    emoji: '🔮' },
-  { id: 'anime',    label: 'Anime',       emoji: '🌸' },
-  { id: 'fantasy',  label: 'Dark Fantasy',emoji: '🧙' },
-  { id: 'luxury',   label: 'Sang trọng',  emoji: '💎' },
-  { id: 'vintage',  label: 'Cổ điển',     emoji: '🏛️' },
-  { id: 'lofi',     label: 'Lofi',        emoji: '🌊' },
-  { id: 'sexy',     label: 'Gợi cảm',     emoji: '🔞' },
-  { id: 'nature',   label: 'Thiên nhiên', emoji: '🌿' },
-  { id: 'pixel',    label: 'Pixel Art',   emoji: '👾' },
-  { id: 'gothic',   label: 'Gothic',      emoji: '🎭' },
-  { id: 'popart',   label: 'Pop Art',     emoji: '☀️' },
+  { id: 'romantic',  label: 'Ngôn tình Lãng mạn',   emoji: '💕' },
+  { id: 'sexy',      label: 'Gợi cảm / Seductive',  emoji: '🔞' },
+
+  // Bối cảnh Phong cảnh Quốc gia
+  { id: 'bg_cn',     label: 'Tử Cấm Thành & Đào Hoa (TQ)', emoji: '🇨🇳' },
+  { id: 'bg_jp',     label: 'Cổng Torii & Phú Sĩ (NB)',    emoji: '🇯🇵' },
+  { id: 'bg_kr',     label: 'Cung Gyeongbok & Hanok (HQ)', emoji: '🇰🇷' },
+  { id: 'bg_th',     label: 'Chùa Vàng Wat Arun (TL)',     emoji: '🇹🇭' },
+  { id: 'bg_in',     label: 'Đền Cổ Sông Hằng (Ấn Độ)',    emoji: '🕉️' },
+  { id: 'bg_il',     label: 'Cổ Thành Jerusalem (Do Thái)',emoji: '✡️' },
+  { id: 'bg_eg',     label: 'Kim Tự Tháp Cát Vàng (Ai Cập)',emoji: '𓀀' },
+  { id: 'bg_nordic', label: 'Vịnh Băng & Cực Quang (Bắc Âu)',emoji: 'ᚱ' },
+  { id: 'bg_maya',   label: 'Rừng Rậm & Chichen Itza (Maya)',emoji: '🪶' },
+
+  // Chủ đề Nghệ thuật & Tương lai
+  { id: 'scifi',     label: 'Viễn tưởng',  emoji: '🚀' },
+  { id: 'cyberpunk', label: 'Cyberpunk',   emoji: '⚡' },
+  { id: 'hologram',  label: 'Hologram',    emoji: '🔮' },
+  { id: 'anime',     label: 'Anime',       emoji: '🌸' },
+  { id: 'fantasy',   label: 'Dark Fantasy',emoji: '🧙' },
+  { id: 'luxury',    label: 'Sang trọng',  emoji: '💎' },
+  { id: 'vintage',   label: 'Cổ điển',     emoji: '🏛️' },
+  { id: 'lofi',      label: 'Lofi',        emoji: '🌊' },
+  { id: 'nature',    label: 'Thiên nhiên', emoji: '🌿' },
+  { id: 'pixel',     label: 'Pixel Art',   emoji: '👾' },
+  { id: 'gothic',    label: 'Gothic',      emoji: '🎭' },
+  { id: 'popart',    label: 'Pop Art',     emoji: '☀️' },
+];
+
+const PM_FONT_STYLES = [
+  { id: 'gold_neon',      label: 'Neon Vàng Gold (Mặc định)', emoji: '🟡' },
+  { id: 'script_cn',      label: 'Trung Quốc (Hán Tự Mực Tàu)',emoji: '🇨🇳' },
+  { id: 'script_jp',      label: 'Nhật Bản (Shodo Cọ Sumi-e)',emoji: '🇯🇵' },
+  { id: 'script_kr',      label: 'Hàn Quốc (Hangul Hình Học)',emoji: '🇰🇷' },
+  { id: 'script_th',      label: 'Thái Lan (Xiêm La Dát Vàng)',emoji: '🇹🇭' },
+  { id: 'script_sanskrit',label: 'Chữ Phạn (Khắc Đá Đền Cổ)',  emoji: '🕉️' },
+  { id: 'script_hebrew',  label: 'Do Thái (Chữ Vuông Vellum)', emoji: '✡️' },
+  { id: 'script_egypt',   label: 'Ai Cập (Tượng Hình Sa Thạch)',emoji: '𓀀' },
+  { id: 'script_rune',    label: 'Bắc Âu (Viking Rune Băng)',  emoji: 'ᚱ' },
+  { id: 'script_maya',    label: 'Maya (Khắc Bia Đá Khối)',    emoji: '🪶' },
+  { id: 'cyber_neon',     label: 'Cyberpunk (Cyan & Hồng)',    emoji: '⚡' },
+  { id: 'hologram_3d',    label: 'Hologram 3D (Ngũ Sắc)',      emoji: '🔮' },
+  { id: 'gold_relief',    label: 'Vàng 24K Chạm Khắc',         emoji: '💎' },
 ];
 
 const PM_RATIOS = [
@@ -3197,19 +3227,21 @@ const PM_RATIOS = [
 ];
 
 const PM_CHAR_DESCRIPTIONS = {
-  woman: `A young Vietnamese-looking adult woman with a small oval face, softly tapered chin, moderately high forehead, naturally shaped medium-thick dark eyebrows with a gentle arch, large dark brown almond-shaped eyes, clearly defined upper eyelids, long upper eyelashes, a straight slender nose with a small rounded tip, neat narrow nostrils, soft cheeks, a small delicate mouth, naturally fuller lower lip, rosy-red nude lips, softly curved mouth corners, and a small rounded chin. Long, straight, silky dark chocolate-brown hair, slightly off-center parting, natural face-framing strands, hair falling smoothly over both shoulders and down past the chest, very subtle natural volume, no bangs, no curls, no waves. Light warm Asian skin tone, smooth but realistic skin texture with very subtle natural radiance and delicate warmth, soft natural flush on cheeks. Subtle, elegant makeup: soft matte base, very delicate neutral contour, tightlined upper eyelids, subtle brown-toned eyeshadow, naturally defined eyebrows, softly diffused satin-finish rosy-red lips. Feminine, slightly slender build with natural soft curves and graceful neck and clavicle. Wearing a simple, fitted black top with a subtly scalloped lace trim along the sweetheart neckline, sleeveless with delicate shoulder straps, small discreet stud earrings, very thin delicate necklace.`,
+  woman: `A young Vietnamese-looking adult woman with a small oval face, softly tapered chin, moderately high forehead, naturally shaped medium-thick dark eyebrows with a gentle arch, large dark brown almond-shaped eyes, clearly defined upper eyelids, long upper eyelashes, a straight slender nose with a small rounded tip, neat narrow nostrils, soft cheeks, a small delicate mouth, naturally fuller lower lip, rosy-red nude lips, softly curved mouth corners, and a small rounded chin. Long, straight, silky dark chocolate-brown hair, slightly off-center parting, natural face-framing strands, hair falling smoothly over both shoulders and down past the chest, very subtle natural volume, no bangs, no curls, no waves. Light warm Asian skin tone, smooth but realistic skin texture with very subtle natural radiance and delicate warmth, soft natural flush on cheeks. Subtle, elegant makeup: soft matte base, very delicate neutral contour, tightlined upper eyelids, subtle brown-toned eyeshadow, naturally defined eyebrows, softly diffused satin-finish rosy-red lips. Feminine, slightly slender build with natural soft curves and graceful neck and clavicle.`,
 
-  man: `A Vietnamese-looking adult man with an oval to slightly rectangular face shape, balanced proportions, broad forehead, clean hairline with natural short hair, well-defined straight eyebrows with slight density, medium-deep set dark brown eyes with clear and focused gaze, a medium-length straight nose bridge with a slightly rounded tip, well-balanced nostril width, defined cheekbones with smooth masculine contours, a natural mouth with a slightly fuller lower lip, subtly defined jawline with a firm chin, very light and neat natural stubble shadow around the upper lip, chin, and jawline for a clean-cut yet mature look. Natural short-to-medium straight black hair, softly styled and parted slightly to the side with natural volume and a clean taper around the sides and back. Warm light-medium Asian skin tone, natural skin texture with realistic pores and soft highlights, healthy complexion. Athletic-casual, healthy build with moderately broad shoulders. Wearing a relaxed-fit, premium plain off-white or cream-colored crew-neck T-shirt, minimal subtle small graphic on left chest, a simple thin gold chain necklace.`
+  man: `A Vietnamese-looking adult man with an oval to slightly rectangular face shape, balanced proportions, broad forehead, clean hairline with natural short hair, well-defined straight eyebrows with slight density, medium-deep set dark brown eyes with clear and focused gaze, a medium-length straight nose bridge with a slightly rounded tip, well-balanced nostril width, defined cheekbones with smooth masculine contours, a natural mouth with a slightly fuller lower lip, subtly defined jawline with a firm chin, very light and neat natural stubble shadow around the upper lip, chin, and jawline for a clean-cut yet mature look. Natural short-to-medium straight black hair, softly styled and parted slightly to the side with natural volume and a clean taper around the sides and back. Warm light-medium Asian skin tone, natural skin texture with realistic pores and soft highlights, healthy complexion. Athletic-casual, healthy build with moderately broad shoulders.`
 };
 
 let pm_selectedMode = 'text_to_img';
 let pm_selectedTool = 'gemini';
 let pm_selectedStyle = 'vn_romance';
+let pm_selectedFontStyle = 'gold_neon';
 let pm_selectedRatio = '1:1';
 let pm_selectedBlocksPerRow = 0;
 
-function pm_buildPrompt(tool, style, ratio, blocksPerRow) {
+function pm_buildPrompt(tool, style, fontStyle, ratio, blocksPerRow) {
   ratio = ratio || pm_selectedRatio || '1:1';
+  fontStyle = fontStyle || pm_selectedFontStyle || 'gold_neon';
   blocksPerRow = blocksPerRow !== undefined ? blocksPerRow : pm_selectedBlocksPerRow;
   const b60Code = (txtCompressed && txtCompressed.value.trim()) ? txtCompressed.value.trim() : '???';
   const ratioData = PM_RATIOS.find(r => r.id === ratio) || PM_RATIOS[0];
@@ -3227,21 +3259,51 @@ function pm_buildPrompt(tool, style, ratio, blocksPerRow) {
 5. LAYOUT: Reproduce ALL cipher blocks visible in the reference image — ${layoutInstruction}. Position this single set cleanly in the center or lower-center foreground. (Reference string: "${b60Code}")`;
 
   const STYLES = {
+    // Tình cảm & Đời sống
     vn_romance:`A deeply romantic, cinematic, and emotional scene. Atmospheric golden hour backlight, soft warm bokeh on a modern urban rooftop or balcony overlooking a glowing sunset skyline, dreamy cinematic depth of field, tender romantic atmosphere. Photorealistic, authentic modern Vietnamese beauty, highly detailed, 8k resolution.`,
-    romantic: `Dreamy soft-focus bokeh background in rose gold and sakura pink gradient tones. Warm luminescent gold and blush pink light sigils. Delicate falling cherry blossom petals. Gentle watercolor wash texture. Sweet romance novel cover aesthetic.`,
-    scifi:    `Pure black OLED background (#050d0a). Glowing electric cyan (#58a6ff) and emerald green (#00ff66) neon vector shapes. Subtle sci-fi HUD grid lines overlay. Strong neon bloom glow effect. Minimalist space technology aesthetic. Hyper-detailed, 8k resolution.`,
-    cyberpunk:`Rain-slicked neon-drenched cyberpunk alley background. Harsh magenta and cyan neon with wet street reflections. Flickering glitch artifacts. Dystopian Blade Runner noir atmosphere. Dark, gritty, cinematic.`,
-    hologram: `Dark void space background. Shimmering iridescent holographic light projections floating in mid-air. Prismatic rainbow diffraction halos. Transparent glassmorphic panel effect. Futuristic AR/VR interface aesthetic.`,
-    anime:    `Clean cel-shaded anime illustration style. Vivid saturated colors on gradient sky background. Sharp ink outlines with vivid flat color fills. Dynamic manga speed-line effects. J-pop album cover aesthetic.`,
-    fantasy:  `Ancient mossy stone dungeon wall background. Glowing ethereal blue-purple arcane magical fire and mystical energy spirals. Floating mystical rune inscriptions. Moonlit gothic cathedral atmosphere. Dark fantasy spellbook page aesthetic.`,
-    luxury:   `Polished jet-black marble with brushed 24k gold leaf vein background. Premium engraved gold relief embossing. Champagne, platinum and obsidian color palette. Minimalist luxury high-fashion editorial aesthetic.`,
-    vintage:  `Aged cream parchment or dark mahogany wood texture background. Deep letterpress copper plate etchings. Sepia and rich amber tones. Art Deco geometric ornamental borders and embellishments. 1920s typographic grand poster aesthetic.`,
-    lofi:     `Soft muted pastel gradient background (lavender, peach, sage mint). Gentle warm tones. Cozy film grain and light leak texture overlay. Lo-fi chill beats album artwork aesthetic. Vaporwave sunset color palette.`,
-    sexy:     `Dramatic single spotlight against deep black studio background. Sleek polished chrome or liquid mercury metallic forms. Chiaroscuro shadow play. Crimson red and obsidian black color palette. Sultry high-fashion editorial aesthetic. Mysterious and seductive.`,
-    nature:   `Lush emerald tropical rainforest canopy background with golden-hour dappled light. Intricate bioluminescent leaf-vein patterns and glowing moss script. Deep green, amber, and violet organic palette. National Geographic fine art nature photography aesthetic.`,
-    pixel:    `Retro 8-bit pixel art style on a dark grid background. Chunky blocky pixel characters with 4-color NES dithering. Bright GameBoy green or vibrant NES color palette. Retro video game title screen aesthetic.`,
-    gothic:   `Victorian gothic graveyard night background with black roses, crumbling stone, spider webs and dripping candle wax. Bone-white tombstone epitaph engravings in bas-relief. Deep black and dark crimson blood palette. Tim Burton meets Edgar Allan Poe aesthetic.`,
-    popart:   `Bold flat-color blocked background in primary colors (bright yellow, red, cobalt blue). Thick black Lichtenstein-style comic book halftone outlines with solid flat color fills. Roy Lichtenstein Pop Art silkscreen print aesthetic. High contrast, energetic, bold.`,
+    romantic:  `Dreamy soft-focus bokeh background in rose gold and sakura pink gradient tones. Warm luminescent gold and blush pink light sigils. Delicate falling cherry blossom petals. Gentle watercolor wash texture. Sweet romance novel cover aesthetic.`,
+    sexy:      `Dramatic single spotlight against deep black studio background. Sleek polished chrome or liquid mercury metallic forms. Chiaroscuro shadow play. Crimson red and obsidian black color palette. Sultry high-fashion editorial aesthetic. Mysterious and seductive.`,
+
+    // Bối cảnh Quốc gia
+    bg_cn:     `Majestic Chinese historical landscape: the Forbidden City Imperial Palace courtyard under blooming pink cherry and peach blossoms, misty distant karst mountains, traditional red lanterns with warm glow, poetic and ethereal Chinese imperial fantasy atmosphere.`,
+    bg_jp:     `Tranquil Japanese Zen scenery: a vibrant vermilion Shinto Torii gate standing serenely before snow-capped Mount Fuji, autumn Japanese red maple leaves gently drifting, stone lanterns (ishidoro), and soft twilight mist.`,
+    bg_kr:     `Atmospheric Korean royal setting: Joseon Dynasty Gyeongbokgung Palace pavilion reflected in a lotus pond, surrounded by golden ginkgo trees in crisp autumn, traditional Hanok village tiled roofs under a gentle lavender sunset sky.`,
+    bg_th:     `Opulent Siamese Thai sanctuary: Wat Arun and gilded temple spires glowing radiantly along the Chao Phraya river during golden hour, intricate gold leaf mosaics, floating lotus blossoms, warm tropical twilight breeze.`,
+    bg_in:     `Timeless sacred Indian riverfront: the ancient stone Ghats of Varanasi along the tranquil Ganges river at dawn, floating clay diya lamps glowing warmly on the water, ancient sandstone temple spires and spiritual morning mist.`,
+    bg_il:     `Atmospheric Jerusalem Old City vista: ancient honey-colored Jerusalem limestone walls and arched courtyards glowing in warm sunset amber light, ancient olive trees, tranquil historic and spiritual majesty.`,
+    bg_eg:     `Epic Ancient Egyptian desert panorama: the Great Pyramids of Giza and Sphinx silhouetted against a blazing golden-amber Sahara sunset, the tranquil Nile river reflecting warm evening hues and swaying date palms.`,
+    bg_nordic: `Breathtaking Nordic Scandinavian wilderness: a dramatic frozen Norwegian fjord flanked by snow-capped peaks, a cozy wooden stilt cabin, dancing emerald green Aurora Borealis (Northern Lights) illuminating the starry arctic night sky.`,
+    bg_maya:   `Mystical Mesoamerican rainforest: the ancient Mayan step-pyramid El Castillo (Chichen Itza) rising above a lush, mist-shrouded tropical jungle canopy at sunrise, exotic birds, morning sun rays piercing through emerald leaves.`,
+
+    // Nghệ thuật & Tương lai
+    scifi:     `Pure black OLED background (#050d0a). Glowing electric cyan (#58a6ff) and emerald green (#00ff66) neon vector shapes. Subtle sci-fi HUD grid lines overlay. Strong neon bloom glow effect. Minimalist space technology aesthetic. Hyper-detailed, 8k resolution.`,
+    cyberpunk: `Rain-slicked neon-drenched cyberpunk alley background. Harsh magenta and cyan neon with wet street reflections. Flickering glitch artifacts. Dystopian Blade Runner noir atmosphere. Dark, gritty, cinematic.`,
+    hologram:  `Dark void space background. Shimmering iridescent holographic light projections floating in mid-air. Prismatic rainbow diffraction halos. Transparent glassmorphic panel effect. Futuristic AR/VR interface aesthetic.`,
+    anime:     `Clean cel-shaded anime illustration style. Vivid saturated colors on gradient sky background. Sharp ink outlines with vivid flat color fills. Dynamic manga speed-line effects. J-pop album cover aesthetic.`,
+    fantasy:   `Ancient mossy stone dungeon wall background. Glowing ethereal blue-purple arcane magical fire and mystical energy spirals. Floating mystical rune inscriptions. Moonlit gothic cathedral atmosphere. Dark fantasy spellbook page aesthetic.`,
+    luxury:    `Polished jet-black marble with brushed 24k gold leaf vein background. Premium engraved gold relief embossing. Champagne, platinum and obsidian color palette. Minimalist luxury high-fashion editorial aesthetic.`,
+    vintage:   `Aged cream parchment or dark mahogany wood texture background. Deep letterpress copper plate etchings. Sepia and rich amber tones. Art Deco geometric ornamental borders and embellishments. 1920s typographic grand poster aesthetic.`,
+    lofi:      `Soft muted pastel gradient background (lavender, peach, sage mint). Gentle warm tones. Cozy film grain and light leak texture overlay. Lo-fi chill beats album artwork aesthetic. Vaporwave sunset color palette.`,
+    nature:    `Lush emerald tropical rainforest canopy background with golden-hour dappled light. Intricate bioluminescent leaf-vein patterns and glowing moss script. Deep green, amber, and violet organic palette. National Geographic fine art nature photography aesthetic.`,
+    pixel:     `Retro 8-bit pixel art style on a dark grid background. Chunky blocky pixel characters with 4-color NES dithering. Bright GameBoy green or vibrant NES color palette. Retro video game title screen aesthetic.`,
+    gothic:    `Victorian gothic graveyard night background with black roses, crumbling stone, spider webs and dripping candle wax. Bone-white tombstone epitaph engravings in bas-relief. Deep black and dark crimson blood palette. Tim Burton meets Edgar Allan Poe aesthetic.`,
+    popart:    `Bold flat-color blocked background in primary colors (bright yellow, red, cobalt blue). Thick black Lichtenstein-style comic book halftone outlines with solid flat color fills. Roy Lichtenstein Pop Art silkscreen print aesthetic. High contrast, energetic, bold.`,
+  };
+
+  const FONT_STYLES = {
+    gold_neon:      `Crisp, razor-sharp glowing warm gold neon (#ffd700) with clean vector edges, slight volumetric bloom, perfectly illuminated without glare.`,
+    script_cn:      `Authentic Chinese ink calligraphy (Shufa) brushwork. Masterfully hand-brushed strokes with varying ink saturation, natural dry-brush bristle streaks (fei bai), rich black sumi ink aesthetics, accented by a small cinnabar-red carved stone seal stamp (yin zhang) nearby.`,
+    script_jp:      `Japanese Zen Shodo calligraphy brushwork. Deep black sumi-e ink with dynamic expressive flow, asymmetrical balance, subtle organic ink splatters, and contemplative negative space of a master calligrapher.`,
+    script_kr:      `Korean royal Hangul geometric typography inspired by Joseon-era Hunminjeongeum. Dignified, clean geometric structural strokes: authoritative vertical pillars, balanced horizontal crossbeams, and harmonious circular vowel accents on textured hanji paper.`,
+    script_th:      `Ornate Siamese royal temple script typography. Elegant looping curved stems, distinctive circular finials, and subtle flame-like traditional Thai kranok flourishes in shimmering gold leaf over deep lacquer.`,
+    script_sanskrit:`Sacred ancient Sanskrit Devanagari stone carving. Bound along the top by a continuous horizontal hanging header line (shirorekha), with mystic flowing curves, sacred Vedic mantra resonance, chiseled into weathered temple rock.`,
+    script_hebrew:  `Ancient mystical Hebrew Torah Ashuri script. Thick, angular square letterforms with tiny royal crown decorative spurs (tagin) on upper tips, written in deep iron gall ink with Kabbalistic mystical aura.`,
+    script_egypt:   `Ancient Egyptian monumental hieroglyphic bas-relief. Chiseled into desert sandstone with weathered pigments of lapis lazuli blue, malachite green, and gold leaf inlays, royal cartouche aesthetic.`,
+    script_rune:    `Ancient Nordic Elder Futhark Viking runic staves. Sharp, angular, straight and diagonal chisel strokes without curves, deeply carved into dark granite with faint glacial blue arcane runes glowing from within.`,
+    script_maya:    `Ancient Mesoamerican Mayan cartouche glyph relief. Rounded-square stone boulder cartouche framing with deeply carved organic contours, jade inlays, and ancient jungle temple stone patina.`,
+    cyber_neon:     `High-tech cyberpunk neon glyphs with dual-tone electric cyan (#00f2fe) and hot magenta (#ff00ea) glowing outline trails, subtle digital chromatic aberration and scanline bloom.`,
+    hologram_3d:    `Floating 3D iridescent holographic glass projections with prismatic rainbow diffraction halos, translucent refractive depth, and floating light particles.`,
+    gold_relief:    `Exquisite 24-karat solid gold relief embossing with brushed metallic texture, bevelled polished edges, catching ambient specular highlights against dark background.`,
   };
 
   const TOOL_PROMPT_PARAMS = {
@@ -3259,6 +3321,7 @@ function pm_buildPrompt(tool, style, ratio, blocksPerRow) {
   };
 
   const styleDesc = STYLES[style] || STYLES.vn_romance;
+  const fontDesc = FONT_STYLES[fontStyle] || FONT_STYLES.gold_neon;
   const params = TOOL_PROMPT_PARAMS[tool] || '';
 
   // ===== MODE 1: ẢNH TỪ TEXT (MÔ TẢ KHUÔN MẶT CẶP ĐÔI) =====
@@ -3273,11 +3336,14 @@ ${PM_CHAR_DESCRIPTIONS.man}
 
 [SCENE INTERACTION & EMOTION]:
 An intensely romantic, passionate, and deeply emotional reunion moment between this Vietnamese couple after a long separation. Tender, loving embrace with their faces close together, affectionate eye contact, radiant authentic smiles, overflowing romantic chemistry and longing fulfilled.
-Atmosphere: ${styleDesc}
+Atmosphere & Setting: ${styleDesc}
 
 ${CIPHER_CORE}
 
-OVERLAY: Superimpose EXACTLY ONE SINGLE ROW of the cipher glyph blocks from the reference screenshot across the lower foreground in crisp, razor-sharp glowing warm gold neon with clean vector edges. Do not repeat or duplicate the row. Do not distort, blur, or stylize the anatomy of the glyphs — every quadrant symbol must match the screenshot 100% legibly and accurately. Photorealistic, authentic modern Vietnamese beauty, highly detailed, 8k resolution.${params}`;
+CIPHER TYPOGRAPHY & VISUAL ART STYLE:
+${fontDesc}
+
+OVERLAY: Superimpose EXACTLY ONE SINGLE ROW of the cipher glyph blocks from the reference screenshot across the lower foreground. The cipher glyphs must specifically embody the visual art style described above (${fontDesc}). Do not repeat or duplicate the row. Do not distort, blur, or stylize away the core quadrant anatomy — every quadrant symbol must match the screenshot 100% legibly and accurately. Photorealistic, authentic beauty, highly detailed, 8k resolution.${params}`;
   }
 
   // ===== MODE 2: ẢNH TỪ ẢNH MẪU (THAM CHIẾU CHÂN DUNG) =====
@@ -3297,7 +3363,10 @@ ${styleDesc}
 
 ${CIPHER_CORE}
 
-OVERLAY: Superimpose EXACTLY ONE SINGLE ROW of the cipher glyph blocks from Image 3 across the lower foreground in crisp, razor-sharp glowing warm gold neon with clean vector edges matching "${b60Code}". Zero duplication, zero spelling hallucination.${params}`;
+CIPHER TYPOGRAPHY & VISUAL ART STYLE:
+${fontDesc}
+
+OVERLAY: Superimpose EXACTLY ONE SINGLE ROW of the cipher glyph blocks from Image 3 across the lower foreground. The cipher glyphs must strictly take on the typography style described above (${fontDesc}), matching reference string "${b60Code}". Zero duplication, zero spelling hallucination.${params}`;
   }
 
   // ===== MODE 3: TẠO CLIP VIDEO (TRỰC TIẾP TỪ TEXT-TO-VIDEO) =====
@@ -3328,23 +3397,25 @@ CHARACTER DESCRIPTIONS:
 - Woman: ${PM_CHAR_DESCRIPTIONS.woman}
 - Man: ${PM_CHAR_DESCRIPTIONS.man}
 
-CINEMATOGRAPHY & CAMERA MOVEMENT:
+CINEMATOGRAPHY & SETTING:
+- Atmosphere & Setting: ${styleDesc}
 - Camera: Slow, ultra-smooth orbital tracking shot circling around the embracing couple (360-degree rotation).
 - Lighting: Warm golden-hour backlight streaming through their hair, creating radiant amber rim lighting, subtle lens flares, and soft glowing bokeh.
-- Optics: 85mm portrait cinema lens, shallow depth of field (f/1.8), romantic rooftop setting with gentle evening breeze fluttering her hair and his shirt.
+- Optics: 85mm portrait cinema lens, shallow depth of field (f/1.8), romantic setting with gentle evening breeze softly moving their hair.
 - Motion Quality: Photorealistic 4K cinematic film, natural physics, realistic micro-expressions, zero distortion, lifelike skin texture.
 
-OVERLAY (SUBTLE CIPHER ACCENT):
-A subtle, elegant translucent holographic amber cipher glyph signature gently floats in the lower corner without obscuring the couple (Sequence: "${b60Code}").${vParams}`;
+OVERLAY (CIPHER SIGNATURE IN SELECTED SCRIPT STYLE):
+A subtle, elegant cipher glyph signature rendered in the visual style of (${fontDesc}) gently floats in the lower corner without obscuring the couple (Sequence: "${b60Code}").${vParams}`;
   }
 
-  return `${CIPHER_CORE}\n\nAesthetic: ${styleDesc}${params}`;
+  return `${CIPHER_CORE}\n\nAesthetic & Background: ${styleDesc}\nCipher Typography: ${fontDesc}${params}`;
 }
 
 function pm_renderSelectors() {
   const modeEl = document.getElementById('ai-mode-selector');
   const toolEl = document.getElementById('ai-tool-selector');
   const styleEl = document.getElementById('ai-style-selector');
+  const fontStyleEl = document.getElementById('ai-font-style-selector');
   const ratioEl = document.getElementById('ai-ratio-selector');
   if (!toolEl || !styleEl) return;
 
@@ -3367,11 +3438,19 @@ function pm_renderSelectors() {
     return `<button onclick="pm_selectTool('${t.id}')" style="${btnBase}background:${active ? col : 'transparent'};color:${active ? '#000' : col};border-color:${col};font-weight:${active ? 'bold' : 'normal'};">${t.emoji} ${t.label}${tag}</button>`;
   }).join('');
 
-  // Render Styles
+  // Render Styles (Bối Cảnh & Hình Nền)
   styleEl.innerHTML = PM_STYLES.map(s => {
     const active = s.id === pm_selectedStyle;
     return `<button onclick="pm_selectStyle('${s.id}')" style="${btnBase}background:${active ? '#ff00ea' : 'transparent'};color:${active ? '#000' : '#cc88cc'};border-color:${active ? '#ff00ea' : '#441144'};font-weight:${active ? 'bold' : 'normal'};">${s.emoji} ${s.label}</button>`;
   }).join('');
+
+  // Render Font Styles (Kiểu Chữ Mật Mã Độc Lập)
+  if (fontStyleEl) {
+    fontStyleEl.innerHTML = PM_FONT_STYLES.map(f => {
+      const active = f.id === pm_selectedFontStyle;
+      return `<button onclick="pm_selectFontStyle('${f.id}')" style="${btnBase}background:${active ? '#00f2fe' : 'transparent'};color:${active ? '#000' : '#00f2fe'};border-color:${active ? '#00f2fe' : '#0d3844'};font-weight:${active ? 'bold' : 'normal'};box-shadow:${active ? '0 0 8px rgba(0,242,254,0.4)' : 'none'};">${f.emoji} ${f.label}</button>`;
+    }).join('');
+  }
 
   // Render Ratios
   if (ratioEl) {
@@ -3384,7 +3463,7 @@ function pm_renderSelectors() {
 
 function pm_refreshPrompt() {
   const el = document.getElementById('ai-prompt-content');
-  if (el) el.value = pm_buildPrompt(pm_selectedTool, pm_selectedStyle, pm_selectedRatio, pm_selectedBlocksPerRow);
+  if (el) el.value = pm_buildPrompt(pm_selectedTool, pm_selectedStyle, pm_selectedFontStyle, pm_selectedRatio, pm_selectedBlocksPerRow);
 
   const hintEl = document.getElementById('ai-prompt-hint');
   if (hintEl) hintEl.textContent = PM_TOOL_HINTS[pm_selectedTool] || '';
@@ -3396,6 +3475,12 @@ function pm_refreshPrompt() {
     blockVal.textContent = pm_selectedBlocksPerRow === 0 ? 'Tự động' : pm_selectedBlocksPerRow;
   }
 }
+
+window.pm_selectFontStyle = function(id) {
+  pm_selectedFontStyle = id;
+  pm_renderSelectors();
+  pm_refreshPrompt();
+};
 
 window.pm_selectMode = function(id) {
   pm_selectedMode = id;

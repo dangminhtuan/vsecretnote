@@ -11,14 +11,14 @@
     <style>
       @font-face {
         font-family: 'CyberVietnamese';
-        src: url('/CyberVietnamese-Regular.ttf?v=6') format('truetype');
+        src: url('/CyberVietnamese-Regular.ttf?v=8') format('truetype');
       }
       #cyber-font-preview {
         font-family: 'CyberVietnamese';
         font-feature-settings: 'calt' 1;
         font-variant-ligatures: normal;
         letter-spacing: 0;
-        word-spacing: -0.45em; /* kéo các block lại gần nhau */
+        word-spacing: -0.58em; /* kéo các khối chữ sát nhau hơn */
         font-size: 48px;
         line-height: 1.05;
         color: #58a6ff;
@@ -447,10 +447,16 @@
                   <div id="ai-tool-selector" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
                 </div>
 
-                <!-- Style selector -->
+                <!-- Style selector (Background / Scene) -->
                 <div>
-                  <div style="font-size: 9px; color: #888; font-family: monospace; margin-bottom: 6px; letter-spacing: 1.5px; text-transform: uppercase;">🎨 Phong Cách</div>
+                  <div style="font-size: 9px; color: #ff77ea; font-family: monospace; margin-bottom: 6px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: bold;">🌄 Bối Cảnh &amp; Hình Nền</div>
                   <div id="ai-style-selector" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
+                </div>
+
+                <!-- Font / Script style selector (Independent Typography) -->
+                <div>
+                  <div style="font-size: 9px; color: #00f2fe; font-family: monospace; margin-bottom: 6px; letter-spacing: 1.5px; text-transform: uppercase; font-weight: bold;">🔤 Kiểu Chữ Mật Mã (Độc Lập)</div>
+                  <div id="ai-font-style-selector" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
                 </div>
 
                 <!-- Aspect ratio selector -->

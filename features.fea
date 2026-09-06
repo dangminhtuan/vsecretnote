@@ -2,33 +2,54 @@ languagesystem DFLT dflt;
 languagesystem latn dflt;
 
 @c1 = [b60_c b60_d b60_g b60_G b60_j b60_k b60_K b60_h b60_v b60_D b60_m b60_C b60_r b60_s b60_n b60_b b60_l b60_Q b60_S b60_z b60_N b60_y b60_L b60_W b60_p b60_f b60_q b60_t b60_T b60_R b60_x];
-@c1_p1 = [b60_c.pos1 b60_d.pos1 b60_g.pos1 b60_G.pos1 b60_j.pos1 b60_k.pos1 b60_K.pos1 b60_h.pos1 b60_v.pos1 b60_D.pos1 b60_m.pos1 b60_C.pos1 b60_r.pos1 b60_s.pos1 b60_n.pos1 b60_b.pos1 b60_l.pos1 b60_Q.pos1 b60_S.pos1 b60_z.pos1 b60_N.pos1 b60_y.pos1 b60_L.pos1 b60_W.pos1 b60_p.pos1 b60_f.pos1 b60_q.pos1 b60_t.pos1 b60_T.pos1 b60_R.pos1 b60_x.pos1];
+@c1_p1_bot = [b60_c.pos1_bot b60_d.pos1_bot b60_g.pos1_bot b60_G.pos1_bot b60_j.pos1_bot b60_k.pos1_bot b60_K.pos1_bot b60_h.pos1_bot b60_v.pos1_bot b60_D.pos1_bot b60_m.pos1_bot b60_C.pos1_bot b60_r.pos1_bot b60_s.pos1_bot b60_n.pos1_bot b60_b.pos1_bot b60_l.pos1_bot b60_Q.pos1_bot b60_S.pos1_bot b60_z.pos1_bot b60_N.pos1_bot b60_y.pos1_bot b60_L.pos1_bot b60_W.pos1_bot b60_p.pos1_bot b60_f.pos1_bot b60_q.pos1_bot b60_t.pos1_bot b60_T.pos1_bot b60_R.pos1_bot b60_x.pos1_bot];
+@c1_p1_top = [b60_c.pos1_top b60_d.pos1_top b60_g.pos1_top b60_G.pos1_top b60_j.pos1_top b60_k.pos1_top b60_K.pos1_top b60_h.pos1_top b60_v.pos1_top b60_D.pos1_top b60_m.pos1_top b60_C.pos1_top b60_r.pos1_top b60_s.pos1_top b60_n.pos1_top b60_b.pos1_top b60_l.pos1_top b60_Q.pos1_top b60_S.pos1_top b60_z.pos1_top b60_N.pos1_top b60_y.pos1_top b60_L.pos1_top b60_W.pos1_top b60_p.pos1_top b60_f.pos1_top b60_q.pos1_top b60_t.pos1_top b60_T.pos1_top b60_R.pos1_top b60_x.pos1_top];
 
-@c2 = [b60_c b60_d b60_g b60_G b60_j b60_k b60_K b60_h b60_v b60_D b60_m b60_C b60_r b60_s b60_n b60_b b60_l b60_Q b60_S b60_z b60_N b60_y b60_L b60_W b60_p b60_f b60_q b60_t b60_T b60_R b60_x b60_0 b60_1 b60_2 b60_3 b60_4 b60_5 b60_6 b60_7 b60_8 b60_9 b60_A b60_B b60_E b60_F b60_H prefix_o b60_J b60_M b60_P b60_U b60_V b60_X b60_Y b60_Z b60_a b60_e b60_i b60_u b60_w];
-@c2_p2 = [b60_c.pos2 b60_d.pos2 b60_g.pos2 b60_G.pos2 b60_j.pos2 b60_k.pos2 b60_K.pos2 b60_h.pos2 b60_v.pos2 b60_D.pos2 b60_m.pos2 b60_C.pos2 b60_r.pos2 b60_s.pos2 b60_n.pos2 b60_b.pos2 b60_l.pos2 b60_Q.pos2 b60_S.pos2 b60_z.pos2 b60_N.pos2 b60_y.pos2 b60_L.pos2 b60_W.pos2 b60_p.pos2 b60_f.pos2 b60_q.pos2 b60_t.pos2 b60_T.pos2 b60_R.pos2 b60_x.pos2 b60_0.pos2 b60_1.pos2 b60_2.pos2 b60_3.pos2 b60_4.pos2 b60_5.pos2 b60_6.pos2 b60_7.pos2 b60_8.pos2 b60_9.pos2 b60_A.pos2 b60_B.pos2 b60_E.pos2 b60_F.pos2 b60_H.pos2 prefix_o.pos2 b60_J.pos2 b60_M.pos2 b60_P.pos2 b60_U.pos2 b60_V.pos2 b60_X.pos2 b60_Y.pos2 b60_Z.pos2 b60_a.pos2 b60_e.pos2 b60_i.pos2 b60_u.pos2 b60_w.pos2];
+@c2 = [b60_c b60_d b60_g b60_G b60_j b60_k b60_K b60_h b60_v b60_D b60_m b60_C b60_r b60_s b60_n b60_b b60_l b60_Q b60_S b60_z b60_N b60_y b60_L b60_W b60_p b60_f b60_q b60_t b60_T b60_R b60_x b60_0 b60_1 b60_2 b60_3 b60_4 b60_5 b60_6 b60_7 b60_8 b60_9 b60_A b60_B b60_E b60_F b60_H b60_o b60_J b60_M b60_P b60_U b60_V b60_X b60_Y b60_Z b60_a b60_e b60_i b60_u b60_w];
+@c2_p2_bot = [b60_c.pos2_bot b60_d.pos2_bot b60_g.pos2_bot b60_G.pos2_bot b60_j.pos2_bot b60_k.pos2_bot b60_K.pos2_bot b60_h.pos2_bot b60_v.pos2_bot b60_D.pos2_bot b60_m.pos2_bot b60_C.pos2_bot b60_r.pos2_bot b60_s.pos2_bot b60_n.pos2_bot b60_b.pos2_bot b60_l.pos2_bot b60_Q.pos2_bot b60_S.pos2_bot b60_z.pos2_bot b60_N.pos2_bot b60_y.pos2_bot b60_L.pos2_bot b60_W.pos2_bot b60_p.pos2_bot b60_f.pos2_bot b60_q.pos2_bot b60_t.pos2_bot b60_T.pos2_bot b60_R.pos2_bot b60_x.pos2_bot b60_0.pos2_bot b60_1.pos2_bot b60_2.pos2_bot b60_3.pos2_bot b60_4.pos2_bot b60_5.pos2_bot b60_6.pos2_bot b60_7.pos2_bot b60_8.pos2_bot b60_9.pos2_bot b60_A.pos2_bot b60_B.pos2_bot b60_E.pos2_bot b60_F.pos2_bot b60_H.pos2_bot b60_o.pos2_bot b60_J.pos2_bot b60_M.pos2_bot b60_P.pos2_bot b60_U.pos2_bot b60_V.pos2_bot b60_X.pos2_bot b60_Y.pos2_bot b60_Z.pos2_bot b60_a.pos2_bot b60_e.pos2_bot b60_i.pos2_bot b60_u.pos2_bot b60_w.pos2_bot];
+@c2_p2_top = [b60_c.pos2_top b60_d.pos2_top b60_g.pos2_top b60_G.pos2_top b60_j.pos2_top b60_k.pos2_top b60_K.pos2_top b60_h.pos2_top b60_v.pos2_top b60_D.pos2_top b60_m.pos2_top b60_C.pos2_top b60_r.pos2_top b60_s.pos2_top b60_n.pos2_top b60_b.pos2_top b60_l.pos2_top b60_Q.pos2_top b60_S.pos2_top b60_z.pos2_top b60_N.pos2_top b60_y.pos2_top b60_L.pos2_top b60_W.pos2_top b60_p.pos2_top b60_f.pos2_top b60_q.pos2_top b60_t.pos2_top b60_T.pos2_top b60_R.pos2_top b60_x.pos2_top b60_0.pos2_top b60_1.pos2_top b60_2.pos2_top b60_3.pos2_top b60_4.pos2_top b60_5.pos2_top b60_6.pos2_top b60_7.pos2_top b60_8.pos2_top b60_9.pos2_top b60_A.pos2_top b60_B.pos2_top b60_E.pos2_top b60_F.pos2_top b60_H.pos2_top b60_o.pos2_top b60_J.pos2_top b60_M.pos2_top b60_P.pos2_top b60_U.pos2_top b60_V.pos2_top b60_X.pos2_top b60_Y.pos2_top b60_Z.pos2_top b60_a.pos2_top b60_e.pos2_top b60_i.pos2_top b60_u.pos2_top b60_w.pos2_top];
 
-@c3 = [b60_z b60_s b60_f b60_r b60_x b60_j b60_Z b60_S b60_F b60_R b60_X b60_J b60_a b60_e b60_i b60_u b60_w b60_y b60_0 b60_1 b60_2 b60_3 b60_4 b60_5 b60_6 b60_7 b60_8 b60_9 b60_B b60_C b60_A b60_E prefix_o b60_U b60_W b60_Y b60_c b60_d b60_g b60_G b60_k b60_K b60_h b60_v b60_D b60_m b60_n b60_b b60_l b60_Q b60_N b60_L b60_p b60_q b60_t b60_T b60_H b60_M b60_P b60_V];
-@c3_p3 = [b60_z.pos3 b60_s.pos3 b60_f.pos3 b60_r.pos3 b60_x.pos3 b60_j.pos3 b60_Z.pos3 b60_S.pos3 b60_F.pos3 b60_R.pos3 b60_X.pos3 b60_J.pos3 b60_a.pos3 b60_e.pos3 b60_i.pos3 b60_u.pos3 b60_w.pos3 b60_y.pos3 b60_0.pos3 b60_1.pos3 b60_2.pos3 b60_3.pos3 b60_4.pos3 b60_5.pos3 b60_6.pos3 b60_7.pos3 b60_8.pos3 b60_9.pos3 b60_B.pos3 b60_C.pos3 b60_A.pos3 b60_E.pos3 prefix_o.pos3 b60_U.pos3 b60_W.pos3 b60_Y.pos3 b60_c.pos3 b60_d.pos3 b60_g.pos3 b60_G.pos3 b60_k.pos3 b60_K.pos3 b60_h.pos3 b60_v.pos3 b60_D.pos3 b60_m.pos3 b60_n.pos3 b60_b.pos3 b60_l.pos3 b60_Q.pos3 b60_N.pos3 b60_L.pos3 b60_p.pos3 b60_q.pos3 b60_t.pos3 b60_T.pos3 b60_H.pos3 b60_M.pos3 b60_P.pos3 b60_V.pos3];
-@c3_p3_t = [b60_z.pos3_t b60_s.pos3_t b60_f.pos3_t b60_r.pos3_t b60_x.pos3_t b60_j.pos3_t b60_Z.pos3_t b60_S.pos3_t b60_F.pos3_t b60_R.pos3_t b60_X.pos3_t b60_J.pos3_t b60_a.pos3_t b60_e.pos3_t b60_i.pos3_t b60_u.pos3_t b60_w.pos3_t b60_y.pos3_t b60_0.pos3_t b60_1.pos3_t b60_2.pos3_t b60_3.pos3_t b60_4.pos3_t b60_5.pos3_t b60_6.pos3_t b60_7.pos3_t b60_8.pos3_t b60_9.pos3_t b60_B.pos3_t b60_C.pos3_t b60_A.pos3_t b60_E.pos3_t prefix_o.pos3_t b60_U.pos3_t b60_W.pos3_t b60_Y.pos3_t b60_c.pos3_t b60_d.pos3_t b60_g.pos3_t b60_G.pos3_t b60_k.pos3_t b60_K.pos3_t b60_h.pos3_t b60_v.pos3_t b60_D.pos3_t b60_m.pos3_t b60_n.pos3_t b60_b.pos3_t b60_l.pos3_t b60_Q.pos3_t b60_N.pos3_t b60_L.pos3_t b60_p.pos3_t b60_q.pos3_t b60_t.pos3_t b60_T.pos3_t b60_H.pos3_t b60_M.pos3_t b60_P.pos3_t b60_V.pos3_t];
-@c3_p3_a = [b60_z.pos3_a b60_s.pos3_a b60_f.pos3_a b60_r.pos3_a b60_x.pos3_a b60_j.pos3_a b60_Z.pos3_a b60_S.pos3_a b60_F.pos3_a b60_R.pos3_a b60_X.pos3_a b60_J.pos3_a b60_a.pos3_a b60_e.pos3_a b60_i.pos3_a b60_u.pos3_a b60_w.pos3_a b60_y.pos3_a b60_0.pos3_a b60_1.pos3_a b60_2.pos3_a b60_3.pos3_a b60_4.pos3_a b60_5.pos3_a b60_6.pos3_a b60_7.pos3_a b60_8.pos3_a b60_9.pos3_a b60_B.pos3_a b60_C.pos3_a b60_A.pos3_a b60_E.pos3_a prefix_o.pos3_a b60_U.pos3_a b60_W.pos3_a b60_Y.pos3_a b60_c.pos3_a b60_d.pos3_a b60_g.pos3_a b60_G.pos3_a b60_k.pos3_a b60_K.pos3_a b60_h.pos3_a b60_v.pos3_a b60_D.pos3_a b60_m.pos3_a b60_n.pos3_a b60_b.pos3_a b60_l.pos3_a b60_Q.pos3_a b60_N.pos3_a b60_L.pos3_a b60_p.pos3_a b60_q.pos3_a b60_t.pos3_a b60_T.pos3_a b60_H.pos3_a b60_M.pos3_a b60_P.pos3_a b60_V.pos3_a];
+@c3_lower = [b60_z b60_s b60_f b60_r b60_x b60_j b60_a b60_e b60_i b60_u b60_w b60_y b60_0 b60_1 b60_2 b60_3 b60_4 b60_5 b60_6 b60_7 b60_8 b60_9 b60_o b60_c b60_d b60_g b60_k b60_h b60_v b60_m b60_n b60_b b60_l b60_p b60_q b60_t];
+@c3_p3_top = [b60_z.pos3_top b60_s.pos3_top b60_f.pos3_top b60_r.pos3_top b60_x.pos3_top b60_j.pos3_top b60_a.pos3_top b60_e.pos3_top b60_i.pos3_top b60_u.pos3_top b60_w.pos3_top b60_y.pos3_top b60_0.pos3_top b60_1.pos3_top b60_2.pos3_top b60_3.pos3_top b60_4.pos3_top b60_5.pos3_top b60_6.pos3_top b60_7.pos3_top b60_8.pos3_top b60_9.pos3_top b60_o.pos3_top b60_c.pos3_top b60_d.pos3_top b60_g.pos3_top b60_k.pos3_top b60_h.pos3_top b60_v.pos3_top b60_m.pos3_top b60_n.pos3_top b60_b.pos3_top b60_l.pos3_top b60_p.pos3_top b60_q.pos3_top b60_t.pos3_top];
+@c3_p3_top_t = [b60_z.pos3_top_t b60_s.pos3_top_t b60_f.pos3_top_t b60_r.pos3_top_t b60_x.pos3_top_t b60_j.pos3_top_t b60_a.pos3_top_t b60_e.pos3_top_t b60_i.pos3_top_t b60_u.pos3_top_t b60_w.pos3_top_t b60_y.pos3_top_t b60_0.pos3_top_t b60_1.pos3_top_t b60_2.pos3_top_t b60_3.pos3_top_t b60_4.pos3_top_t b60_5.pos3_top_t b60_6.pos3_top_t b60_7.pos3_top_t b60_8.pos3_top_t b60_9.pos3_top_t b60_o.pos3_top_t b60_c.pos3_top_t b60_d.pos3_top_t b60_g.pos3_top_t b60_k.pos3_top_t b60_h.pos3_top_t b60_v.pos3_top_t b60_m.pos3_top_t b60_n.pos3_top_t b60_b.pos3_top_t b60_l.pos3_top_t b60_p.pos3_top_t b60_q.pos3_top_t b60_t.pos3_top_t];
+@c3_p3_top_a = [b60_z.pos3_top_a b60_s.pos3_top_a b60_f.pos3_top_a b60_r.pos3_top_a b60_x.pos3_top_a b60_j.pos3_top_a b60_a.pos3_top_a b60_e.pos3_top_a b60_i.pos3_top_a b60_u.pos3_top_a b60_w.pos3_top_a b60_y.pos3_top_a b60_0.pos3_top_a b60_1.pos3_top_a b60_2.pos3_top_a b60_3.pos3_top_a b60_4.pos3_top_a b60_5.pos3_top_a b60_6.pos3_top_a b60_7.pos3_top_a b60_8.pos3_top_a b60_9.pos3_top_a b60_o.pos3_top_a b60_c.pos3_top_a b60_d.pos3_top_a b60_g.pos3_top_a b60_k.pos3_top_a b60_h.pos3_top_a b60_v.pos3_top_a b60_m.pos3_top_a b60_n.pos3_top_a b60_b.pos3_top_a b60_l.pos3_top_a b60_p.pos3_top_a b60_q.pos3_top_a b60_t.pos3_top_a];
+
+@c3_upper = [b60_Z b60_S b60_F b60_R b60_X b60_J b60_B b60_C b60_A b60_E b60_U b60_W b60_Y b60_G b60_K b60_D b60_Q b60_N b60_L b60_T b60_H b60_M b60_P b60_V];
+@c3_p3_bot = [b60_Z.pos3_bot b60_S.pos3_bot b60_F.pos3_bot b60_R.pos3_bot b60_X.pos3_bot b60_J.pos3_bot b60_B.pos3_bot b60_C.pos3_bot b60_A.pos3_bot b60_E.pos3_bot b60_U.pos3_bot b60_W.pos3_bot b60_Y.pos3_bot b60_G.pos3_bot b60_K.pos3_bot b60_D.pos3_bot b60_Q.pos3_bot b60_N.pos3_bot b60_L.pos3_bot b60_T.pos3_bot b60_H.pos3_bot b60_M.pos3_bot b60_P.pos3_bot b60_V.pos3_bot];
+@c3_p3_bot_t = [b60_Z.pos3_bot_t b60_S.pos3_bot_t b60_F.pos3_bot_t b60_R.pos3_bot_t b60_X.pos3_bot_t b60_J.pos3_bot_t b60_B.pos3_bot_t b60_C.pos3_bot_t b60_A.pos3_bot_t b60_E.pos3_bot_t b60_U.pos3_bot_t b60_W.pos3_bot_t b60_Y.pos3_bot_t b60_G.pos3_bot_t b60_K.pos3_bot_t b60_D.pos3_bot_t b60_Q.pos3_bot_t b60_N.pos3_bot_t b60_L.pos3_bot_t b60_T.pos3_bot_t b60_H.pos3_bot_t b60_M.pos3_bot_t b60_P.pos3_bot_t b60_V.pos3_bot_t];
+@c3_p3_bot_a = [b60_Z.pos3_bot_a b60_S.pos3_bot_a b60_F.pos3_bot_a b60_R.pos3_bot_a b60_X.pos3_bot_a b60_J.pos3_bot_a b60_B.pos3_bot_a b60_C.pos3_bot_a b60_A.pos3_bot_a b60_E.pos3_bot_a b60_U.pos3_bot_a b60_W.pos3_bot_a b60_Y.pos3_bot_a b60_G.pos3_bot_a b60_K.pos3_bot_a b60_D.pos3_bot_a b60_Q.pos3_bot_a b60_N.pos3_bot_a b60_L.pos3_bot_a b60_T.pos3_bot_a b60_H.pos3_bot_a b60_M.pos3_bot_a b60_P.pos3_bot_a b60_V.pos3_bot_a];
 
 feature calt {
-    # 1. Chữ Hoa đầu từ (Tiền tố 'I' hoặc 'o') -> 1 viền đứng bên trái
-    sub prefix_I @c1' @c2 @c3 by @c1_p1;
-    sub prefix_I @c1_p1 @c2' @c3 by @c2_p2;
-    sub prefix_I @c1_p1 @c2_p2 @c3' by @c3_p3_t;
+    # 1. Chữ Hoa đầu từ (Tiền tố 'I') -> 1 viền đứng bên trái
+    # 1a. Nếu C3 là HOA -> C3 ở Dưới
+    sub prefix_I @c1' @c2 @c3_upper by @c1_p1_top;
+    sub prefix_I @c1_p1_top @c2' @c3_upper by @c2_p2_top;
+    sub prefix_I @c1_p1_top @c2_p2_top @c3_upper' by @c3_p3_bot_t;
 
-    sub prefix_o @c1' @c2 @c3 by @c1_p1;
-    sub prefix_o @c1_p1 @c2' @c3 by @c2_p2;
-    sub prefix_o @c1_p1 @c2_p2 @c3' by @c3_p3_t;
+    # 1b. Nếu C3 là thường/số -> C3 ở Trên
+    sub prefix_I @c1' @c2 @c3_lower by @c1_p1_bot;
+    sub prefix_I @c1_p1_bot @c2' @c3_lower by @c2_p2_bot;
+    sub prefix_I @c1_p1_bot @c2_p2_bot @c3_lower' by @c3_p3_top_t;
 
     # 2. CHỮ HOA TOÀN TỪ (Tiền tố 'O') -> Khung viền 4 xung quanh
-    sub prefix_O @c1' @c2 @c3 by @c1_p1;
-    sub prefix_O @c1_p1 @c2' @c3 by @c2_p2;
-    sub prefix_O @c1_p1 @c2_p2 @c3' by @c3_p3_a;
+    # 2a. Nếu C3 là HOA -> C3 ở Dưới
+    sub prefix_O @c1' @c2 @c3_upper by @c1_p1_top;
+    sub prefix_O @c1_p1_top @c2' @c3_upper by @c2_p2_top;
+    sub prefix_O @c1_p1_top @c2_p2_top @c3_upper' by @c3_p3_bot_a;
 
-    # 3. Chữ thường tiêu chuẩn (Không tiền tố) -> Không viền
-    sub @c1' @c2 @c3 by @c1_p1;
-    sub @c1_p1 @c2' @c3 by @c2_p2;
-    sub @c1_p1 @c2_p2 @c3' by @c3_p3;
+    # 2b. Nếu C3 là thường/số -> C3 ở Trên
+    sub prefix_O @c1' @c2 @c3_lower by @c1_p1_bot;
+    sub prefix_O @c1_p1_bot @c2' @c3_lower by @c2_p2_bot;
+    sub prefix_O @c1_p1_bot @c2_p2_bot @c3_lower' by @c3_p3_top_a;
+
+    # 3. Chữ thường tiêu chuẩn (Không tiền tố)
+    # 3a. Nếu C3 là HOA -> C3 ở Dưới
+    sub @c1' @c2 @c3_upper by @c1_p1_top;
+    sub @c1_p1_top @c2' @c3_upper by @c2_p2_top;
+    sub @c1_p1_top @c2_p2_top @c3_upper' by @c3_p3_bot;
+
+    # 3b. Nếu C3 là thường/số -> C3 ở Trên
+    sub @c1' @c2 @c3_lower by @c1_p1_bot;
+    sub @c1_p1_bot @c2' @c3_lower by @c2_p2_bot;
+    sub @c1_p1_bot @c2_p2_bot @c3_lower' by @c3_p3_top;
 } calt;

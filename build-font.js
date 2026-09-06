@@ -27,15 +27,24 @@ async function buildFont() {
 
   const PAD = 0.03;
   // OpenType Coordinates: X: 0->1000, Y: -200->800
-  // Bố cục Tam giác:
-  // - c1: Đáy trái (x: 70, y: -140, w: 410, h: 420) -> dồn phải (ax: 1), dồn lên (ay: 1)
-  // - c2: Đáy phải (x: 520, y: -140, w: 410, h: 420) -> dồn trái (ax: -1), dồn lên (ay: 1)
-  // - c3: Đỉnh trên (x: 270, y: 320, w: 460, h: 420) -> căn giữa X (ax: 0), dồn xuống (ay: -1)
-  const ZONES = [
-    { x: 70,  y: -140, w: 410, h: 420, ax: 1,  ay: 1  }, // 0: c1 (Bot-Left)
-    { x: 520, y: -140, w: 410, h: 420, ax: -1, ay: 1  }, // 1: c2 (Bot-Right)
-    { x: 270, y: 320,  w: 460, h: 420, ax: 0,  ay: -1 }, // 2: c3 (Top)
-  ];
+  // Bố cục Tam giác Thuận (△ - khi C3 là chữ thường hoặc số):
+  // - c1_bot: Đáy trái (x: 70, y: -140, w: 410, h: 420) -> dồn phải (ax: 1), dồn lên (ay: 1)
+  // - c2_bot: Đáy phải (x: 520, y: -140, w: 410, h: 420) -> dồn trái (ax: -1), dồn lên (ay: 1)
+  // - c3_top: Đỉnh trên (x: 270, y: 320, w: 460, h: 420) -> căn giữa X (ax: 0), dồn xuống (ay: -1)
+
+  // Bố cục Tam giác Ngược (▽ - khi C3 là chữ HOA):
+  // - c1_top: Đáy trên-trái (x: 70, y: 320, w: 410, h: 420) -> dồn phải (ax: 1), dồn xuống (ay: -1)
+  // - c2_top: Đáy trên-phải (x: 520, y: 320, w: 410, h: 420) -> dồn trái (ax: -1), dồn xuống (ay: -1)
+  // - c3_bot: Đỉnh dưới (x: 270, y: -140, w: 460, h: 420) -> căn giữa X (ax: 0), dồn lên (ay: 1)
+  const ZONES = {
+    c1_bot: { x: 70,  y: -140, w: 410, h: 420, ax: 1,  ay: 1  },
+    c2_bot: { x: 520, y: -140, w: 410, h: 420, ax: -1, ay: 1  },
+    c3_top: { x: 270, y: 320,  w: 460, h: 420, ax: 0,  ay: -1 },
+
+    c1_top: { x: 70,  y: 320,  w: 410, h: 420, ax: 1,  ay: -1 },
+    c2_top: { x: 520, y: 320,  w: 410, h: 420, ax: -1, ay: -1 },
+    c3_bot: { x: 270, y: -140, w: 460, h: 420, ax: 0,  ay: 1  },
+  };
 
   const refPath = baseFont.getPath('C', 0, 0, 1000);
   const refBb = refPath.getBoundingBox();
@@ -82,8 +91,7 @@ async function buildFont() {
     p.close();
   }
 
-  function createPositionalPath(char, zoneIndex, caseType = 'LOWER') {
-    const zone = ZONES[zoneIndex];
+  function createPositionalPath(char, zone, caseType = 'LOWER') {
     const iW = zone.w * (1 - PAD * 2), iH = zone.h * (1 - PAD * 2);
     const iX = zone.x + zone.w * PAD,  iY = zone.y + zone.h * PAD;
 
@@ -126,7 +134,6 @@ async function buildFont() {
 
   function getCharName(char) {
     if (char === 'I') return 'prefix_I';
-    if (char === 'o') return 'prefix_o';
     if (char === 'O') return 'prefix_O';
     if (/[a-zA-Z0-9]/.test(char)) return 'b60_' + char;
     const names = {
@@ -141,13 +148,11 @@ async function buildFont() {
     return names[char] || 'uni' + char.charCodeAt(0).toString(16).toUpperCase();
   }
 
-  // 1. Thêm glyph tiền tố ẩn prefix_I, prefix_o và prefix_O (advanceWidth = 0, path rỗng)
-  // Các glyph này đại diện trực tiếp cho các ký tự gõ 'I', 'o', 'O'
+  // 1. Thêm glyph tiền tố ẩn prefix_I và prefix_O (advanceWidth = 0, path rỗng)
+  // Các glyph này đại diện trực tiếp cho các ký tự gõ 'I' và 'O' (chữ hoa)
+  // NOTE: 'o' thường đã là ký tự C2 hợp lệ trong Base60, KHÔNG dùng làm tiền tố nữa
   glyphs.push(new opentype.Glyph({
     name: 'prefix_I', unicode: 'I'.charCodeAt(0), advanceWidth: 0, path: new opentype.Path()
-  }));
-  glyphs.push(new opentype.Glyph({
-    name: 'prefix_o', unicode: 'o'.charCodeAt(0), advanceWidth: 0, path: new opentype.Path()
   }));
   glyphs.push(new opentype.Glyph({
     name: 'prefix_O', unicode: 'O'.charCodeAt(0), advanceWidth: 0, path: new opentype.Path()
@@ -161,6 +166,10 @@ async function buildFont() {
   // C3: Dấu / thanh điệu (gồm 60 ký tự)
   const C3_CHARS = Array.from(new Set([...BASE60_SS])).filter(c => c && c.length === 1);
 
+  // Phân loại C3 thành C3_UPPER (chữ HOA: C3 ở Dưới) và C3_LOWER (chữ thường/số: C3 ở Trên)
+  const C3_UPPER = C3_CHARS.filter(c => /[A-Z]/.test(c));
+  const C3_LOWER = C3_CHARS.filter(c => !/[A-Z]/.test(c));
+
   // Tập hợp toàn bộ ký tự Base60
   const allChars = Array.from(new Set([
     ...C1_CHARS,
@@ -171,10 +180,10 @@ async function buildFont() {
 
   console.log(`Processing ${allChars.length} characters for Base60 font...`);
 
-  // Tạo base glyphs cho các ký tự (ngoại trừ I, o, O đã gán vào prefix)
+  // Tạo base glyphs cho các ký tự (ngoại trừ I, O đã gán vào prefix; 'o' thường là ký tự C2 hợp lệ)
   for (let i = 0; i < allChars.length; i++) {
     const char = allChars[i];
-    if (char === 'I' || char === 'o' || char === 'O') continue;
+    if (char === 'I' || char === 'O') continue;
     
     const name = getCharName(char);
     const unicode = char.charCodeAt(0);
@@ -187,33 +196,57 @@ async function buildFont() {
     }));
   }
 
-  // Tạo glyphs pos1 cho C1
+  // Tạo glyphs cho C1:
+  // - pos1_bot (khi C3 ở trên): nằm ở Đáy trái
+  // - pos1_top (khi C3 ở dưới): nằm ở Đáy trên-trái
   for (const char of C1_CHARS) {
     const name = getCharName(char);
     glyphs.push(new opentype.Glyph({
-      name: name + '.pos1', advanceWidth: 0, path: createPositionalPath(char, 0)
+      name: name + '.pos1_bot', advanceWidth: 0, path: createPositionalPath(char, ZONES.c1_bot)
+    }));
+    glyphs.push(new opentype.Glyph({
+      name: name + '.pos1_top', advanceWidth: 0, path: createPositionalPath(char, ZONES.c1_top)
     }));
   }
 
-  // Tạo glyphs pos2 cho C2
+  // Tạo glyphs cho C2:
+  // - pos2_bot (khi C3 ở trên): nằm ở Đáy phải
+  // - pos2_top (khi C3 ở dưới): nằm ở Đáy trên-phải
   for (const char of C2_CHARS) {
     const name = getCharName(char);
     glyphs.push(new opentype.Glyph({
-      name: name + '.pos2', advanceWidth: 0, path: createPositionalPath(char, 1)
+      name: name + '.pos2_bot', advanceWidth: 0, path: createPositionalPath(char, ZONES.c2_bot)
+    }));
+    glyphs.push(new opentype.Glyph({
+      name: name + '.pos2_top', advanceWidth: 0, path: createPositionalPath(char, ZONES.c2_top)
     }));
   }
 
-  // Tạo glyphs pos3, pos3_t, pos3_a cho C3
-  for (const char of C3_CHARS) {
+  // Tạo glyphs cho C3_LOWER (C3 ở Trên - Đỉnh nón thuận △):
+  for (const char of C3_LOWER) {
     const name = getCharName(char);
     glyphs.push(new opentype.Glyph({
-      name: name + '.pos3', advanceWidth: 1000, path: createPositionalPath(char, 2, 'LOWER')
+      name: name + '.pos3_top', advanceWidth: 1000, path: createPositionalPath(char, ZONES.c3_top, 'LOWER')
     }));
     glyphs.push(new opentype.Glyph({
-      name: name + '.pos3_t', advanceWidth: 1000, path: createPositionalPath(char, 2, 'TITLE')
+      name: name + '.pos3_top_t', advanceWidth: 1000, path: createPositionalPath(char, ZONES.c3_top, 'TITLE')
     }));
     glyphs.push(new opentype.Glyph({
-      name: name + '.pos3_a', advanceWidth: 1000, path: createPositionalPath(char, 2, 'ALL')
+      name: name + '.pos3_top_a', advanceWidth: 1000, path: createPositionalPath(char, ZONES.c3_top, 'ALL')
+    }));
+  }
+
+  // Tạo glyphs cho C3_UPPER (C3 ở Dưới - Đỉnh chóp ngược ▽):
+  for (const char of C3_UPPER) {
+    const name = getCharName(char);
+    glyphs.push(new opentype.Glyph({
+      name: name + '.pos3_bot', advanceWidth: 1000, path: createPositionalPath(char, ZONES.c3_bot, 'LOWER')
+    }));
+    glyphs.push(new opentype.Glyph({
+      name: name + '.pos3_bot_t', advanceWidth: 1000, path: createPositionalPath(char, ZONES.c3_bot, 'TITLE')
+    }));
+    glyphs.push(new opentype.Glyph({
+      name: name + '.pos3_bot_a', advanceWidth: 1000, path: createPositionalPath(char, ZONES.c3_bot, 'ALL')
     }));
   }
 
@@ -233,50 +266,78 @@ async function buildFont() {
 
   // Xây dựng các lớp OpenType FEA
   const c1Names = C1_CHARS.map(getCharName);
-  const c1Pos1Names = C1_CHARS.map(c => getCharName(c) + '.pos1');
+  const c1Pos1BotNames = C1_CHARS.map(c => getCharName(c) + '.pos1_bot');
+  const c1Pos1TopNames = C1_CHARS.map(c => getCharName(c) + '.pos1_top');
 
   const c2Names = C2_CHARS.map(getCharName);
-  const c2Pos2Names = C2_CHARS.map(c => getCharName(c) + '.pos2');
+  const c2Pos2BotNames = C2_CHARS.map(c => getCharName(c) + '.pos2_bot');
+  const c2Pos2TopNames = C2_CHARS.map(c => getCharName(c) + '.pos2_top');
 
-  const c3Names = C3_CHARS.map(getCharName);
-  const c3Pos3Names = C3_CHARS.map(c => getCharName(c) + '.pos3');
-  const c3Pos3TNames = C3_CHARS.map(c => getCharName(c) + '.pos3_t');
-  const c3Pos3ANames = C3_CHARS.map(c => getCharName(c) + '.pos3_a');
+  const c3LowerNames = C3_LOWER.map(getCharName);
+  const c3Pos3TopNames = C3_LOWER.map(c => getCharName(c) + '.pos3_top');
+  const c3Pos3TopTNames = C3_LOWER.map(c => getCharName(c) + '.pos3_top_t');
+  const c3Pos3TopANames = C3_LOWER.map(c => getCharName(c) + '.pos3_top_a');
+
+  const c3UpperNames = C3_UPPER.map(getCharName);
+  const c3Pos3BotNames = C3_UPPER.map(c => getCharName(c) + '.pos3_bot');
+  const c3Pos3BotTNames = C3_UPPER.map(c => getCharName(c) + '.pos3_bot_t');
+  const c3Pos3BotANames = C3_UPPER.map(c => getCharName(c) + '.pos3_bot_a');
 
   // Generate features.fea với phân tách chính xác:
   const fea = `languagesystem DFLT dflt;
 languagesystem latn dflt;
 
 @c1 = [${c1Names.join(' ')}];
-@c1_p1 = [${c1Pos1Names.join(' ')}];
+@c1_p1_bot = [${c1Pos1BotNames.join(' ')}];
+@c1_p1_top = [${c1Pos1TopNames.join(' ')}];
 
 @c2 = [${c2Names.join(' ')}];
-@c2_p2 = [${c2Pos2Names.join(' ')}];
+@c2_p2_bot = [${c2Pos2BotNames.join(' ')}];
+@c2_p2_top = [${c2Pos2TopNames.join(' ')}];
 
-@c3 = [${c3Names.join(' ')}];
-@c3_p3 = [${c3Pos3Names.join(' ')}];
-@c3_p3_t = [${c3Pos3TNames.join(' ')}];
-@c3_p3_a = [${c3Pos3ANames.join(' ')}];
+@c3_lower = [${c3LowerNames.join(' ')}];
+@c3_p3_top = [${c3Pos3TopNames.join(' ')}];
+@c3_p3_top_t = [${c3Pos3TopTNames.join(' ')}];
+@c3_p3_top_a = [${c3Pos3TopANames.join(' ')}];
+
+@c3_upper = [${c3UpperNames.join(' ')}];
+@c3_p3_bot = [${c3Pos3BotNames.join(' ')}];
+@c3_p3_bot_t = [${c3Pos3BotTNames.join(' ')}];
+@c3_p3_bot_a = [${c3Pos3BotANames.join(' ')}];
 
 feature calt {
-    # 1. Chữ Hoa đầu từ (Tiền tố 'I' hoặc 'o') -> 1 viền đứng bên trái
-    sub prefix_I @c1' @c2 @c3 by @c1_p1;
-    sub prefix_I @c1_p1 @c2' @c3 by @c2_p2;
-    sub prefix_I @c1_p1 @c2_p2 @c3' by @c3_p3_t;
+    # 1. Chữ Hoa đầu từ (Tiền tố 'I') -> 1 viền đứng bên trái
+    # 1a. Nếu C3 là HOA -> C3 ở Dưới
+    sub prefix_I @c1' @c2 @c3_upper by @c1_p1_top;
+    sub prefix_I @c1_p1_top @c2' @c3_upper by @c2_p2_top;
+    sub prefix_I @c1_p1_top @c2_p2_top @c3_upper' by @c3_p3_bot_t;
 
-    sub prefix_o @c1' @c2 @c3 by @c1_p1;
-    sub prefix_o @c1_p1 @c2' @c3 by @c2_p2;
-    sub prefix_o @c1_p1 @c2_p2 @c3' by @c3_p3_t;
+    # 1b. Nếu C3 là thường/số -> C3 ở Trên
+    sub prefix_I @c1' @c2 @c3_lower by @c1_p1_bot;
+    sub prefix_I @c1_p1_bot @c2' @c3_lower by @c2_p2_bot;
+    sub prefix_I @c1_p1_bot @c2_p2_bot @c3_lower' by @c3_p3_top_t;
 
     # 2. CHỮ HOA TOÀN TỪ (Tiền tố 'O') -> Khung viền 4 xung quanh
-    sub prefix_O @c1' @c2 @c3 by @c1_p1;
-    sub prefix_O @c1_p1 @c2' @c3 by @c2_p2;
-    sub prefix_O @c1_p1 @c2_p2 @c3' by @c3_p3_a;
+    # 2a. Nếu C3 là HOA -> C3 ở Dưới
+    sub prefix_O @c1' @c2 @c3_upper by @c1_p1_top;
+    sub prefix_O @c1_p1_top @c2' @c3_upper by @c2_p2_top;
+    sub prefix_O @c1_p1_top @c2_p2_top @c3_upper' by @c3_p3_bot_a;
 
-    # 3. Chữ thường tiêu chuẩn (Không tiền tố) -> Không viền
-    sub @c1' @c2 @c3 by @c1_p1;
-    sub @c1_p1 @c2' @c3 by @c2_p2;
-    sub @c1_p1 @c2_p2 @c3' by @c3_p3;
+    # 2b. Nếu C3 là thường/số -> C3 ở Trên
+    sub prefix_O @c1' @c2 @c3_lower by @c1_p1_bot;
+    sub prefix_O @c1_p1_bot @c2' @c3_lower by @c2_p2_bot;
+    sub prefix_O @c1_p1_bot @c2_p2_bot @c3_lower' by @c3_p3_top_a;
+
+    # 3. Chữ thường tiêu chuẩn (Không tiền tố)
+    # 3a. Nếu C3 là HOA -> C3 ở Dưới
+    sub @c1' @c2 @c3_upper by @c1_p1_top;
+    sub @c1_p1_top @c2' @c3_upper by @c2_p2_top;
+    sub @c1_p1_top @c2_p2_top @c3_upper' by @c3_p3_bot;
+
+    # 3b. Nếu C3 là thường/số -> C3 ở Trên
+    sub @c1' @c2 @c3_lower by @c1_p1_bot;
+    sub @c1_p1_bot @c2' @c3_lower by @c2_p2_bot;
+    sub @c1_p1_bot @c2_p2_bot @c3_lower' by @c3_p3_top;
 } calt;
 `;
   fs.writeFileSync(OUTPUT_FEA, fea);

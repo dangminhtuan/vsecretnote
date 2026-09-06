@@ -9,7 +9,7 @@
     *, *::before, *::after { box-sizing: border-box; }
     @font-face {
       font-family: 'CyberVietnamese';
-      src: url('/CyberVietnamese-Regular.ttf?v=5') format('truetype');
+      src: url('/CyberVietnamese-Regular.ttf?v=8') format('truetype');
     }
     body {
       background: #0d1117; color: #c9d1d9;
@@ -100,23 +100,30 @@
   <h1>Base60 Block Typeface Generator</h1>
   <p>Cấu trúc 4 Khối: Dấu hình học trực quan & Tối ưu khoảng trống</p>
 
-  <div class="displays" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; width: 100%; max-width: 460px; margin-bottom: 8px;">
-    <!-- Phương án 1: C3 ở Trên (Đỉnh nón) -->
-    <div class="variant" style="margin: 0; padding: 8px;">
-      <div style="font-size: 11px; color: #58a6ff; font-weight: bold; margin-bottom: 6px; text-align: center;">1. C3 ở Trên (Đỉnh nón)</div>
-      <svg id="svg-tri-top" class="canvas" width="100%" viewBox="0 0 1000 1000">
-        <!-- Đường viền tam giác hướng dẫn -->
-        <polygon points="500,50 930,940 70,940" fill="none" stroke="#1c2128" stroke-dasharray="10,10" stroke-width="4"/>
-      </svg>
-    </div>
+  <div class="displays" style="width: 100%; max-width: 380px; margin-bottom: 8px;">
+    <!-- Khối Demo Tam Giác Tự Động Đảo Hướng (Thường = C3 Trên △, Hoa = C3 Dưới ▽) -->
+    <div class="variant" style="margin: 0; padding: 10px; width: 100%;">
+      
+      <!-- Top info row: Label & Word position -->
+      <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 6px; padding: 0 4px;">
+        <div id="demo-variant-label" style="font-size: 12px; color: #58a6ff; font-weight: bold; font-family: monospace;">△ Chữ thường (C3 ở Trên)</div>
+        <div id="demo-word-pos" style="font-size: 11px; color: #ff77ea; font-family: monospace; font-weight: bold;"></div>
+      </div>
 
-    <!-- Phương án 2: C3 ở Dưới (Chân đế) -->
-    <div class="variant" style="margin: 0; padding: 8px;">
-      <div style="font-size: 11px; color: #7ee787; font-weight: bold; margin-bottom: 6px; text-align: center;">2. C3 ở Dưới (Chân đế)</div>
-      <svg id="svg-tri-bot" class="canvas" width="100%" viewBox="0 0 1000 1000">
-        <!-- Đường viền tam giác ngược hướng dẫn -->
-        <polygon points="70,60 930,60 500,950" fill="none" stroke="#1c2128" stroke-dasharray="10,10" stroke-width="4"/>
-      </svg>
+      <!-- Main canvas flanked by touch-friendly navigation arrows -->
+      <div style="display: flex; align-items: center; gap: 6px; width: 100%;">
+        <button id="btn-prev-word" title="Từ trước (Phím ←)" style="width: 32px; height: 70px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; border-radius: 6px; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; cursor: pointer; flex-shrink: 0; transition: all .15s; user-select: none;">◀</button>
+        
+        <svg id="svg-tri-demo" class="canvas" width="100%" viewBox="0 0 1000 1000" style="flex: 1;">
+          <!-- Đường viền tam giác hướng dẫn tự động đảo chiều -->
+          <polygon id="svg-tri-guide" points="500,50 930,940 70,940" fill="none" stroke="#1c2128" stroke-dasharray="10,10" stroke-width="6"/>
+        </svg>
+
+        <button id="btn-next-word" title="Từ tiếp theo (Phím →)" style="width: 32px; height: 70px; padding: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; border-radius: 6px; background: #21262d; border: 1px solid #30363d; color: #c9d1d9; cursor: pointer; flex-shrink: 0; transition: all .15s; user-select: none;">▶</button>
+      </div>
+
+      <!-- Word chips (Thẻ từ bấm nhảy nhanh) -->
+      <div id="demo-word-chips" style="display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; width: 100%; margin-top: 8px; max-height: 60px; overflow-y: auto;"></div>
     </div>
   </div>
 
@@ -148,15 +155,15 @@
     </div>
     <div class="input-row">
       <label>Tiếng Việt</label>
-      <input type="text" id="input-word" value="cào" placeholder="gõ từ tiếng Việt" />
+      <input type="text" id="input-word" value="cào" placeholder="Gõ từ hoặc câu tiếng Việt..." />
     </div>
     <div class="input-row">
       <label>Mã Base60</label>
-      <input type="text" id="input-b60" maxlength="4" placeholder="VD: oCpf" />
+      <input type="text" id="input-b60" placeholder="VD: oCpf oKud..." />
     </div>
     <div class="input-row">
       <label>Mã Time</label>
-      <input type="text" id="input-time" maxlength="6" placeholder="VD: 112402" />
+      <input type="text" id="input-time" placeholder="VD: 112402 062706..." />
     </div>
   </div>
 
@@ -178,7 +185,7 @@
 
   <div id="status">Đang tải font...</div>
 
-  <script type="module" src="./font-maker.js?v=7"></script>
+  <script type="module" src="./font-maker.js?v=8"></script>
   <script type="module">
     import { initVsnNavigation } from '/nav-system.js';
     initVsnNavigation('#vsn-font-header');

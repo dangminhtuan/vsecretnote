@@ -178,36 +178,178 @@ function addGlyphToSVG(svg, char, zone, color) {
   svg.appendChild(path);
 }
 
-function renderAllSVGs(b60, originalWord) {
-  ['svg-tri-top', 'svg-tri-bot'].forEach(id => {
-    const svg = document.getElementById(id);
-    if (svg) svg.querySelectorAll('.glyph-path').forEach(el => el.remove());
-  });
+function parseSingleWord(w) {
+  if (!w) return null;
+  const tc = encodeWord(w);
+  let b60 = timeToBase60(tc);
+  const isAllCaps = w === w.toUpperCase() && /[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ]/.test(w);
+  const isTitle = w[0] === w[0].toUpperCase() && /[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ]/.test(w[0]) && !isAllCaps;
+  let prefix = '';
+  if (isAllCaps) prefix = 'O';
+  else if (isTitle) prefix = 'I';
+  
+  const fullB60 = prefix + b60;
+  return {
+    word: w,
+    time: tc,
+    b60: fullB60,
+    coreB60: b60,
+    isAllCaps,
+    isTitle,
+    isUpper: isAllCaps || isTitle,
+    c1: b60[0],
+    c2: b60[1],
+    c3: b60[2]
+  };
+}
 
-  if (!baseFont || !b60 || (b60.length !== 3 && b60.length !== 4) || b60.startsWith('[')) return;
+function parseSingleB60(token) {
+  if (!token || token.length < 3) return null;
+  let prefix = '';
+  let coreB60 = token;
+  if (token.startsWith('I') || token.startsWith('O')) {
+    prefix = token[0];
+    coreB60 = token.slice(1);
+  }
+  if (coreB60.length !== 3) return null;
+  const tc = base60ToTime(coreB60);
+  let decoded = tc ? decodeWord(tc) : '';
+  if (decoded && !decoded.startsWith('[')) {
+    if (prefix === 'I') decoded = decoded.charAt(0).toUpperCase() + decoded.slice(1);
+    else if (prefix === 'O') decoded = decoded.toUpperCase();
+    return parseSingleWord(decoded);
+  }
+  return null;
+}
 
-  const cleanB60 = (b60.startsWith('I') || b60.startsWith('O') || b60.startsWith('o')) ? b60.slice(1) : b60;
-  if (cleanB60.length !== 3) return;
+function parseSingleTime(tc) {
+  if (!tc || tc.length !== 6) return null;
+  const decoded = decodeWord(tc);
+  if (decoded && !decoded.startsWith('[')) {
+    return parseSingleWord(decoded);
+  }
+  return null;
+}
 
-  const [c1, c2, c3] = [cleanB60[0], cleanB60[1], cleanB60[2]];
+let currentWords = [];
+let currentIndex = 0;
 
-  // ─── 1. Phương án 1: C3 ở Trên (Đỉnh nón) ───
-  const svgTop = document.getElementById('svg-tri-top');
-  if (svgTop) {
-    addGlyphToSVG(svgTop, c3, TRI_TOP_ZONES.c3, COLORS[2]); // C3 trên (đỉnh nón)
-    addGlyphToSVG(svgTop, c1, TRI_TOP_ZONES.c1, COLORS[0]); // C1 dưới-trái
-    addGlyphToSVG(svgTop, c2, TRI_TOP_ZONES.c2, COLORS[1]); // C2 dưới-phải
+function renderCurrentWord() {
+  const svg = document.getElementById('svg-tri-demo');
+  if (svg) svg.querySelectorAll('.glyph-path').forEach(el => el.remove());
+
+  const labelEl = document.getElementById('demo-variant-label');
+  const posEl = document.getElementById('demo-word-pos');
+  const guideEl = document.getElementById('svg-tri-guide');
+  const btnPrev = document.getElementById('btn-prev-word');
+  const btnNext = document.getElementById('btn-next-word');
+  const chipsEl = document.getElementById('demo-word-chips');
+
+  if (!currentWords || currentWords.length === 0) {
+    if (labelEl) labelEl.textContent = 'Chưa có từ nào';
+    if (posEl) posEl.textContent = '';
+    if (btnPrev) { btnPrev.disabled = true; btnPrev.style.opacity = '0.2'; btnPrev.style.cursor = 'default'; btnPrev.style.borderColor = '#30363d'; btnPrev.style.color = '#666'; }
+    if (btnNext) { btnNext.disabled = true; btnNext.style.opacity = '0.2'; btnNext.style.cursor = 'default'; btnNext.style.borderColor = '#30363d'; btnNext.style.color = '#666'; }
+    if (chipsEl) chipsEl.innerHTML = '';
+    updateButtonStates('', null);
+    return;
   }
 
-  // ─── 2. Phương án 2: C3 ở Dưới (Chân đế) ───
-  const svgBot = document.getElementById('svg-tri-bot');
-  if (svgBot) {
-    addGlyphToSVG(svgBot, c1, TRI_BOT_ZONES.c1, COLORS[0]); // C1 trên-trái
-    addGlyphToSVG(svgBot, c2, TRI_BOT_ZONES.c2, COLORS[1]); // C2 trên-phải
-    addGlyphToSVG(svgBot, c3, TRI_BOT_ZONES.c3, COLORS[2]); // C3 dưới (chân đế)
+  if (currentIndex < 0) currentIndex = 0;
+  if (currentIndex >= currentWords.length) currentIndex = currentWords.length - 1;
+
+  const cur = currentWords[currentIndex];
+
+  // Nav buttons
+  if (btnPrev) {
+    const canPrev = currentIndex > 0;
+    btnPrev.disabled = !canPrev;
+    btnPrev.style.opacity = canPrev ? '1' : '0.25';
+    btnPrev.style.cursor = canPrev ? 'pointer' : 'default';
+    btnPrev.style.borderColor = canPrev ? '#58a6ff' : '#30363d';
+    btnPrev.style.color = canPrev ? '#58a6ff' : '#666';
+  }
+  if (btnNext) {
+    const canNext = currentIndex < currentWords.length - 1;
+    btnNext.disabled = !canNext;
+    btnNext.style.opacity = canNext ? '1' : '0.25';
+    btnNext.style.cursor = canNext ? 'pointer' : 'default';
+    btnNext.style.borderColor = canNext ? '#58a6ff' : '#30363d';
+    btnNext.style.color = canNext ? '#58a6ff' : '#666';
+  }
+
+  // Header word position
+  if (posEl) {
+    if (currentWords.length > 1) {
+      posEl.textContent = `[ ${currentIndex + 1} / ${currentWords.length} ] "${cur.word}"`;
+    } else {
+      posEl.textContent = `"${cur.word}"`;
+    }
+  }
+
+  // Triangle geometry & orientation based strictly on C3 character case:
+  // Nếu ký tự C3 là chữ HOA (/[A-Z]/) -> C3 ở Dưới (Tam giác ngược ▽)
+  // Nếu ký tự C3 là chữ thường / số   -> C3 ở Trên (Tam giác thuận △)
+  const isC3Upper = /[A-Z]/.test(cur.c3);
+  if (isC3Upper) {
+    if (labelEl) {
+      labelEl.textContent = `▽ C3 là HOA "${cur.c3}" (C3 ở Dưới)`;
+      labelEl.style.color = '#7ee787';
+    }
+    if (guideEl) guideEl.setAttribute('points', '70,60 930,60 500,950');
+    if (svg && baseFont) {
+      addGlyphToSVG(svg, cur.c1, TRI_BOT_ZONES.c1, COLORS[0]); // C1 trên-trái
+      addGlyphToSVG(svg, cur.c2, TRI_BOT_ZONES.c2, COLORS[1]); // C2 trên-phải
+      addGlyphToSVG(svg, cur.c3, TRI_BOT_ZONES.c3, COLORS[2]); // C3 dưới
+    }
+  } else {
+    if (labelEl) {
+      labelEl.textContent = `△ C3 là thường "${cur.c3}" (C3 ở Trên)`;
+      labelEl.style.color = '#58a6ff';
+    }
+    if (guideEl) guideEl.setAttribute('points', '500,50 930,940 70,940');
+    if (svg && baseFont) {
+      addGlyphToSVG(svg, cur.c3, TRI_TOP_ZONES.c3, COLORS[2]); // C3 trên
+      addGlyphToSVG(svg, cur.c1, TRI_TOP_ZONES.c1, COLORS[0]); // C1 dưới-trái
+      addGlyphToSVG(svg, cur.c2, TRI_TOP_ZONES.c2, COLORS[1]); // C2 dưới-phải
+    }
+  }
+
+  // Update Toolbar Tone & Case state for cur.word
+  updateButtonStates(cur.word, cur.c3);
+
+  // Render Word Chips
+  if (chipsEl) {
+    if (currentWords.length > 1) {
+      chipsEl.innerHTML = currentWords.map((item, idx) => {
+        const active = idx === currentIndex;
+        return `<button type="button" onclick="selectWordIndex(${idx})" style="padding: 3px 9px; font-size: 11px; font-family: monospace; border-radius: 12px; cursor: pointer; border: 1px solid ${active ? '#ff00ea' : '#30363d'}; background: ${active ? '#ff00ea' : '#161b22'}; color: ${active ? '#000' : '#8b949e'}; font-weight: ${active ? 'bold' : 'normal'}; transition: all .15s; white-space: nowrap;">${item.word}</button>`;
+      }).join('');
+    } else {
+      chipsEl.innerHTML = '';
+    }
   }
 }
 
+window.selectWordIndex = function(idx) {
+  if (idx < 0 || idx >= currentWords.length) return;
+  currentIndex = idx;
+  renderCurrentWord();
+};
+
+window.prevWord = function() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderCurrentWord();
+  }
+};
+
+window.nextWord = function() {
+  if (currentIndex < currentWords.length - 1) {
+    currentIndex++;
+    renderCurrentWord();
+  }
+};
 
 // ─── Inputs ───────────────────────────────────────────────────────────────
 const inWord = document.getElementById('input-word');
@@ -215,73 +357,80 @@ const inB60  = document.getElementById('input-b60');
 const inTime = document.getElementById('input-time');
 const selFont = document.getElementById('sel-font');
 
-let _busy = false;
-function sync(word, b60, time) {
-  if (_busy) return; _busy = true;
-  if (document.activeElement !== inWord) inWord.value = word;
-  if (document.activeElement !== inB60)  inB60.value = b60;
-  if (document.activeElement !== inTime) inTime.value = time;
-  
-  renderAllSVGs(b60, inWord.value.trim()); 
-  const cleanB60 = (b60 && (b60.startsWith('I') || b60.startsWith('O'))) ? b60.slice(1) : b60;
-  updateButtonStates(inWord.value.trim(), cleanB60 ? cleanB60[2] : null);
-
-  
-  const preview = document.getElementById('ttf-preview');
-  if (preview) preview.textContent = b60 || '';
-  
-  _busy = false;
-}
-
 function clearOn(el, fn) {
   el.addEventListener('keydown', e => { if (e.key==='Delete') { e.preventDefault(); el.value=''; fn(); }});
 }
 
 function fromWord() {
-  let raw = inWord.value.trimStart();
-  if (!raw) { sync('','',''); return; }
-  
-  // Chỉ cho phép 1 từ (chặn dấu cách và các từ phía sau)
-  const w = raw.split(/\s+/)[0];
-  if (inWord.value !== w && document.activeElement === inWord) {
-    inWord.value = w;
+  const raw = inWord.value.trim();
+  if (!raw) {
+    currentWords = [];
+    currentIndex = 0;
+    if (document.activeElement !== inB60) inB60.value = '';
+    if (document.activeElement !== inTime) inTime.value = '';
+    renderCurrentWord();
+    return;
   }
-  
-  const tc = encodeWord(w); 
-  let b60 = timeToBase60(tc);
-  
-  const isAllCaps = w === w.toUpperCase() && /[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ]/.test(w);
-  const isTitle = w[0] === w[0].toUpperCase() && /[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ]/.test(w[0]) && !isAllCaps;
-  
-  if (isAllCaps) b60 = 'O' + b60;
-  else if (isTitle) b60 = 'I' + b60;
+  const rawWords = raw.split(/\s+/).filter(Boolean);
+  currentWords = rawWords.map(w => parseSingleWord(w)).filter(Boolean);
+  if (currentIndex >= currentWords.length) currentIndex = Math.max(0, currentWords.length - 1);
 
-  sync(w, b60, tc);
+  if (document.activeElement !== inB60) {
+    inB60.value = currentWords.map(c => c.b60).join(' ');
+  }
+  if (document.activeElement !== inTime) {
+    inTime.value = currentWords.map(c => c.time).join(' ');
+  }
+
+  renderCurrentWord();
 }
+
 function fromB60() {
-  const b60 = inB60.value.trim();
-  if (b60.length !== 3 && b60.length !== 4) { renderAllSVGs('', ''); return; }
-  
-  let prefix = '';
-  let coreB60 = b60;
-  if (b60.startsWith('I') || b60.startsWith('O') || b60.startsWith('o')) {
-    prefix = b60[0];
-    coreB60 = b60.slice(1);
+  const raw = inB60.value.trim();
+  if (!raw) {
+    currentWords = [];
+    currentIndex = 0;
+    if (document.activeElement !== inWord) inWord.value = '';
+    if (document.activeElement !== inTime) inTime.value = '';
+    renderCurrentWord();
+    return;
   }
-  if (coreB60.length !== 3) { renderAllSVGs('', ''); return; }
-  
-  const tc = base60ToTime(coreB60);
-  let decoded = tc ? decodeWord(tc) : '';
-  if (decoded && !decoded.startsWith('[')) {
-    if (prefix === 'I' || prefix === 'o') decoded = decoded.charAt(0).toUpperCase() + decoded.slice(1);
-    else if (prefix === 'O') decoded = decoded.toUpperCase();
+  const tokens = raw.split(/\s+/).filter(Boolean);
+  currentWords = tokens.map(t => parseSingleB60(t)).filter(Boolean);
+  if (currentIndex >= currentWords.length) currentIndex = Math.max(0, currentWords.length - 1);
+
+  if (document.activeElement !== inWord) {
+    inWord.value = currentWords.map(c => c.word).join(' ');
   }
-  sync(decoded, b60, tc || '');
+  if (document.activeElement !== inTime) {
+    inTime.value = currentWords.map(c => c.time).join(' ');
+  }
+
+  renderCurrentWord();
 }
+
 function fromTime() {
-  const tc = inTime.value.trim();
-  if (tc.length !== 6) { renderAllSVGs('', ''); return; }
-  sync(decodeWord(tc), timeToBase60(tc), tc);
+  const raw = inTime.value.trim();
+  if (!raw) {
+    currentWords = [];
+    currentIndex = 0;
+    if (document.activeElement !== inWord) inWord.value = '';
+    if (document.activeElement !== inB60) inB60.value = '';
+    renderCurrentWord();
+    return;
+  }
+  const tokens = raw.split(/\s+/).filter(Boolean);
+  currentWords = tokens.map(t => parseSingleTime(t)).filter(Boolean);
+  if (currentIndex >= currentWords.length) currentIndex = Math.max(0, currentWords.length - 1);
+
+  if (document.activeElement !== inWord) {
+    inWord.value = currentWords.map(c => c.word).join(' ');
+  }
+  if (document.activeElement !== inB60) {
+    inB60.value = currentWords.map(c => c.b60).join(' ');
+  }
+
+  renderCurrentWord();
 }
 
 inWord.addEventListener('input', fromWord);
@@ -289,34 +438,49 @@ inB60.addEventListener('input', fromB60);
 inTime.addEventListener('input', fromTime);
 clearOn(inWord, fromWord); clearOn(inB60, fromB60); clearOn(inTime, fromTime);
 
+document.getElementById('btn-prev-word')?.addEventListener('click', window.prevWord);
+document.getElementById('btn-next-word')?.addEventListener('click', window.nextWord);
+
+document.addEventListener('keydown', (e) => {
+  if (['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) return;
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    window.prevWord();
+  } else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    window.nextWord();
+  }
+});
+
 selFont.addEventListener('change', (e) => loadFont(e.target.value));
 
 // ─── Toolbar Logic ────────────────────────────────────────────────────────
 window.setTone = function(newTone) {
-  let w = inWord.value.trim();
-  if (!w) return;
-  const isAllCaps = w === w.toUpperCase() && /[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ]/.test(w);
-  const isTitle = w[0] === w[0].toUpperCase() && /[A-ZÀÁÂÃÈÉÊÌÍÒÓÔÕÙÚĂĐĨŨƠƯẠẢẤẦẨẪẬẮẰẲẴẶẸẺẼỀỀỂỄỆỈỊỌỎỐỒỔỖỘỚỜỞỠỢỤỦỨỪỬỮỰỲỴÝỶỸ]/.test(w[0]) && !isAllCaps;
-  
-  const { consonant, rhyme } = extractPhonetics(w);
+  if (!currentWords || currentWords.length === 0 || !currentWords[currentIndex]) return;
+  const cur = currentWords[currentIndex];
+  const { consonant, rhyme } = extractPhonetics(cur.word);
   let newW = consonant + applyTone(rhyme, newTone);
-  
-  if (isAllCaps) newW = newW.toUpperCase();
-  else if (isTitle) newW = newW.charAt(0).toUpperCase() + newW.slice(1);
-  
-  inWord.value = newW;
-  fromWord();
+  if (cur.isAllCaps) newW = newW.toUpperCase();
+  else if (cur.isTitle) newW = newW.charAt(0).toUpperCase() + newW.slice(1);
+
+  currentWords[currentIndex] = parseSingleWord(newW);
+  inWord.value = currentWords.map(c => c.word).join(' ');
+  inB60.value = currentWords.map(c => c.b60).join(' ');
+  inTime.value = currentWords.map(c => c.time).join(' ');
+  renderCurrentWord();
 };
 
 window.setCase = function(type) {
-  let w = inWord.value.trim();
-  if (!w) return;
-  w = w.toLowerCase(); 
-  if (type === 'TITLE') w = w.charAt(0).toUpperCase() + w.slice(1);
-  if (type === 'ALL') w = w.toUpperCase();
-  
-  inWord.value = w;
-  fromWord();
+  if (!currentWords || currentWords.length === 0 || !currentWords[currentIndex]) return;
+  let curW = currentWords[currentIndex].word.toLowerCase();
+  if (type === 'TITLE') curW = curW.charAt(0).toUpperCase() + curW.slice(1);
+  if (type === 'ALL') curW = curW.toUpperCase();
+
+  currentWords[currentIndex] = parseSingleWord(curW);
+  inWord.value = currentWords.map(c => c.word).join(' ');
+  inB60.value = currentWords.map(c => c.b60).join(' ');
+  inTime.value = currentWords.map(c => c.time).join(' ');
+  renderCurrentWord();
 };
 
 loadFont(selFont.value);
