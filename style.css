@@ -1733,4 +1733,35 @@ body.sandbox-mode #sandbox-debug-container {
   }
 }
 
+/* Floating Context Menu Responsive */
+#floating-context-menu {
+  box-shadow: 0 4px 20px rgba(0, 255, 0, 0.45);
+  backdrop-filter: blur(10px);
+}
+#floating-context-menu .copy-btn {
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+#floating-context-menu .copy-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.2);
+}
+@media (max-width: 640px) {
+  #floating-context-menu {
+    gap: 4px !important;
+    padding: 4px 6px !important;
+  }
+  #floating-context-menu .ctx-full-txt {
+    display: none !important;
+  }
+  #floating-context-menu .copy-btn {
+    padding: 5px 9px !important;
+    font-size: 13px !important;
+    min-width: 34px;
+    text-align: center;
+  }
+}
+
 

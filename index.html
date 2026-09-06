@@ -11,7 +11,7 @@
     <style>
       @font-face {
         font-family: 'CyberVietnamese';
-        src: url('/CyberVietnamese-Regular.ttf?v=4') format('truetype');
+        src: url('/CyberVietnamese-Regular.ttf?v=6') format('truetype');
       }
       #cyber-font-preview {
         font-family: 'CyberVietnamese';
@@ -745,9 +745,10 @@
 
     <!-- Floating Context Menu -->
     <div id="floating-context-menu" style="display: none; position: absolute; z-index: 10000; gap: 6px; background: rgba(0, 15, 0, 0.95); border: 1px solid #0f0; padding: 6px; border-radius: 4px; box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); flex-direction: row; align-items: center;">
-      <button id="ctx-copy" class="copy-btn" style="font-weight: bold;">[^C] COPY</button>
-      <button id="ctx-cut" class="copy-btn clear-btn" style="font-weight: bold;">[^X] CUT</button>
-      <button id="ctx-full" class="copy-btn btn-fullscreen" style="font-weight: bold;">⤢ FULL</button>
+      <button id="ctx-copy" class="copy-btn" style="font-weight: bold;"><span>^C</span><span class="ctx-full-txt"> COPY</span></button>
+      <button id="ctx-cut" class="copy-btn clear-btn" style="font-weight: bold;"><span>^X</span><span class="ctx-full-txt"> CUT</span></button>
+      <button id="ctx-paste" class="copy-btn" style="font-weight: bold; border-color: #00ffcc; color: #00ffcc;"><span>^V</span><span class="ctx-full-txt"> PASTE</span></button>
+      <button id="ctx-full" class="copy-btn btn-fullscreen" style="font-weight: bold;"><span id="ctx-full-icon">⤢</span><span class="ctx-full-txt" id="ctx-full-txt"> FULL</span></button>
       <button id="ctx-close" class="copy-btn clear-btn" style="border-color: #777; color: #777;">✕</button>
     </div>
 

@@ -3837,16 +3837,52 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     }
   });
 
+  const btnCtxPaste = document.getElementById('ctx-paste');
+  btnCtxPaste?.addEventListener('mousedown', (e) => e.preventDefault());
+  btnCtxPaste?.addEventListener('click', async () => {
+    if (!activeContextInput) return;
+    try {
+      let text = '';
+      if (navigator.clipboard?.readText) {
+        text = await navigator.clipboard.readText();
+      }
+      if (!text) {
+        activeContextInput.focus();
+        document.execCommand('paste');
+        showToast('Đã dán [^V]!');
+        hideContextMenu();
+        return;
+      }
+      const start = activeContextInput.selectionStart ?? activeContextInput.value.length;
+      const end = activeContextInput.selectionEnd ?? activeContextInput.value.length;
+      const val = activeContextInput.value || '';
+      activeContextInput.value = val.substring(0, start) + text + val.substring(end);
+      activeContextInput.selectionStart = activeContextInput.selectionEnd = start + text.length;
+      activeContextInput.dispatchEvent(new Event('input'));
+      showToast('Đã dán [^V]!');
+    } catch (err) {
+      console.warn('Lỗi đọc clipboard:', err);
+      activeContextInput.focus();
+      document.execCommand('paste');
+      showToast('Đã dán [^V]!');
+    }
+    hideContextMenu();
+  });
+
   document.getElementById('ctx-full')?.addEventListener('click', () => {
     if (activeContextInput) {
       // Find wrapper
       let wrapper = activeContextInput.closest('.input-group') || activeContextInput.parentElement;
+      const iconSpan = document.getElementById('ctx-full-icon');
+      const txtSpan = document.getElementById('ctx-full-txt');
       if (wrapper.classList.contains('fullscreen')) {
         wrapper.classList.remove('fullscreen');
-        document.getElementById('ctx-full').textContent = '⤢ FULL';
+        if (iconSpan) iconSpan.textContent = '⤢';
+        if (txtSpan) txtSpan.textContent = ' FULL';
       } else {
         wrapper.classList.add('fullscreen');
-        document.getElementById('ctx-full').textContent = '⤣ EXIT';
+        if (iconSpan) iconSpan.textContent = '⤣';
+        if (txtSpan) txtSpan.textContent = ' EXIT';
       }
       // Re-position menu after 100ms to adapt to fullscreen
       setTimeout(() => {

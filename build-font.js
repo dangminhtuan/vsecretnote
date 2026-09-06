@@ -1,10 +1,14 @@
 import fs from 'fs';
+import { execSync } from 'child_process';
 import opentype from 'opentype.js';
-import { BASE60_SS } from './vcomp.js';
+import { BASE60_SS, BASE60_HH, BASE60_HH_EXTRA, BASE60_MM } from './vcomp.js';
+import { BASE60_MAPPING } from './data.js';
 
 const FONT_URL = './public/Rajdhani-Bold.ttf';
 const OUTPUT_FONT_RAW = './public/CyberVietnamese-Raw.ttf';
 const OUTPUT_FEA = './features.fea';
+const OUTPUT_FONT_FINAL = './public/CyberVietnamese-Regular.ttf';
+const DIST_FONT_FINAL = './dist/CyberVietnamese-Regular.ttf';
 
 async function buildFont() {
   console.log("Loading base font...");
@@ -23,101 +27,33 @@ async function buildFont() {
 
   const PAD = 0.03;
   // OpenType Coordinates: X: 0->1000, Y: -200->800
+  // Bố cục Tam giác:
+  // - c1: Đáy trái (x: 70, y: -140, w: 410, h: 420) -> dồn phải (ax: 1), dồn lên (ay: 1)
+  // - c2: Đáy phải (x: 520, y: -140, w: 410, h: 420) -> dồn trái (ax: -1), dồn lên (ay: 1)
+  // - c3: Đỉnh trên (x: 270, y: 320, w: 460, h: 420) -> căn giữa X (ax: 0), dồn xuống (ay: -1)
   const ZONES = [
-    { x: 50,  y: -150, w: 400, h: 400, ax: 1, ay: 1 },  // c1: Bot-Left -> Dồn Lên(ay=1), Phải(ax=1)
-    { x: 550, y: -150, w: 400, h: 400, ax: -1, ay: 1 }, // c2: Bot-Right -> Dồn Lên, Trái
-    { x: 50,  y: 350,  w: 400, h: 400, ax: 1, ay: -1 }, // c3: Top-Left -> Dồn Xuống, Phải
+    { x: 70,  y: -140, w: 410, h: 420, ax: 1,  ay: 1  }, // 0: c1 (Bot-Left)
+    { x: 520, y: -140, w: 410, h: 420, ax: -1, ay: 1  }, // 1: c2 (Bot-Right)
+    { x: 270, y: 320,  w: 460, h: 420, ax: 0,  ay: -1 }, // 2: c3 (Top)
   ];
-  const TONE_ZONE = { x: 550, y: 350, w: 400, h: 400 }; // Top-Right
 
   const refPath = baseFont.getPath('C', 0, 0, 1000);
   const refBb = refPath.getBoundingBox();
   const refW = refBb.x2 - refBb.x1;
   const refH = refBb.y2 - refBb.y1;
 
-  function addThickLine(p, x1, y1, x2, y2, th) {
-    const dx = x2 - x1, dy = y2 - y1;
-    const len = Math.hypot(dx, dy);
-    if (len === 0) return;
-    const nx = (-dy / len) * (th / 2);
-    const ny = (dx / len) * (th / 2);
-    p.moveTo(x1 + nx, y1 + ny);
-    p.lineTo(x2 + nx, y2 + ny);
-    p.lineTo(x2 - nx, y2 - ny);
-    p.lineTo(x1 - nx, y1 - ny);
+  // 1 đường viền thanh thẳng đứng ở mép trái (Dành cho Viết Hoa - Title Case)
+  function addLeftBorder(p) {
+    const x1 = 20, x2 = 48;
+    const y1 = -160, y2 = 760;
+    p.moveTo(x1, y1);
+    p.lineTo(x2, y1);
+    p.lineTo(x2, y2);
+    p.lineTo(x1, y2);
     p.close();
   }
 
-  function getToneMarkPath(tone, zone) {
-    const cx = zone.x + zone.w * 0.35; 
-    const cy = zone.y + zone.h * 0.35; // Y points UP in OpenType
-    const r  = Math.min(zone.w, zone.h) * 0.35; 
-    const th = 55; // Độ dày nét chuẩn
-    
-    const p = new opentype.Path();
-
-    switch (tone) {
-      case 0: // Ngang (=) - 2 thanh ngang khép kín
-        addThickLine(p, cx - r*0.4, cy + r*0.35, cx + r*0.4, cy + r*0.35, th);
-        addThickLine(p, cx - r*0.4, cy - r*0.35, cx + r*0.4, cy - r*0.35, th);
-        break;
-      case 1: // Sắc (/) - thanh chéo lên phải
-        addThickLine(p, cx - r*0.6, cy - r*0.7, cx + r*0.6, cy + r*0.7, th);
-        break;
-      case 2: // Huyền (\) - thanh chéo xuống phải
-        addThickLine(p, cx - r*0.6, cy + r*0.7, cx + r*0.6, cy - r*0.7, th);
-        break;
-      case 3: // Hỏi (?) - Móc cong khép kín (Ribbon curve)
-        p.moveTo(cx - r*0.4 - th/2, cy + r*0.2);
-        p.curveTo(cx - r*0.4 - th/2, cy + r*0.9 + th/2, cx + r*0.5 + th/2, cy + r*0.9 + th/2, cx + r*0.5 + th/2, cy + r*0.1);
-        p.curveTo(cx + r*0.5 + th/2, cy - r*0.4, cx + th/2, cy - r*0.2, cx + th/2, cy - r*0.8);
-        p.lineTo(cx - th/2, cy - r*0.8);
-        p.curveTo(cx - th/2, cy - r*0.2 + th/2, cx + r*0.5 - th/2, cy - r*0.4 + th/2, cx + r*0.5 - th/2, cy + r*0.1);
-        p.curveTo(cx + r*0.5 - th/2, cy + r*0.9 - th/2, cx - r*0.4 + th/2, cy + r*0.9 - th/2, cx - r*0.4 + th/2, cy + r*0.2);
-        p.close();
-        break;
-      case 4: // Ngã (~) - Sóng ngã dải lụa khép kín
-        p.moveTo(cx - r*0.7, cy - r*0.2 + th/2);
-        p.quadraticCurveTo(cx - r*0.3, cy + r*0.7 + th/2, cx, cy + th/2);
-        p.quadraticCurveTo(cx + r*0.3, cy - r*0.7 + th/2, cx + r*0.7, cy + r*0.2 + th/2);
-        p.lineTo(cx + r*0.7, cy + r*0.2 - th/2);
-        p.quadraticCurveTo(cx + r*0.3, cy - r*0.7 - th/2, cx, cy - th/2);
-        p.quadraticCurveTo(cx - r*0.3, cy + r*0.7 - th/2, cx - r*0.7, cy - r*0.2 - th/2);
-        p.close();
-        break;
-      case 5: // Nặng (.) - Chấm vuông đặc
-        const s = r * 0.5;
-        p.moveTo(cx - s/2, cy - s/2);
-        p.lineTo(cx + s/2, cy - s/2);
-        p.lineTo(cx + s/2, cy + s/2);
-        p.lineTo(cx - s/2, cy + s/2);
-        p.close();
-        break;
-    }
-    return p;
-  }
-
-  // Helper vẽ vòng tròn rỗng (Donut Ring) theo winding rule
-  function addRing(p, cx, cy, rOut, rIn) {
-    const k = 0.5522847498;
-    // Outer circle (Clockwise)
-    p.moveTo(cx + rOut, cy);
-    p.curveTo(cx + rOut, cy + rOut * k, cx + rOut * k, cy + rOut, cx, cy + rOut);
-    p.curveTo(cx - rOut * k, cy + rOut, cx - rOut, cy + rOut * k, cx - rOut, cy);
-    p.curveTo(cx - rOut, cy - rOut * k, cx - rOut * k, cy - rOut, cx, cy - rOut);
-    p.curveTo(cx + rOut * k, cy - rOut, cx + rOut, cy - rOut * k, cx + rOut, cy);
-    p.close();
-
-    // Inner circle (Counter-Clockwise to create hole)
-    p.moveTo(cx + rIn, cy);
-    p.curveTo(cx + rIn, cy - rIn * k, cx + rIn * k, cy - rIn, cx, cy - rIn);
-    p.curveTo(cx - rIn * k, cy - rIn, cx - rIn, cy - rIn * k, cx - rIn, cy);
-    p.curveTo(cx - rIn, cy + rIn * k, cx - rIn * k, cy + rIn, cx, cy + rIn);
-    p.curveTo(cx + rIn * k, cy + rIn, cx + rIn, cy + rIn * k, cx + rIn, cy);
-    p.close();
-  }
-
-  // Helper vẽ khung chữ nhật bo góc rỗng bao trùm toàn bộ ô 1000x1000
+  // Khung viền chữ nhật bao bọc 4 phía (Dành cho Viết HOA TOÀN BỘ - ALL CAPS)
   function addRoundedRectFrame(p, x, y, w, h, rx, th) {
     const k = 0.5522847498;
     // Outer rect (Clockwise)
@@ -146,7 +82,7 @@ async function buildFont() {
     p.close();
   }
 
-  function createPositionalPath(char, zoneIndex, tone = -1, caseType = 'LOWER') {
+  function createPositionalPath(char, zoneIndex, caseType = 'LOWER') {
     const zone = ZONES[zoneIndex];
     const iW = zone.w * (1 - PAD * 2), iH = zone.h * (1 - PAD * 2);
     const iX = zone.x + zone.w * PAD,  iY = zone.y + zone.h * PAD;
@@ -179,25 +115,19 @@ async function buildFont() {
       else if (cmd.type === 'Z') outPath.close();
     }
 
-    if (tone >= 0) {
-      const tonePath = getToneMarkPath(tone, TONE_ZONE);
-      outPath.extend(tonePath);
-
-      // Nếu là chữ Hoa đầu -> vẽ vòng tròn O quanh dấu thanh
-      if (caseType === 'TITLE') {
-        const cx = TONE_ZONE.x + TONE_ZONE.w * 0.35;
-        const cy = TONE_ZONE.y + TONE_ZONE.h * 0.35;
-        addRing(outPath, cx, cy, 145, 120);
-      }
-      // Nếu là CHỮ HOA TOÀN BỘ -> vẽ khung viền bo tròn bao trùm toàn bộ khối 1000x1000
-      else if (caseType === 'ALL') {
-        addRoundedRectFrame(outPath, 15, -185, 970, 970, 30, 20);
-      }
+    if (caseType === 'TITLE') {
+      addLeftBorder(outPath);
+    } else if (caseType === 'ALL') {
+      addRoundedRectFrame(outPath, 18, -170, 964, 950, 24, 22);
     }
+
     return outPath;
   }
 
   function getCharName(char) {
+    if (char === 'I') return 'prefix_I';
+    if (char === 'o') return 'prefix_o';
+    if (char === 'O') return 'prefix_O';
     if (/[a-zA-Z0-9]/.test(char)) return 'b60_' + char;
     const names = {
         '!': 'exclam', '@': 'at', '#': 'numbersign', '$': 'dollar', '%': 'percent',
@@ -211,7 +141,11 @@ async function buildFont() {
     return names[char] || 'uni' + char.charCodeAt(0).toString(16).toUpperCase();
   }
 
-  // Thêm glyph tiền tố ẩn prefix_o và prefix_O (advanceWidth = 0)
+  // 1. Thêm glyph tiền tố ẩn prefix_I, prefix_o và prefix_O (advanceWidth = 0, path rỗng)
+  // Các glyph này đại diện trực tiếp cho các ký tự gõ 'I', 'o', 'O'
+  glyphs.push(new opentype.Glyph({
+    name: 'prefix_I', unicode: 'I'.charCodeAt(0), advanceWidth: 0, path: new opentype.Path()
+  }));
   glyphs.push(new opentype.Glyph({
     name: 'prefix_o', unicode: 'o'.charCodeAt(0), advanceWidth: 0, path: new opentype.Path()
   }));
@@ -219,63 +153,68 @@ async function buildFont() {
     name: 'prefix_O', unicode: 'O'.charCodeAt(0), advanceWidth: 0, path: new opentype.Path()
   }));
 
-  const base60Names = [];
-  const pos1Names = [];
-  const pos2Names = [];
-  const pos3Names = [];
-  const pos3TitleNames = [];
-  const pos3AllNames = [];
+  // Các nhóm ký tự theo đúng vai trò ngữ nghĩa trong Base60
+  // C1: Chỉ gồm các phụ âm đầu hợp lệ (Không bao giờ chứa I, O, o)
+  const C1_CHARS = Array.from(new Set([...BASE60_HH, ...BASE60_HH_EXTRA])).filter(c => c && c.length === 1);
+  // C2: Vần (gồm 60 ký tự)
+  const C2_CHARS = Array.from(new Set([...BASE60_MM])).filter(c => c && c.length === 1);
+  // C3: Dấu / thanh điệu (gồm 60 ký tự)
+  const C3_CHARS = Array.from(new Set([...BASE60_SS])).filter(c => c && c.length === 1);
 
-  for (let i = 0; i < BASE60_SS.length; i++) {
-    const char = BASE60_SS[i];
+  // Tập hợp toàn bộ ký tự Base60
+  const allChars = Array.from(new Set([
+    ...C1_CHARS,
+    ...C2_CHARS,
+    ...C3_CHARS,
+    ...BASE60_MAPPING
+  ])).filter(c => c && c.length === 1);
+
+  console.log(`Processing ${allChars.length} characters for Base60 font...`);
+
+  // Tạo base glyphs cho các ký tự (ngoại trừ I, o, O đã gán vào prefix)
+  for (let i = 0; i < allChars.length; i++) {
+    const char = allChars[i];
+    if (char === 'I' || char === 'o' || char === 'O') continue;
+    
     const name = getCharName(char);
     const unicode = char.charCodeAt(0);
-
-    // 1. Base glyph
     const baseGlyph = baseFont.charToGlyph(char);
     glyphs.push(new opentype.Glyph({
-        name: name, unicode: unicode,
-        advanceWidth: baseGlyph.advanceWidth, path: baseGlyph.path
+        name: name,
+        unicode: unicode,
+        advanceWidth: baseGlyph.advanceWidth,
+        path: baseGlyph.path
     }));
-    base60Names.push(name);
+  }
 
-    // 2. Pos1 (c1)
-    const name1 = name + '.pos1';
+  // Tạo glyphs pos1 cho C1
+  for (const char of C1_CHARS) {
+    const name = getCharName(char);
     glyphs.push(new opentype.Glyph({
-        name: name1, advanceWidth: 0, path: createPositionalPath(char, 0)
+      name: name + '.pos1', advanceWidth: 0, path: createPositionalPath(char, 0)
     }));
-    pos1Names.push(name1);
+  }
 
-    // 3. Pos2 (c2)
-    const name2 = name + '.pos2';
+  // Tạo glyphs pos2 cho C2
+  for (const char of C2_CHARS) {
+    const name = getCharName(char);
     glyphs.push(new opentype.Glyph({
-        name: name2, advanceWidth: 0, path: createPositionalPath(char, 1)
+      name: name + '.pos2', advanceWidth: 0, path: createPositionalPath(char, 1)
     }));
-    pos2Names.push(name2);
+  }
 
-    // 4. Pos3 (c3) - LOWER, TITLE, ALL
-    const toneIdx = i % 6;
-    
-    // Lowercase
-    const name3 = name + '.pos3';
+  // Tạo glyphs pos3, pos3_t, pos3_a cho C3
+  for (const char of C3_CHARS) {
+    const name = getCharName(char);
     glyphs.push(new opentype.Glyph({
-        name: name3, advanceWidth: 1000, path: createPositionalPath(char, 2, toneIdx, 'LOWER')
+      name: name + '.pos3', advanceWidth: 1000, path: createPositionalPath(char, 2, 'LOWER')
     }));
-    pos3Names.push(name3);
-
-    // Title Case (o prefix)
-    const name3Title = name + '.pos3_t';
     glyphs.push(new opentype.Glyph({
-        name: name3Title, advanceWidth: 1000, path: createPositionalPath(char, 2, toneIdx, 'TITLE')
+      name: name + '.pos3_t', advanceWidth: 1000, path: createPositionalPath(char, 2, 'TITLE')
     }));
-    pos3TitleNames.push(name3Title);
-
-    // All Caps (O prefix)
-    const name3All = name + '.pos3_a';
     glyphs.push(new opentype.Glyph({
-        name: name3All, advanceWidth: 1000, path: createPositionalPath(char, 2, toneIdx, 'ALL')
+      name: name + '.pos3_a', advanceWidth: 1000, path: createPositionalPath(char, 2, 'ALL')
     }));
-    pos3AllNames.push(name3All);
   }
 
   console.log(`Generating font with ${glyphs.length} glyphs...`);
@@ -292,36 +231,66 @@ async function buildFont() {
   fs.writeFileSync(OUTPUT_FONT_RAW, Buffer.from(font.toArrayBuffer()));
   console.log(`Saved raw font to ${OUTPUT_FONT_RAW}`);
 
-  // Generate features.fea với đầy đủ 3 trường hợp: Thường, Title (o...), ALL (O...)
+  // Xây dựng các lớp OpenType FEA
+  const c1Names = C1_CHARS.map(getCharName);
+  const c1Pos1Names = C1_CHARS.map(c => getCharName(c) + '.pos1');
+
+  const c2Names = C2_CHARS.map(getCharName);
+  const c2Pos2Names = C2_CHARS.map(c => getCharName(c) + '.pos2');
+
+  const c3Names = C3_CHARS.map(getCharName);
+  const c3Pos3Names = C3_CHARS.map(c => getCharName(c) + '.pos3');
+  const c3Pos3TNames = C3_CHARS.map(c => getCharName(c) + '.pos3_t');
+  const c3Pos3ANames = C3_CHARS.map(c => getCharName(c) + '.pos3_a');
+
+  // Generate features.fea với phân tách chính xác:
   const fea = `languagesystem DFLT dflt;
 languagesystem latn dflt;
 
-@base60 = [${base60Names.join(' ')}];
-@pos1 = [${pos1Names.join(' ')}];
-@pos2 = [${pos2Names.join(' ')}];
-@pos3 = [${pos3Names.join(' ')}];
-@pos3_t = [${pos3TitleNames.join(' ')}];
-@pos3_a = [${pos3AllNames.join(' ')}];
+@c1 = [${c1Names.join(' ')}];
+@c1_p1 = [${c1Pos1Names.join(' ')}];
+
+@c2 = [${c2Names.join(' ')}];
+@c2_p2 = [${c2Pos2Names.join(' ')}];
+
+@c3 = [${c3Names.join(' ')}];
+@c3_p3 = [${c3Pos3Names.join(' ')}];
+@c3_p3_t = [${c3Pos3TNames.join(' ')}];
+@c3_p3_a = [${c3Pos3ANames.join(' ')}];
 
 feature calt {
-    # 1. Chữ Hoa đầu từ (Tiền tố 'o')
-    sub prefix_o @base60' @base60 @base60 by @pos1;
-    sub prefix_o @pos1 @base60' @base60 by @pos2;
-    sub prefix_o @pos1 @pos2 @base60' by @pos3_t;
+    # 1. Chữ Hoa đầu từ (Tiền tố 'I' hoặc 'o') -> 1 viền đứng bên trái
+    sub prefix_I @c1' @c2 @c3 by @c1_p1;
+    sub prefix_I @c1_p1 @c2' @c3 by @c2_p2;
+    sub prefix_I @c1_p1 @c2_p2 @c3' by @c3_p3_t;
 
-    # 2. CHỮ HOA TOÀN TỪ (Tiền tố 'O')
-    sub prefix_O @base60' @base60 @base60 by @pos1;
-    sub prefix_O @pos1 @base60' @base60 by @pos2;
-    sub prefix_O @pos1 @pos2 @base60' by @pos3_a;
+    sub prefix_o @c1' @c2 @c3 by @c1_p1;
+    sub prefix_o @c1_p1 @c2' @c3 by @c2_p2;
+    sub prefix_o @c1_p1 @c2_p2 @c3' by @c3_p3_t;
 
-    # 3. Chữ thường tiêu chuẩn (Không tiền tố)
-    sub @base60' @base60 @base60 by @pos1;
-    sub @pos1 @base60' @base60 by @pos2;
-    sub @pos2 @base60' by @pos3;
+    # 2. CHỮ HOA TOÀN TỪ (Tiền tố 'O') -> Khung viền 4 xung quanh
+    sub prefix_O @c1' @c2 @c3 by @c1_p1;
+    sub prefix_O @c1_p1 @c2' @c3 by @c2_p2;
+    sub prefix_O @c1_p1 @c2_p2 @c3' by @c3_p3_a;
+
+    # 3. Chữ thường tiêu chuẩn (Không tiền tố) -> Không viền
+    sub @c1' @c2 @c3 by @c1_p1;
+    sub @c1_p1 @c2' @c3 by @c2_p2;
+    sub @c1_p1 @c2_p2 @c3' by @c3_p3;
 } calt;
 `;
   fs.writeFileSync(OUTPUT_FEA, fea);
   console.log(`Saved FEA to ${OUTPUT_FEA}`);
+
+  console.log("Compiling OpenType features via fontTools...");
+  execSync(`python -c "from fontTools.feaLib.builder import addOpenTypeFeatures; from fontTools.ttLib import TTFont; font = TTFont('${OUTPUT_FONT_RAW}'); addOpenTypeFeatures(font, '${OUTPUT_FEA}'); font.save('${OUTPUT_FONT_FINAL}')"`);
+  console.log(`Compiled font saved to ${OUTPUT_FONT_FINAL}`);
+
+  if (fs.existsSync('./dist')) {
+    fs.copyFileSync(OUTPUT_FONT_FINAL, DIST_FONT_FINAL);
+    console.log(`Copied font to ${DIST_FONT_FINAL}`);
+  }
+  console.log("✓ Hoàn tất xây dựng font!");
 }
 
 buildFont();
