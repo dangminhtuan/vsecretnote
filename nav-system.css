@@ -2,13 +2,20 @@
    ⚡ VSECRETNOTE - ADAPTIVE 4-SLOT NAVIGATION SYSTEM
    =================================================== */
 
+/* CHỐNG TRÀN TOÀN CỤC */
+html, body {
+  max-width: 100vw;
+  overflow-x: hidden;
+}
+
 .vsn-nav-header {
   display: flex !important;
   justify-content: space-between !important;
   align-items: center !important;
   width: 100% !important;
+  max-width: 100% !important;
   padding: 8px 12px !important;
-  margin-bottom: 16px !important;
+  margin-bottom: 14px !important;
   border-bottom: 1px solid rgba(0, 255, 102, 0.3) !important;
   background: rgba(5, 12, 8, 0.85) !important;
   backdrop-filter: blur(10px) !important;
@@ -17,29 +24,32 @@
   position: relative !important;
   z-index: 1000 !important;
   flex-wrap: wrap !important;
-  gap: 10px !important;
+  gap: 8px !important;
 }
 
 /* VẾ TRÁI: LOGO & TÊN TRANG HIỆN TẠI */
 .vsn-brand-box {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   text-decoration: none;
   cursor: pointer;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .vsn-logo-title {
   font-family: 'Share Tech Mono', 'Space Mono', 'Consolas', monospace;
-  font-size: 1.4rem;
+  font-size: clamp(1.15rem, 3.5vw, 1.4rem);
   font-weight: 900;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   color: #00ff66;
   text-shadow: 0 0 10px rgba(0, 255, 102, 0.6);
   display: flex;
   align-items: center;
   gap: 6px;
   white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .vsn-current-badge {
@@ -56,14 +66,19 @@
   letter-spacing: 0.5px;
   box-shadow: 0 0 8px rgba(0, 255, 204, 0.3);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
 }
 
 /* VẾ PHẢI: 4 SLOTS ĐIỀU HƯỚNG THÍCH ỨNG */
 .vsn-slots-nav {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   flex-wrap: wrap;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .vsn-slot-btn {
@@ -71,7 +86,7 @@
   align-items: center;
   gap: 6px;
   background: #020d06;
-  padding: 6px 11px;
+  padding: 6px 10px;
   font-family: 'Share Tech Mono', 'Space Mono', 'Consolas', monospace;
   font-size: 11.5px;
   font-weight: bold;
@@ -79,9 +94,24 @@
   cursor: pointer;
   text-decoration: none;
   transition: all 0.18s ease;
-  white-space: nowrap;
   user-select: none;
   position: relative;
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+.vsn-slot-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* TRẠNG THÁI TRÙNG LẬP: ĐANG Ở TRANG NÀY */
+.vsn-slot-btn.is-current-page {
+  border-style: dashed !important;
+  opacity: 0.9;
+  cursor: default !important;
 }
 
 /* SLOT 1: NÚT GHIM (PINNED) */
@@ -90,9 +120,12 @@
   border: 1px solid #ffea00 !important;
   background: rgba(255, 234, 0, 0.06);
 }
-.vsn-slot-btn.slot-pinned:hover {
+.vsn-slot-btn.slot-pinned:not(.is-current-page):hover {
   background: rgba(255, 234, 0, 0.18) !important;
   box-shadow: 0 0 10px rgba(255, 234, 0, 0.4);
+}
+.vsn-slot-btn.slot-pinned.is-current-page {
+  background: rgba(255, 234, 0, 0.12) !important;
 }
 
 /* SLOT 2: THƯỜNG DÙNG TOÀN CỤC (GLOBAL FREQUENT) */
@@ -101,9 +134,12 @@
   border: 1px solid #00ffcc !important;
   background: rgba(0, 255, 204, 0.06);
 }
-.vsn-slot-btn.slot-global:hover {
+.vsn-slot-btn.slot-global:not(.is-current-page):hover {
   background: rgba(0, 255, 204, 0.18) !important;
   box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+}
+.vsn-slot-btn.slot-global.is-current-page {
+  background: rgba(0, 255, 204, 0.12) !important;
 }
 
 /* SLOT 3: THƯỜNG DÙNG THEO NGỮ CẢNH (CONTEXTUAL FREQUENT) */
@@ -112,9 +148,12 @@
   border: 1px solid #00ff66 !important;
   background: rgba(0, 255, 102, 0.06);
 }
-.vsn-slot-btn.slot-context:hover {
+.vsn-slot-btn.slot-context:not(.is-current-page):hover {
   background: rgba(0, 255, 102, 0.18) !important;
   box-shadow: 0 0 10px rgba(0, 255, 102, 0.4);
+}
+.vsn-slot-btn.slot-context.is-current-page {
+  background: rgba(0, 255, 102, 0.12) !important;
 }
 
 /* SLOT 4: BẢNG CHỌN TẤT CẢ (ALL HUB LAUNCHER) */
@@ -133,12 +172,14 @@
 
 /* SLOT TAG INDICATOR */
 .vsn-slot-tag {
-  font-size: 9px;
+  font-size: 8.5px;
   padding: 1px 4px;
   border-radius: 3px;
   text-transform: uppercase;
   font-weight: 900;
   line-height: 1;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .slot-pinned .vsn-slot-tag { background: #ffea00; color: #000; }
 .slot-global .vsn-slot-tag { background: #00ffcc; color: #000; }
@@ -151,6 +192,7 @@
   top: calc(100% + 8px);
   right: 12px;
   width: 340px;
+  max-width: calc(100vw - 24px);
   background: rgba(3, 14, 8, 0.98);
   border: 1px solid #00ffcc;
   box-shadow: 0 8px 32px rgba(0, 255, 204, 0.3), 0 0 12px rgba(0, 0, 0, 0.8);
@@ -162,6 +204,7 @@
   flex-direction: column;
   gap: 8px;
   animation: vsnFadeIn 0.18s ease;
+  box-sizing: border-box;
 }
 
 @keyframes vsnFadeIn {
@@ -210,6 +253,7 @@
   text-decoration: none;
   transition: all 0.15s ease;
   cursor: pointer;
+  box-sizing: border-box;
 }
 
 .vsn-page-item:hover {
@@ -228,28 +272,37 @@
   align-items: center;
   gap: 8px;
   flex: 1;
+  min-width: 0;
 }
 
 .vsn-page-icon {
   font-size: 16px;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .vsn-page-texts {
   display: flex;
   flex-direction: column;
   gap: 2px;
+  min-width: 0;
 }
 
 .vsn-page-title {
   font-size: 12px;
   font-weight: bold;
   color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .vsn-page-desc {
   font-size: 10px;
   color: #8da498;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .vsn-pin-action-btn {
@@ -262,6 +315,7 @@
   border-radius: 4px;
   transition: all 0.15s ease;
   line-height: 1;
+  flex-shrink: 0;
 }
 
 .vsn-pin-action-btn:hover {
@@ -276,25 +330,77 @@
   text-shadow: 0 0 8px rgba(255, 234, 0, 0.7);
 }
 
-/* RESPONSIVE */
+/* ===================================================
+   📱 RESPONSIVE (FIX TRIỆT ĐỂ TRÀN KHUNG NGANG MOBILE)
+   =================================================== */
 @media (max-width: 768px) {
   .vsn-nav-header {
-    flex-direction: column;
+    flex-direction: column !important;
     align-items: stretch !important;
+    padding: 6px 8px !important;
+    gap: 8px !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
+
+  .vsn-brand-box {
+    width: 100% !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
+  }
+
+  .vsn-logo-title {
+    font-size: 1.15rem !important;
+    letter-spacing: 1px !important;
+  }
+
+  .vsn-current-badge {
+    max-width: 150px !important;
+    font-size: 10px !important;
+    padding: 2px 6px !important;
+  }
+
+  /* Grid 2 Cột chuẩn mực: Vừa khít 100% màn hình, không tràn 1px */
   .vsn-slots-nav {
-    justify-content: space-between;
-    width: 100%;
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 5px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
   }
+
   .vsn-slot-btn {
-    flex: 1;
-    justify-content: center;
-    padding: 6px 4px;
-    font-size: 10px;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 6px 6px !important;
+    font-size: 10.5px !important;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    justify-content: flex-start !important;
   }
+
+  .vsn-slot-tag {
+    font-size: 7.5px !important;
+    padding: 1px 3px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .vsn-slot-name {
+    flex: 1 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: 10.5px !important;
+  }
+
   .vsn-launcher-popover {
-    left: 10px;
-    right: 10px;
-    width: auto;
+    left: 6px !important;
+    right: 6px !important;
+    width: auto !important;
+    max-width: calc(100vw - 12px) !important;
   }
 }

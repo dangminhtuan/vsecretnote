@@ -224,18 +224,22 @@ class VsnNavManager {
     navBox.className = 'vsn-slots-nav';
 
     // Helper tạo nút link cho Slot
-    const createSlotBtn = (page, typeClass, tagLabel, tagTooltip) => {
+    const createSlotBtn = (page, typeClass, defaultTag, currentTag, tagTooltip) => {
+      const isCurrent = page.id === this.currentPage.id;
+      const tagLabel = isCurrent ? currentTag : defaultTag;
       const btn = document.createElement('a');
-      btn.href = page.path;
-      btn.className = `vsn-slot-btn ${typeClass}`;
-      btn.title = tagTooltip;
+      btn.href = isCurrent ? 'javascript:void(0)' : page.path;
+      btn.className = `vsn-slot-btn ${typeClass} ${isCurrent ? 'is-current-page' : ''}`;
+      btn.title = isCurrent ? `[Bạn đang ở trang này]: ${page.title}` : tagTooltip;
       btn.innerHTML = `
         <span class="vsn-slot-tag">${tagLabel}</span>
-        <span>${page.icon} ${page.title}</span>
+        <span class="vsn-slot-name">${page.icon} ${page.title}</span>
       `;
-      btn.addEventListener('click', () => {
-        this.recordClick(page.id);
-      });
+      if (!isCurrent) {
+        btn.addEventListener('click', () => {
+          this.recordClick(page.id);
+        });
+      }
       return btn;
     };
 
@@ -244,6 +248,7 @@ class VsnNavManager {
       slot1,
       'slot-pinned',
       '📌 Ghim',
+      '📌 Đang ở trang ghim',
       `[Slot 1 - Ghim]: Trang do bạn ghim cố định. Đổi ở menu 'Tất cả'`
     );
 
@@ -253,6 +258,7 @@ class VsnNavManager {
       slot2,
       'slot-global',
       '🔥 Thường dùng',
+      '🔥 Đang ở trang thường dùng',
       `[Slot 2 - Toàn cục]: Trang mở nhiều nhất hệ thống (${gClicks} lượt click)`
     );
 
@@ -262,6 +268,7 @@ class VsnNavManager {
       slot3,
       'slot-context',
       '🎯 Ngữ cảnh',
+      '🎯 Đang ở trang này',
       `[Slot 3 - Ngữ cảnh]: Thường mở nhất khi đang ở ${this.currentPage.title} (${cClicks} lượt)`
     );
 
@@ -272,7 +279,7 @@ class VsnNavManager {
     slot4Btn.title = 'Mở danh mục tất cả trang & tùy chọn ghim';
     slot4Btn.innerHTML = `
       <span class="vsn-slot-tag">🗂️</span>
-      <span>Tất Cả Trang ▼</span>
+      <span class="vsn-slot-name">Tất Cả Trang ▼</span>
     `;
 
     // Dropdown Popover Launcher
