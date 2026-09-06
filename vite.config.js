@@ -37,7 +37,8 @@ export default defineConfig({
         matrix: resolve(import.meta.dirname, 'matrix.html'),
         dict_matrix: resolve(import.meta.dirname, 'dict-matrix.html'),
         font_maker: resolve(import.meta.dirname, 'font-maker.html'),
-        mnemonic: resolve(import.meta.dirname, 'mnemonic.html')
+        mnemonic: resolve(import.meta.dirname, 'mnemonic.html'),
+        twins: resolve(import.meta.dirname, 'twins.html')
       }
     }
   }

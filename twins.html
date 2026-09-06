@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>VSecretNote - Kỳ Quan Đối Xứng & Mã Lặp Base60 (Twins & Triples)</title>
+  <link rel="stylesheet" href="/style.css" />
+  <link rel="stylesheet" href="/snk.css" />
+  <style>
+    :root {
+      --bg-dark: #050a06;
+      --panel-bg: #09140c;
+      --card-bg: #0b180e;
+      --card-bg-alt: #08120b;
+      --neon-green: #00ff66;
+      --neon-cyan: #00ffcc;
+      --neon-gold: #ffea00;
+      --neon-magenta: #ff55ff;
+      --neon-blue: #38bdf8;
+      --text-bright: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-green: #00552b;
+      --border-glow: rgba(0, 255, 102, 0.4);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      padding: 10px 12px;
+      font-family: 'Space Mono', 'Consolas', monospace, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-bright);
+      min-height: 100vh;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .tw-page {
+      max-width: 1350px;
+      margin: 0 auto;
+    }
+
+    /* HEADER & NAV */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+      gap: 10px;
+      border-bottom: 1px solid var(--border-green);
+      padding-bottom: 10px;
+    }
+
+    .tw-header-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      color: var(--neon-cyan);
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+    }
+
+    .tw-header-title .badge {
+      background: #002b18;
+      border: 1px solid var(--neon-green);
+      color: var(--neon-green);
+      font-size: 10.5px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .tw-nav {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tw-nav-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #020d05 !important;
+      padding: 7px 11px;
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease;
+      color: var(--text-bright) !important;
+      border: 1px solid #1a4425 !important;
+      white-space: nowrap;
+    }
+
+    .tw-nav-btn:hover {
+      color: #fff !important;
+      border-color: var(--neon-green) !important;
+      background: #002610 !important;
+      box-shadow: 0 0 8px rgba(0, 255, 102, 0.3);
+    }
+
+    .tw-nav-btn.active {
+      color: #00ffcc !important;
+      background: #002b18 !important;
+      border: 2px solid #00ffcc !important;
+      box-shadow: 0 0 12px rgba(0, 255, 204, 0.5) !important;
+      font-weight: 900 !important;
+    }
+
+    /* STATS SUMMARY BAR */
+    .tw-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .tw-stat-card {
+      background: var(--panel-bg);
+      border: 1px solid #0f3d1f;
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .tw-stat-card:hover {
+      border-color: var(--neon-green);
+      background: #0d1e12;
+      transform: translateY(-1px);
+    }
+
+    .tw-stat-card.active {
+      border-color: var(--neon-cyan);
+      background: #002618;
+      box-shadow: 0 0 10px rgba(0, 255, 204, 0.3);
+    }
+
+    .tw-stat-label {
+      font-size: 10px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tw-stat-val {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--neon-green);
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+    }
+
+    .tw-stat-sub {
+      font-size: 10px;
+      font-weight: normal;
+      color: var(--text-muted);
+    }
+
+    /* SEARCH & ANALYZER TOOLBAR */
+    .tw-search-panel {
+      background: var(--panel-bg);
+      border: 1px solid var(--neon-green);
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 0 15px rgba(0, 255, 102, 0.12);
+    }
+
+    .tw-search-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--neon-green);
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+
+    .tw-search-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .tw-search-input {
+      flex: 1;
+      background: #000000;
+      color: var(--neon-green);
+      border: 1px solid #008844;
+      border-radius: 4px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .tw-search-input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 255, 204, 0.4);
+    }
+
+    /* VIEW SWITCHER (DUAL BUTTON GROUP - CONTEXTUAL MIMICRY) */
+    .tw-view-toggle-group {
+      display: inline-flex;
+      gap: 4px;
+      background: #000;
+      border: 1px solid #1a4425;
+      padding: 3px;
+      border-radius: 4px;
+    }
+
+    .tw-view-toggle-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: bold;
+      border-radius: 3px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .tw-view-toggle-btn:hover {
+      color: #fff;
+      background: #002210;
+    }
+
+    .tw-view-toggle-btn.active {
+      background: #004422 !important;
+      color: var(--neon-cyan) !important;
+      box-shadow: 0 0 8px rgba(0, 255, 204, 0.4);
+    }
+
+    /* DYNAMIC ANALYZER LIVE CARD */
+    .tw-live-analysis-card {
+      display: none;
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 6px;
+      background: #03170b;
+      border: 1px solid var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(0, 255, 204, 0.25);
+      animation: fadeIn 0.2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* FILTER TABS */
+    .tw-tabs-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .tw-tab-btn {
+      background: #031206;
+      border: 1px solid #144021;
+      color: var(--text-bright);
+      padding: 6px 12px;
+      font-size: 11.5px;
+      font-family: inherit;
+      font-weight: bold;
+      border-radius: 4px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .tw-tab-btn:hover {
+      border-color: var(--neon-green);
+      background: #07220e;
+      color: #fff;
+    }
+
+    .tw-tab-btn.active {
+      background: #002b18 !important;
+      border: 2px solid var(--neon-cyan) !important;
+      color: var(--neon-cyan) !important;
+      box-shadow: 0 0 10px rgba(0, 255, 204, 0.4) !important;
+    }
+
+    .tw-tab-count {
+      background: rgba(0, 255, 102, 0.15);
+      border: 1px solid var(--neon-green);
+      color: var(--neon-green);
+      font-size: 9.5px;
+      padding: 1px 5px;
+      border-radius: 10px;
+    }
+
+    .tw-tab-btn.active .tw-tab-count {
+      background: var(--neon-cyan);
+      color: #000;
+      border-color: var(--neon-cyan);
+      font-weight: 900;
+    }
+
+    /* BADGES */
+    .tw-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-size: 10px;
+      font-weight: bold;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    .tw-badge-triple {
+      background: #3b1b00;
+      border: 1px solid var(--neon-gold);
+      color: var(--neon-gold);
+      text-shadow: 0 0 5px rgba(255, 234, 0, 0.4);
+    }
+
+    .tw-badge-tail {
+      background: #002b28;
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+    }
+
+    .tw-badge-head {
+      background: #2b0028;
+      border: 1px solid var(--neon-magenta);
+      color: var(--neon-magenta);
+    }
+
+    .tw-badge-sandwich {
+      background: #001f3b;
+      border: 1px solid var(--neon-blue);
+      color: var(--neon-blue);
+    }
+
+    .tw-speaker-btn {
+      background: #041408;
+      border: 1px solid #00aa55;
+      color: var(--neon-green);
+      border-radius: 4px;
+      padding: 4px 7px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tw-speaker-btn:hover {
+      background: var(--neon-green);
+      color: #000;
+      box-shadow: 0 0 8px rgba(0, 255, 102, 0.6);
+    }
+
+    /* TABLE VIEW (DESKTOP) */
+    .tw-table-container {
+      width: 100%;
+      overflow-x: auto;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-green);
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .tw-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .tw-table th {
+      background: #020904;
+      color: var(--neon-green);
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-green);
+      font-weight: bold;
+      text-transform: uppercase;
+      font-size: 10.5px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+      vertical-align: top;
+    }
+
+    /* Multi-select filter under column header (dict.html style) */
+    .tw-th-title {
+      margin-bottom: 5px;
+      font-size: 10.5px;
+      font-weight: bold;
+      color: var(--neon-green);
+      letter-spacing: 0.5px;
+    }
+
+    .tw-ms-container {
+      position: relative;
+      width: 100%;
+    }
+
+    .tw-ms-header {
+      background: #000000;
+      color: var(--neon-cyan);
+      border: 1px solid #00aa55;
+      padding: 4px 6px;
+      font-size: 11px;
+      cursor: pointer;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      user-select: none;
+      border-radius: 3px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.15s;
+    }
+
+    .tw-ms-header:hover {
+      border-color: var(--neon-cyan);
+      background: #002210;
+    }
+
+    .tw-ms-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 170px;
+      background: #041007;
+      border: 1px solid var(--neon-green);
+      z-index: 100;
+      max-height: 270px;
+      padding: 6px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.9), 0 0 10px rgba(0, 255, 102, 0.25);
+      border-radius: 4px;
+      flex-direction: column;
+      margin-top: 2px;
+    }
+
+    .tw-ms-container.open .tw-ms-dropdown {
+      display: flex;
+    }
+
+    .tw-ms-search {
+      width: 100%;
+      box-sizing: border-box;
+      background: #000;
+      color: var(--neon-green);
+      border: 1px solid #00552b;
+      padding: 4px 6px;
+      font-family: inherit;
+      font-size: 11px;
+      border-radius: 3px;
+      margin-bottom: 5px;
+      outline: none;
+    }
+
+    .tw-ms-search:focus {
+      border-color: var(--neon-cyan);
+    }
+
+    .tw-ms-actions {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #003318;
+    }
+
+    .tw-ms-btn-action {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      padding: 1px 4px;
+    }
+
+    .tw-ms-btn-action:hover {
+      color: var(--neon-cyan);
+    }
+
+    .tw-ms-options {
+      max-height: 180px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .tw-ms-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 4px;
+      font-size: 11.5px;
+      color: var(--text-bright);
+      cursor: pointer;
+      border-radius: 3px;
+      transition: background 0.1s;
+    }
+
+    .tw-ms-option:hover {
+      background: #092612;
+      color: #fff;
+    }
+
+    .tw-ms-option input {
+      accent-color: #00ff66;
+      cursor: pointer;
+    }
+
+    .tw-ms-option-count {
+      font-size: 9.5px;
+      color: var(--text-muted);
+      margin-left: auto;
+    }
+
+    .tw-table td {
+      padding: 9px 12px;
+      border-bottom: 1px solid #0e2414;
+      vertical-align: middle;
+      color: var(--text-bright);
+    }
+
+    .tw-table tr:hover {
+      background: rgba(0, 255, 102, 0.05);
+    }
+
+    .tw-code-cell {
+      font-size: 15px;
+      font-weight: 900;
+      color: var(--neon-green);
+      font-family: inherit;
+      letter-spacing: 1px;
+    }
+
+    .tw-word-cell {
+      font-size: 14px;
+      font-weight: bold;
+      color: #ffffff;
+    }
+
+    .tw-mnemonic-cell {
+      color: #cbd5e1;
+      font-size: 11.5px;
+    }
+
+    .tw-swipe-cell {
+      color: #93c5fd;
+      font-size: 11px;
+    }
+
+    /* GROUPED SECTION HEADERS (WHEN VIEWING ALL / CATEGORIZED) */
+    .tw-section-row td {
+      background: #021a0d !important;
+      border-top: 2px solid #00aa55 !important;
+      border-bottom: 1px solid #004422 !important;
+      padding: 7px 12px !important;
+    }
+
+    .tw-section-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tw-section-badge-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tw-section-count {
+      font-size: 11px;
+      color: var(--neon-cyan);
+      background: rgba(0, 255, 204, 0.12);
+      border: 1px solid rgba(0, 255, 204, 0.4);
+      padding: 1px 8px;
+      border-radius: 12px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+
+    .tw-card-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #031c0e;
+      border: 1px solid #00aa55;
+      border-left: 4px solid var(--neon-cyan);
+      padding: 8px 12px;
+      border-radius: 5px;
+      margin-top: 8px;
+      margin-bottom: 2px;
+      box-shadow: 0 0 10px rgba(0, 255, 102, 0.15);
+    }
+
+    /* MOBILE-FIRST CARD VIEW */
+    .tw-cards-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tw-card {
+      background: var(--card-bg);
+      border: 1px solid #144021;
+      border-radius: 6px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+      transition: all 0.15s ease;
+    }
+
+    .tw-card:hover {
+      border-color: var(--neon-green);
+      background: #0e2213;
+    }
+
+    .tw-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      border-bottom: 1px dashed #144021;
+      padding-bottom: 8px;
+    }
+
+    .tw-card-main {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .tw-card-word {
+      font-size: 18px;
+      font-weight: 900;
+      color: #ffffff;
+    }
+
+    .tw-card-code {
+      font-size: 16px;
+      font-weight: 900;
+      color: var(--neon-green);
+      background: #011406;
+      border: 1px solid #008844;
+      padding: 1px 8px;
+      border-radius: 4px;
+      letter-spacing: 1px;
+    }
+
+    .tw-card-body {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 12px;
+    }
+
+    .tw-card-mnemonic {
+      color: #f1f5f9;
+      font-size: 12.5px;
+      line-height: 1.4;
+    }
+
+    .tw-card-details {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--text-muted);
+      background: #051308;
+      border-radius: 4px;
+      padding: 6px 8px;
+      border: 1px solid #0c2914;
+    }
+
+    .tw-card-swipe {
+      color: #60a5fa;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+    }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border-green);
+      padding: 12px 0 20px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    /* DEFAULT VIEW: TABLE ON DESKTOP, CARDS ON MOBILE */
+    .tw-table-container {
+      display: block;
+      width: 100%;
+      overflow-x: auto;
+      background: var(--panel-bg);
+      border: 1px solid var(--border-green);
+      border-radius: 6px;
+      margin-bottom: 20px;
+    }
+
+    .tw-cards-container {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .tw-table-container {
+        display: none !important;
+      }
+      .tw-cards-container {
+        display: flex !important;
+      }
+      .tw-view-toggle-group {
+        display: none !important;
+      }
+      .tw-header-title {
+        font-size: 13.5px;
+      }
+      .tw-search-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="tw-page">
+    <!-- HEADER -->
+    <header>
+      <div class="tw-header-title">
+        <span>⚡ VSecretNote</span>
+        <span class="badge">Kỳ Quan Đối Xứng Base60</span>
+      </div>
+      <nav class="tw-nav">
+        <a href="/index.html" class="tw-nav-btn">Trang Chính</a>
+        <a href="/matrix.html" class="tw-nav-btn">Ma Trận Base60</a>
+        <a href="/mnemonic.html" class="tw-nav-btn">Bảng Thần Chú</a>
+        <a href="/twins.html" class="tw-nav-btn active">Kỳ Quan Mã Lặp</a>
+      </nav>
+    </header>
+
+    <!-- STATS OVERVIEW -->
+    <div class="tw-stats-grid">
+      <div class="tw-stat-card active" data-filter="all" id="statCardAll">
+        <span class="tw-stat-label">Tổng Số Kỳ Quan</span>
+        <span class="tw-stat-val" id="statAllVal">695 <span class="tw-stat-sub">từ</span></span>
+      </div>
+      <div class="tw-stat-card" data-filter="triple" id="statCardTriple">
+        <span class="tw-stat-label">Tam Hoa (3x)</span>
+        <span class="tw-stat-val" style="color: var(--neon-gold);" id="statTripleVal">8 <span class="tw-stat-sub">từ</span></span>
+      </div>
+      <div class="tw-stat-card" data-filter="tail" id="statCardTail">
+        <span class="tw-stat-label">Lặp Đuôi (sS/ss/zz/zZ)</span>
+        <span class="tw-stat-val" style="color: var(--neon-cyan);" id="statTailVal">152 <span class="tw-stat-sub">từ</span></span>
+      </div>
+      <div class="tw-stat-card" data-filter="head" id="statCardHead">
+        <span class="tw-stat-label">Lặp Đầu (Trục Chéo)</span>
+        <span class="tw-stat-val" style="color: var(--neon-magenta);" id="statHeadVal">286 <span class="tw-stat-sub">từ</span></span>
+      </div>
+      <div class="tw-stat-card" data-filter="sandwich" id="statCardSandwich">
+        <span class="tw-stat-label">Kẹp Sandwich (C1=C3)</span>
+        <span class="tw-stat-val" style="color: var(--neon-blue);" id="statSandwichVal">249 <span class="tw-stat-sub">từ</span></span>
+      </div>
+    </div>
+
+    <!-- SEARCH & ANALYZER PANEL -->
+    <div class="tw-search-panel">
+      <div class="tw-search-header">
+        <span>Tra cứu & Phân tích Kỳ quan đối xứng</span>
+        <span id="searchResultCount" style="color: var(--text-muted); font-size: 11px;">Hiển thị 695 / 695 từ</span>
+      </div>
+      <div class="tw-search-row">
+        <input 
+          type="text" 
+          class="tw-search-input" 
+          id="twSearchInput" 
+          placeholder="Nhập từ tiếng Việt (vd: đoán, hôn, sướng) hoặc mã Base60 (vd: dsS, hhz)..." 
+          autocomplete="off"
+        />
+        <div class="tw-view-toggle-group">
+          <button class="tw-view-toggle-btn active" id="btnViewTable" title="Chế độ xem Bảng (Desktop)">📊 DẠNG BẢNG</button>
+          <button class="tw-view-toggle-btn" id="btnViewCards" title="Chế độ xem Thẻ (Mobile)">🗂️ DẠNG THẺ</button>
+        </div>
+      </div>
+
+      <!-- DYNAMIC ON-THE-FLY RESULT -->
+      <div class="tw-live-analysis-card" id="twLiveAnalysisCard">
+        <!-- Injected via JS -->
+      </div>
+    </div>
+
+    <!-- FILTER TABS -->
+    <div class="tw-tabs-row" id="twTabsRow">
+      <button class="tw-tab-btn active" data-filter="all">Tất Cả <span class="tw-tab-count" id="tabCountAll">695</span></button>
+      <button class="tw-tab-btn" data-filter="triple">🌟 Tam Hoa (3x) <span class="tw-tab-count" id="tabCountTriple">8</span></button>
+      <button class="tw-tab-btn" data-filter="tail">👯 Lặp Đuôi <span class="tw-tab-count" id="tabCountTail">152</span></button>
+      <button class="tw-tab-btn" data-filter="head">⚡ Lặp Đầu (Trục Chéo) <span class="tw-tab-count" id="tabCountHead">286</span></button>
+      <button class="tw-tab-btn" data-filter="sandwich">🥪 Kẹp Sandwich <span class="tw-tab-count" id="tabCountSandwich">249</span></button>
+    </div>
+
+    <!-- MAIN DATA VIEW: DESKTOP TABLE (COLLAPSED BY DEFAULT) -->
+    <div class="tw-table-container" id="twTableContainer">
+      <table class="tw-table">
+        <thead>
+          <tr>
+            <th style="width: 48px; text-align: center;">Nghe</th>
+            <th style="width: 85px;">Mã Base60</th>
+            <th style="width: 100px;">Từ Gốc</th>
+            <th style="width: 120px;">Hình Thái</th>
+            <th style="width: 140px;">
+              <div class="tw-th-title">Cặp Lặp</div>
+              <div class="tw-ms-container" id="tw-ms-rep">
+                <div class="tw-ms-header" id="tw-ms-rep-header"><span>Tất cả</span> <span>▾</span></div>
+                <div class="tw-ms-dropdown" id="tw-ms-rep-dropdown">
+                  <input type="text" class="tw-ms-search" id="tw-ms-rep-search" placeholder="Tìm ký tự..." />
+                  <div class="tw-ms-actions">
+                    <button type="button" class="tw-ms-btn-action" id="tw-ms-btn-select-all">Chọn hết</button>
+                    <button type="button" class="tw-ms-btn-action" id="tw-ms-btn-clear">Bỏ chọn</button>
+                  </div>
+                  <div class="tw-ms-options" id="tw-ms-rep-options">
+                    <!-- Checkboxes injected via JS -->
+                  </div>
+                </div>
+              </div>
+            </th>
+            <th>Ý Nghĩa Liên Tưởng</th>
+          </tr>
+        </thead>
+        <tbody id="twTableBody">
+          <!-- Injected via JS -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- MAIN DATA VIEW: MOBILE-FIRST CARDS -->
+    <div class="tw-cards-container" id="twCardsContainer">
+      <!-- Injected via JS -->
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+      TimeCypher Base60 Engine • Bản quyền thuộc về VSecretNote • Miễn dịch trùng màu & Tối ưu Mobile-First
+    </footer>
+  </div>
+
+  <script type="module">
+    import { TWINS_DATA, speakWordAndCode, analyzeAnyWord } from './twins.js';
+
+    let currentFilter = 'all';
+    let currentSearch = '';
+    let isCardsViewOnDesktop = false;
+
+    const tableBody = document.getElementById('twTableBody');
+    const cardsContainer = document.getElementById('twCardsContainer');
+    const searchInput = document.getElementById('twSearchInput');
+    const searchResultCount = document.getElementById('searchResultCount');
+    const liveAnalysisCard = document.getElementById('twLiveAnalysisCard');
+    const btnViewCards = document.getElementById('btnViewCards');
+    const btnViewTable = document.getElementById('btnViewTable');
+    const tableContainer = document.getElementById('twTableContainer');
+
+    // Multi-Select for Repeated Letters (dict.html style)
+    const selectedRepLetters = new Set();
+    const msContainer = document.getElementById('tw-ms-rep');
+    const msHeader = document.getElementById('tw-ms-rep-header');
+    const msOptionsDiv = document.getElementById('tw-ms-rep-options');
+    const msSearchInput = document.getElementById('tw-ms-rep-search');
+    const btnSelectAll = document.getElementById('tw-ms-btn-select-all');
+    const btnClear = document.getElementById('tw-ms-btn-clear');
+
+    // Count words per repeated character
+    const letterCounts = {};
+    TWINS_DATA.forEach(item => {
+      const c1 = item.code[0].toLowerCase();
+      const c2 = item.code[1].toLowerCase();
+      const c3 = item.code[2].toLowerCase();
+      let key = '';
+      if (c1 === c2 || c1 === c3) key = c1;
+      else if (c2 === c3) key = c2;
+      if (key) {
+        letterCounts[key] = (letterCounts[key] || 0) + 1;
+      }
+    });
+
+    const sortedLetters = Object.entries(letterCounts).sort((a,b) => b[1] - a[1]);
+    const optionLabels = [];
+
+    sortedLetters.forEach(([letter, count]) => {
+      const label = document.createElement('label');
+      label.className = 'tw-ms-option';
+      label.dataset.letter = letter;
+
+      const cb = document.createElement('input');
+      cb.type = 'checkbox';
+      cb.value = letter;
+
+      cb.addEventListener('change', (e) => {
+        if (e.target.checked) selectedRepLetters.add(letter);
+        else selectedRepLetters.delete(letter);
+        updateMsHeader();
+        renderData();
+      });
+
+      const spanName = document.createElement('span');
+      spanName.textContent = `${letter.toUpperCase()} (${letter}/${letter.toUpperCase()})`;
+
+      const spanCount = document.createElement('span');
+      spanCount.className = 'tw-ms-option-count';
+      spanCount.textContent = `${count}`;
+
+      label.appendChild(cb);
+      label.appendChild(spanName);
+      label.appendChild(spanCount);
+      msOptionsDiv.appendChild(label);
+      optionLabels.push(label);
+    });
+
+    function updateMsHeader() {
+      if (selectedRepLetters.size === 0) {
+        msHeader.innerHTML = '<span>Tất cả</span> <span>▾</span>';
+      } else if (selectedRepLetters.size <= 2) {
+        msHeader.innerHTML = `<span>${Array.from(selectedRepLetters).map(l => l.toUpperCase()).join(', ')}</span> <span>▾</span>`;
+      } else {
+        msHeader.innerHTML = `<span>${selectedRepLetters.size} ký tự</span> <span>▾</span>`;
+      }
+    }
+
+    msHeader.addEventListener('click', (e) => {
+      e.stopPropagation();
+      msContainer.classList.toggle('open');
+      if (msContainer.classList.contains('open')) {
+        msSearchInput.focus();
+      }
+    });
+
+    msSearchInput.addEventListener('click', (e) => e.stopPropagation());
+    msOptionsDiv.addEventListener('click', (e) => e.stopPropagation());
+
+    msSearchInput.addEventListener('input', (e) => {
+      const query = e.target.value.trim().toLowerCase();
+      optionLabels.forEach(label => {
+        const letter = label.dataset.letter;
+        if (!query || letter.includes(query)) {
+          label.style.display = 'flex';
+        } else {
+          label.style.display = 'none';
+        }
+      });
+    });
+
+    btnSelectAll.addEventListener('click', (e) => {
+      e.stopPropagation();
+      sortedLetters.forEach(([l]) => selectedRepLetters.add(l));
+      msOptionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+      updateMsHeader();
+      renderData();
+    });
+
+    btnClear.addEventListener('click', (e) => {
+      e.stopPropagation();
+      selectedRepLetters.clear();
+      msOptionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+      updateMsHeader();
+      renderData();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (msContainer && !msContainer.contains(e.target)) {
+        msContainer.classList.remove('open');
+      }
+    });
+
+    function getBadgeClass(pattern) {
+      switch(pattern) {
+        case 'triple': return 'tw-badge-triple';
+        case 'tail': return 'tw-badge-tail';
+        case 'head': return 'tw-badge-head';
+        case 'sandwich': return 'tw-badge-sandwich';
+        default: return '';
+      }
+    }
+
+    const PATTERN_GROUPS = [
+      { key: 'triple', name: '🌟 Tam Hoa (Triple 3x)', badgeClass: 'tw-badge-triple' },
+      { key: 'head', name: '⚡ Lặp Đầu (Trục Chéo)', badgeClass: 'tw-badge-head' },
+      { key: 'sandwich', name: '🥪 Kẹp Sandwich (C1 = C3)', badgeClass: 'tw-badge-sandwich' },
+      { key: 'tail', name: '👯 Lặp Đuôi (Tail Double)', badgeClass: 'tw-badge-tail' },
+    ];
+
+    function renderTableRow(item) {
+      return `
+        <tr>
+          <td style="text-align: center;">
+            <button class="tw-speaker-btn" data-word="${item.word}" data-code="${item.code}" title="Nghe phát âm">🔊</button>
+          </td>
+          <td><span class="tw-code-cell">${item.code}</span></td>
+          <td><span class="tw-word-cell">${item.word}</span></td>
+          <td><span class="tw-badge ${getBadgeClass(item.pattern)}">${item.patternName}</span></td>
+          <td><code style="color: var(--neon-cyan); font-weight: bold;">${item.rep}</code></td>
+          <td><span class="tw-mnemonic-cell">${item.mnemonic}</span></td>
+        </tr>
+      `;
+    }
+
+    function renderCard(item) {
+      return `
+        <div class="tw-card">
+          <div class="tw-card-top">
+            <div class="tw-card-main">
+              <span class="tw-card-word">${item.word}</span>
+              <span class="tw-card-code">${item.code}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 6px;">
+              <span class="tw-badge ${getBadgeClass(item.pattern)}">${item.patternName}</span>
+              <button class="tw-speaker-btn" data-word="${item.word}" data-code="${item.code}" title="Nghe phát âm">🔊</button>
+            </div>
+          </div>
+          <div class="tw-card-body">
+            <div class="tw-card-mnemonic">${item.mnemonic}</div>
+            <div class="tw-card-details">
+              <span>Cặp lặp: <strong style="color: var(--neon-cyan);">${item.rep}</strong> • <span style="color: var(--neon-gold);">${item.group}</span></span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderData() {
+      const q = currentSearch.trim().toLowerCase();
+      let baseFiltered = TWINS_DATA;
+
+      // Filter by multi-selected repeated characters (e.g. s, d...)
+      if (selectedRepLetters.size > 0) {
+        baseFiltered = baseFiltered.filter(item => {
+          const c1 = item.code[0].toLowerCase();
+          const c2 = item.code[1].toLowerCase();
+          const c3 = item.code[2].toLowerCase();
+          let repLetter = '';
+          if (c1 === c2 || c1 === c3) repLetter = c1;
+          else if (c2 === c3) repLetter = c2;
+          return selectedRepLetters.has(repLetter);
+        });
+      }
+
+      if (q) {
+        baseFiltered = baseFiltered.filter(item => 
+          item.word.toLowerCase().includes(q) ||
+          item.code.toLowerCase().includes(q) ||
+          item.rep.toLowerCase().includes(q) ||
+          item.group.toLowerCase().includes(q) ||
+          item.mnemonic.toLowerCase().includes(q)
+        );
+      }
+
+      // Dynamic counts for Tabs and Stat Cards based on current active letter/text filters
+      const counts = {
+        all: baseFiltered.length,
+        triple: baseFiltered.filter(x => x.pattern === 'triple').length,
+        tail: baseFiltered.filter(x => x.pattern === 'tail').length,
+        head: baseFiltered.filter(x => x.pattern === 'head').length,
+        sandwich: baseFiltered.filter(x => x.pattern === 'sandwich').length
+      };
+
+      document.getElementById('statAllVal').innerHTML = `${counts.all} <span class="tw-stat-sub">từ</span>`;
+      document.getElementById('statTripleVal').innerHTML = `${counts.triple} <span class="tw-stat-sub">từ</span>`;
+      document.getElementById('statTailVal').innerHTML = `${counts.tail} <span class="tw-stat-sub">từ</span>`;
+      document.getElementById('statHeadVal').innerHTML = `${counts.head} <span class="tw-stat-sub">từ</span>`;
+      document.getElementById('statSandwichVal').innerHTML = `${counts.sandwich} <span class="tw-stat-sub">từ</span>`;
+
+      document.getElementById('tabCountAll').textContent = counts.all;
+      document.getElementById('tabCountTriple').textContent = counts.triple;
+      document.getElementById('tabCountTail').textContent = counts.tail;
+      document.getElementById('tabCountHead').textContent = counts.head;
+      document.getElementById('tabCountSandwich').textContent = counts.sandwich;
+
+      let filtered = baseFiltered;
+      if (currentFilter !== 'all') {
+        filtered = filtered.filter(item => item.pattern === currentFilter);
+      }
+
+      searchResultCount.textContent = `Hiển thị ${filtered.length} / ${TWINS_DATA.length} từ`;
+
+      // 1. Render Table & 2. Render Cards
+      if (filtered.length === 0) {
+        tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);">Không tìm thấy kỳ quan đối xứng nào khớp với bộ lọc.</td></tr>`;
+        cardsContainer.innerHTML = `<div style="text-align: center; padding: 25px; color: var(--text-muted); background: var(--panel-bg); border-radius: 6px;">Không tìm thấy kỳ quan nào khớp với bộ lọc.</div>`;
+      } else if (currentFilter === 'all') {
+        // Categorized by Hình Thái with headers
+        let tableHtml = '';
+        let cardsHtml = '';
+
+        PATTERN_GROUPS.forEach(pDef => {
+          const groupItems = filtered.filter(x => x.pattern === pDef.key);
+          if (groupItems.length > 0) {
+            tableHtml += `
+              <tr class="tw-section-row">
+                <td colspan="6">
+                  <div class="tw-section-title">
+                    <div class="tw-section-badge-wrap">
+                      <span class="tw-badge ${pDef.badgeClass}">${pDef.name}</span>
+                    </div>
+                    <span class="tw-section-count">${groupItems.length} từ</span>
+                  </div>
+                </td>
+              </tr>
+            `;
+            tableHtml += groupItems.map(renderTableRow).join('');
+
+            cardsHtml += `
+              <div class="tw-card-section-header">
+                <span class="tw-badge ${pDef.badgeClass}">${pDef.name}</span>
+                <span class="tw-section-count">${groupItems.length} từ</span>
+              </div>
+            `;
+            cardsHtml += groupItems.map(renderCard).join('');
+          }
+        });
+
+        tableBody.innerHTML = tableHtml;
+        cardsContainer.innerHTML = cardsHtml;
+      } else {
+        // Flat list for specific pattern tab
+        tableBody.innerHTML = filtered.map(renderTableRow).join('');
+        cardsContainer.innerHTML = filtered.map(renderCard).join('');
+      }
+
+      // Attach Audio Listeners to both table and cards
+      const attachSpeakers = (container) => {
+        container.querySelectorAll('.tw-speaker-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const w = btn.getAttribute('data-word');
+            const c = btn.getAttribute('data-code');
+            speakWordAndCode(w, c);
+          });
+        });
+      };
+      attachSpeakers(tableBody);
+      attachSpeakers(cardsContainer);
+    }
+
+    // Dynamic Search & Live Analyzer
+    searchInput.addEventListener('input', () => {
+      currentSearch = searchInput.value;
+      renderData();
+
+      const q = currentSearch.trim();
+      if (q.length >= 2) {
+        const analysis = analyzeAnyWord(q);
+        if (analysis && analysis.isTwin) {
+          liveAnalysisCard.style.display = 'block';
+          liveAnalysisCard.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+              <span style="color: var(--neon-gold); font-weight: bold; font-size: 11.5px;">✨ KỲ QUAN ĐỐI XỨNG ĐÃ ĐƯỢC XÁC NHẬN!</span>
+              <span class="tw-badge ${getBadgeClass(analysis.pattern)}">${analysis.patternName}</span>
+            </div>
+            <div style="display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px;">
+              <strong style="font-size: 16px; color: #fff;">${analysis.word}</strong>
+              <span style="color: var(--neon-green); font-size: 15px; font-weight: 900; background: #000; padding: 1px 6px; border-radius: 3px; border: 1px solid var(--neon-green);">${analysis.code}</span>
+              <button class="tw-speaker-btn" data-word="${analysis.word}" data-code="${analysis.code}">🔊</button>
+            </div>
+            <div style="font-size: 11px; color: #94a3b8;">${analysis.breakdown} • <strong>Cặp lặp:</strong> <span style="color: var(--neon-cyan);">${analysis.rep}</span></div>
+          `;
+          liveAnalysisCard.querySelector('.tw-speaker-btn')?.addEventListener('click', () => {
+            speakWordAndCode(analysis.word, analysis.code);
+          });
+        } else {
+          liveAnalysisCard.style.display = 'none';
+        }
+      } else {
+        liveAnalysisCard.style.display = 'none';
+      }
+    });
+
+    // Filter Tabs Click
+    document.querySelectorAll('.tw-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tw-tab-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.getAttribute('data-filter');
+        
+        // Sync stat card active state
+        document.querySelectorAll('.tw-stat-card').forEach(c => {
+          if (c.getAttribute('data-filter') === currentFilter) {
+            c.classList.add('active');
+          } else {
+            c.classList.remove('active');
+          }
+        });
+
+        renderData();
+      });
+    });
+
+    // Stat Cards Click
+    document.querySelectorAll('.tw-stat-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const filter = card.getAttribute('data-filter');
+        const correspondingTab = document.querySelector(`.tw-tab-btn[data-filter="${filter}"]`);
+        if (correspondingTab) correspondingTab.click();
+      });
+    });
+
+    // View Switcher (Dual Button Group)
+    function switchView(view) {
+      if (view === 'cards') {
+        tableContainer.style.display = 'none';
+        cardsContainer.style.display = 'flex';
+        btnViewCards.classList.add('active');
+        btnViewTable.classList.remove('active');
+      } else {
+        tableContainer.style.display = 'block';
+        cardsContainer.style.display = 'none';
+        btnViewCards.classList.remove('active');
+        btnViewTable.classList.add('active');
+      }
+    }
+
+    btnViewCards.addEventListener('click', () => switchView('cards'));
+    btnViewTable.addEventListener('click', () => switchView('table'));
+
+    // Initial render & view detection
+    renderData();
+    if (window.innerWidth <= 768) {
+      switchView('cards');
+    } else {
+      switchView('table');
+    }
+  </script>
+</body>
+</html>
