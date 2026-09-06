@@ -3133,16 +3133,39 @@ document.getElementById('btn-close-activity-log')?.addEventListener('click', () 
 });
 
 // ===== ✨ PROMPT MACHINE =====
-const PM_TOOLS = [
-  { id: 'mj',       label: 'Midjourney', emoji: '🎨', color: '#58a6ff' },
-  { id: 'flux',     label: 'Flux',       emoji: '⚡', color: '#a78bfa' },
-  { id: 'dalle',    label: 'ChatGPT',    emoji: '🤖', color: '#00ff66' },
-  { id: 'gemini',   label: 'Gemini',     emoji: '♊', color: '#4dd0e1' },
-  { id: 'ideogram', label: 'Ideogram',   emoji: '💡', color: '#fbbf24' },
-  { id: 'firefly',  label: 'Firefly',    emoji: '🔥', color: '#fb923c' },
-  { id: 'sd',       label: 'Stable Diff',emoji: '🖥️', color: '#e879f9' },
-  { id: 'bing',     label: 'Bing',       emoji: '🔍', color: '#38bdf8' },
+const PM_MODES = [
+  { id: 'text_to_img', label: 'Ảnh từ Text',   emoji: '✍️', desc: 'Tạo ảnh từ mô tả chi tiết diện mạo cặp đôi' },
+  { id: 'img_ref',     label: 'Ảnh từ Ảnh mẫu', emoji: '🖼️', desc: 'Dùng ảnh chân dung upload làm tham chiếu 100%' },
+  { id: 'video_clip',  label: 'Tạo Clip Video', emoji: '🎬', desc: 'Sinh prompt tạo clip video nồng cháy trực tiếp' },
 ];
+
+const PM_TOOLS = [
+  { id: 'gemini',   label: 'Gemini',      emoji: '♊', color: '#4dd0e1', type: 'image' },
+  { id: 'mj',       label: 'Midjourney',  emoji: '🎨', color: '#58a6ff', type: 'image' },
+  { id: 'flux',     label: 'Flux',        emoji: '⚡', color: '#a78bfa', type: 'image' },
+  { id: 'dalle',    label: 'ChatGPT',     emoji: '🤖', color: '#00ff66', type: 'image' },
+  { id: 'kling',    label: 'Kling AI',    emoji: '🎥', color: '#ff0055', type: 'video' },
+  { id: 'runway',   label: 'Runway Gen-3',emoji: '🎬', color: '#00f2fe', type: 'video' },
+  { id: 'luma',     label: 'Luma Dream',  emoji: '🌟', color: '#a855f7', type: 'video' },
+  { id: 'ideogram', label: 'Ideogram',    emoji: '💡', color: '#fbbf24', type: 'image' },
+  { id: 'firefly',  label: 'Firefly',     emoji: '🔥', color: '#fb923c', type: 'image' },
+  { id: 'sd',       label: 'Stable Diff', emoji: '🖥️', color: '#e879f9', type: 'image' },
+  { id: 'bing',     label: 'Bing',        emoji: '🔍', color: '#38bdf8', type: 'image' },
+];
+
+const PM_TOOL_HINTS = {
+  gemini: '♊ Mẹo Gemini: Tải kèm ảnh chụp màn hình chứa mật mã (reference) + dán prompt này vào khung chat Gemini.',
+  mj: '🎨 Mẹo Midjourney: Gõ /imagine rồi dán prompt. Đính kèm URL ảnh nếu dùng mode Tham chiếu mẫu.',
+  flux: '⚡ Mẹo Flux: Dán prompt vào Flux.1 Dev/Schnell. Bật guidance scale ~3.5 để giữ chi tiết chân thực.',
+  dalle: '🤖 Mẹo ChatGPT/DALL-E: Dán prompt kèm ảnh tham chiếu. DALL-E sẽ mô phỏng lại cặp đôi và mật mã.',
+  kling: '🎥 Mẹo Kling AI: Chọn Text-to-Video. Thiết lập High Quality (Pro), 5s hoặc 10s, chuyển động orbital.',
+  runway: '🎬 Mẹo Runway Gen-3: Dán prompt vào Text-to-Video. Thiết lập Camera Controls & Motion Brush để điều khiển.',
+  luma: '🌟 Mẹo Luma Dream Machine: Dán prompt vào Luma Dream Machine để render clip điện ảnh 24fps mượt mà.',
+  ideogram: '💡 Mẹo Ideogram: Chọn Style = General, bật Magic Prompt nếu muốn tăng độ phong phú chi tiết.',
+  firefly: '🔥 Mẹo Adobe Firefly: Dán prompt và chọn phong cách Photo (Realistic).',
+  sd: '🖥️ Mẹo Stable Diffusion: Sử dụng ControlNet Tile/IP-Adapter để giữ nguyên khuôn mặt và mật mã.',
+  bing: '🔍 Mẹo Copilot/Bing: Dán prompt vào DALL-E 3 trên Microsoft Designer hoặc Bing Image Creator.',
+};
 
 const PM_STYLES = [
   { id: 'vn_romance',label: 'Tình Yêu VN (30 & 20)', emoji: '👩‍❤️‍👨' },
@@ -3173,6 +3196,13 @@ const PM_RATIOS = [
   { id: '2:3',   label: '2:3',   emoji: '📐', hint: 'Ảnh dọc',     sdSize: '832×1216'  },
 ];
 
+const PM_CHAR_DESCRIPTIONS = {
+  woman: `A young Vietnamese-looking adult woman with a small oval face, softly tapered chin, moderately high forehead, naturally shaped medium-thick dark eyebrows with a gentle arch, large dark brown almond-shaped eyes, clearly defined upper eyelids, long upper eyelashes, a straight slender nose with a small rounded tip, neat narrow nostrils, soft cheeks, a small delicate mouth, naturally fuller lower lip, rosy-red nude lips, softly curved mouth corners, and a small rounded chin. Long, straight, silky dark chocolate-brown hair, slightly off-center parting, natural face-framing strands, hair falling smoothly over both shoulders and down past the chest, very subtle natural volume, no bangs, no curls, no waves. Light warm Asian skin tone, smooth but realistic skin texture with very subtle natural radiance and delicate warmth, soft natural flush on cheeks. Subtle, elegant makeup: soft matte base, very delicate neutral contour, tightlined upper eyelids, subtle brown-toned eyeshadow, naturally defined eyebrows, softly diffused satin-finish rosy-red lips. Feminine, slightly slender build with natural soft curves and graceful neck and clavicle. Wearing a simple, fitted black top with a subtly scalloped lace trim along the sweetheart neckline, sleeveless with delicate shoulder straps, small discreet stud earrings, very thin delicate necklace.`,
+
+  man: `A Vietnamese-looking adult man with an oval to slightly rectangular face shape, balanced proportions, broad forehead, clean hairline with natural short hair, well-defined straight eyebrows with slight density, medium-deep set dark brown eyes with clear and focused gaze, a medium-length straight nose bridge with a slightly rounded tip, well-balanced nostril width, defined cheekbones with smooth masculine contours, a natural mouth with a slightly fuller lower lip, subtly defined jawline with a firm chin, very light and neat natural stubble shadow around the upper lip, chin, and jawline for a clean-cut yet mature look. Natural short-to-medium straight black hair, softly styled and parted slightly to the side with natural volume and a clean taper around the sides and back. Warm light-medium Asian skin tone, natural skin texture with realistic pores and soft highlights, healthy complexion. Athletic-casual, healthy build with moderately broad shoulders. Wearing a relaxed-fit, premium plain off-white or cream-colored crew-neck T-shirt, minimal subtle small graphic on left chest, a simple thin gold chain necklace.`
+};
+
+let pm_selectedMode = 'text_to_img';
 let pm_selectedTool = 'gemini';
 let pm_selectedStyle = 'vn_romance';
 let pm_selectedRatio = '1:1';
@@ -3197,46 +3227,122 @@ function pm_buildPrompt(tool, style, ratio, blocksPerRow) {
 5. LAYOUT: Reproduce ALL cipher blocks visible in the reference image — ${layoutInstruction}. Position this single set cleanly in the center or lower-center foreground. (Reference string: "${b60Code}")`;
 
   const STYLES = {
-    vn_romance:`[COMPOSITION: Background = Romantic Scene, Foreground Overlay = Exact Cipher Blocks]
-A deeply romantic, cinematic, and emotional scene featuring an attractive, stylish 30-year-old Vietnamese man and a gorgeous, radiant 20-year-old Vietnamese woman sharing an intimate, tender romantic moment (gentle eye contact, warm embrace). Atmospheric golden hour backlight, soft warm bokeh on a rooftop or balcony, dreamy cinematic depth of field.
-OVERLAY: Superimpose EXACTLY ONE SINGLE ROW of the cipher glyph blocks from the reference screenshot across the lower foreground in crisp, razor-sharp glowing warm gold neon with clean vector edges. Do not repeat or duplicate the row. Do not distort, blur, or stylize the anatomy of the glyphs — every quadrant symbol must match the screenshot 100% legibly and accurately. Photorealistic, authentic modern Vietnamese beauty, highly detailed, 8k resolution.`,
-    scifi:    `Pure black OLED background (#050d0a). Cipher glyphs as glowing electric cyan (#58a6ff) and emerald green (#00ff66) neon vector shapes. Subtle sci-fi HUD grid lines overlay. Strong neon bloom glow effect. Minimalist space technology aesthetic. Hyper-detailed, 8k resolution.`,
-    cyberpunk:`Rain-slicked neon-drenched cyberpunk alley background. Cipher glyphs in harsh magenta and cyan neon with wet street reflections. Flickering glitch artifacts. Dystopian Blade Runner noir atmosphere. Dark, gritty, cinematic.`,
-    hologram: `Dark void space background. Cipher glyphs rendered as shimmering iridescent holographic light projections floating in mid-air. Prismatic rainbow diffraction halos. Transparent glassmorphic panel effect. Futuristic AR/VR interface aesthetic.`,
-    romantic: `Dreamy soft-focus bokeh background in rose gold and sakura pink gradient tones. Cipher glyphs as warm luminescent gold and blush pink light sigils. Delicate falling cherry blossom petals. Gentle watercolor wash texture. Sweet romance novel cover aesthetic.`,
-    anime:    `Clean cel-shaded anime illustration style. Vivid saturated colors on gradient sky background. Cipher glyphs as sharp black ink outlines with vivid flat color fills. Dynamic manga speed-line effects. J-pop album cover aesthetic.`,
-    fantasy:  `Ancient mossy stone dungeon wall background. Cipher glyphs glowing with ethereal blue-purple arcane magical fire and mystical energy spirals. Floating mystical rune inscriptions. Moonlit gothic cathedral atmosphere. Dark fantasy spellbook page aesthetic.`,
-    luxury:   `Polished jet-black marble with brushed 24k gold leaf vein background. Cipher glyphs as premium engraved gold relief embossing. Champagne, platinum and obsidian color palette. Minimalist luxury high-fashion editorial aesthetic.`,
-    vintage:  `Aged cream parchment or dark mahogany wood texture background. Cipher glyphs as deep letterpress copper plate etchings. Sepia and rich amber tones. Art Deco geometric ornamental borders and embellishments. 1920s typographic grand poster aesthetic.`,
-    lofi:     `Soft muted pastel gradient background (lavender, peach, sage mint). Cipher glyphs in gentle warm tones. Cozy film grain and light leak texture overlay. Lo-fi chill beats album artwork aesthetic. Vaporwave sunset color palette.`,
-    sexy:     `Dramatic single spotlight against deep black studio background. Cipher glyphs as sleek polished chrome or liquid mercury metallic forms. Chiaroscuro shadow play. Crimson red and obsidian black color palette. Sultry high-fashion lingerie editorial aesthetic. Mysterious and seductive.`,
-    nature:   `Lush emerald tropical rainforest canopy background with golden-hour dappled light. Cipher glyphs as intricate bioluminescent leaf-vein patterns and glowing moss script. Deep green, amber, and violet organic palette. National Geographic fine art nature photography aesthetic.`,
-    pixel:    `Retro 8-bit pixel art style on a dark grid background. Cipher glyphs as chunky blocky pixel characters with 4-color NES dithering. Bright GameBoy green or vibrant NES color palette. Retro video game title screen aesthetic.`,
-    gothic:   `Victorian gothic graveyard night background with black roses, crumbling stone, spider webs and dripping candle wax. Cipher glyphs as bone-white tombstone epitaph engravings in bas-relief. Deep black and dark crimson blood palette. Tim Burton meets Edgar Allan Poe aesthetic.`,
-    popart:   `Bold flat-color blocked background in primary colors (bright yellow, red, cobalt blue). Cipher glyphs as thick black Lichtenstein-style comic book halftone outlines with solid flat color fills. Roy Lichtenstein Pop Art silkscreen print aesthetic. High contrast, energetic, bold.`,
+    vn_romance:`A deeply romantic, cinematic, and emotional scene. Atmospheric golden hour backlight, soft warm bokeh on a modern urban rooftop or balcony overlooking a glowing sunset skyline, dreamy cinematic depth of field, tender romantic atmosphere. Photorealistic, authentic modern Vietnamese beauty, highly detailed, 8k resolution.`,
+    romantic: `Dreamy soft-focus bokeh background in rose gold and sakura pink gradient tones. Warm luminescent gold and blush pink light sigils. Delicate falling cherry blossom petals. Gentle watercolor wash texture. Sweet romance novel cover aesthetic.`,
+    scifi:    `Pure black OLED background (#050d0a). Glowing electric cyan (#58a6ff) and emerald green (#00ff66) neon vector shapes. Subtle sci-fi HUD grid lines overlay. Strong neon bloom glow effect. Minimalist space technology aesthetic. Hyper-detailed, 8k resolution.`,
+    cyberpunk:`Rain-slicked neon-drenched cyberpunk alley background. Harsh magenta and cyan neon with wet street reflections. Flickering glitch artifacts. Dystopian Blade Runner noir atmosphere. Dark, gritty, cinematic.`,
+    hologram: `Dark void space background. Shimmering iridescent holographic light projections floating in mid-air. Prismatic rainbow diffraction halos. Transparent glassmorphic panel effect. Futuristic AR/VR interface aesthetic.`,
+    anime:    `Clean cel-shaded anime illustration style. Vivid saturated colors on gradient sky background. Sharp ink outlines with vivid flat color fills. Dynamic manga speed-line effects. J-pop album cover aesthetic.`,
+    fantasy:  `Ancient mossy stone dungeon wall background. Glowing ethereal blue-purple arcane magical fire and mystical energy spirals. Floating mystical rune inscriptions. Moonlit gothic cathedral atmosphere. Dark fantasy spellbook page aesthetic.`,
+    luxury:   `Polished jet-black marble with brushed 24k gold leaf vein background. Premium engraved gold relief embossing. Champagne, platinum and obsidian color palette. Minimalist luxury high-fashion editorial aesthetic.`,
+    vintage:  `Aged cream parchment or dark mahogany wood texture background. Deep letterpress copper plate etchings. Sepia and rich amber tones. Art Deco geometric ornamental borders and embellishments. 1920s typographic grand poster aesthetic.`,
+    lofi:     `Soft muted pastel gradient background (lavender, peach, sage mint). Gentle warm tones. Cozy film grain and light leak texture overlay. Lo-fi chill beats album artwork aesthetic. Vaporwave sunset color palette.`,
+    sexy:     `Dramatic single spotlight against deep black studio background. Sleek polished chrome or liquid mercury metallic forms. Chiaroscuro shadow play. Crimson red and obsidian black color palette. Sultry high-fashion editorial aesthetic. Mysterious and seductive.`,
+    nature:   `Lush emerald tropical rainforest canopy background with golden-hour dappled light. Intricate bioluminescent leaf-vein patterns and glowing moss script. Deep green, amber, and violet organic palette. National Geographic fine art nature photography aesthetic.`,
+    pixel:    `Retro 8-bit pixel art style on a dark grid background. Chunky blocky pixel characters with 4-color NES dithering. Bright GameBoy green or vibrant NES color palette. Retro video game title screen aesthetic.`,
+    gothic:   `Victorian gothic graveyard night background with black roses, crumbling stone, spider webs and dripping candle wax. Bone-white tombstone epitaph engravings in bas-relief. Deep black and dark crimson blood palette. Tim Burton meets Edgar Allan Poe aesthetic.`,
+    popart:   `Bold flat-color blocked background in primary colors (bright yellow, red, cobalt blue). Thick black Lichtenstein-style comic book halftone outlines with solid flat color fills. Roy Lichtenstein Pop Art silkscreen print aesthetic. High contrast, energetic, bold.`,
   };
 
-  // Chỉ các tham số THỰC SỰ đưa vào prompt (được copy)
   const TOOL_PROMPT_PARAMS = {
     mj:       `\n\n--ar ${ratio} --style raw --v 6.1 --q 2 --no text, words, letters, vietnamese, latin`,
     flux:     `\n\nAspect ratio: ${ratio}.\nNegative prompt: text, words, letters, vietnamese text, latin alphabet, readable characters, typography, watermark`,
     dalle:    `\n\nOutput format: ${ratio} aspect ratio (${ratioData.hint}).`,
     gemini:   `\n\nOutput image aspect ratio: ${ratio} (${ratioData.hint}).`,
     ideogram: `\n\nAspect ratio: ${ratio}.\nNegative prompt: text, words, vietnamese, latin, readable letters, typography, watermark`,
+    kling:    `\n\nAspect ratio: ${ratio}.\nKling AI Pro mode, photorealistic high detail render.`,
+    runway:   `\n\nAspect ratio: ${ratio}.\nRunway Gen-3 photorealistic cinematic still.`,
+    luma:     `\n\nAspect ratio: ${ratio}.\nLuma Dream Machine high quality output.`,
     firefly:  `\n\nOutput aspect ratio: ${ratio} (${ratioData.hint}).`,
     sd:       `\n\nNegative prompt: (text:1.6), (words:1.5), (letters:1.5), (vietnamese:1.6), (latin:1.5), (readable:1.5), watermark, signature, blurry\nSteps: 30, CFG Scale: 7, Sampler: DPM++ 2M Karras, Size: ${ratioData.sdSize}`,
     bing:     `\n\nOutput format: ${ratio} aspect ratio (${ratioData.hint}).`,
   };
 
-
-  const styleDesc = STYLES[style] || STYLES.scifi;
+  const styleDesc = STYLES[style] || STYLES.vn_romance;
   const params = TOOL_PROMPT_PARAMS[tool] || '';
 
-  return `${CIPHER_CORE}\n\nAesthetic: ${styleDesc}${params}`;
+  // ===== MODE 1: ẢNH TỪ TEXT (MÔ TẢ KHUÔN MẶT CẶP ĐÔI) =====
+  if (pm_selectedMode === 'text_to_img') {
+    return `[COMPOSITION: Romantic Scene with Specific Couple + Foreground Cipher Overlay]
 
+[CHARACTER 1 - VIETNAMESE WOMAN]:
+${PM_CHAR_DESCRIPTIONS.woman}
+
+[CHARACTER 2 - VIETNAMESE MAN]:
+${PM_CHAR_DESCRIPTIONS.man}
+
+[SCENE INTERACTION & EMOTION]:
+An intensely romantic, passionate, and deeply emotional reunion moment between this Vietnamese couple after a long separation. Tender, loving embrace with their faces close together, affectionate eye contact, radiant authentic smiles, overflowing romantic chemistry and longing fulfilled.
+Atmosphere: ${styleDesc}
+
+${CIPHER_CORE}
+
+OVERLAY: Superimpose EXACTLY ONE SINGLE ROW of the cipher glyph blocks from the reference screenshot across the lower foreground in crisp, razor-sharp glowing warm gold neon with clean vector edges. Do not repeat or duplicate the row. Do not distort, blur, or stylize the anatomy of the glyphs — every quadrant symbol must match the screenshot 100% legibly and accurately. Photorealistic, authentic modern Vietnamese beauty, highly detailed, 8k resolution.${params}`;
+  }
+
+  // ===== MODE 2: ẢNH TỪ ẢNH MẪU (THAM CHIẾU CHÂN DUNG) =====
+  if (pm_selectedMode === 'img_ref') {
+    return `[MULTI-IMAGE REFERENCE & IDENTITY PRESERVATION DIRECTIVE]
+CRITICAL INSTRUCTION: Attached are reference portraits of a Vietnamese woman (Image 1) and a Vietnamese man (Image 2), alongside the cipher glyph screenshot (Image 3).
+
+1. STRICT FACIAL & BIOLOGICAL CONSISTENCY:
+- Woman: Perfectly preserve the exact facial anatomy, bone structure, almond eye shape, nose contours, lips, skin tone, and hair texture directly from Image 1. Maintain authentic biological Vietnamese features without artificial beautification filters or altering her core identity.
+- Man: Perfectly preserve the exact facial structure, jawline, nose bridge, eyes, light natural stubble, and hairstyle directly from Image 2. Maintain 100% likeness and authentic character identity.
+
+2. EMOTION & REUNION MOMENT:
+Portray these exact two individuals experiencing an intense, passionate, and deeply affectionate reunion after a long time apart. A tight, loving embrace, gentle tender smiles, eyes filled with emotion and devotion, holding each other closely.
+
+3. ENVIRONMENT & AESTHETIC:
+${styleDesc}
+
+${CIPHER_CORE}
+
+OVERLAY: Superimpose EXACTLY ONE SINGLE ROW of the cipher glyph blocks from Image 3 across the lower foreground in crisp, razor-sharp glowing warm gold neon with clean vector edges matching "${b60Code}". Zero duplication, zero spelling hallucination.${params}`;
+  }
+
+  // ===== MODE 3: TẠO CLIP VIDEO (TRỰC TIẾP TỪ TEXT-TO-VIDEO) =====
+  if (pm_selectedMode === 'video_clip') {
+    const videoToolDirectives = {
+      kling:    `\n\n--mode pro --duration 10 --camera orbital-pan --cfg 0.6`,
+      runway:   `\n\nCamera: Slow orbit 360 clockwise, slight tilt up. Motion scale: 5. 4K Ultra HD, 24fps.`,
+      luma:     `\n\nCinematic 24fps film motion, continuous orbital tracking shot, golden hour lighting, photorealistic physics.`,
+      mj:       `\n\n--ar ${ratio} --style raw --v 6.1 --motion 5`,
+      dalle:    `\n\nVideo motion storyboard prompt. Aspect ratio: ${ratio}.`,
+      gemini:   `\n\nDirect Text-to-Video generation prompt. Aspect ratio: ${ratio}.`,
+      flux:     `\n\nHigh-motion cinematic scene prompt. Aspect ratio: ${ratio}.`,
+      ideogram: `\n\nAspect ratio: ${ratio}.`,
+      firefly:  `\n\nAspect ratio: ${ratio}.`,
+      sd:       `\n\nAnimateDiff motion prompt, 24fps, cinematic camera pan. Size: ${ratioData.sdSize}`,
+      bing:     `\n\nCinematic video scene prompt. Aspect ratio: ${ratio}.`,
+    };
+
+    const vParams = videoToolDirectives[tool] || `\n\nAspect ratio: ${ratio} (${ratioData.hint}).`;
+
+    return `[CINEMATIC VIDEO DIRECTIVE - PASSIONATE REUNION SCENE (24FPS FILM)]
+
+SCENE & ACTION CHOREOGRAPHY:
+A breathtakingly emotional, cinematic slow-motion video capturing an intense and passionate reunion of two Vietnamese lovers meeting again after a long, agonizing separation.
+The woman rushes forward with tearful joyful eyes and throws her arms tightly around the man's neck. The man catches her in a powerful, tender embrace, lifting and spinning her slightly off the ground, burying his face into her silky dark hair with profound relief before gently pulling back to look into her eyes. Breathless joyful laughter, tender romantic smiles, their foreheads resting together with immense intimacy and devotion.
+
+CHARACTER DESCRIPTIONS:
+- Woman: ${PM_CHAR_DESCRIPTIONS.woman}
+- Man: ${PM_CHAR_DESCRIPTIONS.man}
+
+CINEMATOGRAPHY & CAMERA MOVEMENT:
+- Camera: Slow, ultra-smooth orbital tracking shot circling around the embracing couple (360-degree rotation).
+- Lighting: Warm golden-hour backlight streaming through their hair, creating radiant amber rim lighting, subtle lens flares, and soft glowing bokeh.
+- Optics: 85mm portrait cinema lens, shallow depth of field (f/1.8), romantic rooftop setting with gentle evening breeze fluttering her hair and his shirt.
+- Motion Quality: Photorealistic 4K cinematic film, natural physics, realistic micro-expressions, zero distortion, lifelike skin texture.
+
+OVERLAY (SUBTLE CIPHER ACCENT):
+A subtle, elegant translucent holographic amber cipher glyph signature gently floats in the lower corner without obscuring the couple (Sequence: "${b60Code}").${vParams}`;
+  }
+
+  return `${CIPHER_CORE}\n\nAesthetic: ${styleDesc}${params}`;
 }
 
 function pm_renderSelectors() {
+  const modeEl = document.getElementById('ai-mode-selector');
   const toolEl = document.getElementById('ai-tool-selector');
   const styleEl = document.getElementById('ai-style-selector');
   const ratioEl = document.getElementById('ai-ratio-selector');
@@ -3244,17 +3350,30 @@ function pm_renderSelectors() {
 
   const btnBase = `display:inline-flex;align-items:center;gap:4px;border-radius:20px;padding:4px 9px;font-size:11px;font-family:monospace;cursor:pointer;border:1px solid;transition:all 0.15s;white-space:nowrap;`;
 
+  // Render Modes
+  if (modeEl) {
+    modeEl.innerHTML = PM_MODES.map(m => {
+      const active = m.id === pm_selectedMode;
+      return `<button onclick="pm_selectMode('${m.id}')" title="${m.desc}" style="${btnBase}background:${active ? '#ff00ea' : 'rgba(255,0,234,0.08)'};color:${active ? '#000' : '#ff77ea'};border-color:${active ? '#ff00ea' : '#771177'};font-weight:${active ? 'bold' : 'normal'};box-shadow:${active ? '0 0 10px rgba(255,0,234,0.45)' : 'none'};">${m.emoji} ${m.label}</button>`;
+    }).join('');
+  }
+
+  // Render Tools
   toolEl.innerHTML = PM_TOOLS.map(t => {
     const active = t.id === pm_selectedTool;
     const col = t.color;
-    return `<button onclick="pm_selectTool('${t.id}')" style="${btnBase}background:${active ? col : 'transparent'};color:${active ? '#000' : col};border-color:${col};font-weight:${active ? 'bold' : 'normal'};">${t.emoji} ${t.label}</button>`;
+    const isVideoTool = t.type === 'video';
+    const tag = isVideoTool ? `<span style="font-size:8px;padding:1px 3px;border-radius:3px;background:${active ? '#000' : col};color:${active ? col : '#000'};margin-left:2px;font-weight:bold;">VIDEO</span>` : '';
+    return `<button onclick="pm_selectTool('${t.id}')" style="${btnBase}background:${active ? col : 'transparent'};color:${active ? '#000' : col};border-color:${col};font-weight:${active ? 'bold' : 'normal'};">${t.emoji} ${t.label}${tag}</button>`;
   }).join('');
 
+  // Render Styles
   styleEl.innerHTML = PM_STYLES.map(s => {
     const active = s.id === pm_selectedStyle;
     return `<button onclick="pm_selectStyle('${s.id}')" style="${btnBase}background:${active ? '#ff00ea' : 'transparent'};color:${active ? '#000' : '#cc88cc'};border-color:${active ? '#ff00ea' : '#441144'};font-weight:${active ? 'bold' : 'normal'};">${s.emoji} ${s.label}</button>`;
   }).join('');
 
+  // Render Ratios
   if (ratioEl) {
     ratioEl.innerHTML = PM_RATIOS.map(r => {
       const active = r.id === pm_selectedRatio;
@@ -3277,6 +3396,28 @@ function pm_refreshPrompt() {
     blockVal.textContent = pm_selectedBlocksPerRow === 0 ? 'Tự động' : pm_selectedBlocksPerRow;
   }
 }
+
+window.pm_selectMode = function(id) {
+  pm_selectedMode = id;
+  if (id === 'video_clip') {
+    // If currently on an image-only tool, switch to Kling AI
+    const curTool = PM_TOOLS.find(t => t.id === pm_selectedTool);
+    if (!curTool || curTool.type !== 'video') {
+      pm_selectedTool = 'kling';
+    }
+    if (pm_selectedRatio === '1:1') {
+      pm_selectedRatio = '16:9';
+    }
+  } else {
+    // If returning to image mode and current tool is video-only, switch to Gemini
+    const curTool = PM_TOOLS.find(t => t.id === pm_selectedTool);
+    if (curTool && curTool.type === 'video') {
+      pm_selectedTool = 'gemini';
+    }
+  }
+  pm_renderSelectors();
+  pm_refreshPrompt();
+};
 
 window.pm_selectBlocksPerRow = function(val) {
   pm_selectedBlocksPerRow = parseInt(val, 10);
