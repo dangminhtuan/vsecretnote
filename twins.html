@@ -578,6 +578,29 @@
       font-size: 11.5px;
     }
 
+    .tw-rhyme-family-cell {
+      max-width: 360px;
+      line-height: 1.8;
+    }
+
+    .tw-rhyme-tag {
+      display: inline-block;
+      background: rgba(0, 255, 157, 0.08);
+      border: 1px solid rgba(0, 255, 157, 0.25);
+      color: #a7f3d0;
+      font-size: 11px;
+      padding: 1px 5px;
+      border-radius: 3px;
+      margin: 1px 2px 1px 0;
+      font-family: monospace;
+    }
+
+    .tw-rhyme-code {
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 10px;
+      font-family: monospace;
+    }
+
     .tw-swipe-cell {
       color: #93c5fd;
       font-size: 11px;
@@ -880,6 +903,7 @@
               </div>
             </th>
             <th>Ý Nghĩa Liên Tưởng</th>
+            <th>Từ Cùng Vần <span style="color: var(--text-muted); font-weight: normal; font-size: 0.75em;">(gần nhất)</span></th>
           </tr>
         </thead>
         <tbody id="twTableBody">
@@ -1026,6 +1050,74 @@
       }
     });
 
+
+    // Build set of all twin words (for exclusion) once
+    const TWINS_WORD_SET = new Set(TWINS_DATA.map(d => d.word.toLowerCase()));
+
+
+    // ─── RHYME FAMILY ALGORITHM (Real Words from syllables.json) ─────────────
+    // Vietnamese initial consonants, longest-first to avoid partial matches
+    const VI_INITIALS = [
+      'ngh','nh','ng','th','tr','ch','ph','kh','gh','gi','qu',
+      'đ','b','c','d','g','h','k','l','m','n','p','r','s','t','v','x'
+    ];
+
+    // Strip all Vietnamese tone marks → bare form (e.g. "sướng" → "suong")
+    function removeTones(s) {
+      return s.normalize('NFD')
+        .replace(/[\u0300\u0301\u0303\u0309\u0323]/g, '')
+        .normalize('NFC');
+    }
+
+    // Extract BARE rhyme (no tones): strip initial consonant from bare form
+    // "sướng" → bare="suong" → strip "s" → bareRhyme="uong"
+    // "nghiêng" → bare="nghieng" → strip "ngh" → bareRhyme="ieng"
+    function extractBareRhyme(word) {
+      const bare = removeTones(word.toLowerCase().trim());
+      for (const init of VI_INITIALS) {
+        if (bare.startsWith(init)) return bare.slice(init.length);
+      }
+      return bare; // no initial (e.g. "ôm", "anh")
+    }
+
+    // Index: bareRhyme → [realWords] — built async from syllables.json
+    let RHYME_INDEX = {};
+    let syllablesLoaded = false;
+
+    async function buildSyllableIndex() {
+      try {
+        const res = await fetch('/syllables.json');
+        const syllables = await res.json();
+        RHYME_INDEX = {};
+        for (const word of syllables) {
+          const key = extractBareRhyme(word);
+          if (!key) continue;
+          if (!RHYME_INDEX[key]) RHYME_INDEX[key] = [];
+          RHYME_INDEX[key].push(word);
+        }
+        syllablesLoaded = true;
+        renderData(); // re-render with real words
+      } catch(e) {
+        console.warn('Could not load syllables.json:', e);
+      }
+    }
+
+    // Lookup up to `limit` REAL words sharing same bare rhyme, excluding twin entries
+    function getRhymeFamily(twinWord, limit = 15) {
+      const key = extractBareRhyme(twinWord);
+      if (!key || !syllablesLoaded) return [];
+      const candidates = RHYME_INDEX[key] || [];
+      const twinLower = twinWord.toLowerCase();
+      return candidates
+        .filter(w => w.toLowerCase() !== twinLower)
+        .filter(w => !TWINS_WORD_SET.has(w.toLowerCase()))
+        .slice(0, limit);
+    }
+
+    buildSyllableIndex(); // kick off async load
+    // ─────────────────────────────────────────────────────────────────────────
+
+
     function getBadgeClass(pattern) {
       switch(pattern) {
         case 'triple': return 'tw-badge-triple';
@@ -1044,6 +1136,14 @@
     ];
 
     function renderTableRow(item) {
+      const family = getRhymeFamily(item.word, 10);
+      const familyHtml = family.length > 0
+        ? family.map(w => {
+            const analysis = analyzeAnyWord(w);
+            const code = (analysis && analysis.code !== '---') ? analysis.code : '?';
+            return `<span class="tw-rhyme-tag">${w} <span class="tw-rhyme-code">(${code})</span></span>`;
+          }).join('')
+        : `<span style="color:var(--text-muted);font-size:0.8em;">—</span>`;
       return `
         <tr>
           <td style="text-align: center;">
@@ -1054,6 +1154,7 @@
           <td><span class="tw-badge ${getBadgeClass(item.pattern)}">${item.patternName}</span></td>
           <td><code style="color: var(--neon-cyan); font-weight: bold;">${item.rep}</code></td>
           <td><span class="tw-mnemonic-cell">${item.mnemonic}</span></td>
+          <td class="tw-rhyme-family-cell">${familyHtml}</td>
         </tr>
       `;
     }
@@ -1138,7 +1239,7 @@
 
       // 1. Render Table & 2. Render Cards
       if (filtered.length === 0) {
-        tableBody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 25px; color: var(--text-muted);">Không tìm thấy kỳ quan đối xứng nào khớp với bộ lọc.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 25px; color: var(--text-muted);">Không tìm thấy kỳ quan đối xứng nào khớp với bộ lọc.</td></tr>`;
         cardsContainer.innerHTML = `<div style="text-align: center; padding: 25px; color: var(--text-muted); background: var(--panel-bg); border-radius: 6px;">Không tìm thấy kỳ quan nào khớp với bộ lọc.</div>`;
       } else if (currentFilter === 'all') {
         // Categorized by Hình Thái with headers
@@ -1150,7 +1251,7 @@
           if (groupItems.length > 0) {
             tableHtml += `
               <tr class="tw-section-row">
-                <td colspan="6">
+                <td colspan="7">
                   <div class="tw-section-title">
                     <div class="tw-section-badge-wrap">
                       <span class="tw-badge ${pDef.badgeClass}">${pDef.name}</span>

@@ -43,28 +43,84 @@
             <div style="position: relative; display: inline-block;">
               <button id="btn-view-options" class="cyber-btn" title="Tùy chọn hiển thị (View)" style="border-color: #00ffcc; color: #00ffcc; background: #000; cursor: pointer; font-size: 16px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.2s;">👁️</button>
               
-              <div id="view-options-menu" style="display: none; position: absolute; top: 42px; left: 0; z-index: 10001; background: rgba(5, 15, 10, 0.96); border: 1px solid #00ffcc; box-shadow: 0 4px 20px rgba(0, 255, 204, 0.35); border-radius: 6px; padding: 8px 10px; min-width: 190px; backdrop-filter: blur(10px); flex-direction: column; gap: 8px;">
-                <div style="font-size: 10px; color: #888; font-family: monospace; font-weight: bold; border-bottom: 1px solid #224433; padding-bottom: 4px; letter-spacing: 1px;">⚙️ TÙY CHỌN HIỂN THỊ</div>
+              <div id="view-options-menu" style="display: none; position: absolute; top: 42px; left: 0; z-index: 10001; background: rgba(5, 15, 10, 0.98); border: 1px solid #00ffcc; box-shadow: 0 4px 24px rgba(0, 255, 204, 0.4); border-radius: 6px; padding: 10px; min-width: 225px; max-height: 80vh; overflow-y: auto; backdrop-filter: blur(12px); flex-direction: column; gap: 8px;">
+                <div style="font-size: 10px; color: #888; font-family: monospace; font-weight: bold; border-bottom: 1px solid #224433; padding-bottom: 4px; letter-spacing: 1px;">⚙️ TÙY CHỌN TIỆN ÍCH</div>
                 
-                <label style="display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: #eee; cursor: pointer; user-select: none;">
-                  <input type="checkbox" id="chk-view-vk" style="accent-color: #00ffcc; width: 14px; height: 14px; cursor: pointer;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #ccc; cursor: pointer; user-select: none;">
+                  <input type="checkbox" id="chk-view-vk" style="accent-color: #00ffcc; width: 13px; height: 13px; cursor: pointer;">
                   <span>⌨️ Bàn phím ảo</span>
                 </label>
                 
-                <label style="display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: #eee; cursor: pointer; user-select: none;">
-                  <input type="checkbox" id="chk-view-tutor" checked style="accent-color: #00ff66; width: 14px; height: 14px; cursor: pointer;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #ccc; cursor: pointer; user-select: none;">
+                  <input type="checkbox" id="chk-view-tutor" checked style="accent-color: #00ff66; width: 13px; height: 13px; cursor: pointer;">
                   <span>🎓 Trợ giảng ghi nhớ</span>
                 </label>
                 
-                <label style="display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: #eee; cursor: pointer; user-select: none;">
-                  <input type="checkbox" id="chk-view-toolbar" checked style="accent-color: #ffaa00; width: 14px; height: 14px; cursor: pointer;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #ccc; cursor: pointer; user-select: none;">
+                  <input type="checkbox" id="chk-view-toolbar" checked style="accent-color: #ffaa00; width: 13px; height: 13px; cursor: pointer;">
                   <span>📋 Thanh Copy nổi</span>
                 </label>
 
-                <label style="display: flex; align-items: center; gap: 8px; font-size: 11.5px; color: #eee; cursor: pointer; user-select: none;">
-                  <input type="checkbox" id="chk-view-case" style="accent-color: #58a6ff; width: 14px; height: 14px; cursor: pointer;">
+                <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #ccc; cursor: pointer; user-select: none;">
+                  <input type="checkbox" id="chk-view-case" style="accent-color: #58a6ff; width: 13px; height: 13px; cursor: pointer;">
                   <span>🔠 Hỗ trợ Chữ Hoa (I/O)</span>
                 </label>
+
+                <!-- PHÂN VÙNG BẬT TẮT Ô TEXT -->
+                <div style="margin-top: 4px; padding-top: 6px; border-top: 1px solid #224433; display: flex; justify-content: space-between; align-items: center;">
+                  <span style="font-size: 10px; color: #00ffcc; font-family: monospace; font-weight: bold; letter-spacing: 0.5px;">📝 BẬT/TẮT Ô TEXT</span>
+                  <div style="display: flex; gap: 4px;">
+                    <button id="btn-view-minimal" style="background: #002b22; color: #00ffcc; border: 1px solid #00ffcc; font-size: 9px; padding: 1px 5px; border-radius: 3px; cursor: pointer; font-family: monospace;" title="Chỉ hiện 5 ô cốt lõi: Tiếng Việt, Base60, Base60 liền, Giờ Thiêng, Kỳ Quan">Gọn</button>
+                    <button id="btn-view-all" style="background: #112; color: #aaa; border: 1px solid #445; font-size: 9px; padding: 1px 5px; border-radius: 3px; cursor: pointer; font-family: monospace;" title="Hiện toàn bộ 11 ô">Tất cả</button>
+                  </div>
+                </div>
+
+                <div id="view-textboxes-list" style="display: flex; flex-direction: column; gap: 6px;">
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
+                    <input type="checkbox" class="chk-box-toggle" data-target="group-text" checked style="accent-color: #00ff66; width: 13px; height: 13px; cursor: pointer;">
+                    <span>1. 🟢 Tiếng Việt gốc</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
+                    <input type="checkbox" class="chk-box-toggle" data-target="group-compressed" checked style="accent-color: #a855f7; width: 13px; height: 13px; cursor: pointer;">
+                    <span>2. 🟣 Base60</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
+                    <input type="checkbox" class="chk-box-toggle" data-target="group-continuous" checked style="accent-color: #a855f7; width: 13px; height: 13px; cursor: pointer;">
+                    <span>3. 🔤 Base60 liền</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
+                    <input type="checkbox" class="chk-box-toggle" data-target="group-holy" checked style="accent-color: #ffaa00; width: 13px; height: 13px; cursor: pointer;">
+                    <span>4. 🟡 Giờ thiêng [4 số]</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
+                    <input type="checkbox" class="chk-box-toggle" data-target="group-twins" checked style="accent-color: #00ffaa; width: 13px; height: 13px; cursor: pointer;">
+                    <span>5. ✨ Kỳ quan gần nhất</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
+                    <input type="checkbox" class="chk-box-toggle" data-target="group-time" checked style="accent-color: #00f0ff; width: 13px; height: 13px; cursor: pointer;">
+                    <span>6. ⏱️ Thời gian [6 số]</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
+                    <input type="checkbox" class="chk-box-toggle" data-target="group-time5" checked style="accent-color: #00f0ff; width: 13px; height: 13px; cursor: pointer;">
+                    <span>7. 🔢 Thời gian [5 số]</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
+                    <input type="checkbox" class="chk-box-toggle" data-target="group-cvnss4" checked style="accent-color: #f0f; width: 13px; height: 13px; cursor: pointer;">
+                    <span>8. ⚡ CVNSS 4.0</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
+                    <input type="checkbox" class="chk-box-toggle" data-target="group-fakeviet" checked style="accent-color: #ff5555; width: 13px; height: 13px; cursor: pointer;">
+                    <span>9. ♰ Mã Giả Việt</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
+                    <input type="checkbox" class="chk-box-toggle" data-target="group-camel" checked style="accent-color: #ffaa00; width: 13px; height: 13px; cursor: pointer;">
+                    <span>10. 🐫 camelCase</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
+                    <input type="checkbox" class="chk-box-toggle" data-target="group-noaccent" checked style="accent-color: #888; width: 13px; height: 13px; cursor: pointer;">
+                    <span>11. 📝 Không dấu liền</span>
+                  </label>
+                </div>
               </div>
             </div>
 
@@ -242,7 +298,7 @@
             </div>
 
           <!-- Text Decrypted -->
-          <div class="input-group">
+          <div class="input-group" id="group-text">
             <div class="label-row">
               <label for="text-input">TEXT DECRYPTED [VI/EN]</label>
             </div>
@@ -315,25 +371,41 @@
             </div>
           </div>
           
-          <!-- Compressed Base60 Continuous -->
-          <div class="input-group compressed-group">
-            <div class="label-row">
-              <label for="compressed-continuous-input">CONTINUOUS BASE60 [NO SPACE]</label>
-            </div>
-            <textarea id="compressed-continuous-input" placeholder="Mã nén liên tiếp (không khoảng trắng)..." spellcheck="false"></textarea>
-          </div>
-          
           <div class="controls">
             <button id="btn-encode" class="cyber-btn"><span class="btn-text">ENCODE &darr;</span></button>
             <button id="btn-decode" class="cyber-btn"><span class="btn-text">DECODE &uarr;</span></button>
           </div>
 
-          <!-- Compressed Base60 -->
-          <div class="input-group compressed-group">
+          <!-- 2. Compressed Base60 -->
+          <div class="input-group compressed-group" id="group-compressed">
             <div class="label-row">
               <label for="compressed-input">COMPRESSED CODE [BASE60]</label>
-              </div>
+            </div>
             <textarea id="compressed-input" placeholder="Mã nén siêu ngắn..." spellcheck="false"></textarea>
+          </div>
+
+          <!-- 3. Compressed Base60 Continuous -->
+          <div class="input-group compressed-group" id="group-continuous">
+            <div class="label-row">
+              <label for="compressed-continuous-input">CONTINUOUS BASE60 [NO SPACE]</label>
+            </div>
+            <textarea id="compressed-continuous-input" placeholder="Mã nén liên tiếp (không khoảng trắng)..." spellcheck="false"></textarea>
+          </div>
+
+          <!-- 4. Giờ Thiêng 4 Ký Tự -->
+          <div class="input-group" id="group-holy">
+            <div class="label-row">
+              <label for="holy-hours-input" style="color: #ffaa00;">GIỜ THIÊNG [4 SỐ]</label>
+            </div>
+            <textarea id="holy-hours-input" placeholder="Mã giờ thiêng 4 số (vd: 1414, 1010 1919 1410)..." spellcheck="false"></textarea>
+          </div>
+
+          <!-- 5. Kỳ Quan Gần Nhất -->
+          <div class="input-group" id="group-twins">
+            <div class="label-row">
+              <label for="twins-input" style="color: #00ffaa;">KỲ QUAN [GẦN NHẤT]</label>
+            </div>
+            <textarea id="twins-input" placeholder="Mã kỳ quan gần nhất..." spellcheck="false"></textarea>
           </div>
 
           <!-- Cyber Font Preview -->
@@ -409,8 +481,24 @@
           </div>
 
 
+          <!-- Time Encrypted -->
+          <div class="input-group" id="group-time">
+            <div class="label-row">
+              <label for="time-input">TIME ENCRYPTED [HH:MM:SS]</label>
+            </div>
+            <textarea id="time-input" placeholder="Mã thời gian 6 chữ số..." spellcheck="false"></textarea>
+          </div>
+
+          <!-- Time 5 Digits -->
+          <div class="input-group" id="group-time5">
+            <div class="label-row">
+              <label for="time-5-input">TIME ENCRYPTED [SSSSS]</label>
+            </div>
+            <textarea id="time-5-input" placeholder="Mã thời gian 5 chữ số..." spellcheck="false"></textarea>
+          </div>
+
           <!-- CVNSS4 Encrypted -->
-          <div class="input-group">
+          <div class="input-group" id="group-cvnss4">
             <div class="label-row">
               <label for="cvnss4-input" style="color: #f0f;">CVNSS4 [CHỮ VIỆT NHANH 4.0]</label>
             </div>
@@ -418,45 +506,30 @@
           </div>
 
           <!-- Mã giả Việt -->
-          <div class="input-group">
+          <div class="input-group" id="group-fakeviet">
             <div class="label-row">
               <label for="fake-viet-input">MÃ GIẢ VIỆT</label>
-              </div>
+            </div>
             <textarea id="fake-viet-input" placeholder="Mã giả Việt (♰...♰)" spellcheck="false"></textarea>
           </div>
 
-          
-            <!-- Tiếng Việt camelCase -->
-            <div class="input-group">
-              <div class="label-row">
-                <label for="camel-case-input">TIẾNG VIỆT CAMELCASE [TAG]</label>
-              </div>
-              <textarea id="camel-case-input" placeholder="víDụNhưThếNày..." spellcheck="false"></textarea>
-            </div>
-  
-            <!-- Tiếng Việt Không Dấu Liền -->
-            <div class="input-group">
-              <div class="label-row">
-                <label for="no-accent-input">KHÔNG DẤU LIỀN [TAG]</label>
-              </div>
-              <textarea id="no-accent-input" placeholder="vidunhuthenay..." spellcheck="false"></textarea>
-            </div>
-
-            <!-- Time Encrypted -->
-          <div class="input-group">
+          <!-- Tiếng Việt camelCase -->
+          <div class="input-group" id="group-camel">
             <div class="label-row">
-              <label for="time-input">TIME ENCRYPTED [HH:MM:SS]</label>
-              </div>
-            <textarea id="time-input" placeholder="Mã thời gian 6 chữ số..." spellcheck="false"></textarea>
+              <label for="camel-case-input">TIẾNG VIỆT CAMELCASE [TAG]</label>
+            </div>
+            <textarea id="camel-case-input" placeholder="víDụNhưThếNày..." spellcheck="false"></textarea>
           </div>
 
-          <!-- Time 5 Digits -->
-          <div class="input-group">
+          <!-- Tiếng Việt Không Dấu Liền -->
+          <div class="input-group" id="group-noaccent">
             <div class="label-row">
-              <label for="time-5-input">TIME ENCRYPTED [SSSSS]</label>
-              </div>
-            <textarea id="time-5-input" placeholder="Mã thời gian 5 chữ số..." spellcheck="false"></textarea>
+              <label for="no-accent-input">KHÔNG DẤU LIỀN [TAG]</label>
+            </div>
+            <textarea id="no-accent-input" placeholder="vidunhuthenay..." spellcheck="false"></textarea>
           </div>
+
+
 
           <!-- Debug Sandbox Log -->
           <!-- Debug Sandbox Log Removed -->
@@ -673,7 +746,7 @@
     <!-- Floating Context Menu -->
     <div id="floating-context-menu" style="display: none; position: absolute; z-index: 10000; gap: 6px; background: rgba(0, 15, 0, 0.95); border: 1px solid #0f0; padding: 6px; border-radius: 4px; box-shadow: 0 0 15px rgba(0, 255, 0, 0.5); flex-direction: row; align-items: center;">
       <button id="ctx-copy" class="copy-btn" style="font-weight: bold;">[^C] COPY</button>
-      <button id="ctx-clear" class="copy-btn clear-btn" style="font-weight: bold;">[DEL] CLR</button>
+      <button id="ctx-cut" class="copy-btn clear-btn" style="font-weight: bold;">[^X] CUT</button>
       <button id="ctx-full" class="copy-btn btn-fullscreen" style="font-weight: bold;">⤢ FULL</button>
       <button id="ctx-close" class="copy-btn clear-btn" style="border-color: #777; color: #777;">✕</button>
     </div>

@@ -40,28 +40,30 @@ export function analyzeAnyWord(input) {
   input = input.trim();
   if (!input) return null;
 
-  // Check if input is a 3-char code
-  if (input.length === 3) {
-    const time = base60ToTime(input);
-    const decoded = decodeWord(time);
-    if (decoded && !decoded.startsWith('[')) {
-      return analyzeWordResult(decoded, input, time);
+  // 1. Prioritize Vietnamese word encoding first
+  const time = encodeWord(input);
+  if (time && !time.startsWith('[')) {
+    const code = timeToBase60(time);
+    return analyzeWordResult(input, code, time);
+  }
+
+  // 2. Fallback: check if input is a valid 3-char Base60 code
+  if (input.length === 3 && /^[a-zA-Z0-9]{3}$/.test(input)) {
+    const bTime = base60ToTime(input);
+    if (bTime && bTime.length === 6 && /^\d{6}$/.test(bTime)) {
+      const decoded = decodeWord(bTime);
+      if (decoded && !decoded.startsWith('[')) {
+        return analyzeWordResult(decoded, input, bTime);
+      }
     }
   }
 
-  // Otherwise assume it's a Vietnamese word
-  const time = encodeWord(input);
-  if (!time || time.startsWith('[')) {
-    return {
-      word: input,
-      code: '---',
-      isTwin: false,
-      message: 'Từ không có trong quy tắc âm học tiếng Việt của Base60.'
-    };
-  }
-
-  const code = timeToBase60(time);
-  return analyzeWordResult(input, code, time);
+  return {
+    word: input,
+    code: '---',
+    isTwin: false,
+    message: 'Từ không có trong quy tắc âm học tiếng Việt của Base60.'
+  };
 }
 
 function analyzeWordResult(word, code, time) {

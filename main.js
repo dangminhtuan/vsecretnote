@@ -10,6 +10,7 @@ import {
   encodeWord, decodeWord, timeToBase60, base60ToTime, TOKEN_REGEX
 , applyTone} from './vcomp.js';
 import { encodeCVNSS4Word, decodeCVNSS4Word } from './cvnss4.js';
+import { TWINS_DATA } from './twins.js';
 
 // --- UI MATRIX EFFECT ---
 const canvas = document.getElementById('matrix-canvas');
@@ -48,6 +49,8 @@ const txtFakeViet = document.getElementById('fake-viet-input');
 const txtTime5 = document.getElementById('time-5-input');
 const txtCompressedContinuous = document.getElementById('compressed-continuous-input');
 const txtCVNSS4 = document.getElementById('cvnss4-input');
+const txtHolyHours = document.getElementById('holy-hours-input');
+const txtTwins = document.getElementById('twins-input');
 
 const btnEncode = document.getElementById('btn-encode');
 const btnDecode = document.getElementById('btn-decode');
@@ -260,26 +263,285 @@ function renderBreakdown(pairs) {
   });
 }
 
+// ===== ⏰ SPECIAL TIME (HOLY HOUR) CODES =====
+export const HOLY_HOUR_CODES = {
+  // 1. Trục 24 giờ kép (HH == MM)
+  '0000': '000005', // cạ
+  '0101': '010123', // phạc
+  '0202': '020205', // gạch
+  '0303': '030320', // tài
+  '0404': '040429', // thiệt
+  '0505': '050520', // tràn
+  '0606': '060627', // xỉn
+  '0707': '070700', // hôn
+  '0808': '080801', // vú
+  '0909': '090900', // dâm
+  '1010': '101001', // mút (mms)
+  '1111': '111105', // chịch
+  '1212': '121200', // rên
+  '1313': '131301', // sướng
+  '1414': '141401', // nứng
+  '1515': '151501', // bướm
+  '1616': '161601', // liếm
+  '1717': '171700', // chim
+  '1818': '181802', // sờ
+  '1919': '191900', // ôm
+  '2020': '202005', // ngực
+  '2121': '212101', // nhấp (yys)
+  '2222': '222202', // lồn
+  '2323': '232305', // nghạnh
+
+  // 2. Thế số Đảo / Gánh (Mirror)
+  '0609': '060907', // khít (KDS)
+  '0906': '090605', // dạng
+  '1221': '122105', // rập
+  '2112': '211208', // nhoài
+  '1331': '133100', // săm
+  '1441': '144104', // nẫu
+  '0110': '011001', // đút (dms)
+  '0440': '044023', // thật
+  '0550': '055000', // kê
+
+  // 3. Thế số Sảnh Tiến (Straight)
+  '0123': '012317', // được
+  '1234': '123407', // rớt (r3S)
+  '2345': '234503', // nghẻm
+  '0234': '023423', // quặp
+  '0345': '034501', // ghém
+  '0012': '001214', // cuồng
+
+  // 4. Thế số Cặp Đôi (Pairs)
+  '1122': '112202', // chồn
+  '2211': '221101', // lích (lick)
+  '1020': '102007', // móp (liên tưởng bóp)
+  '2010': '201012', // nguôi
+  '0816': '081608'  // vòi
+};
+
+// Index TWINS_DATA for lightning-fast 3-tier lookup
+const twinsByC2 = {};
+const twinsByC1 = {};
+const twinsByWord = new Map();
+const twinsByCode = new Map();
+
+if (Array.isArray(TWINS_DATA)) {
+  TWINS_DATA.forEach(t => {
+    twinsByWord.set(t.word.toLowerCase(), t);
+    twinsByCode.set(t.code, t);
+    const c1 = t.code[0];
+    const c2 = t.code[1];
+    if (!twinsByC2[c2]) twinsByC2[c2] = [];
+    twinsByC2[c2].push(t);
+    if (!twinsByC1[c1]) twinsByC1[c1] = [];
+    twinsByC1[c1].push(t);
+  });
+}
+
+export function findNearestTwin(word) {
+  if (!word) return null;
+  const wLower = word.toLowerCase();
+  // Tầng 0: Bản thân là kỳ quan
+  if (twinsByWord.has(wLower)) {
+    return twinsByWord.get(wLower);
+  }
+  const time = encodeWord(word);
+  if (!time || time.startsWith('[')) return null;
+  const code = timeToBase60(time);
+  const c1 = code[0], c2 = code[1], c3 = code[2];
+
+  // Tầng 1: Cùng vần C2 (Ưu tiên cùng dấu C3, sau đó cùng phụ âm C1)
+  if (twinsByC2[c2] && twinsByC2[c2].length > 0) {
+    let best = twinsByC2[c2][0];
+    let bestScore = -1;
+    for (const t of twinsByC2[c2]) {
+      let score = 0;
+      if (t.code[2] === c3) score += 10;
+      if (t.code[0] === c1) score += 5;
+      if (score > bestScore) {
+        bestScore = score;
+        best = t;
+      }
+    }
+    return best;
+  }
+
+  // Tầng 2: Cùng phụ âm đầu C1
+  if (twinsByC1[c1] && twinsByC1[c1].length > 0) {
+    return twinsByC1[c1][0];
+  }
+
+  return (TWINS_DATA && TWINS_DATA.length > 0) ? TWINS_DATA[0] : null;
+}
+
+const holyHourList = Object.keys(HOLY_HOUR_CODES);
+
+export function findNearestHolyHour(hhmm) {
+  if (!hhmm || hhmm.length < 4) return hhmm;
+  if (HOLY_HOUR_CODES[hhmm]) return hhmm; // Đã là mốc giờ thiêng chuẩn
+
+  const hh = hhmm.substring(0, 2);
+  const mm = parseInt(hhmm.substring(2, 4), 10);
+
+  // 1. Cùng giờ HH trong danh sách giờ thiêng (ví dụ 0404, 0440; 1616...)
+  const sameHH = holyHourList.filter(h => h.startsWith(hh));
+  if (sameHH.length > 0) {
+    sameHH.sort((a, b) => {
+      const mmA = parseInt(a.substring(2, 4), 10);
+      const mmB = parseInt(b.substring(2, 4), 10);
+      return Math.abs(mmA - mm) - Math.abs(mmB - mm);
+    });
+    return sameHH[0];
+  }
+
+  // 2. Toàn cục: khoảng cách số gần nhất trong bảng giờ thiêng
+  const targetVal = parseInt(hhmm, 10);
+  let closest = holyHourList[0];
+  let minDiff = 99999;
+  for (const h of holyHourList) {
+    const diff = Math.abs(parseInt(h, 10) - targetVal);
+    if (diff < minDiff) {
+      minDiff = diff;
+      closest = h;
+    }
+  }
+  return closest;
+}
+
+export function wordToHolyHour(word) {
+  if (!word) return '';
+  const time = encodeWord(word);
+  if (!time || time.startsWith('[')) return '';
+  const hhmm = time.substring(0, 4);
+  return findNearestHolyHour(hhmm);
+}
+
+export function clearAllTextareas() {
+  if (txtDecrypted) txtDecrypted.value = '';
+  if (txtEncrypted) txtEncrypted.value = '';
+  if (txtCompressed) txtCompressed.value = '';
+  if (txtFakeViet) txtFakeViet.value = '';
+  if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = '';
+  if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = '';
+  if (txtTime5) txtTime5.value = '';
+  if (txtCompressedContinuous) txtCompressedContinuous.value = '';
+  if (txtCVNSS4) txtCVNSS4.value = '';
+  if (txtHolyHours) txtHolyHours.value = '';
+  if (txtTwins) txtTwins.value = '';
+  renderBreakdown([]);
+  if (typeof updateCompressionStats === 'function') updateCompressionStats();
+  updateCyberFontDisplay();
+}
+
+export function syncFromHolyHours() {
+  if (!txtHolyHours) return;
+  const text = txtHolyHours.value.trim();
+  if (!text) {
+    clearAllTextareas();
+    return;
+  }
+  const tokens = text.split(/\s+/);
+  const timeParts = [];
+  const wordParts = [];
+  const b60Parts = [];
+  const twinsParts = [];
+
+  tokens.forEach(t => {
+    if (!t) return;
+    if (/^\d{4}$/.test(t)) {
+      const full6 = HOLY_HOUR_CODES[t] || (t + '00');
+      const word = decodeWord(full6);
+      const b60 = timeToBase60(full6);
+      timeParts.push(full6);
+      wordParts.push(word);
+      b60Parts.push(b60);
+      const nearestTwin = findNearestTwin(word);
+      if (nearestTwin) {
+        twinsParts.push(nearestTwin.code);
+      } else {
+        twinsParts.push(word);
+      }
+    } else {
+      timeParts.push(t);
+      wordParts.push(t);
+      b60Parts.push(t);
+      twinsParts.push(t);
+    }
+  });
+
+  const fullTime = timeParts.join(' ');
+  const fullWords = wordParts.join(' ');
+  const fullB60 = b60Parts.join(' ');
+
+  if (txtEncrypted) txtEncrypted.value = fullTime;
+  if (txtDecrypted) txtDecrypted.value = fullWords;
+  if (txtCompressed) txtCompressed.value = fullB60;
+  if (txtCompressedContinuous) txtCompressedContinuous.value = fullB60.replace(/\s+/g, '');
+  if (txtTwins) txtTwins.value = twinsParts.join(' ');
+  if (txtTime5) txtTime5.value = timeTo5Digit(fullTime);
+  if (txtFakeViet) txtFakeViet.value = toFakeViet(fullWords);
+  if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = toCamelCase(fullWords);
+  if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = toNoAccentContinuous(fullWords);
+  if (txtCVNSS4) txtCVNSS4.value = wordParts.map(w => encodeCVNSS4Word(w)).join(' ');
+
+  if (typeof updateCompressionStats === 'function') updateCompressionStats();
+  updateCyberFontDisplay();
+}
+
+export function syncFromTwins() {
+  if (!txtTwins) return;
+  const text = txtTwins.value.trim();
+  if (!text) {
+    clearAllTextareas();
+    return;
+  }
+
+  const lines = text.split(/\r?\n/);
+  const allDecodedWords = [];
+
+  lines.forEach((line, lineIdx) => {
+    if (lineIdx > 0) allDecodedWords.push('\n');
+    const tokens = line.split(/\s+/);
+    tokens.forEach(t => {
+      if (!t) return;
+      // 1. If exact twin code from twinsByCode
+      if (twinsByCode.has(t)) {
+        allDecodedWords.push(twinsByCode.get(t).word);
+      } else if (t.length === 3 && /^[a-zA-Z0-9]{3}$/.test(t)) {
+        // 2. Any 3-character Base60 code
+        const timeCode = base60ToTime(t);
+        const decoded = decodeWord(timeCode);
+        if (decoded && !decoded.startsWith('[')) {
+          allDecodedWords.push(decoded);
+        } else {
+          allDecodedWords.push(t);
+        }
+      } else {
+        // 3. Fallback: word directly or other token
+        allDecodedWords.push(t);
+      }
+    });
+  });
+
+  const fullVi = allDecodedWords.join(' ').replace(/ \n /g, '\n').replace(/\n /g, '\n').replace(/ \n/g, '\n');
+  if (txtDecrypted) {
+    txtDecrypted.value = fullVi;
+    syncFromDecrypted();
+  }
+}
+
 function syncFromDecrypted() {
   const text = txtDecrypted.value;
   if (!text.trim()) {
-    if (txtDecrypted) txtDecrypted.value = '';
-    if (txtEncrypted) txtEncrypted.value = '';
-    if (txtCompressed) txtCompressed.value = '';
-          if (txtFakeViet) txtFakeViet.value = '';
-      if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = '';
-      if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = '';
-    if (txtTime5) txtTime5.value = '';
-    if (txtCompressedContinuous) txtCompressedContinuous.value = '';
-    if (txtCVNSS4) txtCVNSS4.value = '';
-    renderBreakdown([]);
+    clearAllTextareas();
     return;
-}
+  }
   const tokens = text.split(TOKEN_REGEX);
   let encryptedParts = [];
   let compressedParts = [];
   let breakdownPairs = [];
   let cvnss4Parts = [];
+  let twinsParts = [];
+  let holyParts = [];
 
   tokens.forEach(token => {
     if (!token) return;
@@ -291,22 +553,39 @@ function syncFromDecrypted() {
       compressedParts.push(b60Code);
       cvnss4Parts.push(encodeCVNSS4Word(token));
       breakdownPairs.push({ word: token, time: timeCode, base60: b60Code });
-    
+
+      const nearestTwin = findNearestTwin(token);
+      if (nearestTwin) {
+        twinsParts.push(nearestTwin.code);
+      } else {
+        twinsParts.push(token);
+      }
+      if (timeCode && timeCode.length >= 4) {
+        holyParts.push(wordToHolyHour(token));
+      } else {
+        holyParts.push(token);
+      }
     } else if (token.startsWith('[') && token.endsWith(']')) {
       encryptedParts.push(token);
       compressedParts.push(token);
       cvnss4Parts.push(token);
       breakdownPairs.push({ word: token.substring(1, token.length - 1), time: token, base60: token });
+      twinsParts.push(token);
+      holyParts.push(token);
     } else {
       encryptedParts.push(token);
       compressedParts.push(token);
       cvnss4Parts.push(token);
+      twinsParts.push(token);
+      holyParts.push(token);
     }
   });
 
   txtEncrypted.value = encryptedParts.join('');
   if(txtCompressed) txtCompressed.value = compressedParts.join('');
   if(txtCVNSS4) txtCVNSS4.value = cvnss4Parts.join('');
+  if(txtHolyHours && document.activeElement !== txtHolyHours) txtHolyHours.value = holyParts.join(' ').replace(/\s+/g, ' ').trim();
+  if(txtTwins && document.activeElement !== txtTwins) txtTwins.value = twinsParts.join(' ').replace(/\s+/g, ' ').trim();
   
   if(txtFakeViet) txtFakeViet.value = toFakeViet(text);
   
@@ -325,23 +604,16 @@ function syncFromDecrypted() {
 function syncFromTime() {
   const text = txtEncrypted.value;
   if (!text.trim()) {
-    if (txtDecrypted) txtDecrypted.value = '';
-    if (txtEncrypted) txtEncrypted.value = '';
-    if (txtCompressed) txtCompressed.value = '';
-          if (txtFakeViet) txtFakeViet.value = '';
-      if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = '';
-      if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = '';
-    if (txtTime5) txtTime5.value = '';
-    if (txtCompressedContinuous) txtCompressedContinuous.value = '';
-    if (txtCVNSS4) txtCVNSS4.value = '';
-    renderBreakdown([]);
+    clearAllTextareas();
     return;
-}
+  }
   const tokens = text.split(TOKEN_REGEX);
   let decryptedParts = [];
   let compressedParts = [];
   let breakdownPairs = [];
   let cvnss4Parts = [];
+  let twinsParts = [];
+  let holyParts = [];
 
   tokens.forEach(token => {
     if (!token) return;
@@ -352,23 +624,39 @@ function syncFromTime() {
       compressedParts.push(b60Code);
       cvnss4Parts.push(encodeCVNSS4Word(token));
       breakdownPairs.push({ time: token, word: decoded, base60: b60Code });
-    
+
+      const nearestTwin = findNearestTwin(decoded);
+      if (nearestTwin) {
+        twinsParts.push(nearestTwin.code);
+      } else {
+        twinsParts.push(decoded);
+      }
+      if (token && token.length >= 4) {
+        holyParts.push(findNearestHolyHour(token.substring(0, 4)));
+      } else {
+        holyParts.push(token);
+      }
     } else if (token.startsWith('[') && token.endsWith(']')) {
       decryptedParts.push(token);
       compressedParts.push(token);
       cvnss4Parts.push(token);
       breakdownPairs.push({ time: token, word: token.substring(1, token.length - 1), base60: token });
+      twinsParts.push(token);
+      holyParts.push(token);
     } else {
       decryptedParts.push(token);
       compressedParts.push(token);
       cvnss4Parts.push(token);
+      twinsParts.push(token);
+      holyParts.push(token);
     }
   });
 
   txtDecrypted.value = decryptedParts.join('');
   if(txtCVNSS4) txtCVNSS4.value = cvnss4Parts.join('');
   if(txtCompressed) txtCompressed.value = compressedParts.join('');
-  if(txtCVNSS4) txtCVNSS4.value = cvnss4Parts.join('');
+  if(txtHolyHours && document.activeElement !== txtHolyHours) txtHolyHours.value = holyParts.join(' ').replace(/\s+/g, ' ').trim();
+  if(txtTwins && document.activeElement !== txtTwins) txtTwins.value = twinsParts.join(' ').replace(/\s+/g, ' ').trim();
 
   if(txtFakeViet) txtFakeViet.value = toFakeViet(txtDecrypted.value);
 
@@ -380,6 +668,8 @@ function syncFromTime() {
   renderBreakdown(breakdownPairs);
   saveCurrentNote();
   if (typeof window.updateMnemonicTutorFromDecrypted === 'function') window.updateMnemonicTutorFromDecrypted();
+  if (typeof updateCompressionStats === 'function') updateCompressionStats();
+  updateCyberFontDisplay();
 }
 
 
@@ -395,14 +685,7 @@ function syncFromCompressedContinuous() {
   if (!txtCompressedContinuous) return;
   const val = txtCompressedContinuous.value.replace(/\s+/g, '');
   if (!val) {
-    if (txtDecrypted) txtDecrypted.value = '';
-    if (txtEncrypted) txtEncrypted.value = '';
-    if (txtCompressed) txtCompressed.value = '';
-          if (txtFakeViet) txtFakeViet.value = '';
-      if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = '';
-      if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = '';
-    if (txtTime5) txtTime5.value = '';
-    renderBreakdown([]);
+    clearAllTextareas();
     return;
   }
   
@@ -427,15 +710,7 @@ function syncFromCompressedContinuous() {
 function syncFromCVNSS4() {
   const text = (txtCVNSS4 ? txtCVNSS4.value : '').trim();
   if (!text) {
-    if (txtDecrypted) txtDecrypted.value = '';
-    if (txtEncrypted) txtEncrypted.value = '';
-    if (txtCompressed) txtCompressed.value = '';
-          if (txtFakeViet) txtFakeViet.value = '';
-      if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = '';
-      if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = '';
-    if (txtTime5) txtTime5.value = '';
-    if (txtCompressedContinuous) txtCompressedContinuous.value = '';
-    renderBreakdown([]);
+    clearAllTextareas();
     return;
   }
 
@@ -443,12 +718,16 @@ function syncFromCVNSS4() {
   const allTimeParts = [];
   const allDecryptedParts = [];
   const allCompressedParts = [];
+  const allTwinsParts = [];
+  const allHolyParts = [];
 
   lines.forEach((line, lineIdx) => {
     if (lineIdx > 0) {
       allTimeParts.push('\n');
       allDecryptedParts.push('\n');
       allCompressedParts.push('\n');
+      allTwinsParts.push('\n');
+      allHolyParts.push('\n');
     }
     const tokens = line.split(TOKEN_REGEX);
     tokens.forEach(token => {
@@ -464,10 +743,20 @@ function syncFromCVNSS4() {
         b60 = formatB60WithCase(b60, decoded);
         allTimeParts.push(timeCode);
         allCompressedParts.push(b60);
+
+        const nearestTwin = findNearestTwin(decoded);
+        allTwinsParts.push(nearestTwin ? nearestTwin.code : decoded);
+        if (timeCode && timeCode.length >= 4) {
+          allHolyParts.push(wordToHolyHour(decoded));
+        } else {
+          allHolyParts.push(decoded);
+        }
       } else {
         allDecryptedParts.push(token);
         allTimeParts.push(token);
         allCompressedParts.push(token);
+        allTwinsParts.push(token);
+        allHolyParts.push(token);
       }
     });
   });
@@ -475,6 +764,9 @@ function syncFromCVNSS4() {
   if (txtDecrypted) txtDecrypted.value = allDecryptedParts.join('');
   if (txtEncrypted) txtEncrypted.value = allTimeParts.join('');
   if (txtCompressed) txtCompressed.value = allCompressedParts.join('');
+  if (txtCompressedContinuous) txtCompressedContinuous.value = txtCompressed ? txtCompressed.value.replace(/\s+/g, '') : '';
+  if (txtHolyHours) txtHolyHours.value = allHolyParts.join(' ').replace(/\s+/g, ' ').trim();
+  if (txtTwins) txtTwins.value = allTwinsParts.join(' ').replace(/\s+/g, ' ').trim();
   
   if(txtFakeViet) txtFakeViet.value = typeof toFakeViet === 'function' ? toFakeViet(txtDecrypted.value) : '';
   
@@ -482,9 +774,9 @@ function syncFromCVNSS4() {
   
   if(document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = typeof toNoAccentContinuous === 'function' ? toNoAccentContinuous(txtDecrypted ? txtDecrypted.value : '') : '';
   if (txtTime5) txtTime5.value = typeof timeTo5Digit === 'function' ? timeTo5Digit(txtEncrypted.value) : '';
-  if (txtCompressedContinuous) txtCompressedContinuous.value = txtCompressed ? txtCompressed.value.replace(/\s+/g, '') : '';
   
   if (typeof updateCompressionStats === 'function') updateCompressionStats();
+  updateCyberFontDisplay();
   autoResizeAll();
   forceSave();
 }
@@ -493,18 +785,9 @@ function syncFromCompressed() {
   if(!txtCompressed) return;
   const rawText = txtCompressed.value;
   if (!rawText.trim()) {
-    if (txtDecrypted) txtDecrypted.value = '';
-    if (txtEncrypted) txtEncrypted.value = '';
-    if (txtCompressed) txtCompressed.value = '';
-          if (txtFakeViet) txtFakeViet.value = '';
-      if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = '';
-      if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = '';
-    if (txtTime5) txtTime5.value = '';
-    if (txtCompressedContinuous) txtCompressedContinuous.value = '';
-    if (txtCVNSS4) txtCVNSS4.value = '';
-    renderBreakdown([]);
+    clearAllTextareas();
     return;
-}
+  }
 
   // Xu ly tung dong rieng de bao toan ky tu xuong dong
   const lines = rawText.split(/\r?\n/);
@@ -512,12 +795,16 @@ function syncFromCompressed() {
   const allDecryptedParts = [];
   const allBreakdownPairs = [];
   const allCvnss4Parts = [];
+  const allTwinsParts = [];
+  const allHolyParts = [];
 
   lines.forEach((line, lineIdx) => {
     if (lineIdx > 0) {
       allTimeParts.push('\n');
       allDecryptedParts.push('\n');
       allCvnss4Parts.push('\n');
+      allTwinsParts.push('\n');
+      allHolyParts.push('\n');
     }
     const tokens = line.split(TOKEN_REGEX);
     tokens.forEach(token => {
@@ -539,21 +826,43 @@ function syncFromCompressed() {
         allDecryptedParts.push(decoded);
         allCvnss4Parts.push(encodeCVNSS4Word(decoded));
         allBreakdownPairs.push({ base60: token, time: timeCode, word: decoded });
+
+        if (decoded && !decoded.startsWith('[')) {
+          const nearestTwin = findNearestTwin(decoded);
+          allTwinsParts.push(nearestTwin ? nearestTwin.code : decoded);
+          if (timeCode && timeCode.length >= 4) {
+            allHolyParts.push(wordToHolyHour(decoded));
+          } else {
+            allHolyParts.push(decoded);
+          }
+        } else {
+          allTwinsParts.push(token);
+          allHolyParts.push(token);
+        }
       } else if (token.startsWith('[') && token.endsWith(']')) {
         allTimeParts.push(token);
         allDecryptedParts.push(token);
         allCvnss4Parts.push(token);
         allBreakdownPairs.push({ base60: token, time: token, word: token.substring(1, token.length - 1) });
+        allTwinsParts.push(token);
+        allHolyParts.push(token);
       } else {
         allTimeParts.push(token);
         allDecryptedParts.push(token);
         allCvnss4Parts.push(token);
+        allTwinsParts.push(token);
+        allHolyParts.push(token);
       }
     });
   });
 
   txtEncrypted.value = allTimeParts.join('');
   txtDecrypted.value = allDecryptedParts.join('');
+  if (txtHolyHours) txtHolyHours.value = allHolyParts.join(' ').replace(/\s+/g, ' ').trim();
+  if (txtTwins) txtTwins.value = allTwinsParts.join(' ').replace(/\s+/g, ' ').trim();
+  if (txtCompressedContinuous && document.activeElement !== txtCompressedContinuous) {
+    txtCompressedContinuous.value = txtCompressed.value.replace(/\s+/g, '');
+  }
 
   if(txtFakeViet) txtFakeViet.value = toFakeViet(txtDecrypted.value);
 
@@ -670,6 +979,20 @@ if (txtCompressed) txtCompressed.addEventListener('input', syncFromCompressed);
 if (txtFakeViet) txtFakeViet.addEventListener('input', syncFromFakeViet);
 if (txtTime5) txtTime5.addEventListener('input', syncFromTime5);
 if (txtCompressedContinuous) txtCompressedContinuous.addEventListener('input', syncFromCompressedContinuous);
+if (txtHolyHours) txtHolyHours.addEventListener('input', syncFromHolyHours);
+if (txtTwins) txtTwins.addEventListener('input', syncFromTwins);
+const inpCamelCase = document.getElementById('camel-case-input');
+if (inpCamelCase) {
+  inpCamelCase.addEventListener('input', () => {
+    if (!inpCamelCase.value.trim()) clearAllTextareas();
+  });
+}
+const inpNoAccent = document.getElementById('no-accent-input');
+if (inpNoAccent) {
+  inpNoAccent.addEventListener('input', () => {
+    if (!inpNoAccent.value.trim()) clearAllTextareas();
+  });
+}
 
 let saveTimeout = null;
 
@@ -1168,9 +1491,7 @@ function enterSandboxMode(silent = false) {
   localStorage.setItem('timecypher_last_mode', 'sandbox');
   document.body.classList.add('sandbox-mode');
   currentNoteId = 'playground';
-  txtDecrypted.value = '';
-  txtEncrypted.value = '';
-  if(txtCompressed) txtCompressed.value = '';
+  clearAllTextareas();
   currentNoteTags = [];
   currentNoteCounters = {};
   currentNoteRelations = [];
@@ -2547,9 +2868,8 @@ document.addEventListener('keydown', (e) => {
 });
 
 document.getElementById('btn-sandbox-clear')?.addEventListener('click', () => {
+  clearAllTextareas();
   if (typeof txtDecrypted !== 'undefined' && txtDecrypted) {
-    txtDecrypted.value = '';
-    txtDecrypted.dispatchEvent(new Event('input')); // Đồng bộ xóa toàn bộ
     txtDecrypted.focus();
   }
 });
@@ -2701,6 +3021,81 @@ if (chkViewCase) {
     }
   });
 }
+
+// 5. Toggle Visible Textboxes (Bật/Tắt từng ô text)
+const ALL_BOX_IDS = [
+  'group-text',
+  'group-compressed',
+  'group-continuous',
+  'group-holy',
+  'group-twins',
+  'group-time',
+  'group-time5',
+  'group-cvnss4',
+  'group-fakeviet',
+  'group-camel',
+  'group-noaccent'
+];
+const MINIMAL_BOX_IDS = [
+  'group-text',
+  'group-compressed',
+  'group-continuous',
+  'group-holy',
+  'group-twins'
+];
+
+let visibleBoxes = null;
+try {
+  const saved = localStorage.getItem('pref_visible_boxes');
+  if (saved) {
+    visibleBoxes = JSON.parse(saved);
+  }
+} catch (e) {
+  console.error(e);
+}
+
+if (!Array.isArray(visibleBoxes) || visibleBoxes.length === 0) {
+  visibleBoxes = [...ALL_BOX_IDS];
+}
+
+function applyBoxVisibility() {
+  document.querySelectorAll('.chk-box-toggle').forEach(chk => {
+    const targetId = chk.dataset.target;
+    const isVisible = visibleBoxes.includes(targetId);
+    chk.checked = isVisible;
+    const el = document.getElementById(targetId);
+    if (el) {
+      el.style.display = isVisible ? '' : 'none';
+    }
+  });
+  localStorage.setItem('pref_visible_boxes', JSON.stringify(visibleBoxes));
+}
+
+document.querySelectorAll('.chk-box-toggle').forEach(chk => {
+  chk.addEventListener('change', () => {
+    const targetId = chk.dataset.target;
+    if (chk.checked) {
+      if (!visibleBoxes.includes(targetId)) visibleBoxes.push(targetId);
+    } else {
+      visibleBoxes = visibleBoxes.filter(id => id !== targetId);
+    }
+    applyBoxVisibility();
+  });
+});
+
+document.getElementById('btn-view-minimal')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  visibleBoxes = [...MINIMAL_BOX_IDS];
+  applyBoxVisibility();
+});
+
+document.getElementById('btn-view-all')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  visibleBoxes = [...ALL_BOX_IDS];
+  applyBoxVisibility();
+});
+
+applyBoxVisibility();
 
 // ===== 🔗 SHARE LINK =====
 document.getElementById('btn-share-link')?.addEventListener('click', () => {
@@ -2988,59 +3383,6 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
 (function() {
   const LOOKAHEAD_MINUTES = 3; // Dò trước 3 phút
 
-  const HOLY_HOUR_CODES = {
-    // 1. Trục 24 giờ kép (HH == MM)
-    '0000': '000005', // cạ
-    '0101': '010123', // phạc
-    '0202': '020205', // gạch
-    '0303': '030320', // tài
-    '0404': '040429', // thiệt
-    '0505': '050520', // tràn
-    '0606': '060627', // xỉn
-    '0707': '070700', // hôn
-    '0808': '080801', // vú
-    '0909': '090900', // dâm
-    '1010': '101001', // mút (mms)
-    '1111': '111105', // chịch
-    '1212': '121200', // rên
-    '1313': '131301', // sướng
-    '1414': '141401', // nứng
-    '1515': '151501', // bướm
-    '1616': '161601', // liếm
-    '1717': '171700', // chim
-    '1818': '181802', // sờ
-    '1919': '191900', // ôm
-    '2020': '202005', // ngực
-    '2121': '212101', // nhấp (yys)
-    '2222': '222202', // lồn
-    '2323': '232305', // nghạnh
-
-    // 2. Thế số Đảo / Gánh (Mirror)
-    '0609': '060907', // khít (KDS)
-    '0906': '090605', // dạng
-    '1221': '122105', // rập
-    '2112': '211208', // nhoài
-    '1331': '133100', // săm
-    '1441': '144104', // nẫu
-    '0110': '011001', // đút (dms)
-    '0440': '044023', // thật
-    '0550': '055000', // kê
-
-    // 3. Thế số Sảnh Tiến (Straight)
-    '0123': '012317', // được
-    '1234': '123407', // rớt (r3S)
-    '2345': '234503', // nghẻm
-    '0234': '023423', // quặp
-    '0345': '034501', // ghém
-    '0012': '001214', // cuồng
-
-    // 4. Thế số Cặp Đôi (Pairs)
-    '1122': '112202', // chồn
-    '2211': '221101', // lích (lick)
-    '1020': '102007', // móp (liên tưởng bóp)
-    '2010': '201012', // nguôi
-    '0816': '081608'  // vòi
-  };
 
   function isSpecialTime(h, m) {
     const hh = String(h).padStart(2, '0');
@@ -3388,28 +3730,39 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
   }
 
   // Attach click listener to all textareas
-  const allTextareas = [txtDecrypted, txtEncrypted, txtCompressed, txtFakeViet, txtTime5, txtCompressedContinuous];
+  const allTextareas = [
+    txtDecrypted,
+    txtCompressed,
+    txtCompressedContinuous,
+    txtHolyHours,
+    txtTwins,
+    txtEncrypted,
+    txtTime5,
+    txtCVNSS4,
+    txtFakeViet,
+    document.getElementById('camel-case-input'),
+    document.getElementById('no-accent-input')
+  ].filter(Boolean);
+
   allTextareas.forEach(ta => {
-    if (ta) {
-      ta.addEventListener('focus', (e) => {
-        if (!isToolbarEnabled) return;
-        // Show context menu at top right of the textarea
-        activeContextInput = ta;
-        const rect = ta.getBoundingClientRect();
-        
-        ctxMenu.style.display = 'flex';
-        // Position it near the top-right of the textarea, accounting for scroll
-        let topPos = rect.top + window.scrollY - 45; // a bit above
-        if (rect.top < 60) {
-          topPos = rect.bottom + window.scrollY + 8;
-        }
-        let leftPos = rect.right + window.scrollX - ctxMenu.offsetWidth;
-        if (leftPos < 0) leftPos = rect.left + window.scrollX;
-        
-        ctxMenu.style.top = topPos + 'px';
-        ctxMenu.style.left = leftPos + 'px';
-      });
-    }
+    ta.addEventListener('focus', (e) => {
+      if (!isToolbarEnabled) return;
+      // Show context menu at top right of the textarea
+      activeContextInput = ta;
+      const rect = ta.getBoundingClientRect();
+      
+      ctxMenu.style.display = 'flex';
+      // Position it near the top-right of the textarea, accounting for scroll
+      let topPos = rect.top + window.scrollY - 45; // a bit above
+      if (rect.top < 60) {
+        topPos = rect.bottom + window.scrollY + 8;
+      }
+      let leftPos = rect.right + window.scrollX - ctxMenu.offsetWidth;
+      if (leftPos < 0) leftPos = rect.left + window.scrollX;
+      
+      ctxMenu.style.top = topPos + 'px';
+      ctxMenu.style.left = leftPos + 'px';
+    });
   });
 
   // Hide when clicking outside
@@ -3424,20 +3777,63 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
   // Context Menu Buttons
   document.getElementById('ctx-close')?.addEventListener('click', hideContextMenu);
 
-  document.getElementById('ctx-copy')?.addEventListener('click', () => {
-    if (activeContextInput && activeContextInput.value) {
-      navigator.clipboard.writeText(activeContextInput.value).then(() => {
-        showToast('Đã copy!');
+  const btnCtxCopy = document.getElementById('ctx-copy');
+  btnCtxCopy?.addEventListener('mousedown', (e) => e.preventDefault());
+  btnCtxCopy?.addEventListener('click', () => {
+    if (!activeContextInput) return;
+    const start = activeContextInput.selectionStart;
+    const end = activeContextInput.selectionEnd;
+    const hasSelection = (start !== undefined && end !== undefined && start !== end);
+    const val = activeContextInput.value || '';
+    const textToCopy = hasSelection ? val.substring(start, end) : val;
+
+    if (textToCopy) {
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        showToast('Đã copy [^C]!');
         hideContextMenu();
       });
     }
   });
 
-  document.getElementById('ctx-clear')?.addEventListener('click', () => {
-    if (activeContextInput) {
-      activeContextInput.value = '';
-      activeContextInput.dispatchEvent(new Event('input'));
+  const btnCtxCut = document.getElementById('ctx-cut') || document.getElementById('ctx-clear');
+  btnCtxCut?.addEventListener('mousedown', (e) => e.preventDefault());
+  btnCtxCut?.addEventListener('click', () => {
+    if (!activeContextInput) return;
+    const start = activeContextInput.selectionStart;
+    const end = activeContextInput.selectionEnd;
+    const hasSelection = (start !== undefined && end !== undefined && start !== end);
+    const val = activeContextInput.value || '';
+    const textToCut = hasSelection ? val.substring(start, end) : val;
+
+    if (!textToCut) {
       hideContextMenu();
+      return;
+    }
+
+    const doCut = () => {
+      if (hasSelection) {
+        activeContextInput.value = val.substring(0, start) + val.substring(end);
+        activeContextInput.selectionStart = activeContextInput.selectionEnd = start;
+      } else {
+        activeContextInput.value = '';
+      }
+      if (!activeContextInput.value.trim()) {
+        clearAllTextareas();
+      } else {
+        activeContextInput.dispatchEvent(new Event('input'));
+      }
+      showToast('Đã cắt [^X]!');
+      hideContextMenu();
+    };
+
+    if (navigator.clipboard?.writeText) {
+      navigator.clipboard.writeText(textToCut).then(doCut).catch(() => {
+        document.execCommand('copy');
+        doCut();
+      });
+    } else {
+      document.execCommand('copy');
+      doCut();
     }
   });
 

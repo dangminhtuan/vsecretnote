@@ -878,7 +878,7 @@ body.sandbox-mode .status-panel,
 body.sandbox-mode #matrix-canvas-container,
 body.sandbox-mode .input-group:nth-child(1),
 body.sandbox-mode .input-group:nth-child(2),
-body.sandbox-mode #backlinks-container,
+body.sandbox-mode #game-dashboard,
 body.sandbox-mode .controls,
 body.sandbox-mode .label-row:not(#sandbox-debug-container .label-row) {
   display: none !important;
