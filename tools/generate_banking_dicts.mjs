@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 import { REAL_VIETNAMESE_WORDS, BASE60_MAPPING, RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2, CONSONANTS_BASE, CONSONANTS_EXTRA } from 'file:///d:/__G%20AG%20Projects/vsecretnote_hkC_20260815/data.js';
-import { removeVietnameseTones, encodeWord, timeToBase60, BASE60_HH } from 'file:///d:/__G%20AG%20Projects/vsecretnote_hkC_20260815/vcomp.js';
+import { removeVietnameseTones, encodeWord, timeToBase60, BASE60_HH, extractPhonetics } from 'file:///d:/__G%20AG%20Projects/vsecretnote_hkC_20260815/vcomp.js';
 
 const projectRoot = 'd:/__G AG Projects/vsecretnote_hkC_20260815';
 const publicDir = path.join(projectRoot, 'public');
@@ -124,23 +124,31 @@ export function stripAllAccents(str) {
     .toLowerCase();
 }
 
-const allConsonants = [...new Set([...CONSONANTS_BASE, ...CONSONANTS_EXTRA].filter(Boolean))].sort((a,b) => b.length - a.length);
+const getPhonetics = extractPhonetics;
 
-function getPhonetics(word) {
-  const [cleanWord, tone] = removeVietnameseTones(word.toLowerCase());
-  let consonant = '';
-  let rhyme = cleanWord;
-  for (const c of allConsonants) {
-    if (cleanWord.startsWith(c)) {
-      consonant = c;
-      rhyme = cleanWord.substring(c.length);
-      break;
-    }
-  }
-  if (consonant === 'gi') {
-    consonant = 'd';
-  }
-  return { consonant, rhyme, tone };
+const PREFERRED_ANCHOR_WORDS = new Set([
+  'sướng', 'ôm', 'soán', 'ong', 'sác', 'són', 'ruộng', 'muối', 'luyện', 'hiếu', 'hiểu',
+  'chuồn', 'khang', 'kháng', 'điện', 'vùng', 'huấn', 'suốt', 'núp', 'ngửi', 'đỡ',
+  'chích', 'giết', 'minh', 'mình', 'lõi', 'nhập', 'ngực', 'gạch', 'vỉa', 'vía', 'giếng'
+]);
+
+function getWordEleganceScore(word, code, tone) {
+  if (!code || code.length !== 3) return 0;
+  const c1 = code[0], c2 = code[1], c3 = code[2];
+  const l1 = c1.toLowerCase(), l2 = c2.toLowerCase(), l3 = c3.toLowerCase();
+
+  // 1. Tam hoa tuyet doi (Exact Triple 3x: sướng=sss, ôm=zzz, giạm=jjj)
+  if (c1 === c2 && c2 === c3) return 1000;
+
+  // 2. Tam hoa cung chu cai (Case-insensitive Triple: soán=ssS, ong=zzZ, sác=SSs, són=sSS)
+  if (l1 === l2 && l2 === l3) return 800;
+
+  // 3. Tu vung thong dung / uu tien dac biet
+  if (PREFERRED_ANCHOR_WORDS.has(word)) return 500;
+
+  // 4. Tone preference (ngang 0 > sac 1 > huyen 2 > hoi 3 > nang 5 > nga 4)
+  const toneScores = [50, 45, 40, 30, 20, 25];
+  return toneScores[tone] || 0;
 }
 
 function getTwinAnchor(rhyme) {
@@ -158,11 +166,17 @@ function getTwinAnchor(rhyme) {
       return (ph.consonant === cons || (cons === 'g' && ph.consonant === 'gi')) && ph.rhyme === rhyme;
     });
     if (matches.length > 0) {
-      matches.sort((a,b) => getPhonetics(a).tone - getPhonetics(b).tone);
-      const anchorWord = matches[0];
-      const enc = encodeWord(anchorWord);
-      if (enc && !enc.startsWith('[')) {
-        return { word: anchorWord, code: timeToBase60(enc) };
+      const scored = matches.map(w => {
+        const enc = encodeWord(w);
+        if (!enc || enc.startsWith('[')) return null;
+        const code = timeToBase60(enc);
+        const ph = getPhonetics(w);
+        return { word: w, code, score: getWordEleganceScore(w, code, ph.tone) };
+      }).filter(Boolean);
+
+      if (scored.length > 0) {
+        scored.sort((a, b) => b.score - a.score);
+        return { word: scored[0].word, code: scored[0].code };
       }
     }
   }
@@ -219,7 +233,18 @@ unaccentedGroups.forEach((words, unaccented) => {
   const rhymeEntries = Array.from(byRhyme.entries());
 
   rhymeEntries.forEach(([rhyme, groupWords], idx) => {
-    groupWords.sort((a, b) => getPhonetics(a).tone - getPhonetics(b).tone);
+    groupWords.sort((a, b) => {
+      const encA = encodeWord(a), encB = encodeWord(b);
+      const codeA = encA && !encA.startsWith('[') ? timeToBase60(encA) : '';
+      const codeB = encB && !encB.startsWith('[') ? timeToBase60(encB) : '';
+      const phA = getPhonetics(a), phB = getPhonetics(b);
+      const scoreA = getWordEleganceScore(a, codeA, phA.tone);
+      const scoreB = getWordEleganceScore(b, codeB, phB.tone);
+      if (scoreA >= 800 || scoreB >= 800) {
+        return scoreB - scoreA;
+      }
+      return phA.tone - phB.tone;
+    });
     const bestWord = groupWords[0];
     const bestEnc = encodeWord(bestWord);
     if (!bestEnc || bestEnc.startsWith('[')) return;
