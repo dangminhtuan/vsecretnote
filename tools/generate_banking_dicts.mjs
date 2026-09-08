@@ -320,13 +320,43 @@ function createZip(zipFileName, contentLines) {
   console.log(`✓ Đã tạo thành công: ${zipFileName} (${contentLines.length} mục)`);
 }
 
-createZip('Gboard_Banking_Telex.zip', telexLines);
-createZip('Gboard_Banking_VNI.zip', vniLines);
-createZip('Gboard_Learn_NoTone.zip', learnNoToneLines);
+const utilityDicts = {
+  N: learnNoToneLines,
+  V: vniLines,
+  T: telexLines
+};
+
+const utilityCombos = [
+  { name: 'Gboard_Utility_EMPTY.zip', keys: [] },
+  { name: 'Gboard_Utility_N.zip', keys: ['N'], alias: 'Gboard_Learn_NoTone.zip' },
+  { name: 'Gboard_Utility_V.zip', keys: ['V'], alias: 'Gboard_Banking_VNI.zip' },
+  { name: 'Gboard_Utility_T.zip', keys: ['T'], alias: 'Gboard_Banking_Telex.zip' },
+  { name: 'Gboard_Utility_N_V.zip', keys: ['N', 'V'] },
+  { name: 'Gboard_Utility_N_T.zip', keys: ['N', 'T'] },
+  { name: 'Gboard_Utility_V_T.zip', keys: ['V', 'T'] },
+  { name: 'Gboard_Utility_N_V_T.zip', keys: ['N', 'V', 'T'] }
+];
+
+console.log("-> Bắt đầu tạo 8 file Zip tổ hợp Tiện Dụng...");
+for (const combo of utilityCombos) {
+  const combined = [];
+  for (const k of combo.keys) {
+    combined.push(...utilityDicts[k]);
+  }
+  const lines = [...new Set(combined)];
+  createZip(combo.name, lines);
+
+  if (combo.alias) {
+    const src = path.join(publicDir, combo.name);
+    const dst = path.join(publicDir, combo.alias);
+    fs.copyFileSync(src, dst);
+    console.log(`   ✓ Đã sao chép sang alias: ${combo.alias}`);
+  }
+}
 
 // Dọn dẹp temp
 const tempTxtFile = path.join(publicDir, 'dictionary.txt');
 if (fs.existsSync(tempTxtFile)) {
   fs.unlinkSync(tempTxtFile);
 }
-console.log("=== HOÀN TẤT TẠO 3 GÓI TIỆN ÍCH ĐỘC LẬP! ===");
+console.log("=== HOÀN TẤT TẠO 8 GÓI TIỆN DỤNG TỔ HỢP! ===");

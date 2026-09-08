@@ -1219,12 +1219,52 @@ function checkUrlParams() {
     }
   }
 
+  // Quản lý tải tổ hợp Từ Điển Gboard TIỆN DỤNG (Học vần, VNI, Telex)
+  function updateUtilityDownloadLink() {
+    const chkN = document.getElementById('chk-util-n');
+    const chkV = document.getElementById('chk-util-v');
+    const chkT = document.getElementById('chk-util-t');
+    if (!chkN || !chkV || !chkT) return;
+
+    const activeKeys = [];
+    if (chkN.checked) activeKeys.push('N');
+    if (chkV.checked) activeKeys.push('V');
+    if (chkT.checked) activeKeys.push('T');
+
+    let zipName = '';
+    if (activeKeys.length === 0) {
+      zipName = 'Gboard_Utility_EMPTY.zip';
+    } else if (activeKeys.length === 1 && activeKeys[0] === 'N') {
+      zipName = 'Gboard_Learn_NoTone.zip';
+    } else if (activeKeys.length === 1 && activeKeys[0] === 'V') {
+      zipName = 'Gboard_Banking_VNI.zip';
+    } else if (activeKeys.length === 1 && activeKeys[0] === 'T') {
+      zipName = 'Gboard_Banking_Telex.zip';
+    } else {
+      zipName = `Gboard_Utility_${activeKeys.join('_')}.zip`;
+    }
+
+    const dlUtilLink = document.getElementById('dl-util-link');
+    const dlUtilFilename = document.getElementById('dl-util-filename');
+    if (dlUtilLink) {
+      dlUtilLink.href = `/${zipName}`;
+      dlUtilLink.download = zipName;
+    }
+    if (dlUtilFilename) {
+      dlUtilFilename.textContent = zipName;
+    }
+  }
+
   ['chk-r', 'chk-f', 'chk-b', 'chk-l'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', updateGboardDownloadLink);
+  });
+  ['chk-util-n', 'chk-util-v', 'chk-util-t'].forEach(id => {
+    document.getElementById(id)?.addEventListener('change', updateUtilityDownloadLink);
   });
   
   // Chạy lần đầu khởi tạo
   updateGboardDownloadLink();
+  updateUtilityDownloadLink();
 
   renderDictTable();
   initSmartOmnibox();
