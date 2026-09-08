@@ -126,29 +126,53 @@ export function stripAllAccents(str) {
 
 const getPhonetics = extractPhonetics;
 
+const syllablesPath = path.join(projectRoot, 'public', 'syllables.json');
+const COMMON_SYLLABLES = fs.existsSync(syllablesPath)
+  ? new Set(JSON.parse(fs.readFileSync(syllablesPath, 'utf8')).map(s => s.toLowerCase()))
+  : new Set();
+
+const twinsPath = path.join(projectRoot, 'twins_data_full.json');
+const TWINS_MAP = new Map();
+if (fs.existsSync(twinsPath)) {
+  const twinsData = JSON.parse(fs.readFileSync(twinsPath, 'utf8'));
+  twinsData.forEach(t => TWINS_MAP.set(t.word, t));
+}
+
 const PREFERRED_ANCHOR_WORDS = new Set([
-  'sướng', 'ôm', 'soán', 'ong', 'sác', 'són', 'ruộng', 'muối', 'luyện', 'hiếu', 'hiểu',
+  'mượn', 'muốn', 'sướng', 'ôm', 'soán', 'ong', 'sác', 'són', 'ruộng', 'muối', 'luyện', 'hiếu', 'hiểu',
   'chuồn', 'khang', 'kháng', 'điện', 'vùng', 'huấn', 'suốt', 'núp', 'ngửi', 'đỡ',
   'chích', 'giết', 'minh', 'mình', 'lõi', 'nhập', 'ngực', 'gạch', 'vỉa', 'vía', 'giếng'
 ]);
 
 function getWordEleganceScore(word, code, tone) {
-  if (!code || code.length !== 3) return 0;
+  if (!code || code.length !== 3) return -1000;
   const c1 = code[0], c2 = code[1], c3 = code[2];
-  const l1 = c1.toLowerCase(), l2 = c2.toLowerCase(), l3 = c3.toLowerCase();
 
-  // 1. Tam hoa tuyet doi (Exact Triple 3x: sướng=sss, ôm=zzz, giạm=jjj)
-  if (c1 === c2 && c2 === c3) return 1000;
+  // Ưu tiên 1: CÁC KỲ QUAN (twins_data_full.json)
+  const twin = TWINS_MAP.get(word);
+  if (twin) {
+    if (twin.pattern === 'triple') {
+      if (c1 === c2 && c2 === c3) return 3000; // Tam hoa tuyệt đối sss, zzz, jjj
+      return 2800; // Tam hoa hoa-thường ssS, zzZ, SSs, sSS
+    }
+    if (twin.pattern === 'head') return 2000; // Cặp lặp mỏ neo đầu rry, mme, lly, CCi
+  }
 
-  // 2. Tam hoa cung chu cai (Case-insensitive Triple: soán=ssS, ong=zzZ, sác=SSs, són=sSS)
-  if (l1 === l2 && l2 === l3) return 800;
+  // Ưu tiên 2: CÁC TỪ PHỔ BIẾN
+  let score = 0;
+  if (PREFERRED_ANCHOR_WORDS.has(word)) {
+    score += 400;
+  }
+  if (COMMON_SYLLABLES.has(word)) {
+    score += 300;
+  } else {
+    score -= 500; // Phạt nặng từ cổ / hiếm không có trong từ điển âm tiết chuẩn
+  }
 
-  // 3. Tu vung thong dung / uu tien dac biet
-  if (PREFERRED_ANCHOR_WORDS.has(word)) return 500;
-
-  // 4. Tone preference (ngang 0 > sac 1 > huyen 2 > hoi 3 > nang 5 > nga 4)
+  // Thứ tự thanh điệu tự nhiên
   const toneScores = [50, 45, 40, 30, 20, 25];
-  return toneScores[tone] || 0;
+  score += (toneScores[tone] || 0);
+  return score;
 }
 
 function getTwinAnchor(rhyme) {
@@ -240,10 +264,7 @@ unaccentedGroups.forEach((words, unaccented) => {
       const phA = getPhonetics(a), phB = getPhonetics(b);
       const scoreA = getWordEleganceScore(a, codeA, phA.tone);
       const scoreB = getWordEleganceScore(b, codeB, phB.tone);
-      if (scoreA >= 800 || scoreB >= 800) {
-        return scoreB - scoreA;
-      }
-      return phA.tone - phB.tone;
+      return scoreB - scoreA;
     });
     const bestWord = groupWords[0];
     const bestEnc = encodeWord(bestWord);
