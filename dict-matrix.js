@@ -21,6 +21,23 @@ document.querySelectorAll('.tab-btn[data-target]').forEach(btn => {
     const targetId = btn.getAttribute('data-target');
     const targetContent = document.getElementById(targetId);
     if (targetContent) targetContent.classList.add('active');
+
+    // Đóng dropdown download nếu đang mở khi chuyển tab
+    const dlMenu = document.getElementById('dl-menu');
+    const dlBtn = document.getElementById('dl-btn');
+    if (dlMenu) dlMenu.classList.remove('show');
+    if (dlBtn) dlBtn.classList.remove('active');
+
+    const tabName = targetId === 'tab-matrix' ? 'matrix' : (targetId === 'tab-dict' ? 'dict' : null);
+    if (tabName) {
+      const url = new URL(window.location);
+      url.searchParams.set('tab', tabName);
+      url.searchParams.delete('action');
+      window.history.replaceState(null, '', url);
+      if (window.__VSN_NAV_MANAGER__) {
+        window.__VSN_NAV_MANAGER__.updateState();
+      }
+    }
   });
 });
 
@@ -771,6 +788,14 @@ window.jumpToDictionary = function({ rhyme, toneName, consGroup, consonant, word
   if (dictTabBtn) dictTabBtn.classList.add('active');
   if (dictTabContent) dictTabContent.classList.add('active');
 
+  const url = new URL(window.location);
+  url.searchParams.set('tab', 'dict');
+  url.searchParams.delete('action');
+  window.history.replaceState(null, '', url);
+  if (window.__VSN_NAV_MANAGER__) {
+    window.__VSN_NAV_MANAGER__.updateState();
+  }
+
   // 2. Clear previous filters
   selectedCons.clear();
   selectedRhymes.clear();
@@ -1166,6 +1191,22 @@ function initSmartOmnibox() {
 
 function checkUrlParams() {
   const params = new URLSearchParams(window.location.search);
+  const tab = params.get('tab');
+  const action = params.get('action');
+
+  if (tab === 'matrix') {
+    document.getElementById('tab-btn-matrix')?.click();
+  } else if (tab === 'dict') {
+    document.getElementById('tab-btn-dict')?.click();
+  }
+
+  if (action === 'download' || tab === 'download') {
+    const dlMenu = document.getElementById('dl-menu');
+    const dlBtn = document.getElementById('dl-btn');
+    if (dlMenu) dlMenu.classList.add('show');
+    if (dlBtn) dlBtn.classList.add('active');
+  }
+
   const rhyme = params.get('rhyme');
   const tone = params.get('tone');
   const consGroup = params.get('consGroup');
@@ -1265,6 +1306,27 @@ function checkUrlParams() {
   // Chạy lần đầu khởi tạo
   updateGboardDownloadLink();
   updateUtilityDownloadLink();
+
+  // Đồng bộ toggle mở/đóng menu Tải Từ Điển Gboard với URL & Navbar
+  const dlBtn = document.getElementById('dl-btn');
+  const dlMenu = document.getElementById('dl-menu');
+  if (dlBtn && dlMenu) {
+    dlBtn.addEventListener('click', () => {
+      setTimeout(() => {
+        const isShow = dlMenu.classList.contains('show');
+        const url = new URL(window.location);
+        if (isShow) {
+          url.searchParams.set('action', 'download');
+        } else {
+          url.searchParams.delete('action');
+        }
+        window.history.replaceState(null, '', url);
+        if (window.__VSN_NAV_MANAGER__) {
+          window.__VSN_NAV_MANAGER__.updateState();
+        }
+      }, 20);
+    });
+  }
 
   renderDictTable();
   initSmartOmnibox();

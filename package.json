@@ -14,7 +14,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "sync": "node tools/master_sync.mjs"
+    "sync": "node tools/master_sync.mjs",
+    "deploy:m": "node tools/master_sync.mjs && vite build && git add . && git commit -m \"update\" && git push && npx wrangler pages deploy dist --project-name mat-ma-thoi-gian",
+    "deploy:s": "node tools/master_sync.mjs && vite build && git add . && git commit -m \"update\" && git push && npx wrangler pages deploy dist --project-name streamlai",
+    "deploy:t": "node tools/master_sync.mjs && vite build && git add . && git commit -m \"update\" && git push && npx wrangler pages deploy dist --project-name townai"
   },
   "keywords": [
     "vietnamese",

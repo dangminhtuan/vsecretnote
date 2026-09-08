@@ -330,6 +330,124 @@ html, body {
   text-shadow: 0 0 8px rgba(255, 234, 0, 0.7);
 }
 
+/* SUBPAGE NESTED GROUPS */
+.vsn-page-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  background: rgba(2, 14, 8, 0.6);
+  border: 1px solid #082914;
+  border-radius: 6px;
+  padding: 3px;
+  box-sizing: border-box;
+}
+
+.vsn-group-header-item {
+  background: #04160b !important;
+  border-color: #0b381a !important;
+}
+
+.vsn-subpage-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-left: 10px;
+  padding-left: 8px;
+  border-left: 2px solid #00552b;
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.vsn-subpage-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 8px;
+  border-radius: 4px;
+  background: #020b05;
+  border: 1px solid #062010;
+  transition: all 0.15s ease;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.vsn-subpage-item:hover {
+  border-color: #00ff66;
+  background: #062412;
+  transform: translateX(2px);
+}
+
+.vsn-subpage-item.current-page {
+  border-color: #00ffcc;
+  background: rgba(0, 255, 204, 0.12);
+}
+
+.vsn-subpage-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.vsn-subpage-prefix {
+  color: #008844;
+  font-family: monospace;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.vsn-subpage-icon {
+  font-size: 13px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.vsn-subpage-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.vsn-subpage-title {
+  font-size: 11.5px;
+  font-weight: bold;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vsn-subpage-desc {
+  font-size: 9px;
+  color: #729482;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vsn-sub-pin-btn {
+  font-size: 13px;
+  padding: 2px 4px;
+}
+
+/* Custom Scrollbar */
+.vsn-pages-list::-webkit-scrollbar {
+  width: 5px;
+}
+.vsn-pages-list::-webkit-scrollbar-track {
+  background: #020a05;
+}
+.vsn-pages-list::-webkit-scrollbar-thumb {
+  background: #00552b;
+  border-radius: 3px;
+}
+.vsn-pages-list::-webkit-scrollbar-thumb:hover {
+  background: #00ff66;
+}
+
+
 /* ===================================================
    📱 RESPONSIVE (FIX TRIỆT ĐỂ TRÀN KHUNG NGANG MOBILE)
    =================================================== */
