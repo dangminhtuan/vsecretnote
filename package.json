@@ -13,7 +13,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync": "node tools/master_sync.mjs"
   },
   "keywords": [
     "vietnamese",
