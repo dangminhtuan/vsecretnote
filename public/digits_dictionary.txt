@@ -5,7 +5,7 @@ ov	41 [Vần O & Ký tự o] Vần 'o' Tiếng Việt ➔ Mã: 4 (Index 35) | K�
 1	43 [Số 1] Vần: 1: ăn/ơn/yên | Dấu: 1 (B4 Sắc)		
 2	44 [Số 2] Vần: 2: ăng/ơp/yêt | Dấu: 2 (B4 Huyền)		
 3	45 [Số 3] Vần: 3: ăp/ơt/yêu | Dấu: 3 (B4 Hỏi)		
-4	46 [Số 4] Vần: 4: ăt/o/ươu | Dấu: 4 (B4 Ngã)		
+4	46 [Số 4] Vần: 4: ăt/oen/ươu | Dấu: 4 (B4 Ngã)		
 5	47 [Số 5] Vần: 5: âu/oac/uôm | Dấu: 5 (B4 Nặng)		
 6	48 [Số 6] Vần: 6: âc/oach/uơ | Dấu: 6 (B5 Ngang)		
 7	49 [Số 7] Vần: 7: ân/oam/uâng | Dấu: 7 (B5 Sắc)		

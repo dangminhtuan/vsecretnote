@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 import { REAL_VIETNAMESE_WORDS, BASE60_MAPPING, RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2, CONSONANTS_BASE, CONSONANTS_EXTRA } from 'file:///d:/__G%20AG%20Projects/vsecretnote_hkC_20260815/data.js';
-import { removeVietnameseTones, encodeWord, timeToBase60 } from 'file:///d:/__G%20AG%20Projects/vsecretnote_hkC_20260815/vcomp.js';
+import { removeVietnameseTones, encodeWord, timeToBase60, BASE60_HH } from 'file:///d:/__G%20AG%20Projects/vsecretnote_hkC_20260815/vcomp.js';
 
 const projectRoot = 'd:/__G AG Projects/vsecretnote_hkC_20260815';
 const publicDir = path.join(projectRoot, 'public');
@@ -143,14 +143,30 @@ function getPhonetics(word) {
   return { consonant, rhyme, tone };
 }
 
-function getRhymeBaseCode(rhymeStr) {
-  let idx = RHYMES_BASE.indexOf(rhymeStr);
-  if (idx !== -1) return BASE60_MAPPING[idx] + 'z';
-  idx = RHYMES_EXTRA_1.indexOf(rhymeStr);
-  if (idx !== -1) return BASE60_MAPPING[idx] + 'Z';
-  idx = RHYMES_EXTRA_2.indexOf(rhymeStr);
-  if (idx !== -1) return BASE60_MAPPING[idx] + 'a';
-  return '';
+function getTwinAnchor(rhyme) {
+  let rIdx = RHYMES_BASE.indexOf(rhyme);
+  if (rIdx === -1) rIdx = RHYMES_EXTRA_1.indexOf(rhyme);
+  if (rIdx === -1) rIdx = RHYMES_EXTRA_2.indexOf(rhyme);
+  if (rIdx === -1) return null;
+
+  const rhymeChar = BASE60_MAPPING[rIdx];
+  const cIdx = BASE60_HH.indexOf(rhymeChar);
+  if (cIdx !== -1 && cIdx < CONSONANTS_BASE.length) {
+    const cons = CONSONANTS_BASE[cIdx];
+    const matches = REAL_VIETNAMESE_WORDS.filter(w => {
+      const ph = getPhonetics(w);
+      return (ph.consonant === cons || (cons === 'g' && ph.consonant === 'gi')) && ph.rhyme === rhyme;
+    });
+    if (matches.length > 0) {
+      matches.sort((a,b) => getPhonetics(a).tone - getPhonetics(b).tone);
+      const anchorWord = matches[0];
+      const enc = encodeWord(anchorWord);
+      if (enc && !enc.startsWith('[')) {
+        return { word: anchorWord, code: timeToBase60(enc) };
+      }
+    }
+  }
+  return null;
 }
 
 // DỮ LIỆU CÁC GÓI
@@ -187,33 +203,42 @@ filteredWords.forEach(word => {
   unaccentedGroups.get(unaccented).push(word);
 });
 
-// Gói 3: Học vần không dấu (PHÂN LOẠI THÔNG MINH: Từ có thật trong TV -> thêm 'z', từ không có thật -> gõ tự nhiên)
+// Gói 3: Học vần không dấu (GỢI Ý TỪ THỰC TẾ KÈM MỎ NEO CẶP LẶP)
 const realWordsSet = new Set(REAL_VIETNAMESE_WORDS.map(w => w.toLowerCase()));
 const learnNoToneLines = [];
 
 unaccentedGroups.forEach((words, unaccented) => {
-  const rhymeMap = new Map();
+  const byRhyme = new Map();
   words.forEach(w => {
     const ph = getPhonetics(w);
-    if (ph.rhyme && !rhymeMap.has(ph.rhyme)) {
-      const code = getRhymeBaseCode(ph.rhyme);
-      if (code) rhymeMap.set(ph.rhyme, code);
+    if (!byRhyme.has(ph.rhyme)) byRhyme.set(ph.rhyme, []);
+    byRhyme.get(ph.rhyme).push(w);
+  });
+
+  const formulas = [];
+  byRhyme.forEach((groupWords, rhyme) => {
+    groupWords.sort((a, b) => getPhonetics(a).tone - getPhonetics(b).tone);
+    const bestWord = groupWords[0];
+    const bestEnc = encodeWord(bestWord);
+    if (!bestEnc || bestEnc.startsWith('[')) return;
+    const bestCode = timeToBase60(bestEnc);
+
+    const anchor = getTwinAnchor(rhyme);
+    if (anchor && anchor.word !== bestWord && anchor.code !== bestCode) {
+      formulas.push(`${bestWord}=${bestCode} (${anchor.word}=${anchor.code})`);
+    } else {
+      formulas.push(`${bestWord}=${bestCode}`);
     }
   });
 
-  if (rhymeMap.size > 0) {
-    const formulas = [];
-    rhymeMap.forEach((code, rhyme) => {
-      formulas.push(`${rhyme}=${code}`);
-    });
-    const formulaStr = formulas.join(' ');
-    
+  if (formulas.length > 0) {
+    const formulaStr = formulas.join('  ');
     const isRealWord = realWordsSet.has(unaccented);
     if (isRealWord) {
-      // Từ này vốn là từ tiếng Việt có thật (thanh, xem, phim, toan, ngon...) -> BẮT BUỘC có đuôi 'z' để bảo vệ gõ thường
+      // Từ này vốn là từ tiếng Việt có thật -> BẮT BUỘC có đuôi 'z' để bảo vệ gõ thường
       learnNoToneLines.push(`${unaccented}z\t${formulaStr}\t\t`);
     } else {
-      // Từ này KHÔNG có thật trong tiếng Việt (muon, duoc, nghieng, nguoi...) -> Gõ tự nhiên 100% không cần 'z'
+      // Từ này KHÔNG có thật trong tiếng Việt -> Gõ tự nhiên 100% không cần 'z'
       learnNoToneLines.push(`${unaccented}\t${formulaStr}\t\t`);
       // Thêm cả alias đuôi 'z' nếu người dùng quen tay gõ 'z'
       learnNoToneLines.push(`${unaccented}z\t${formulaStr}\t\t`);

@@ -15,16 +15,16 @@ export const CONSONANTS_EXTRA = [
 // === VẦN ===
 // RHYMES_BASE: a/ă/â/e/ê + anchors
 export const RHYMES_BASE = [
-  'a', 'ơ', 'ach', 'ai', 'am', 'an', 'ang',
-  'ôn', 'u', 'âm', 'ut', 'ich', 'ên', 'ương',
+  'êt', 'ơ', 'ach', 'ai', 'am', 'an', 'ang',
+  'ôn', 'ia', 'âm', 'ut', 'ich', 'ên', 'ương',
   'ưng', 'ươm', 'iêm', 'im', 'ac', 'ôm',
   'ưc', 'âp', 'ôn',
   'anh', 'ao', 'ap', 'at', 'au', 'ay',
   'ă', 'ăc', 'ăm', 'ăn', 'ăng', 'ăp', 'ăt',
   'âu', 'âc', 'ân', 'âng', 'ât', 'â', 'ây',
   'ê', 'ec', 'em', 'en', 'eo', 'ep', 'et',
-  'êu', 'êch', 'êm', 'ênh', 'êp', 'êt', 'e',
-  'i', 'ia', ''
+  'êu', 'êch', 'êm', 'ênh', 'êp', 'a', 'e',
+  'i', 'u', ''
 ];
 
 // RHYMES_EXTRA_1: i/o/ô/ơ
@@ -33,16 +33,16 @@ export const RHYMES_EXTRA_1 = [
   'oa', 'oai', 'oan', 'oc', 'oe', 'oi', 'om', 'on', 'ong', 'op', 'ot', 'oăn', 'oăng',
   'ơm', 'ôc', 'ôi', 'ông', 'ôp', 'ôt',
   'ơi', 'ô', 'ơn', 'ơp', 'ơt',
-  'o', 'oac', 'oach', 'oam', 'oang', 'oanh', 'oap', 'oat', 'oay', 'oeo',
-  'oem', 'oen', 'oet', 'ooc', 'oong', 'oăc', 'oăm', 'oăt', 'iê', 'eng',
+  'oen', 'oac', 'oach', 'oam', 'oang', 'oanh', 'oap', 'oat', 'oay', 'oeo',
+  'oem', 'o', 'oet', 'ooc', 'oong', 'oăc', 'oăm', 'oăt', 'iê', 'eng',
   null, null, null, null, null
 ];
 
 // RHYMES_EXTRA_2: u/ư/y
 export const RHYMES_EXTRA_2 = [
   'ua', 'uât', 'uc', 'uê', 'ui', 'um', 'un', 'uân', 'ung', 'uôc', 'uôi', 'uôn', 'uông', 'uôt', 'up', 'uy', 'uyên', 'uyêt',
-  'ynh', 'ưa', 'ưi', 'ưm', 'ưn', 'ươc', 'ươi', 'ươn', 'ươp', 'ươt', 'ưt', 'ưu',
-  'y', 'yêm', 'yên', 'yêt', 'yêu',
+  'ynh', 'ưa', 'ưi', 'y', 'ưn', 'ươc', 'ươi', 'ươn', 'ươp', 'ươt', 'ưt', 'ưu',
+  'ưm', 'yêm', 'yên', 'yêt', 'yêu',
   'ươu', 'uôm', 'uơ', 'uâng', 'uây', 'uêch', 'uênh', 'uya', 'uych', 'uyn',
   'uynh', 'uyp', 'uyt', 'uyu', 'yn', 'ư', 'yt', 'yêng', 'ăk', 'n',
   null, null, null, null, null

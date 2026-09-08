@@ -64,9 +64,30 @@ function initMultiSelect(containerId, dataList, selectedSet) {
     }
   });
 
+  const lenBar = document.getElementById(`${containerId}-len-bar`);
+  let activeLen = null;
+
+  const updateLenButtonsUI = () => {
+    if (!lenBar) return;
+    lenBar.querySelectorAll('.ms-len-btn').forEach(btn => {
+      const lenVal = btn.dataset.len;
+      if (lenVal === 'clear') return;
+      if (activeLen && lenVal === String(activeLen)) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  };
+
   const updateHeader = () => {
     if (selectedSet.size === 0) {
       header.textContent = 'Tất cả';
+    } else if (activeLen !== null) {
+      const lenLabel = activeLen === 4 ? '4+ KT' : `${activeLen} KT`;
+      header.textContent = `${lenLabel} (${selectedSet.size})`;
+    } else if (selectedSet.size > 3) {
+      header.textContent = `Đã chọn (${selectedSet.size})`;
     } else {
       header.textContent = Array.from(selectedSet).join(', ') || 'Đã chọn';
     }
@@ -74,6 +95,23 @@ function initMultiSelect(containerId, dataList, selectedSet) {
   };
 
   const optionLabels = [];
+
+  const filterOptionLabels = () => {
+    const query = removeAccents(searchInput.value.toLowerCase());
+    optionLabels.forEach(label => {
+      const matchSearch = label.dataset.text.includes(query);
+      const itemLen = parseInt(label.dataset.len, 10);
+      let matchLen = true;
+      if (activeLen !== null) {
+        if (activeLen === 4) {
+          matchLen = itemLen >= 4;
+        } else {
+          matchLen = itemLen === activeLen;
+        }
+      }
+      label.style.display = (matchSearch && matchLen) ? 'flex' : 'none';
+    });
+  };
 
   dataList.forEach(item => {
     const label = document.createElement('label');
@@ -85,6 +123,10 @@ function initMultiSelect(containerId, dataList, selectedSet) {
     checkbox.addEventListener('change', (e) => {
       if (e.target.checked) selectedSet.add(item);
       else selectedSet.delete(item);
+      if (activeLen !== null) {
+        activeLen = null;
+        updateLenButtonsUI();
+      }
       updateHeader();
     });
 
@@ -92,31 +134,62 @@ function initMultiSelect(containerId, dataList, selectedSet) {
     label.appendChild(checkbox);
     label.appendChild(document.createTextNode(text));
     label.dataset.text = removeAccents(text.toLowerCase());
+    label.dataset.len = item ? item.length : 0;
     optionsDiv.appendChild(label);
     optionLabels.push(label);
   });
 
-  searchInput.addEventListener('input', (e) => {
-    const query = removeAccents(e.target.value.toLowerCase());
-    optionLabels.forEach(label => {
-      if (label.dataset.text.includes(query)) {
-        label.style.display = 'flex';
-      } else {
-        label.style.display = 'none';
-      }
-    });
+  searchInput.addEventListener('input', () => {
+    filterOptionLabels();
   });
+
+  if (lenBar) {
+    lenBar.querySelectorAll('.ms-len-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const lenVal = btn.dataset.len;
+
+        if (lenVal === 'clear') {
+          activeLen = null;
+          selectedSet.clear();
+          optionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = false; });
+          updateLenButtonsUI();
+          filterOptionLabels();
+          updateHeader();
+          return;
+        }
+
+        const lenNum = parseInt(lenVal, 10);
+        if (activeLen === lenNum) {
+          activeLen = null;
+          selectedSet.clear();
+          optionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = false; });
+        } else {
+          activeLen = lenNum;
+          selectedSet.clear();
+          dataList.forEach(item => {
+            if (!item) return;
+            const match = (lenNum === 4) ? (item.length >= 4) : (item.length === lenNum);
+            if (match) selectedSet.add(item);
+          });
+          optionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+            cb.checked = selectedSet.has(cb.value);
+          });
+        }
+
+        updateLenButtonsUI();
+        filterOptionLabels();
+        updateHeader();
+      });
+    });
+  }
 
   return {
     syncUI: () => {
       optionsDiv.querySelectorAll('input[type="checkbox"]').forEach(cb => {
         cb.checked = selectedSet.has(cb.value);
       });
-      if (selectedSet.size === 0) {
-        header.textContent = 'Tất cả';
-      } else {
-        header.textContent = Array.from(selectedSet).join(', ') || 'Đã chọn';
-      }
+      updateHeader();
     }
   };
 }
