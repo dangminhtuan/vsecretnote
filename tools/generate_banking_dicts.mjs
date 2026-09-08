@@ -216,7 +216,9 @@ unaccentedGroups.forEach((words, unaccented) => {
   });
 
   const formulas = [];
-  byRhyme.forEach((groupWords, rhyme) => {
+  const rhymeEntries = Array.from(byRhyme.entries());
+
+  rhymeEntries.forEach(([rhyme, groupWords], idx) => {
     groupWords.sort((a, b) => getPhonetics(a).tone - getPhonetics(b).tone);
     const bestWord = groupWords[0];
     const bestEnc = encodeWord(bestWord);
@@ -224,15 +226,25 @@ unaccentedGroups.forEach((words, unaccented) => {
     const bestCode = timeToBase60(bestEnc);
 
     const anchor = getTwinAnchor(rhyme);
-    if (anchor && anchor.word !== bestWord && anchor.code !== bestCode) {
-      formulas.push(`${bestWord}=${bestCode} (${anchor.word}=${anchor.code})`);
+    const hasAnchor = anchor && anchor.word !== bestWord && anchor.code !== bestCode;
+
+    if (idx === 0) {
+      if (hasAnchor) {
+        formulas.push(`${bestCode},${anchor.code}=${bestWord},${anchor.word}`);
+      } else {
+        formulas.push(`${bestCode}=${bestWord}`);
+      }
     } else {
-      formulas.push(`${bestWord}=${bestCode}`);
+      if (hasAnchor) {
+        formulas.push(`${bestWord},${anchor.word}=${bestCode},${anchor.code}`);
+      } else {
+        formulas.push(`${bestWord}=${bestCode}`);
+      }
     }
   });
 
   if (formulas.length > 0) {
-    const formulaStr = formulas.join('  ');
+    const formulaStr = formulas.join(' | ');
     const isRealWord = realWordsSet.has(unaccented);
     if (isRealWord) {
       // Từ này vốn là từ tiếng Việt có thật -> BẮT BUỘC có đuôi 'z' để bảo vệ gõ thường
