@@ -13,6 +13,11 @@
         font-family: 'CyberVietnamese';
         src: url('/CyberVietnamese-Regular.ttf?v=8') format('truetype');
       }
+      @font-face {
+        font-family: 'V2B ViScript';
+        src: url('/V2B-ViScript.ttf?v=6') format('truetype');
+        font-display: swap;
+      }
       #cyber-font-preview {
         font-family: 'CyberVietnamese';
         font-feature-settings: 'calt' 1;
@@ -26,6 +31,26 @@
         padding: 4px 4px 2px;
         min-height: 56px;
         display: block;
+      }
+      #viscript-font-preview {
+        font-family: 'V2B ViScript', sans-serif;
+        letter-spacing: 0.18em;
+        font-size: 48px;
+        line-height: 1.15;
+        color: #00f2fe;
+        text-shadow: 0 0 12px rgba(0, 242, 254, 0.45);
+        overflow-wrap: anywhere;
+        white-space: pre-wrap;
+        word-break: break-word;
+        padding: 4px 6px 2px;
+        min-height: 56px;
+        display: block;
+        cursor: pointer;
+        user-select: text;
+        transition: background 0.2s ease;
+      }
+      #viscript-font-preview:hover {
+        background: rgba(0, 242, 254, 0.05);
       }
     </style>
   </head>
@@ -419,6 +444,21 @@
                 <div id="cyber-font-bar" style="width: 0%; height: 100%; background: #0f0; transition: width 0.3s ease, background 0.3s ease;"></div>
               </div>
               <span id="cyber-font-bytes" style="font-size: 11px; font-family: monospace; color: #888; min-width: 80px;"></span>
+            </div>
+          </div>
+
+          <!-- ViScript Font Preview (Row 7) -->
+          <div class="input-group" id="group-viscript-font" style="background: #000; border: 1px solid #005577; border-radius: 6px; padding: 6px 10px; margin-top: 5px;">
+            <div class="label-row" style="margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center;">
+              <label style="color: #00f2fe; letter-spacing: 1px;">VISCRIPT FONT [V2B PUA PREVIEW]</label>
+              <button id="btn-copy-viscript-pua" class="cyber-btn-small" style="font-size: 10px; padding: 1px 6px; color: #00f2fe; border-color: #005577; background: rgba(0,242,254,0.1); cursor: pointer;" title="Sao chép chuỗi ký tự PUA">📋 Copy PUA</button>
+            </div>
+            <div id="viscript-font-preview" title="Click để sao chép chuỗi ký tự PUA"></div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 2px; margin-bottom: 4px; justify-content: flex-end;">
+              <div style="flex: 1; height: 3px; background: #222; border-radius: 1px; overflow: hidden;">
+                <div id="viscript-font-bar" style="width: 0%; height: 100%; background: #00f2fe; transition: width 0.3s ease, background 0.3s ease;"></div>
+              </div>
+              <span id="viscript-font-bytes" style="font-size: 11px; font-family: monospace; color: #888; min-width: 80px;"></span>
             </div>
           </div>
 

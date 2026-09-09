@@ -25,6 +25,13 @@ Không chỉ để gõ nhanh, SNK là người thầy dạy bạn thuộc lòng 
 - **Mã hóa VCOMP (Base60):** Mỗi từ tiếng Việt được nén chặt thành 2-3 ký tự (Ví dụ: `tuyệt mật` -> `Gza m9U`). Không có từ điển giải mã, dữ liệu hoàn toàn vô dụng với hacker.
 - **Không Máy Chủ (Serverless):** Ứng dụng hoạt động hoàn toàn trên trình duyệt của bạn (Client-side). Không có cơ sở dữ liệu đám mây, không gửi API về server. Bí mật của bạn chỉ nằm trên máy của bạn.
 
+### 4. Đỉnh Cao Mật Mã: Font Chữ Hình Học V2B ViScript (Unicode PUA)
+- **Siêu Nén 16-Bit (1 Từ = 1 Ký Tự PUA):** Toàn bộ âm tiết tiếng Việt (phụ âm, vần, thanh điệu) được nén thành **đúng 1 ký tự 16-bit** (2 bytes) trong dải Unicode PUA (`U+E000` - `U+F8FF`).
+- **Không Cần Dấu Cách (Tiết Kiệm Tới 64% Dung Lượng):** Hoạt động như chữ khối tượng hình (tương tự chữ Hán/Kanji), viết liền mạch không tốn dù chỉ 1 byte dấu cách. Dùng `letter-spacing` tạo khoảng cách thị giác thoáng đạt tuyệt đối!
+- **Nét Chữ "d" Móc Lưỡi Câu Độc Đáo:** Phân biệt rõ rệt 100% với hình tròn `o`, loại bỏ hoàn toàn khả năng nhầm lẫn thị giác.
+- **Ứng Dụng Đa Nền Tảng (Word, Photoshop, Illustrator):** Cài đặt font TrueType `.ttf` trực tiếp vào Windows/macOS. Chỉ cần Copy mã PUA và dán vào Word/Photoshop, văn bản tiếng Việt lập tức hóa thành chữ tượng hình ngoài hành tinh viễn tưởng!
+- 👉 **Xem phân tích chi tiết tính ưu việt tại:** [V2B ViScript - Đỉnh Cao Chữ Hình Học](VISCRIPT_UU_VIET.md)
+
 ---
 
 ## 🚀 Cài đặt & Chạy Ứng dụng

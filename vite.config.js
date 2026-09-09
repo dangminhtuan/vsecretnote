@@ -38,7 +38,13 @@ export default defineConfig({
         dict_matrix: resolve(import.meta.dirname, 'dict-matrix.html'),
         font_maker: resolve(import.meta.dirname, 'font-maker.html'),
         mnemonic: resolve(import.meta.dirname, 'mnemonic.html'),
-        twins: resolve(import.meta.dirname, 'twins.html')
+        twins: resolve(import.meta.dirname, 'twins.html'),
+        viscript: resolve(import.meta.dirname, 'viscript.html'),
+        vssl: resolve(import.meta.dirname, 'vssl.html'),
+        geo_font: resolve(import.meta.dirname, 'geo-font.html'),
+        glyph_studio: resolve(import.meta.dirname, 'glyph-studio.html'),
+        v2b_demo: resolve(import.meta.dirname, 'v2b-demo.html'),
+        viscript_encoder: resolve(import.meta.dirname, 'viscript-encoder.html')
       }
     }
   }

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
@@ -6,6 +6,7 @@
   <title>ViScript — Chu Viet Kieu Han</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/nav-system.css" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
@@ -97,6 +98,7 @@
   </style>
 </head>
 <body>
+<header id="vsn-viscript-header" style="width: 100%; max-width: 980px; margin-bottom: 24px;"></header>
 <div class="header">
   <h1>ViScript</h1>
   <p class="sub">Chu Viet ma hoa Base60 &middot; Trinh bay theo phong cach Hangul</p>
@@ -123,6 +125,9 @@
 <footer>ViScript &middot; Dua tren he ma hoa SecretNoteKeyboard Base60</footer>
 <script type="module">
 import { encodeWord, timeToBase60 } from './vcomp.js';
+import { initVsnNavigation } from './nav-system.js';
+
+initVsnNavigation('#vsn-viscript-header');
 
 const B60_CHARS = [
   'c','d','g','G','j','k','K','h','v','D','m','C','r','s','n','b','l','Q','S','z',

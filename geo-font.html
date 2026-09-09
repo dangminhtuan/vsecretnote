@@ -1,0 +1,1809 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Base60 Radical Script — 60 Nét Cốt Lõi Tối Giản Tuyệt Đối</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/nav-system.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060911;
+      --panel: #0d1322;
+      --card: #121a2e;
+      --border: #1e2c4a;
+      --border-light: #2c3f66;
+      --accent: #00f2fe;
+      --accent-glow: rgba(0, 242, 254, 0.35);
+      --gold: #facc15;
+      --gold-glow: rgba(250, 204, 21, 0.35);
+      --text: #e2e8f0;
+      --text-muted: #8493a8;
+      --font: 'Outfit', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 12px 60px;
+    }
+    header#vsn-nav-header {
+      width: 100%;
+      max-width: 1100px;
+      margin-bottom: 16px;
+    }
+    .main-wrap {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(0,242,254,0.08), rgba(250,204,21,0.05));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .hero-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #00f2fe, #38bdf8, #facc15);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .primitive-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .prim-chip {
+      background: rgba(0, 242, 254, 0.08);
+      border: 1px solid rgba(0, 242, 254, 0.25);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-family: var(--mono);
+      color: var(--accent);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Live Tester */
+    .tester-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    }
+    .tester-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .tester-title {
+      font-size: 0.82rem;
+      font-family: var(--mono);
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--gold);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .c3-auto-badge {
+      display: inline-flex;
+      align-items: center;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border-light);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.72rem;
+      font-family: var(--mono);
+      user-select: none;
+    }
+    .input-row {
+      display: flex;
+      gap: 10px;
+    }
+    .text-input {
+      flex: 1;
+      background: #080c16;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 0.95rem;
+      color: #fff;
+      font-family: var(--font);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .text-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 12px var(--accent-glow);
+    }
+    .live-render-stage {
+      min-height: 120px;
+      background: #060912;
+      border: 1px dashed var(--border-light);
+      border-radius: 10px;
+      padding: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: auto;
+    }
+    .word-block {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .word-block:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+    .word-svg-box {
+      width: 82px;
+      height: 82px;
+      background: #080d1a;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .word-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .code-label {
+      font-size: 0.68rem;
+      font-family: var(--mono);
+      color: var(--gold);
+    }
+
+    /* Filter & Controls Section */
+    .filter-section {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .search-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .search-input-box {
+      flex: 1;
+      min-width: 240px;
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      background: #070b14;
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      padding: 9px 36px 9px 36px;
+      font-size: 0.95rem;
+      color: #fff;
+      font-family: var(--mono);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .search-input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 12px var(--gold-glow);
+    }
+    .search-clear-btn {
+      position: absolute;
+      right: 10px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 4px;
+      visibility: hidden;
+    }
+    .search-clear-btn:hover { color: #fff; background: rgba(255,255,255,0.1); }
+    .search-stats {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-family: var(--mono);
+      white-space: nowrap;
+    }
+
+    /* Controls Bar */
+    .controls-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .ctl-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+    .color-btn {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .color-btn.active {
+      transform: scale(1.18);
+      border-color: #fff;
+    }
+
+    /* 60 Grid (10 Cột x 6 Hàng) */
+    .grid-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+    }
+    .grid-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .glyph-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 980px) {
+      .glyph-grid { grid-template-columns: repeat(6, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .glyph-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+    }
+    @media (max-width: 440px) {
+      .glyph-grid { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+    }
+
+    .glyph-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 8px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .glyph-card:hover {
+      background: var(--card);
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px var(--accent-glow);
+    }
+    .glyph-card.highlight {
+      border-color: var(--gold);
+      box-shadow: 0 0 14px var(--gold-glow);
+      background: rgba(250, 204, 21, 0.08);
+    }
+    .glyph-svg-wrap {
+      width: 48px;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .glyph-meta {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.65rem;
+      font-family: var(--mono);
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding-top: 3px;
+    }
+    .glyph-index {
+      color: #556677;
+    }
+    .glyph-char {
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.85rem;
+    }
+
+    /* Modal Inspector */
+    #glyph-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-box {
+      background: #0e1526;
+      border: 1px solid var(--accent);
+      box-shadow: 0 12px 40px var(--accent-glow);
+      border-radius: 18px;
+      width: 100%;
+      max-width: 420px;
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .modal-close:hover { color: #fff; }
+    .modal-large-svg {
+      width: 140px;
+      height: 140px;
+      background: #070a12;
+      border-radius: 14px;
+      border: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+    .modal-info-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .modal-info-table td:first-child {
+      color: var(--text-muted);
+      font-family: var(--mono);
+      width: 42%;
+    }
+    .modal-info-table td:last-child {
+      color: #fff;
+      font-weight: 600;
+    }
+    .twin-jump-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(250, 204, 21, 0.12);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-family: var(--mono);
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+    .twin-jump-btn:hover {
+      background: var(--gold);
+      color: #060911;
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+
+    /* View Switcher Bar */
+    .view-switcher-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 6px;
+    }
+    .view-mode-tabs {
+      display: inline-flex;
+      gap: 4px;
+      background: #080c16;
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border-light);
+    }
+    .view-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 0.82rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .view-tab-btn:hover {
+      color: #fff;
+    }
+    .view-tab-btn.active {
+      background: var(--card);
+      color: var(--accent);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      border: 1px solid var(--border-light);
+    }
+
+    /* Taxonomy Layout */
+    .taxonomy-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .tier-section {
+      background: #070b14;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .tier-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .tier-title-box {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .tier-title {
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tier-badge {
+      font-size: 0.72rem;
+      font-family: var(--mono);
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: rgba(0,242,254,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(0,242,254,0.3);
+    }
+    .tier-desc {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+    }
+    .clusters-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 10px;
+    }
+    .cluster-card {
+      background: rgba(14, 21, 38, 0.6);
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: border-color 0.2s;
+    }
+    .cluster-card.highlight-cluster {
+      border-color: rgba(250, 204, 21, 0.45);
+      background: rgba(250, 204, 21, 0.04);
+      box-shadow: 0 0 16px rgba(250, 204, 21, 0.08);
+    }
+    .cluster-card:hover {
+      border-color: var(--accent);
+    }
+    .cluster-header {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .cluster-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #f1f5f9;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .cluster-relation {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-family: var(--mono);
+    }
+    .cluster-glyphs-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tax-glyph-card {
+      background: #080d1a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      min-width: 62px;
+      transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .tax-glyph-card:hover {
+      background: var(--card);
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+    .tax-glyph-card.highlight {
+      border-color: var(--gold);
+      background: rgba(250, 204, 21, 0.12);
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+    .tax-glyph-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 0.62rem;
+      font-family: var(--mono);
+    }
+    .tax-char {
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.84rem;
+    }
+    .tax-note {
+      font-size: 0.6rem;
+      color: #94a3b8;
+      font-family: var(--mono);
+      text-align: center;
+      max-width: 64px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Alpha View Styles (aAbB...0123...) */
+    .alpha-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .alpha-section-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .alpha-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding-bottom: 8px;
+    }
+    .alpha-section-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .alpha-section-badge {
+      font-size: 0.72rem;
+      font-family: var(--mono);
+      background: rgba(0, 242, 254, 0.12);
+      color: var(--accent);
+      border: 1px solid rgba(0, 242, 254, 0.3);
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+    .alpha-pairs-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 10px;
+    }
+    .alpha-pair-cell {
+      background: #080d1a;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .alpha-pair-cell:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+    .alpha-pair-tag {
+      font-size: 0.7rem;
+      font-family: var(--mono);
+      color: var(--gold);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .alpha-pair-items {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      align-items: center;
+    }
+    .alpha-subcard {
+      flex: 1;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .alpha-subcard:hover {
+      background: var(--card);
+      border-color: var(--gold);
+      transform: scale(1.05);
+    }
+    .alpha-subcard.highlight {
+      border-color: var(--gold);
+      background: rgba(250, 204, 21, 0.12);
+      box-shadow: 0 0 10px var(--gold-glow);
+    }
+    .alpha-subcard-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 4px;
+      font-size: 0.64rem;
+      font-family: var(--mono);
+    }
+    .alpha-subcard-char {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: #fff;
+    }
+    .alpha-digits-grid {
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 900px) {
+      .alpha-digits-grid { grid-template-columns: repeat(5, 1fr); }
+    }
+    @media (max-width: 500px) {
+      .alpha-digits-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; }
+      .alpha-pairs-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header id="vsn-nav-header"></header>
+
+  <div class="main-wrap">
+    <!-- Hero Banner -->
+    <div class="hero-banner">
+      <div class="hero-title">
+        <span>💠 Base60 Radical Script</span>
+        <span style="font-size: 0.78rem; padding: 2px 8px; border-radius: 16px; background: rgba(0,242,254,0.15); color: var(--accent); font-family: var(--mono); border: 1px solid var(--accent); font-weight: 600;">HỆ ĐỐI XỨNG XOAY 4 HƯỚNG TỐI GIẢN</span>
+        <a href="/glyph-studio.html" style="margin-left: auto; text-decoration: none; font-size: 0.8rem; font-family: var(--mono); background: rgba(250, 204, 21, 0.12); color: var(--gold); border: 1px solid var(--gold); padding: 4px 10px; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px;">
+          ✏️ Xưởng Tự Thiết Kế Nét →
+        </a>
+      </div>
+      <p class="hero-desc">
+        Hệ thống 60 ký tự hình học khai thác tối đa <strong>các chiều xoay đối xứng không gian (90°, 45°, lật gương)</strong>. 
+        Mỗi ký tự đạt độ tinh giản tuyệt đối: c ➔ cung phải ⊂, G ➔ cung trái ⊃, d ➔ bán nguyệt trái ᗡ, D ➔ bán nguyệt phải D, k ➔ góc trái &lt;, K ➔ góc phải &gt;, r ➔ góc vuông ┌, n ➔ vòm dưới ⌒, u ➔ vòm trên ∪...
+      </p>
+      <div class="primitive-chips">
+        <span class="prim-chip">c ➔ Cung phải ⊂</span>
+        <span class="prim-chip">G ➔ Cung trái ⊃</span>
+        <span class="prim-chip">d ➔ Bán nguyệt trái ᗡ</span>
+        <span class="prim-chip">D ➔ Bán nguyệt phải D</span>
+        <span class="prim-chip">k ➔ Góc trái &lt;</span>
+        <span class="prim-chip">K ➔ Góc phải &gt;</span>
+        <span class="prim-chip">r ➔ Góc vuông ┌</span>
+        <span class="prim-chip">n ➔ Vòm dưới ⌒</span>
+        <span class="prim-chip">u ➔ Vòm trên ∪</span>
+        <span class="prim-chip">l ➔ Đứng 90° |</span>
+        <span class="prim-chip">a ➔ Ngang 0° —</span>
+        <span class="prim-chip">i ➔ Xiên thuận /</span>
+        <span class="prim-chip">A ➔ Xiên nghịch \</span>
+        <span class="prim-chip">V ➔ Chóp đỉnh ^</span>
+        <span class="prim-chip">v ➔ Chóp đáy ∨</span>
+        <span class="prim-chip">E ➔ Chữ T xoay ⊢</span>
+        <span class="prim-chip">H ➔ Song song đứng ||</span>
+      </div>
+    </div>
+
+    <!-- Live Sentence Tester -->
+    <div class="tester-card">
+      <div class="tester-header">
+        <div class="tester-title">⚡ Thử Nghiệm Ghép Câu Tiếng Việt</div>
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <div class="c3-auto-badge" title="Tự động đảo hướng theo font-maker.js">
+            <span style="color: var(--accent);">△ C3 thường (Trên)</span>
+            <span style="color: var(--text-muted); margin: 0 4px;">|</span>
+            <span style="color: var(--gold);">▽ C3 HOA (Dưới)</span>
+          </div>
+          <div style="display: flex; gap: 5px;">
+            <button class="ex-btn" onclick="setEx('Không có gì quý hơn độc lập tự do')" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #cbd5e1; border-radius: 6px; padding: 3px 8px; font-size: 11px; cursor: pointer;">Không có gì...</button>
+            <button class="ex-btn" onclick="setEx('Tình yêu')" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #cbd5e1; border-radius: 6px; padding: 3px 8px; font-size: 11px; cursor: pointer;">Tình yêu</button>
+            <button class="ex-btn" onclick="setEx('Việt Nam')" style="background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: #cbd5e1; border-radius: 6px; padding: 3px 8px; font-size: 11px; cursor: pointer;">Việt Nam</button>
+          </div>
+        </div>
+      </div>
+      <div class="input-row">
+        <input type="text" id="live-input" class="text-input" placeholder="Nhập câu tiếng Việt bất kỳ..." value="Không có gì quý hơn độc lập tự do cả phải không bạn rồi trời" oninput="renderLiveSentence(this.value)" />
+      </div>
+      <div id="live-stage" class="live-render-stage"></div>
+    </div>
+
+    <!-- Filter & Controls Section -->
+    <div class="filter-section">
+      <div class="search-row">
+        <div class="search-input-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="glyph-search" class="search-input" placeholder="Lọc ký tự nhanh (VD: b d e hoặc bde)..." oninput="handleSearch(this.value)" autocomplete="off" spellcheck="false" />
+          <button id="search-clear-btn" class="search-clear-btn" onclick="clearSearch()" title="Xóa tìm kiếm (Esc)">✕</button>
+        </div>
+        <div class="search-stats" id="search-stats">
+          Đang hiển thị <strong>60</strong> / 60 ký tự
+        </div>
+      </div>
+
+      <div class="controls-row">
+        <div class="ctl-group">
+          <span>Độ dày nét:</span>
+          <input type="range" id="stroke-width-range" min="4" max="14" value="8" style="accent-color: var(--accent); cursor: pointer; width: 90px;" oninput="updateStrokeWidth(this.value)" />
+          <span id="stroke-val" style="font-family: var(--mono); color: #fff; width: 25px;">8px</span>
+        </div>
+
+        <div class="ctl-group">
+          <span>Màu phát quang:</span>
+          <button class="color-btn active" style="background: #00f2fe;" onclick="setColor('#00f2fe', this)" title="Cyan Neon"></button>
+          <button class="color-btn" style="background: #ffd700;" onclick="setColor('#ffd700', this)" title="Cyber Gold"></button>
+          <button class="color-btn" style="background: #00ff66;" onclick="setColor('#00ff66', this)" title="Matrix Green"></button>
+          <button class="color-btn" style="background: #ff00ea;" onclick="setColor('#ff00ea', this)" title="Hot Magenta"></button>
+          <button class="color-btn" style="background: #ffffff;" onclick="setColor('#ffffff', this)" title="Pure White"></button>
+        </div>
+
+        <div class="ctl-group" style="font-size: 0.75rem; color: var(--text-muted);">
+          <span>Nhấn vào từng ô để xem chi tiết cấu tạo nét</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Switcher Bar -->
+    <div class="view-switcher-bar">
+      <div class="view-mode-tabs">
+        <button class="view-tab-btn active" id="btn-view-taxonomy" onclick="switchViewMode('taxonomy')">
+          🌳 Cây Phân Loại Hình Thái & Cụm Xoay
+        </button>
+        <button class="view-tab-btn" id="btn-view-matrix" onclick="switchViewMode('matrix')">
+          ⚅ Ma Trận Base60 Index (10 × 6)
+        </button>
+        <button class="view-tab-btn" id="btn-view-alpha" onclick="switchViewMode('alpha')">
+          🔤 Bảng Cặp aAbB123
+        </button>
+      </div>
+      <div style="font-size: 0.76rem; color: var(--text-muted); font-family: var(--mono);" id="view-mode-hint">
+        Sắp xếp: Ít nét ➔ Nhiều nét · Cặp xoay đặt liền kề
+      </div>
+    </div>
+
+    <!-- View 1: Cây Phân Loại Hình Thái & Cụm Xoay (Default) -->
+    <div id="taxonomy-view" class="taxonomy-wrap"></div>
+
+    <!-- View 2: Ma Trận Base60 Index 10x6 -->
+    <div id="matrix-view" style="display: none;">
+      <div class="grid-header">
+        <div class="grid-title">
+          <span>Bảng 60 Ký Tự Base60 (Ma Trận 10 × 6)</span>
+        </div>
+        <div style="font-size: 0.78rem; color: var(--text-muted); font-family: var(--mono);">
+          Chỉ số Index: #00 .. #59
+        </div>
+      </div>
+      <div id="glyph-grid" class="glyph-grid" style="margin-top: 10px;"></div>
+    </div>
+
+    <!-- View 3: Bảng Cặp Chữ aAbB và Chữ Số 0123... -->
+    <div id="alpha-view" class="alpha-wrap" style="display: none;"></div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="glyph-modal" onclick="if(event.target===this) closeModal()">
+    <div class="modal-box">
+      <button class="modal-close" onclick="closeModal()">✕</button>
+      <div id="modal-svg-target" class="modal-large-svg"></div>
+      <table class="modal-info-table">
+        <tr><td>Chỉ số Index:</td><td id="m-index">#00</td></tr>
+        <tr><td>Ký tự Base60:</td><td id="m-b60" style="color: var(--gold); font-size: 1.2rem; font-family: var(--mono);">c</td></tr>
+        <tr><td>Tên nét cốt lõi:</td><td id="m-family">Cung C mở phải</td></tr>
+        <tr><td>Phân loại nét:</td><td id="m-tier">Tầng 1 (1 Nét nguyên tử)</td></tr>
+        <tr><td>Cấu trúc nguyên tử:</td><td id="m-recipe">1 nét cung đơn</td></tr>
+        <tr id="m-twin-row" style="display: none;"><td>Đối ngẫu xoay:</td><td id="m-twin"></td></tr>
+        <tr><td>Mã nhị phân (6-bit):</td><td id="m-bits" style="font-family: var(--mono); color: var(--accent);">000000</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <script type="module">
+    import { encodeWord, timeToBase60 } from './vcomp.js';
+    import { initVsnNavigation } from './nav-system.js';
+
+    initVsnNavigation('#vsn-nav-header');
+
+    // 60 Ký tự chuẩn của Base60 mapping (0..59)
+    const B60_MAPPING = [
+      'c','d','g','G','j','k','K','h','v','D','m','C','r','s','n','b','l','Q','S','z',
+      'N','y','L','W','p','f','q','t','T','R','x','0','1','2','3','4','5','6','7','8',
+      '9','A','B','E','F','H','o','J','M','P','U','V','X','Y','Z','a','e','i','u','w'
+    ];
+
+    let currentStrokeColor = '#00f2fe';
+    let currentStrokeWidth = 8;
+
+    // 60 Công thức nét hình học tối giản tuyệt đối (Distinctive Minimal Core Radicals)
+    const GLYPH_RECIPES = [
+      // 0: 'c' - Cung C mở sang phải ⊂ (Bộ tứ cung tròn - 1 nét)
+      { id: 0, family: 'Cung C mở phải ⊂', name: 'Nửa cung tròn mở phải (c)', path: '<path d="M 68 28 A 25 25 0 0 0 68 72" fill="none" />', twin: 3, twinRelation: 'Lật gương với G' },
+      
+      // 1: 'd' - Móc lưỡi câu / chữ d khuyết
+      { id: 1, family: 'Móc lưỡi câu / d khuyết', name: 'Nét móc câu d khuyết (d)', path: '<path d="M 50 20 L 50 50 A 18 15 0 0 0 50 80" fill="none" />', twin: 9, twinRelation: 'Đối ngẫu với D' },
+      
+      // 2: 'g' - Trục đứng + đuôi xiên hất trái (Theo thiết kế trực tiếp của bạn!)
+      { id: 2, family: 'Trục đứng + đuôi xiên hất trái', name: 'Thẳng dài dọc + thẳng ngắn xiên hất trái (g)', path: '<polyline points="65,20 65,80 35,50" fill="none" />' },
+      
+      // 3: 'G' - Cung C hoa đối xứng gương mở sang trái ⊃ (Theo yêu cầu: cong to đối xứng gương với C)
+      { id: 3, family: 'Cung tròn lớn hoa ⊃', name: 'Cung tròn lớn mở sang trái (G) - Lật gương với C hoa', path: '<path d="M 24 22 A 30 30 0 1 1 24 78" fill="none" />', twin: 11, twinRelation: 'Lật gương hoàn hảo với C hoa' },
+      
+      // 4: 'j' - Nét móc câu cá đơn thuần (Theo yêu cầu: thu bé gọn ở tâm)
+      { id: 4, family: 'Nét móc câu nhỏ', name: '1 nét móc cong dưới sang trái nhỏ (j)', path: '<path d="M 56 32 L 56 58 A 12 12 0 0 1 32 68" fill="none" />' },
+      
+      // 5: 'k' - Chữ V xoay ngang 90 độ mở sang phải < (Bộ tứ góc nhọn - 1 nét gập nhỏ)
+      { id: 5, family: 'Góc nhọn nhỏ mở phải <', name: 'Chữ V xoay 90° mở phải nhỏ (k)', path: '<polyline points="64,30 34,50 64,70" fill="none" />', twin: 6, twinRelation: 'Đối ngẫu ngắn-dài với K' },
+      
+      // 6: 'K' - Chữ V xoay ngang 90 độ mở sang trái > (Theo yêu cầu: nét dài sải rộng)
+      { id: 6, family: 'Góc nhọn mở trái > (Nét dài)', name: 'Chữ V xoay 90° mở trái nét dài (K)', path: '<polyline points="22,24 78,50 22,76" fill="none" />', twin: 5, twinRelation: 'Đối ngẫu dài-ngắn với k' },
+      
+      // 7: 'h' - Khung vuông mở dưới ⊓ (Bộ Ngũ Hình Vuông - Cổng vòm vuông 2 chân)
+      { id: 7, family: 'Khung vuông mở dưới ⊓', name: 'Khung vuông thiếu cạnh đáy (h) - Cổng vòm 2 chân', path: '<polyline points="30,68 30,30 70,30 70,68" fill="none" />', twin: 50, twinRelation: 'Xoay 180° với U (⊔)' },
+      
+      // 8: 'v' - Góc nhọn chữ v nhỏ chĩa xuống ∨ (Bộ tứ góc nhọn)
+      { id: 8, family: 'Góc nhọn v nhỏ ∨', name: 'Góc nhọn chóp dưới (v)', path: '<polyline points="32,44 50,76 68,44" fill="none" />', twin: 51, twinRelation: 'Đảo ngược đỉnh/đáy với V (^)' },
+      
+      // 9: 'D' - Bán nguyệt lớn khép kín quay phải D
+      { id: 9, family: 'Bán nguyệt quay phải D', name: 'Nửa hình tròn lớn khép kín (D)', path: '<path d="M 32 22 L 32 78 A 28 28 0 0 0 32 22 Z" fill="none" />', twin: 1, twinRelation: 'Đối ngẫu lớn-nhỏ với d' },
+
+      // 10: 'm' - Hai vòm sóng lượn liên tiếp (1 nét lượn sóng liền, không chân chống)
+      { id: 10, family: 'Vòm sóng đôi ⌒⌒', name: 'Hai vòm cong liên tiếp không chân (m)', path: '<path d="M 22 62 A 14 14 0 0 1 50 62 A 14 14 0 0 1 78 62" fill="none" />' },
+      
+      // 11: 'C' - Cung tròn lớn mở rộng
+      { id: 11, family: 'Cung tròn lớn hoa', name: 'Cung tròn lớn mở rộng (C) - Lật gương với G hoa', path: '<path d="M 76 22 A 30 30 0 1 0 76 78" fill="none" />', twin: 3, twinRelation: 'Lật gương hoàn hảo với G hoa' },
+      
+      // 12: 'r' - Góc vuông trên-trái ┌ (Theo thiết kế trực tiếp của bạn - Xoay 180° của 's')
+      { id: 12, family: 'Góc vuông trên-trái ┌', name: 'Thẳng ngắn đứng trái + thẳng ngắn ngang đỉnh phải (r)', path: '<polyline points="35,66 35,34 75,34" fill="none" />', twin: 13, twinRelation: 'Đối ngẫu xoay 180° với s' },
+      
+      // 13: 's' - Góc vuông ngược đáy phải _| (Theo thiết kế trực tiếp của bạn!)
+      { id: 13, family: 'Góc vuông ngược _|', name: 'Thẳng ngắn đứng phải + thẳng ngắn ngang đáy trái (s)', path: '<polyline points="65,34 65,66 25,66" fill="none" />', twin: 12, twinRelation: 'Đối ngẫu xoay 180° với r' },
+      
+      // 14: 'n' - Một vòm cong đơn mở dưới ⌒ (Bộ tứ cung tròn - 1 nét)
+      { id: 14, family: 'Vòm sóng đơn ⌒', name: 'Cung mở dưới hình cầu vồng (n)', path: '<path d="M 28 62 A 22 22 0 0 1 72 62" fill="none" />' },
+      
+      // 15: 'b' - Trục đứng lượn liền bụng dưới phải (Single continuous stroke)
+      { id: 15, family: 'Trục đứng liền bụng phải', name: '1 nét liền trục trái + vòm bụng phải (b)', path: '<path d="M 36 22 L 36 78 A 18 18 0 0 0 36 42" fill="none" />' },
+      
+      // 16: 'l' - Một gạch thẳng đứng 90 độ duy nhất (Bộ đôi nét thẳng)
+      { id: 16, family: 'Một gạch dọc đứng |', name: 'Nét gạch đứng 90 độ (l)', path: '<line x1="50" y1="18" x2="50" y2="82" />' },
+      
+      // 17: 'Q' - Hình vuông khép kín □ (Theo yêu cầu trực tiếp của bạn!)
+      { id: 17, family: 'Hình vuông khép kín □', name: 'Khối vuông khép kín hoàn chỉnh (Q)', path: '<rect x="30" y="30" width="40" height="40" rx="4" fill="none" />', twin: 46, twinRelation: 'Đối ngẫu Vuông - Tròn với o (○)' },
+      
+      // 18: 'S' - Chữ S lớn toàn khung (Theo ảnh bạn vẽ - Uốn lượn 2 vòm đối xứng tâm)
+      { id: 18, family: 'Chữ S hoa đối xứng 2 vòm', name: 'Chữ S hoa chuẩn mực 2 vòm lượn qua tâm (S)', path: '<path d="M 64 22 C 32 14, 26 40, 50 50 C 74 60, 68 86, 36 78" fill="none" />' },
+      
+      // 19: 'z' - Góc vuông trên-phải ┐ (Theo thiết kế trực tiếp của bạn!)
+      { id: 19, family: 'Góc vuông trên-phải ┐', name: 'Thẳng ngắn ngang đỉnh trái + thẳng ngắn đứng phải (z) - Lật gương với r', path: '<polyline points="25,34 65,34 65,66" fill="none" />', twin: 12, twinRelation: 'Lật gương với r (┌)' },
+
+      // 20: 'N' - Ba đoạn thẳng chữ N lớn
+      { id: 20, family: 'Ziczac chữ N hoa', name: 'Ba đoạn thẳng ziczac chữ N (N)', path: '<polyline points="30,78 30,22 70,78 70,22" fill="none" />' },
+      
+      // 21: 'y' - Chữ y cân đối (Nhánh trái và phải đều đỉnh)
+      { id: 21, family: 'Chữ y phân nhánh cân đối', name: 'Trục dài xiên phải sang trái + nhánh trái cân đỉnh (y)', path: '<line x1="68" y1="24" x2="32" y2="80" /><line x1="32" y1="24" x2="50" y2="52" />' },
+      
+      // 22: 'L' - Góc vuông chữ L (1 polyline duy nhất)
+      { id: 22, family: 'Góc vuông chữ L |_', name: 'Góc vuông đứng ngang (L)', path: '<polyline points="34,22 34,78 76,78" fill="none" />' },
+      
+      // 23: 'W' - Chữ W lớn 4 nét gập ziczac
+      { id: 23, family: 'Chữ W lớn 4 nét gập', name: 'Bốn nét xiên ziczac lớn (W)', path: '<polyline points="20,24 35,78 50,42 65,78 80,24" fill="none" />', twin: 48, twinRelation: 'Xoay 180° với M' },
+      
+      // 24: 'p' - Trục rủ xuống lượn liền vòm trên phải (Single continuous stroke)
+      { id: 24, family: 'Trục rủ liền vòm trên', name: '1 nét liền trục rủ + vòm trên phải (p)', path: '<path d="M 36 80 L 36 28 A 18 18 0 0 1 36 64" fill="none" />' },
+      
+      // 25: 'f' - Chữ T ngược ⊥ (Đáy ngang + trục dọc giữa - Bộ tứ chữ T)
+      { id: 25, family: 'Chữ T ngược ⊥', name: 'Thanh ngang đáy + trục đứng giữa (f)', path: '<line x1="24" y1="76" x2="76" y2="76" /><line x1="50" y1="76" x2="50" y2="24" />', twin: 28, twinRelation: 'Xoay 180° với T' },
+      
+      // 26: 'q' - Khung vuông thiếu bên phải ⊏ (Theo yêu cầu trực tiếp của bạn!)
+      { id: 26, family: 'Khung vuông mở phải ⊏', name: 'Khung vuông thiếu cạnh phải (q)', path: '<polyline points="68,30 30,30 30,70 68,70" fill="none" />', twin: 49, twinRelation: 'Lật gương với P (⊐)' },
+      
+      // 27: 't' - Dấu chữ thập tối giản +
+      { id: 27, family: 'Dấu chữ thập +', name: 'Hai nét giao nhau vuông góc (t)', path: '<line x1="30" y1="50" x2="70" y2="50" /><line x1="50" y1="26" x2="50" y2="76" />' },
+      
+      // 28: 'T' - Chữ T đỉnh (Thanh ngang + trục giữa - Bộ tứ chữ T)
+      { id: 28, family: 'Thanh ngang đỉnh + trục giữa', name: 'Chữ T hoa đối xứng ⊤ (T)', path: '<line x1="22" y1="24" x2="78" y2="24" /><line x1="50" y1="24" x2="50" y2="78" />', twin: 25, twinRelation: 'Xoay 180° với f' },
+      
+      // 29: 'R' - Mái gập đỉnh xiên phải (Thẳng dài + thẳng ngắn gập đỉnh phải)
+      { id: 29, family: 'Mái gập đỉnh xiên phải', name: 'Trục dài xiên thuận + mái ngắn vát đỉnh phải (R)', path: '<polyline points="32,78 54,26 76,48" fill="none" />' },
+
+      // 30: 'x' - Dấu chéo chữ x nhỏ (Giao cắt 45 độ)
+      { id: 30, family: 'Dấu chéo nhỏ ×', name: 'Hai đường chéo giao nhau nhỏ (x)', path: '<line x1="34" y1="44" x2="66" y2="76" /><line x1="66" y1="44" x2="34" y2="76" />' },
+      
+      // 31: '0' - Vòng oval số 0 có dấu chấm tâm
+      { id: 31, family: 'Oval số 0 + tâm ⊙', name: 'Hình oval có chấm định vị tâm (0)', path: '<ellipse cx="50" cy="50" rx="22" ry="28" fill="none" /><circle cx="50" cy="50" r="4" fill="currentColor" />' },
+      
+      // 32: '1' - Nét gập số 1
+      { id: 32, family: 'Gạch đứng số 1', name: 'Gạch dọc có chóp xiên đỉnh (1)', path: '<polyline points="36,36 50,22 50,80" fill="none" />' },
+      
+      // 33: '2' - Nét lượn ziczac số 2
+      { id: 33, family: 'Vòm cong + đáy ngang', name: 'Chữ số 2 hình học (2)', path: '<path d="M 32 36 A 16 16 0 0 1 68 44 C 68 62, 34 66, 32 78 L 70 78" fill="none" />' },
+      
+      // 34: '3' - Hai vòm mở trái
+      { id: 34, family: 'Hai vòm mở trái 3', name: 'Chữ số 3 hai tầng vòm (3)', path: '<path d="M 34 26 L 66 26 C 56 46, 56 46, 66 54 A 16 16 0 0 1 34 76" fill="none" />' },
+      
+      // 35: '4' - Góc nhọn + trục cắt
+      { id: 35, family: 'Góc vuông + trục cắt 4', name: 'Chữ số 4 hình học (4)', path: '<polyline points="62,22 28,58 72,58" fill="none" /><line x1="62" y1="36" x2="62" y2="80" />' },
+      
+      // 36: '5' - Ngang + gập bụng cong
+      { id: 36, family: 'Ngang + gập bụng cong 5', name: 'Chữ số 5 hình học (5)', path: '<polyline points="68,26 34,26 32,48" fill="none" /><path d="M 32 48 A 18 18 0 1 1 32 76" fill="none" />' },
+      
+      // 37: '6' - Cung trên lượn vào tròn đáy
+      { id: 37, family: 'Cung lượn vào tròn đáy 6', name: 'Chữ số 6 hình học (6)', path: '<circle cx="50" cy="62" r="17" fill="none" /><path d="M 33 60 C 32 38, 44 24, 66 24" fill="none" />' },
+      
+      // 38: '7' - Góc tù số 7 (1 polyline duy nhất)
+      { id: 38, family: 'Góc tù số 7 ¬', name: 'Thanh ngang + nét chéo xuống (7)', path: '<polyline points="28,26 72,26 44,78" fill="none" />' },
+      
+      // 39: '8' - Hai vòng tròn đồng tâm xếp chồng
+      { id: 39, family: 'Hai vòng tròn xếp chồng 8', name: 'Chữ số 8 hai tầng tròn (8)', path: '<circle cx="50" cy="38" r="14" fill="none" /><circle cx="50" cy="64" r="16" fill="none" />' },
+
+      // 40: '9' - Vòng tròn đỉnh + đuôi thẳng xuống
+      { id: 40, family: 'Vòng tròn đỉnh + đuôi rủ 9', name: 'Chữ số 9 hình học (9)', path: '<circle cx="50" cy="38" r="17" fill="none" /><path d="M 67 38 L 67 66 A 14 14 0 0 1 42 78" fill="none" />' },
+      
+      // 41: 'A' - Nét nghiêng nghịch 45 độ \ (Theo yêu cầu: nét dài toàn khung)
+      { id: 41, family: 'Nét nghiêng nghịch 45° \\ (Dài)', name: 'Gạch xiên nghịch 45 độ nét dài (A) - Đối ngẫu với i', path: '<line x1="26" y1="26" x2="74" y2="74" />', twin: 57, twinRelation: 'Đối ngẫu dài-ngắn với i (/)' },
+      
+      // 42: 'B' - Trục đứng + hai cung tròn khép kín
+      { id: 42, family: 'Trục + hai bán nguyệt B', name: 'Chữ B hoa 2 vòm bụng (B)', path: '<line x1="32" y1="22" x2="32" y2="78" /><path d="M 32 22 A 16 16 0 0 1 32 50 A 16 16 0 0 1 32 78" fill="none" />' },
+      
+      // 43: 'E' - Chữ T xoay 90 độ ⊢ (Trục đứng trái + gạch ngang giữa chĩa phải - Bộ tứ chữ T)
+      { id: 43, family: 'Chữ T xoay 90° ⊢', name: 'Trục đứng trái + gạch ngang giữa (E)', path: '<line x1="32" y1="22" x2="32" y2="78" /><line x1="32" y1="50" x2="72" y2="50" />', twin: 44, twinRelation: 'Đối ngẫu xoay 180° với F' },
+      
+      // 44: 'F' - Chữ T xoay trái ⊣ (Theo thiết kế trực tiếp của bạn!)
+      { id: 44, family: 'Chữ T xoay trái ⊣', name: 'Trục đứng phải + gạch ngang giữa chĩa trái (F)', path: '<line x1="66" y1="22" x2="66" y2="78" /><line x1="66" y1="50" x2="28" y2="50" />', twin: 43, twinRelation: 'Đối ngẫu xoay 180° với E' },
+      
+      // 45: 'H' - Hai thanh đứng song song || (Dấu = xoay 90 độ)
+      { id: 45, family: 'Song song đứng ||', name: 'Cặp thanh dọc song song (H)', path: '<line x1="38" y1="22" x2="38" y2="78" /><line x1="62" y1="22" x2="62" y2="78" />', twin: 56, twinRelation: 'Xoay 90° với e' },
+      
+      // 46: 'o' - Vòng tròn nhỏ xoe ở giữa
+      { id: 46, family: 'Vòng tròn nhỏ ○', name: 'Chữ o thường tròn xoe (o)', path: '<circle cx="50" cy="50" r="18" fill="none" />', twin: 17, twinRelation: 'Đối ngẫu Tròn - Vuông với Q (□)' },
+      
+      // 47: 'J' - Thanh ngang đỉnh + móc cong lớn
+      { id: 47, family: 'Ngang đỉnh + móc lớn J', name: 'Chữ J hoa có thanh ngang đỉnh (J)', path: '<line x1="32" y1="24" x2="72" y2="24" /><path d="M 58 24 L 58 64 A 18 18 0 0 1 28 74" fill="none" />' },
+      
+      // 48: 'M' - Ziczac M lớn (3 góc nhọn đối xứng, không chân đứng)
+      { id: 48, family: 'Ziczac M lớn /\\/\\', name: 'Bốn nét gãy góc chữ M lớn (M)', path: '<polyline points="20,72 35,28 50,56 65,28 80,72" fill="none" />', twin: 23, twinRelation: 'Xoay 180° với W' },
+      
+      // 49: 'P' - Khung vuông thiếu bên trái ⊐ (Bộ Ngũ Hình Vuông - Lật gương hoàn hảo với q)
+      { id: 49, family: 'Khung vuông mở trái ⊐', name: 'Khung vuông thiếu cạnh trái (P) - Lật gương với q', path: '<polyline points="32,30 70,30 70,70 32,70" fill="none" />', twin: 26, twinRelation: 'Lật gương với q (⊏)' },
+
+      // 50: 'U' - Khung chữ U vuông mở trên ⊔ (Bộ Ngũ Hình Vuông - Đối ngẫu Vuông/Tròn với u thường)
+      { id: 50, family: 'Khung chữ U vuông ⊔', name: 'Khung vuông thiếu cạnh trên (U) - Mở ngửa đỉnh', path: '<polyline points="30,32 30,70 70,70 70,32" fill="none" />', twin: 58, twinRelation: 'Đối ngẫu Vuông - Tròn với u (∪) & xoay 180° với h' },
+      
+      // 51: 'V' - Chóp nón lớn ^ chĩa lên nét dài (Theo yêu cầu của bạn!)
+      { id: 51, family: 'Chóp nón lớn ^ (Nét dài)', name: 'Góc nhọn chóp nón đỉnh nét dài (V)', path: '<polyline points="24,78 50,22 76,78" fill="none" />', twin: 8, twinRelation: 'Đảo ngược đỉnh/đáy với v (∨)' },
+      
+      // 52: 'X' - Dấu chéo lớn toàn khung
+      { id: 52, family: 'Dấu chéo lớn X', name: 'Chữ X hoa giao cắt rộng (X)', path: '<line x1="24" y1="24" x2="76" y2="76" /><line x1="76" y1="24" x2="24" y2="76" />' },
+      
+      // 53: 'Y' - Chữ Y lớn phân nhánh
+      { id: 53, family: 'Chữ Y lớn phân nhánh', name: 'Chữ Y hoa trục đứng dưới (Y)', path: '<polyline points="26,24 50,52 74,24" fill="none" /><line x1="50" y1="52" x2="50" y2="80" />' },
+      
+      // 54: 'Z' - Chữ Z lớn toàn khung
+      { id: 54, family: 'Chữ Z lớn toàn khung', name: 'Chữ Z hoa góc cạnh lớn (Z)', path: '<polyline points="26,24 74,24 26,76 74,76" fill="none" />' },
+      
+      // 55: 'a' - Một gạch ngang đơn - (Theo chỉ thị của bạn!)
+      { id: 55, family: 'Một gạch ngang đơn -', name: 'Thanh ngang đơn giản giữa khung (a)', path: '<line x1="26" y1="50" x2="74" y2="50" />' },
+      
+      // 56: 'e' - Hai vạch ngang song song = (Theo chỉ thị của bạn!)
+      { id: 56, family: 'Hai vạch ngang song song =', name: 'Hai thanh ngang song song (e)', path: '<line x1="28" y1="40" x2="72" y2="40" /><line x1="28" y1="60" x2="72" y2="60" />', twin: 45, twinRelation: 'Xoay 90° với H' },
+      
+      // 57: 'i' - Nét nghiêng 45 độ ngắn / (Theo yêu cầu: nét ngắn ở tâm)
+      { id: 57, family: 'Nét nghiêng 45° ngắn /', name: 'Gạch xiên thuận 45 độ ngắn (i) - Đối ngẫu với A', path: '<line x1="40" y1="60" x2="60" y2="40" />', twin: 41, twinRelation: 'Đối ngẫu ngắn-dài với A (\\)' },
+      
+      // 58: 'u' - Vòm ngửa hình đáy chén ∪ (Bộ tứ cung tròn - 1 nét)
+      { id: 58, family: 'Vòm ngửa đáy chén ∪', name: 'Cung ngửa hình đáy chén (u)', path: '<path d="M 28 38 A 22 22 0 0 0 72 38" fill="none" />', twin: 50, twinRelation: 'Đối ngẫu Tròn - Vuông với U (⊔)' },
+      
+      // 59: 'w' - Hai góc nhọn v ghép nhỏ ở nửa dưới
+      { id: 59, family: 'Hai góc nhọn liên tiếp w', name: 'Chữ w thường v kép nhỏ (w)', path: '<polyline points="24,46 36,74 48,52 60,74 72,46" fill="none" />' }
+    ];
+
+    function makeSvg(pathHtml, size = 48, color = currentStrokeColor, strokeW = currentStrokeWidth) {
+      return `<svg viewBox="0 0 100 100" width="${size}" height="${size}" stroke="${color}" stroke-width="${strokeW}" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px ${color}55);">${pathHtml}</svg>`;
+    }
+
+    // Hệ thống phân loại hình thái học & cụm phép xoay liền kề
+    const TAXONOMY_DATA = [
+      {
+        tierId: 1,
+        tierName: 'TẦNG 1: 1 NÉT NGUYÊN TỬ (HẠT NHÂN TỐI GIẢN)',
+        tierBadge: '16 Ký tự · 1 Stroke Primitives',
+        tierDesc: 'Nét vẽ đơn giản nhất: đường thẳng, cung tròn, góc nhọn và vòng tròn không nhấc bút.',
+        clusters: [
+          {
+            name: 'Cụm Nét Thẳng Đơn (1-Line)',
+            relation: '4 Hướng: Ngang 0° ➔ Đứng 90° ➔ Xiên thuận / ➔ Xiên nghịch \\',
+            items: [
+              { idx: 55, char: 'a', note: 'Ngang 0° —' },
+              { idx: 16, char: 'l', note: 'Đứng 90° |' },
+              { idx: 57, char: 'i', note: 'Xiên thuận / (Ngắn)' },
+              { idx: 41, char: 'A', note: 'Xiên nghịch \\ (Dài)' }
+            ]
+          },
+          {
+            name: 'Cụm Cung Tròn 4 Hướng (C-Arcs 4-Way)',
+            relation: 'Phép xoay 90° & Lật gương khép kín 4 hướng',
+            items: [
+              { idx: 0,  char: 'c', note: 'Mở phải ⊂' },
+              { idx: 3,  char: 'G', note: 'Mở trái ⊃ (Lớn - Lật C)' },
+              { idx: 14, char: 'n', note: 'Mở đáy ∩ (Úp)' },
+              { idx: 58, char: 'u', note: 'Mở đỉnh ∪ (Ngửa)' }
+            ]
+          },
+          {
+            name: 'Cụm Góc Nhọn V 4 Hướng (V-Angles 4-Way)',
+            relation: 'Chóp đáy ∨ ➔ Chóp đỉnh ^ (dài) ➔ Mở phải < (nhỏ) ➔ Mở trái > (dài)',
+            items: [
+              { idx: 8,  char: 'v', note: 'Chóp đáy nhỏ ∨' },
+              { idx: 51, char: 'V', note: 'Chóp đỉnh lớn ^ (Dài)' },
+              { idx: 5,  char: 'k', note: 'Mở phải < (Nhỏ)' },
+              { idx: 6,  char: 'K', note: 'Mở trái > (Nét dài)' }
+            ]
+          },
+          {
+            name: 'Cụm Khối Kín & Đường Cong (Tròn - Cung - Móc - Góc)',
+            relation: 'Tròn ○ (đối ngẫu với □) ➔ Cung lớn C ➔ Móc j ➔ Góc vuông L',
+            items: [
+              { idx: 46, char: 'o', note: 'Tròn nhỏ ○' },
+              { idx: 11, char: 'C', note: 'Cung lớn C' },
+              { idx: 4,  char: 'j', note: 'Móc câu đáy' },
+              { idx: 22, char: 'L', note: 'Góc vuông |_ 1 nét' }
+            ]
+          }
+        ]
+      },
+      {
+        tierId: 2,
+        tierName: 'TẦNG 2: 2 NÉT GHÉP & CẶP XOAY ĐỐI NGẪU',
+        tierBadge: '23 Ký tự · Dual-Stroke Combinations',
+        tierDesc: 'Tổ hợp từ 2 nét cơ bản: các cặp đối ngẫu xoay 180°, họ hình vuông 4 hướng, bộ tứ chữ T và bán nguyệt.',
+        clusters: [
+          {
+            name: 'Cụm Họ Hình Vuông 4 Hướng & Kín (Square Family)',
+            relation: '★ Khối vuông kín Q (□) & 4 hướng mở: Phải q (⊏) ➔ Trái P (⊐) ➔ Trên U (⊔) ➔ Dưới h (⊓)',
+            highlight: true,
+            items: [
+              { idx: 17, char: 'Q', note: 'Vuông kín □ (Trung tâm)' },
+              { idx: 26, char: 'q', note: 'Mở phải ⊏ (Khuyết phải)' },
+              { idx: 49, char: 'P', note: 'Mở trái ⊐ (Khuyết trái - Lật q)' },
+              { idx: 50, char: 'U', note: 'Mở trên ⊔ (Khuyết trên - U vuông)' },
+              { idx: 7,  char: 'h', note: 'Mở dưới ⊓ (Khuyết dưới - Cổng vòm)' }
+            ]
+          },
+          {
+            name: 'Cụm Góc Vuông Đối Ngẫu (Right-Angle Corners)',
+            relation: '★ r (┌) lật gương với z (┐) · s (_|) xoay 180° với r',
+            highlight: true,
+            items: [
+              { idx: 12, char: 'r', note: 'Trên-trái ┌' },
+              { idx: 19, char: 'z', note: 'Trên-phải ┐ (Lật r)' },
+              { idx: 13, char: 's', note: 'Dưới-phải _| (⟳ r)' }
+            ]
+          },
+          {
+            name: 'Cụm Chữ T 4 Hướng (T-Cross 4-Way 90°)',
+            relation: '4 Phép xoay 90° của trục thẳng + nhánh vuông góc',
+            items: [
+              { idx: 28, char: 'T', note: 'Chĩa xuống ⊤' },
+              { idx: 25, char: 'f', note: 'Chĩa lên ⊥ (180°)' },
+              { idx: 43, char: 'E', note: 'Chĩa phải ⊢ (90°)' },
+              { idx: 44, char: 'F', note: 'Chĩa trái ⊣ (270°)' }
+            ]
+          },
+          {
+            name: 'Cụm Bán Nguyệt D Khép Kín (D-Semicircle Twins)',
+            relation: 'Bán nguyệt lật trái và phải đối xứng',
+            items: [
+              { idx: 9,  char: 'D', note: 'Quay phải D (Lớn)' },
+              { idx: 1,  char: 'd', note: 'Quay trái ᗡ (Nhỏ)' }
+            ]
+          },
+          {
+            name: 'Cụm Hai Nét Song Song (Parallel Twins)',
+            relation: 'Song song ngang và xoay 90° thành đứng',
+            items: [
+              { idx: 56, char: 'e', note: 'Ngang đôi =' },
+              { idx: 45, char: 'H', note: 'Dọc đôi || (90°)' }
+            ]
+          },
+          {
+            name: 'Cụm Giao Cắt Vuông & Xiên (Crosses)',
+            relation: 'Chữ thập vuông góc 90° và chéo 45°',
+            items: [
+              { idx: 27, char: 't', note: 'Chữ thập +' },
+              { idx: 30, char: 'x', note: 'Dấu chéo nhỏ ×' }
+            ]
+          },
+          {
+            name: 'Cụm Trục + Phân Nhánh (Stem + Branch)',
+            relation: 'Trục đứng/xiên kết hợp nhánh hất và vát đỉnh',
+            items: [
+              { idx: 2,  char: 'g', note: 'Trục + hất trái' },
+              { idx: 21, char: 'y', note: 'Xiên + nhánh trái' },
+              { idx: 29, char: 'R', note: 'Mái vát đỉnh phải' }
+            ]
+          },
+          {
+            name: 'Cụm 1 Nét Liền Trục + Vòm Bụng',
+            relation: 'Nét kéo dài liền vòm cong trên/dưới',
+            items: [
+              { idx: 15, char: 'b', note: 'Trục + bụng dưới' },
+              { idx: 24, char: 'p', note: 'Trục + vòm trên' }
+            ]
+          }
+        ]
+      },
+      {
+        tierId: 3,
+        tierName: 'TẦNG 3: 3-4 NÉT PHỨC HỢP & ZICZAC',
+        tierBadge: '11 Ký tự · Multi-Stroke & Complexes',
+        tierDesc: 'Cấu trúc nhiều nhịp chuyển hướng, đỉnh nhọn kép đối xứng và uốn lượn liên hoàn.',
+        clusters: [
+          {
+            name: 'Cụm Đỉnh Nhọn Kép 180° (Dual Peaks W & M)',
+            relation: '★ W và M là phép xoay 180° lật ngược đỉnh/đáy!',
+            highlight: true,
+            items: [
+              { idx: 23, char: 'W', note: '2 Đáy nhọn lớn ∨∨' },
+              { idx: 48, char: 'M', note: '2 Đỉnh nhọn lớn ∧∧ (⟳ 180° W)' },
+              { idx: 59, char: 'w', note: 'v kép nhỏ ∨∨' }
+            ]
+          },
+          {
+            name: 'Cụm Ziczac Đối Xứng (Ziczac Family)',
+            relation: 'Đường gập góc liên hoàn chữ N và Z hoa',
+            items: [
+              { idx: 20, char: 'N', note: 'Ziczac N hoa' },
+              { idx: 54, char: 'Z', note: 'Ziczac Z lớn' }
+            ]
+          },
+          {
+            name: 'Cụm Cung Sóng & Uốn Lượn',
+            relation: 'Các đường cong uốn lượn liên hoàn',
+            items: [
+              { idx: 10, char: 'm', note: 'Vòm sóng đôi ⌒⌒' },
+              { idx: 18, char: 'S', note: 'Chữ S hoa 2 vòm' }
+            ]
+          },
+          {
+            name: 'Cụm Phân Nhánh & Chéo Lớn',
+            relation: 'Chạc ba phân nhánh và giao cắt toàn khung',
+            items: [
+              { idx: 53, char: 'Y', note: 'Chữ Y phân nhánh' },
+              { idx: 52, char: 'X', note: 'Chéo lớn X' }
+            ]
+          },
+          {
+            name: 'Cụm Trục, Móc & Vòm Kép',
+            relation: 'Thanh ngang móc cong và trục 2 tầng',
+            items: [
+              { idx: 47, char: 'J', note: 'Ngang đỉnh + móc' },
+              { idx: 42, char: 'B', note: 'Trục + 2 bán nguyệt B' }
+            ]
+          }
+        ]
+      },
+      {
+        tierId: 4,
+        tierName: 'TẦNG 4: BỘ 10 CHỮ SỐ HÌNH HỌC (0 .. 9)',
+        tierBadge: '10 Ký tự · Geometric Numerals',
+        tierDesc: 'Ký hiệu số học nguyên bản được số hóa theo phong cách hình học tối giản.',
+        clusters: [
+          {
+            name: 'Bộ 10 Chữ Số Hình Học (0 Đến 9)',
+            relation: 'Khai thác trọn vẹn số học Base10 trong không gian Base60',
+            items: [
+              { idx: 31, char: '0', note: 'Oval chấm tâm ⊙' },
+              { idx: 32, char: '1', note: 'Gạch đứng chóp 1' },
+              { idx: 33, char: '2', note: 'Vòm + đáy ngang 2' },
+              { idx: 34, char: '3', note: '2 Vòm mở trái 3' },
+              { idx: 35, char: '4', note: 'Góc vuông + trục 4' },
+              { idx: 36, char: '5', note: 'Ngang + bụng cong 5' },
+              { idx: 37, char: '6', note: 'Cung lượn tròn 6' },
+              { idx: 38, char: '7', note: 'Góc tù ¬ 7' },
+              { idx: 39, char: '8', note: '2 Tròn xếp tầng 8' },
+              { idx: 40, char: '9', note: 'Tròn đỉnh + rủ 9' }
+            ]
+          }
+        ]
+      }
+    ];
+
+    function renderTaxonomy() {
+      const container = document.getElementById('taxonomy-view');
+      if (!container) return;
+
+      container.innerHTML = TAXONOMY_DATA.map(tier => {
+        const clustersHtml = tier.clusters.map(cluster => {
+          const glyphsHtml = cluster.items.map(item => {
+            const g = GLYPH_RECIPES[item.idx] || GLYPH_RECIPES[0];
+            const char = B60_MAPPING[item.idx] || item.char;
+            return `
+              <div class="tax-glyph-card" id="tax-card-${item.idx}" data-char="${char}" onclick="openModal(${item.idx})">
+                <div class="glyph-svg-wrap">
+                  ${makeSvg(g.path, 38)}
+                </div>
+                <div class="tax-glyph-meta">
+                  <span class="glyph-index">#${item.idx < 10 ? '0' + item.idx : item.idx}</span>
+                  <span class="tax-char">'${char}'</span>
+                </div>
+                <div class="tax-note" title="${item.note}">${item.note}</div>
+              </div>
+            `;
+          }).join('');
+
+          return `
+            <div class="cluster-card ${cluster.highlight ? 'highlight-cluster' : ''}" id="cluster-box-${cluster.name.replace(/\s+/g, '-')}">
+              <div class="cluster-header">
+                <div class="cluster-name">${cluster.name}</div>
+                <div class="cluster-relation">${cluster.relation}</div>
+              </div>
+              <div class="cluster-glyphs-row">
+                ${glyphsHtml}
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        return `
+          <div class="tier-section" id="tier-sec-${tier.tierId}">
+            <div class="tier-header">
+              <div class="tier-title-box">
+                <span class="tier-title">${tier.tierName}</span>
+                <span class="tier-badge">${tier.tierBadge}</span>
+              </div>
+              <div class="tier-desc">${tier.tierDesc}</div>
+            </div>
+            <div class="clusters-container">
+              ${clustersHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderGrid() {
+      const container = document.getElementById('glyph-grid');
+      if (!container) return;
+      container.innerHTML = GLYPH_RECIPES.map((g, idx) => {
+        const char = B60_MAPPING[idx] || '?';
+        return `
+          <div class="glyph-card" onclick="openModal(${idx})" id="card-${idx}" data-char="${char}">
+            <div class="glyph-svg-wrap">
+              ${makeSvg(g.path, 42)}
+            </div>
+            <div class="glyph-meta">
+              <span class="glyph-index">#${idx < 10 ? '0' + idx : idx}</span>
+              <span class="glyph-char">'${char}'</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderAlpha() {
+      const container = document.getElementById('alpha-view');
+      if (!container) return;
+
+      const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('');
+      
+      let pairsHtml = alphabet.map(letter => {
+        const lowerChar = letter;
+        const upperChar = letter.toUpperCase();
+        const lowerIdx = B60_MAPPING.indexOf(lowerChar);
+        const upperIdx = B60_MAPPING.indexOf(upperChar);
+
+        const hasLower = lowerIdx !== -1;
+        const hasUpper = upperIdx !== -1;
+
+        let items = '';
+        if (hasLower) {
+          const g = GLYPH_RECIPES[lowerIdx];
+          items += `
+            <div class="alpha-subcard" onclick="openModal(${lowerIdx})" id="alpha-card-${lowerIdx}" data-char="${lowerChar}">
+              <div class="glyph-svg-wrap" style="width: 50px; height: 50px;">
+                ${makeSvg(g.path, 34)}
+              </div>
+              <div class="alpha-subcard-meta">
+                <span class="glyph-index">#${lowerIdx < 10 ? '0' + lowerIdx : lowerIdx}</span>
+                <span class="alpha-subcard-char" style="color: var(--accent);">'${lowerChar}'</span>
+              </div>
+              <div style="font-size: 0.58rem; color: var(--text-muted); font-family: var(--mono);">thường</div>
+            </div>
+          `;
+        }
+
+        if (hasUpper) {
+          const g = GLYPH_RECIPES[upperIdx];
+          items += `
+            <div class="alpha-subcard" onclick="openModal(${upperIdx})" id="alpha-card-${upperIdx}" data-char="${upperChar}">
+              <div class="glyph-svg-wrap" style="width: 50px; height: 50px;">
+                ${makeSvg(g.path, 34)}
+              </div>
+              <div class="alpha-subcard-meta">
+                <span class="glyph-index">#${upperIdx < 10 ? '0' + upperIdx : upperIdx}</span>
+                <span class="alpha-subcard-char" style="color: var(--gold);">'${upperChar}'</span>
+              </div>
+              <div style="font-size: 0.58rem; color: var(--gold); font-family: var(--mono);">HOA</div>
+            </div>
+          `;
+        }
+
+        const tagText = (hasLower && hasUpper) 
+          ? `Cặp ${lowerChar.toUpperCase()} (${lowerChar} · ${upperChar})` 
+          : `Chữ ${lowerChar} (Đơn)`;
+
+        return `
+          <div class="alpha-pair-cell">
+            <div class="alpha-pair-tag">
+              <span>${tagText}</span>
+              ${(!hasUpper) ? '<span style="font-size: 0.6rem; color: var(--text-muted); font-weight: normal;">(Không có ' + upperChar + ')</span>' : ''}
+            </div>
+            <div class="alpha-pair-items">
+              ${items}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      const digits = ['0','1','2','3','4','5','6','7','8','9'];
+      let digitsHtml = digits.map(d => {
+        const idx = B60_MAPPING.indexOf(d);
+        if (idx === -1) return '';
+        const g = GLYPH_RECIPES[idx];
+        return `
+          <div class="alpha-subcard" onclick="openModal(${idx})" id="alpha-card-${idx}" data-char="${d}" style="padding: 8px 4px;">
+            <div class="glyph-svg-wrap" style="width: 52px; height: 52px;">
+              ${makeSvg(g.path, 36)}
+            </div>
+            <div class="alpha-subcard-meta">
+              <span class="glyph-index">#${idx}</span>
+              <span class="alpha-subcard-char" style="color: #38ef7d;">'${d}'</span>
+            </div>
+            <div style="font-size: 0.58rem; color: #38ef7d; font-family: var(--mono);">Số ${d}</div>
+          </div>
+        `;
+      }).join('');
+
+      container.innerHTML = `
+        <div class="alpha-section-box">
+          <div class="alpha-section-header">
+            <div class="alpha-section-title">
+              <span>🔤 26 Cặp Ký Tự Latinh (Thường & HOA Đặt Cạnh Nhau: aA, bB, cC...)</span>
+            </div>
+            <span class="alpha-section-badge">50 Ký tự · aA .. zZ</span>
+          </div>
+          <div class="alpha-pairs-grid">
+            ${pairsHtml}
+          </div>
+        </div>
+
+        <div class="alpha-section-box">
+          <div class="alpha-section-header">
+            <div class="alpha-section-title">
+              <span>🔢 10 Chữ Số Hình Học (0 Đến 9)</span>
+            </div>
+            <span class="alpha-section-badge" style="color: #38ef7d; border-color: rgba(56,239,125,0.3); background: rgba(56,239,125,0.1);">10 Chữ Số · #31 .. #40</span>
+          </div>
+          <div class="alpha-digits-grid">
+            ${digitsHtml}
+          </div>
+        </div>
+      `;
+    }
+
+    window.switchViewMode = function(mode) {
+      const taxView = document.getElementById('taxonomy-view');
+      const matView = document.getElementById('matrix-view');
+      const alphaView = document.getElementById('alpha-view');
+      const btnTax = document.getElementById('btn-view-taxonomy');
+      const btnMat = document.getElementById('btn-view-matrix');
+      const btnAlpha = document.getElementById('btn-view-alpha');
+      const hint = document.getElementById('view-mode-hint');
+
+      if (mode === 'taxonomy') {
+        if (taxView) taxView.style.display = 'flex';
+        if (matView) matView.style.display = 'none';
+        if (alphaView) alphaView.style.display = 'none';
+        if (btnTax) btnTax.classList.add('active');
+        if (btnMat) btnMat.classList.remove('active');
+        if (btnAlpha) btnAlpha.classList.remove('active');
+        if (hint) hint.textContent = 'Sắp xếp: Ít nét ➔ Nhiều nét · Cặp xoay đặt liền kề';
+      } else if (mode === 'matrix') {
+        if (taxView) taxView.style.display = 'none';
+        if (matView) matView.style.display = 'block';
+        if (alphaView) alphaView.style.display = 'none';
+        if (btnTax) btnTax.classList.remove('active');
+        if (btnMat) btnMat.classList.add('active');
+        if (btnAlpha) btnAlpha.classList.remove('active');
+        if (hint) hint.textContent = 'Sắp xếp: Thứ tự chỉ số Base60 Index (#00 .. #59)';
+      } else if (mode === 'alpha') {
+        if (taxView) taxView.style.display = 'none';
+        if (matView) matView.style.display = 'none';
+        if (alphaView) alphaView.style.display = 'flex';
+        if (btnTax) btnTax.classList.remove('active');
+        if (btnMat) btnMat.classList.remove('active');
+        if (btnAlpha) btnAlpha.classList.add('active');
+        if (hint) hint.textContent = 'Sắp xếp: Cặp ký tự thường - HOA (aA, bB, cC...) và 10 chữ số (0..9)';
+      }
+    };
+
+    window.openModal = function(idx) {
+      const g = GLYPH_RECIPES[idx];
+      const char = B60_MAPPING[idx];
+      document.getElementById('m-index').textContent = `#${idx < 10 ? '0' + idx : idx} (Vị trí ${idx + 1}/60)`;
+      document.getElementById('m-b60').textContent = `'${char}'`;
+      document.getElementById('m-family').textContent = g.family;
+      document.getElementById('m-recipe').textContent = g.name;
+      document.getElementById('m-bits').textContent = idx.toString(2).padStart(6, '0');
+      document.getElementById('modal-svg-target').innerHTML = makeSvg(g.path, 110, currentStrokeColor, currentStrokeWidth * 1.25);
+
+      // Tìm vị trí Tầng & Cụm trong Taxonomy
+      let foundTier = 'Tầng ?';
+      let foundCluster = 'Cụm ?';
+      for (const t of TAXONOMY_DATA) {
+        for (const c of t.clusters) {
+          if (c.items.some(it => it.idx === idx)) {
+            foundTier = t.tierName.split(':')[0];
+            foundCluster = c.name;
+            break;
+          }
+        }
+      }
+      document.getElementById('m-tier').textContent = `${foundTier} · ${foundCluster}`;
+
+      // Xử lý nút đối ngẫu xoay
+      const twinRow = document.getElementById('m-twin-row');
+      const twinCell = document.getElementById('m-twin');
+      if (g.twin !== undefined) {
+        const twinChar = B60_MAPPING[g.twin];
+        twinCell.innerHTML = `<button class="twin-jump-btn" onclick="openModal(${g.twin})" title="Nhấn để xem ngay ký tự đối ngẫu">${g.twinRelation} <strong>'${twinChar}'</strong> →</button>`;
+        twinRow.style.display = '';
+      } else {
+        twinRow.style.display = 'none';
+      }
+
+      document.getElementById('glyph-modal').style.display = 'flex';
+    };
+
+    window.closeModal = function() {
+      document.getElementById('glyph-modal').style.display = 'none';
+    };
+
+    window.updateStrokeWidth = function(w) {
+      currentStrokeWidth = parseInt(w, 10);
+      document.getElementById('stroke-val').textContent = w + 'px';
+      renderTaxonomy();
+      renderGrid();
+      renderAlpha();
+      handleSearch(document.getElementById('glyph-search').value);
+      renderLiveSentence(document.getElementById('live-input').value);
+    };
+
+    window.setColor = function(col, btn) {
+      currentStrokeColor = col;
+      document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+      if (btn) btn.classList.add('active');
+      renderTaxonomy();
+      renderGrid();
+      renderAlpha();
+      handleSearch(document.getElementById('glyph-search').value);
+      renderLiveSentence(document.getElementById('live-input').value);
+    };
+
+    window.setEx = function(text) {
+      document.getElementById('live-input').value = text;
+      renderLiveSentence(text);
+    };
+
+    // Bộ lọc ký tự nhanh hoạt động trên cả Taxonomy, Matrix & aAbB123
+    window.handleSearch = function(query) {
+      const q = query.trim();
+      const clearBtn = document.getElementById('search-clear-btn');
+      const statsEl = document.getElementById('search-stats');
+      
+      if (clearBtn) clearBtn.style.visibility = q ? 'visible' : 'hidden';
+
+      if (!q) {
+        document.querySelectorAll('.glyph-card, .tax-glyph-card, .alpha-subcard').forEach(card => {
+          card.style.display = '';
+          card.classList.remove('highlight');
+        });
+        document.querySelectorAll('.cluster-card, .tier-section, .alpha-pair-cell').forEach(el => {
+          el.style.display = '';
+        });
+        if (statsEl) statsEl.innerHTML = 'Đang hiển thị <strong>60</strong> / 60 ký tự';
+        return;
+      }
+
+      let tokens = q.includes(' ') ? q.split(/\s+/).filter(Boolean) : [...q];
+      let matchCount = 0;
+
+      // 1. Lọc ma trận gốc
+      GLYPH_RECIPES.forEach((g, idx) => {
+        const char = B60_MAPPING[idx];
+        const card = document.getElementById(`card-${idx}`);
+        const isMatch = tokens.includes(char);
+        if (card) {
+          if (isMatch) {
+            card.style.display = '';
+            card.classList.add('highlight');
+            matchCount++;
+          } else {
+            card.style.display = 'none';
+            card.classList.remove('highlight');
+          }
+        }
+      });
+
+      // 2. Lọc cây phân loại taxonomy
+      document.querySelectorAll('.tax-glyph-card').forEach(card => {
+        const char = card.getAttribute('data-char');
+        const isMatch = tokens.includes(char);
+        if (isMatch) {
+          card.style.display = '';
+          card.classList.add('highlight');
+        } else {
+          card.style.display = 'none';
+          card.classList.remove('highlight');
+        }
+      });
+
+      // 3. Lọc bảng cặp aAbB123
+      document.querySelectorAll('.alpha-subcard').forEach(card => {
+        const char = card.getAttribute('data-char');
+        const isMatch = tokens.includes(char);
+        if (isMatch) {
+          card.style.display = '';
+          card.classList.add('highlight');
+        } else {
+          card.style.display = 'none';
+          card.classList.remove('highlight');
+        }
+      });
+      document.querySelectorAll('.alpha-pair-cell').forEach(cell => {
+        const visibleCards = cell.querySelectorAll('.alpha-subcard:not([style*="display: none"])');
+        cell.style.display = visibleCards.length ? '' : 'none';
+      });
+
+      // Ẩn các cluster/tier không có thẻ khớp
+      document.querySelectorAll('.cluster-card').forEach(cluster => {
+        const visibleCards = cluster.querySelectorAll('.tax-glyph-card:not([style*="display: none"])');
+        cluster.style.display = visibleCards.length ? '' : 'none';
+      });
+
+      document.querySelectorAll('.tier-section').forEach(tier => {
+        const visibleClusters = tier.querySelectorAll('.cluster-card:not([style*="display: none"])');
+        tier.style.display = visibleClusters.length ? '' : 'none';
+      });
+
+      if (statsEl) {
+        statsEl.innerHTML = `Tìm thấy <strong style="color: var(--gold);">${matchCount}</strong> / 60 ký tự khớp`;
+      }
+    };
+
+    window.clearSearch = function() {
+      const input = document.getElementById('glyph-search');
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+      handleSearch('');
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        clearSearch();
+      }
+    });
+
+    // Tư duy font-maker.js:
+    // Tự động đảo hướng tam giác theo tính chất của ký tự C3 trong từng từ:
+    // - Nếu C3 là chữ HOA (/[A-Z]/) -> C3 ở Dưới (Tam giác ngược ▽)
+    // - Nếu C3 là chữ thường / số -> C3 ở Trên (Tam giác thuận △)
+    // Bố cục Co Cụm Hướng Tâm (Centripetal Clustering): scale 0.58, dồn sát vào tâm giữa!
+    window.renderLiveSentence = function(sentence) {
+      const stage = document.getElementById('live-stage');
+      if (!stage) return;
+      stage.innerHTML = '';
+      const words = sentence.trim().split(/\s+/).filter(Boolean);
+      if (!words.length) {
+        stage.innerHTML = '<span style="color: var(--text-muted); font-size: 0.85rem;">Nhập câu ở trên để xem hiển thị ký tự ghép nối...</span>';
+        return;
+      }
+
+      words.forEach(word => {
+        const timeCode = encodeWord(word.toLowerCase());
+        const b60 = timeToBase60(timeCode);
+        if (!b60 || b60.length < 3) return;
+
+        const c1Char = b60[0], c2Char = b60[1], c3Char = b60[2];
+        const idx1 = Math.max(0, B60_MAPPING.indexOf(c1Char));
+        const idx2 = Math.max(0, B60_MAPPING.indexOf(c2Char));
+        const idx3 = Math.max(0, B60_MAPPING.indexOf(c3Char));
+
+        const g1 = GLYPH_RECIPES[idx1] || GLYPH_RECIPES[0];
+        const g2 = GLYPH_RECIPES[idx2] || GLYPH_RECIPES[0];
+        const g3 = GLYPH_RECIPES[idx3] || GLYPH_RECIPES[0];
+
+        // Kiểm tra chữ HOA:
+        const isC3Upper = /[A-Z]/.test(c3Char);
+
+        let compositeSvg = '';
+        let labelHtml = '';
+
+        if (!isC3Upper) {
+          // △ C3 thường/số ở TRÊN (Co cụm hướng tâm: scale 0.58, C3 trên giữa, C1 dưới trái, C2 dưới phải)
+          compositeSvg = `
+            <svg viewBox="0 0 100 100" width="82" height="82" stroke="${currentStrokeColor}" stroke-width="${currentStrokeWidth * 0.72}" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px ${currentStrokeColor}55);">
+              <rect x="2" y="2" width="96" height="96" rx="10" fill="none" stroke="${currentStrokeColor}" stroke-width="1" opacity="0.14" />
+              <polygon points="50,4 96,94 4,94" fill="none" stroke="${currentStrokeColor}" stroke-width="0.7" stroke-dasharray="3,3" opacity="0.18" />
+              <!-- C3 (Thanh điệu thường) trên đỉnh giữa - Co cụm hướng tâm -->
+              <g transform="translate(21, 6) scale(0.58)">${g3.path}</g>
+              <!-- C1 (Phụ âm) đáy dưới trái - Co cụm hướng tâm -->
+              <g transform="translate(6, 42) scale(0.58)">${g1.path}</g>
+              <!-- C2 (Vần) đáy dưới phải - Co cụm hướng tâm -->
+              <g transform="translate(36, 42) scale(0.58)">${g2.path}</g>
+            </svg>
+          `;
+          labelHtml = `<div class="code-label"><span style="color: var(--accent); font-weight: bold;" title="C3 thường ở trên">△ ${c3Char}</span><span style="color: #64748b;">(trên)</span> · <span style="color: #e2e8f0;">${c1Char}${c2Char}</span></div>`;
+        } else {
+          // ▽ C3 HOA ở DƯỚI (Co cụm hướng tâm: scale 0.58, C1 trên trái, C2 trên phải, C3 HOA chân đế dưới giữa)
+          compositeSvg = `
+            <svg viewBox="0 0 100 100" width="82" height="82" stroke="${currentStrokeColor}" stroke-width="${currentStrokeWidth * 0.72}" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0 0 4px ${currentStrokeColor}55);">
+              <rect x="2" y="2" width="96" height="96" rx="10" fill="none" stroke="${currentStrokeColor}" stroke-width="1" opacity="0.14" />
+              <polygon points="4,6 96,6 50,96" fill="none" stroke="${currentStrokeColor}" stroke-width="0.7" stroke-dasharray="3,3" opacity="0.18" />
+              <!-- C1 (Phụ âm) trên trái - Co cụm hướng tâm -->
+              <g transform="translate(6, 8) scale(0.58)">${g1.path}</g>
+              <!-- C2 (Vần) trên phải - Co cụm hướng tâm -->
+              <g transform="translate(36, 8) scale(0.58)">${g2.path}</g>
+              <!-- C3 (Thanh điệu HOA) chân đế dưới giữa - Co cụm hướng tâm -->
+              <g transform="translate(21, 44) scale(0.58)">${g3.path}</g>
+            </svg>
+          `;
+          labelHtml = `<div class="code-label"><span style="color: #e2e8f0;">${c1Char}${c2Char}</span> · <span style="color: var(--gold); font-weight: bold;" title="C3 HOA ở dưới">▽ ${c3Char}</span><span style="color: #64748b;">(dưới)</span></div>`;
+        }
+
+        const block = document.createElement('div');
+        block.className = 'word-block';
+        block.innerHTML = `
+          <div class="word-svg-box">${compositeSvg}</div>
+          <div class="word-label">${word}</div>
+          ${labelHtml}
+        `;
+        stage.appendChild(block);
+      });
+    };
+
+    renderTaxonomy();
+    renderGrid();
+    renderAlpha();
+    renderLiveSentence(document.getElementById('live-input').value);
+  </script>
+</body>
+</html>

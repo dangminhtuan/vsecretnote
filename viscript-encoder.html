@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bộ Gõ & Hiển Thị Font ViScript (PUA) — TimeCypher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/nav-system.css" />
+  <style>
+    @font-face {
+      font-family: 'V2B ViScript';
+      src: url('/V2B-ViScript.ttf?v=6') format('truetype');
+      font-display: swap;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060911;
+      --panel: #0d1322;
+      --card: #121a2e;
+      --border: #1e2c4a;
+      --border-light: #2c3f66;
+      --accent: #00f2fe;
+      --accent-glow: rgba(0, 242, 254, 0.3);
+      --green: #10b981;
+      --gold: #facc15;
+      --text: #e2e8f0;
+      --text-muted: #8493a8;
+      --font: 'Outfit', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 12px 14px 40px;
+    }
+
+    header#vsn-nav-header {
+      width: 100%;
+      max-width: 1240px;
+      margin-bottom: 14px;
+    }
+
+    .main-wrap {
+      width: 100%;
+      max-width: 1240px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* TOP BANNER */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(0,242,254,0.08), rgba(16,185,129,0.05), rgba(250,204,21,0.04));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .hero-title {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hero-badge {
+      font-size: 0.75rem;
+      font-family: var(--mono);
+      padding: 2px 8px;
+      background: rgba(0, 242, 254, 0.12);
+      border: 1px solid var(--accent);
+      border-radius: 6px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .download-font-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: linear-gradient(135deg, #00f2fe, #10b981);
+      color: #000;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 0 16px rgba(0, 242, 254, 0.35);
+      transition: all 0.2s ease;
+    }
+    .download-font-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 22px rgba(0, 242, 254, 0.55);
+    }
+
+    /* GRID LAYOUT */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    @media (max-width: 860px) {
+      .grid-2col { grid-template-columns: 1fr; }
+    }
+
+    .panel-card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .panel-header b {
+      color: var(--accent);
+    }
+
+    textarea.input-box {
+      width: 100%;
+      height: 235px;
+      background: #070c18;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: #fff;
+      font-family: var(--font);
+      font-size: 1.05rem;
+      line-height: 1.6;
+      padding: 12px 14px;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    textarea.input-box:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .preset-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .chip {
+      background: #141f36;
+      border: 1px solid var(--border-light);
+      border-radius: 6px;
+      color: #94a3b8;
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chip:hover {
+      background: #1e2c4a;
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    /* PUA OUTPUT CARD - Khung kết quả chính thức duy nhất */
+    .raw-pua-box {
+      background: #040711;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      height: 235px;
+      overflow-y: auto;
+      font-family: 'V2B ViScript', sans-serif;
+      font-size: 36px;
+      line-height: 1.28;
+      letter-spacing: 0;
+      white-space: pre-wrap;
+      color: var(--accent);
+      word-break: break-word;
+      user-select: all;
+      cursor: text;
+      text-shadow: 0 0 8px var(--accent-glow);
+      transition: font-size 0.15s;
+    }
+    .raw-pua-box.mode-hex {
+      font-family: var(--mono);
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #38bdf8;
+      letter-spacing: 1px;
+      text-shadow: none;
+    }
+
+    .size-slider-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .size-slider-row input[type="range"] {
+      cursor: pointer;
+      accent-color: var(--accent);
+      width: 80px;
+    }
+
+    .action-btn {
+      background: #0e1e38;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s;
+    }
+    .action-btn:hover {
+      background: var(--accent);
+      color: #000;
+    }
+
+    /* WORD BY WORD BREAKDOWN */
+    .breakdown-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-height: 180px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    .word-card {
+      background: #0a1122;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 72px;
+    }
+    .word-card-viet { font-size: 0.8rem; color: #94a3b8; font-weight: 600; }
+    .word-card-glyph {
+      font-family: 'V2B ViScript', sans-serif;
+      font-size: 28px;
+      color: var(--accent);
+    }
+    .word-card-hex { font-size: 0.65rem; color: #64748b; font-family: var(--mono); }
+
+    /* INSTRUCTIONS FOOTER */
+    .guide-box {
+      background: #0b1528;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    .guide-box b { color: #fff; }
+    .guide-box ol { margin-left: 20px; margin-top: 6px; }
+    .guide-box li { margin-bottom: 4px; }
+
+    /* TOAST */
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f2744;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.4);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+      z-index: 9999;
+    }
+    #toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+  <header id="vsn-nav-header"></header>
+
+  <div class="main-wrap">
+    <!-- HERO BANNER -->
+    <div class="hero-banner">
+      <div>
+        <div class="hero-title">
+          <span>🔤 Bộ Gõ & Hiển Thị Font ViScript (PUA)</span>
+          <span class="hero-badge" id="heroBadgeTotal">7,612 TỪ & BIẾN THỂ CHÍNH TẢ PUA</span>
+        </div>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">
+          Mỗi từ tiếng Việt được ánh xạ sang 1 ký tự Unicode PUA (U+E000...) hiển thị qua font <b>V2B ViScript</b> dạng khối hình học tương tự chữ Hán / Hàn (Hỗ trợ 100% cả 2 kiểu dấu chính tả như <i>hóa / hoá</i>, <i>thúy / thuý</i>).
+        </p>
+      </div>
+      <a href="/V2B-ViScript.ttf" download class="download-font-btn">
+        ⬇️ Tải Font V2B-ViScript.ttf (2.8 MB)
+      </a>
+    </div>
+
+    <!-- MAIN INTERACTIVE GRID -->
+    <div class="grid-2col">
+      <!-- PANEL 1: NHẬP TIẾNG VIỆT -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <span>1. Nhập Văn Bản Tiếng Việt</span>
+          <button class="action-btn" style="padding: 2px 8px; font-size: 0.72rem;" onclick="clearInput()">Xóa</button>
+        </div>
+        <textarea id="inputViet" class="input-box" placeholder="Gõ tiếng Việt ở đây... Ví dụ: xin chào việt nam" oninput="handleEncode()">xin chào việt nam</textarea>
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+          <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 600;">Mẫu thử nghiệm nhanh:</span>
+          <div class="preset-chips" id="presetChipsContainer"></div>
+        </div>
+      </div>
+
+      <!-- PANEL 2: KẾT QUẢ FONT VISCRIPT (PUA) -->
+      <div class="panel-card">
+        <div class="panel-header">
+          <span>2. Kết Quả Font ViScript (PUA)</span>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="size-slider-row">
+              <label for="fontSizeRange">Cỡ:</label>
+              <input type="range" id="fontSizeRange" min="18" max="72" value="36" oninput="changeFontSize(this.value)" />
+              <span id="fontSizeVal" style="font-family: var(--mono); color: var(--accent); min-width: 32px;">36px</span>
+            </div>
+            <button id="togglePuaViewBtn" class="action-btn" onclick="togglePuaView()">🔀 Xem Hex</button>
+            <button class="action-btn" onclick="copyRawPUA()">📋 Copy</button>
+          </div>
+        </div>
+        <div id="rawPuaOutput" class="raw-pua-box" title="Văn bản Font V2B ViScript (Bôi đen hoặc click Copy để dán vào Word/Notepad)"></div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--text-muted);">
+          <span>Số từ: <b id="statWords" style="color: var(--green);">0</b> từ <span id="fontStatusBadge" style="font-size: 0.7rem; color: var(--accent); margin-left: 6px;">● Font Sẵn Sàng</span></span>
+          <span>Dung lượng: <b id="statPuaBytes" style="color: var(--accent);">0</b> bytes (<span id="statSaving">0%</span>)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORD BREAKDOWN -->
+    <div style="margin-top: 14px; background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px;">
+      <div style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted); margin-bottom: 8px;">
+        Chi tiết từng từ (Mã PUA Hex & Glyph):
+      </div>
+      <div id="wordBreakdown" class="breakdown-row"></div>
+    </div>
+
+    <!-- GUIDE -->
+    <div class="guide-box">
+      <b>📖 Hướng Dẫn Sử Dụng Trong Word / Notepad / Photoshop:</b>
+      <ol>
+        <li>Tải file font <b>V2B-ViScript.ttf</b> bằng nút trên hoặc đã được cài đặt sẵn vào Windows.</li>
+        <li>(Nếu chưa cài): Click đúp vào file <code>V2B-ViScript.ttf</code> → Chọn <b>"Install" (Cài đặt)</b>.</li>
+        <li>Gõ đoạn văn tiếng Việt vào ô trên → Click <b>"Sao Chép Văn Bản"</b> hoặc <b>"Copy PUA"</b>.</li>
+        <li>Mở Word/Notepad/Illustrator → <b>Dán (Ctrl+V)</b> → Bôi đen toàn bộ → Chọn font chữ <b>"V2B ViScript"</b>.</li>
+        <li><b>Kết quả:</b> Đoạn văn sẽ biến thành hệ chữ tượng hình hình học ngoài hành tinh! Bạn có thể tăng giảm cỡ chữ (12pt, 24pt, 48pt...) hay bôi màu tùy ý như chữ tiếng Anh/Hàn thông thường.</li>
+      </ol>
+    </div>
+
+    <!-- TÍNH ƯU VIỆT VƯỢT BẬC CỦA VISCRIPT -->
+    <div style="margin-top: 14px; background: linear-gradient(135deg, rgba(0,242,254,0.06), rgba(16,185,129,0.06)); border: 1px solid rgba(0,242,254,0.3); border-radius: 12px; padding: 14px 16px;">
+      <div style="font-size: 0.95rem; font-weight: bold; color: var(--accent); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
+        <span>✨</span> <span>TÍNH ƯU VIỆT VƯỢT BẬC CỦA HỆ CHỮ VISCRIPT</span>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; font-size: 0.8rem; line-height: 1.5;">
+        <div style="background: rgba(7, 12, 24, 0.7); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;">
+          <b style="color: #10b981;">⚡ Siêu Nén 16-Bit (2 Bytes/Từ):</b>
+          <div style="color: var(--text-muted); margin-top: 2px;">1 từ tiếng Việt trọn vẹn = đúng 1 ký tự PUA. Không cần dấu cách, tiết kiệm đến <b>64% dung lượng</b>!</div>
+        </div>
+        <div style="background: rgba(7, 12, 24, 0.7); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;">
+          <b style="color: #00f2fe;">🎨 Hình Học Hướng Tâm Độc Bản:</b>
+          <div style="color: var(--text-muted); margin-top: 2px;">Cấu trúc 3 thành phần (phụ âm, vần, dấu) hội tụ cân đối. Nét chữ <b>d móc câu</b> sắc sảo không thể nhầm lẫn.</div>
+        </div>
+        <div style="background: rgba(7, 12, 24, 0.7); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;">
+          <b style="color: #facc15;">💼 Tương Thích Văn Phòng & Đồ Họa:</b>
+          <div style="color: var(--text-muted); margin-top: 2px;">File font TTF cài thẳng vào Windows. Gõ và định dạng màu/cỡ chữ tự do trong Word, Photoshop, Illustrator.</div>
+        </div>
+        <div style="background: rgba(7, 12, 24, 0.7); border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;">
+          <b style="color: #a78bfa;">🔒 Mật Mã Nhận Thức & Dịch Ngược 100%:</b>
+          <div style="color: var(--text-muted); margin-top: 2px;">Mật mã thị giác Zero-Knowledge, bảo toàn dữ liệu lossless, hỗ trợ cả 2 chuẩn dấu thanh <i>(oá/óa, uý/úy)</i>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast">✅ Đã sao chép!</div>
+
+  <script type="module">
+    import { initVsnNavigation } from '/nav-system.js';
+    initVsnNavigation('#vsn-nav-header');
+  </script>
+
+  <script>
+    let MAPPING = null;
+
+    // Danh sách 5 mẫu thử nghiệm nhanh từ v2b-demo.html
+    const PRESETS = [
+      {
+        name: 'Tuyên Ngôn Độc Lập',
+        icon: '📜',
+        text: 'Nước Việt Nam có quyền hưởng tự do và độc lập, và sự thật đã thành một nước tự do độc lập. Toàn thể dân tộc Việt Nam quyết đem tất cả tinh thần và lực lượng, tính mạng và của cải để giữ vững quyền tự do, độc lập ấy.'
+      },
+      {
+        name: 'Công Nghệ AI & Dữ Liệu',
+        icon: '🤖',
+        text: 'Trí tuệ nhân tạo và mô hình ngôn ngữ lớn đang mở ra một kỷ nguyên mới cho nhân loại. Khả năng nén dữ liệu và tối ưu hóa bộ nhớ đóng vai trò quyết định trong việc tăng tốc độ tính toán.'
+      },
+      {
+        name: 'Khẩu Hiệu Quốc Gia',
+        icon: '🇻🇳',
+        text: 'Cộng hòa xã hội chủ nghĩa Việt Nam: Độc lập - Tự do - Hạnh phúc.'
+      },
+      {
+        name: 'Truyện Kiều (Lục Bát)',
+        icon: '🖋️',
+        text: 'Trăm năm trong cõi người ta,\nChữ tài chữ mệnh khéo là ghét nhau.\nTrải qua một cuộc bể dâu,\nNhững điều trông thấy mà đau đớn lòng.'
+      },
+      {
+        name: 'Đời Thường & Trò Chuyện',
+        icon: '☕',
+        text: 'Hôm nay thời tiết đẹp lắm, chiều nay chúng mình cùng nhau đi dạo quanh hồ Tây rồi uống cà phê nhé!'
+      }
+    ];
+
+    // Render danh sách chip mẫu
+    function renderPresetChips() {
+      const container = document.getElementById('presetChipsContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      PRESETS.forEach(p => {
+        const chip = document.createElement('div');
+        chip.className = 'chip';
+        chip.innerHTML = `<span>${p.icon}</span> <span>${p.name}</span>`;
+        chip.onclick = () => setSample(p.text);
+        container.appendChild(chip);
+      });
+    }
+    renderPresetChips();
+
+    // Load mapping table
+    fetch('/v2b-mapping.json')
+      .then(res => {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(data => {
+        MAPPING = data;
+        document.getElementById('fontStatusBadge').textContent = '● Mapping: ' + Object.keys(data).length + ' từ';
+        handleEncode();
+      })
+      .catch(err => {
+        console.warn('Lỗi load mapping:', err);
+        document.getElementById('fontStatusBadge').textContent = '⚠️ Chưa nạp được mapping';
+        document.getElementById('fontStatusBadge').style.color = '#f43f5e';
+      });
+
+    // Tokenizer
+    function tokenizeText(text) {
+      const tokens = [];
+      const regex = /([a-zA-Z\u00C0-\u024F\u1E00-\u1EFF]+)|([^a-zA-Z\u00C0-\u024F\u1E00-\u1EFF]+)/g;
+      let match;
+      while ((match = regex.exec(text)) !== null) {
+        tokens.push({ text: match[0], isWord: !!match[1] });
+      }
+      return tokens;
+    }
+
+    let currentPuaMode = 'font'; // 'font' hoặc 'hex'
+    let cachedPuaText = '';
+    let cachedHexText = '';
+
+    function togglePuaView() {
+      const box = document.getElementById('rawPuaOutput');
+      const btn = document.getElementById('togglePuaViewBtn');
+      if (currentPuaMode === 'font') {
+        currentPuaMode = 'hex';
+        box.classList.add('mode-hex');
+        box.textContent = cachedHexText;
+        btn.textContent = '🔤 Xem Chữ ViScript';
+      } else {
+        currentPuaMode = 'font';
+        box.classList.remove('mode-hex');
+        box.textContent = cachedPuaText;
+        btn.textContent = '🔀 Xem Mã Hex';
+      }
+    }
+
+    // Bộ quy tắc hoán đổi vị trí dấu thanh (Kiểu cũ <-> Kiểu mới)
+    const TONE_SWAP_PAIRS = [
+      ['oá', 'óa'], ['oà', 'òa'], ['oả', 'ỏa'], ['oã', 'õa'], ['oạ', 'ọa'],
+      ['oé', 'óe'], ['oè', 'òe'], ['oẻ', 'ỏe'], ['oẽ', 'õe'], ['oẹ', 'ọe'],
+      ['uý', 'úy'], ['uỳ', 'ùy'], ['uỷ', 'ủy'], ['uỹ', 'ũy'], ['uỵ', 'ụy'],
+      ['uá', 'úa'], ['uà', 'ùa'], ['uả', 'ủa'], ['uã', 'ũa'], ['uạ', 'ụa'],
+      ['ué', 'úe'], ['uè', 'ùe'], ['uẻ', 'ủe'], ['uẽ', 'ũe'], ['uẹ', 'ụe'],
+      ['iá', 'ía'], ['ià', 'ìa'], ['iả', 'ỉa'], ['iã', 'ĩa'], ['iạ', 'ịa'],
+    ];
+
+    function getMappingCodePoint(word) {
+      const lower = word.toLowerCase();
+      // 1. Tra cứu trực tiếp
+      if (MAPPING[lower] !== undefined) return MAPPING[lower];
+      // 2. Tra cứu hoán đổi vị trí dấu thanh
+      for (const [v1, v2] of TONE_SWAP_PAIRS) {
+        if (lower.includes(v1)) {
+          const alt = lower.replace(v1, v2);
+          if (MAPPING[alt] !== undefined) return MAPPING[alt];
+        } else if (lower.includes(v2)) {
+          const alt = lower.replace(v2, v1);
+          if (MAPPING[alt] !== undefined) return MAPPING[alt];
+        }
+      }
+      return undefined;
+    }
+
+    function handleEncode() {
+      if (!MAPPING) return;
+      const input = document.getElementById('inputViet').value;
+      const tokens = tokenizeText(input);
+
+      let puaText = '';
+      let hexList = [];
+      let recognizedWords = 0;
+      const breakdownItems = [];
+
+      for (const tok of tokens) {
+        if (!tok.isWord) {
+          puaText += tok.text;
+          hexList.push(tok.text);
+        } else {
+          const cp = getMappingCodePoint(tok.text);
+          if (cp !== undefined) {
+            const ch = String.fromCodePoint(cp);
+            const hexCode = 'U+' + cp.toString(16).toUpperCase();
+            puaText += ch;
+            hexList.push(hexCode);
+            recognizedWords++;
+            breakdownItems.push({
+              viet: tok.text,
+              glyph: ch,
+              hex: hexCode
+            });
+          } else {
+            // Từ lạ không có trong từ điển: giữ nguyên
+            puaText += tok.text;
+            hexList.push(tok.text);
+            breakdownItems.push({
+              viet: tok.text,
+              glyph: '?',
+              hex: '[Chưa có]'
+            });
+          }
+        }
+      }
+
+      cachedPuaText = puaText;
+      cachedHexText = hexList.join(' ');
+
+      // 1. Cập nhật ô chuỗi PUA (theo chế độ hiện tại)
+      const puaBox = document.getElementById('rawPuaOutput');
+      puaBox.textContent = (currentPuaMode === 'font') ? cachedPuaText : cachedHexText;
+
+      // 2. Cập nhật thống kê
+      document.getElementById('statWords').textContent = recognizedWords;
+      const utf8Bytes = new TextEncoder().encode(input).length;
+      const puaBytes = recognizedWords * 2 + (input.length - tokens.filter(t => t.isWord).reduce((a, b) => a + b.text.length, 0));
+      document.getElementById('statPuaBytes').textContent = puaBytes;
+      const saving = utf8Bytes > 0 ? Math.round((1 - puaBytes / utf8Bytes) * 100) : 0;
+      document.getElementById('statSaving').textContent = (saving >= 0 ? '-' : '+') + Math.abs(saving) + '% dung lượng';
+
+      // 3. Chi tiết breakdown
+      const bdContainer = document.getElementById('wordBreakdown');
+      bdContainer.innerHTML = '';
+      breakdownItems.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'word-card';
+        card.innerHTML = `
+          <div class="word-card-viet">${item.viet}</div>
+          <div class="word-card-glyph">${item.glyph}</div>
+          <div class="word-card-hex">${item.hex}</div>
+        `;
+        bdContainer.appendChild(card);
+      });
+    }
+
+    function changeFontSize(val) {
+      document.getElementById('rawPuaOutput').style.fontSize = val + 'px';
+      document.getElementById('fontSizeVal').textContent = val + 'px';
+    }
+
+    function setSample(text) {
+      document.getElementById('inputViet').value = text;
+      handleEncode();
+    }
+
+    function clearInput() {
+      document.getElementById('inputViet').value = '';
+      handleEncode();
+    }
+
+    function copyRawPUA() {
+      // Luôn copy chuỗi PUA thực tế (Unicode 2 bytes) để có thể dán vào Word/Notepad
+      navigator.clipboard.writeText(cachedPuaText).then(() => showToast('✅ Đã copy văn bản ViScript (PUA)!'));
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    }
+  </script>
+</body>
+</html>

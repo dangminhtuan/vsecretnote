@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Tiếng Việt Kiểu Hàn 2-Byte (V2B) — TimeCypher</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/nav-system.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060911;
+      --panel: #0d1322;
+      --card: #121a2e;
+      --card-alt: #162038;
+      --border: #1e2c4a;
+      --border-light: #2c3f66;
+      --accent: #00f2fe;
+      --accent-glow: rgba(0, 242, 254, 0.35);
+      --green: #10b981;
+      --green-glow: rgba(16, 185, 129, 0.35);
+      --gold: #facc15;
+      --gold-glow: rgba(250, 204, 21, 0.35);
+      --red: #f43f5e;
+      --purple: #a855f7;
+      --text: #e2e8f0;
+      --text-muted: #8493a8;
+      --font: 'Outfit', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 16px 14px 60px;
+    }
+    header#vsn-nav-header {
+      width: 100%;
+      max-width: 1240px;
+      margin-bottom: 14px;
+    }
+    .main-wrap {
+      width: 100%;
+      max-width: 1240px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* HERO BANNER */
+    .hero-banner {
+      background: linear-gradient(135deg, rgba(0,242,254,0.09), rgba(16,185,129,0.06), rgba(250,204,21,0.05));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .hero-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .hero-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #00f2fe, #10b981, #facc15);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .hero-tag {
+      font-size: 0.75rem;
+      font-family: var(--mono);
+      padding: 3px 10px;
+      background: rgba(0, 242, 254, 0.12);
+      border: 1px solid rgba(0, 242, 254, 0.4);
+      border-radius: 20px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .hero-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .hero-desc strong {
+      color: #fff;
+    }
+
+    /* PRESET BAR */
+    .preset-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .preset-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .preset-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .preset-btn {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-size: 0.82rem;
+      font-family: var(--font);
+      padding: 5px 11px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+    .preset-btn:hover {
+      border-color: var(--accent);
+      background: rgba(0, 242, 254, 0.08);
+      color: var(--accent);
+      transform: translateY(-1px);
+    }
+
+    /* METRIC DASHBOARD */
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 900px) {
+      .metric-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .metric-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    .metric-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .metric-card.highlight {
+      background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(0,242,254,0.06));
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+    .metric-lbl {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+    }
+    .metric-val {
+      font-size: 1.25rem;
+      font-weight: 700;
+      font-family: var(--mono);
+      color: #fff;
+    }
+    .metric-card.highlight .metric-val {
+      color: var(--green);
+      text-shadow: 0 0 10px var(--green-glow);
+    }
+    .metric-sub {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    /* PROGRESS BAR */
+    .bar-container {
+      width: 100%;
+      height: 7px;
+      background: var(--card);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #00f2fe);
+      width: 0%;
+      transition: width 0.3s ease;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
+    }
+
+    /* WORKSPACE GRID */
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 16px;
+    }
+    @media (max-width: 950px) {
+      .grid-layout { grid-template-columns: 1fr; }
+    }
+
+    /* PANEL BASE */
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .panel-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #fff;
+    }
+    .panel-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .action-btn {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      padding: 4px 9px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .action-btn:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* MODE TOGGLE BUTTONS */
+    .mode-tab-box {
+      display: inline-flex;
+      background: #080d19;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2px;
+    }
+    .mode-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 0.76rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .mode-tab-btn.active {
+      background: var(--card);
+      color: var(--accent);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    }
+
+    /* TEXTAREAS */
+    .custom-textarea {
+      width: 100%;
+      height: 100px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #fff;
+      font-family: var(--font);
+      font-size: 0.92rem;
+      line-height: 1.45;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .custom-textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(0, 242, 254, 0.2);
+    }
+    .mono-output {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: #38bdf8;
+      background: #090f1d;
+    }
+
+    /* ==================================================== */
+    /* HANGUL-STYLE CYBER BLOCKS CONTAINER (TIẾNG VIỆT KỲ LẠ) */
+    /* ==================================================== */
+    .hangul-panel {
+      background: linear-gradient(135deg, rgba(13,19,34,0.95), rgba(18,26,46,0.98));
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .hangul-stage-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+    .hangul-card {
+      background: #090f1e;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      padding: 8px 8px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      user-select: none;
+      width: 96px;
+    }
+    .hangul-card:hover {
+      border-color: var(--accent);
+      background: #0d162c;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 14px rgba(0, 242, 254, 0.2);
+    }
+    .hangul-card.active {
+      border-color: var(--accent);
+      background: rgba(0, 242, 254, 0.14);
+      box-shadow: 0 0 14px var(--accent-glow);
+    }
+    .h-svg-wrap {
+      width: 78px;
+      height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .h-word-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 2px;
+    }
+    .h-word {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .h-2b-badge {
+      font-size: 0.62rem;
+      font-family: var(--mono);
+      padding: 1px 4px;
+      border-radius: 4px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--green);
+      font-weight: 600;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    .h-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      font-size: 0.68rem;
+      font-family: var(--mono);
+      padding: 0 2px;
+    }
+    .h-b60 {
+      color: var(--gold);
+    }
+    .h-hex {
+      color: var(--text-muted);
+    }
+
+    /* INLINE READING STREAM (ĐỌC LIỀN MẠCH NHƯ TIẾNG HÀN) */
+    .hangul-stage-inline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-end;
+      gap: 8px 6px;
+      padding: 12px;
+      background: #080d19;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      max-height: 380px;
+      overflow-y: auto;
+      line-height: 1.8;
+    }
+    .hangul-inline-item {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 6px;
+      transition: background 0.15s;
+    }
+    .hangul-inline-item:hover {
+      background: rgba(0, 242, 254, 0.12);
+    }
+    .h-inline-svg {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .h-inline-word {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      font-weight: 500;
+    }
+    .hangul-inline-punct {
+      font-size: 1.4rem;
+      color: var(--gold);
+      font-family: var(--mono);
+      padding: 0 2px;
+      margin-bottom: 12px;
+    }
+
+    /* TOKEN STREAM CHIPS */
+    .token-stream-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      max-height: 130px;
+      overflow-y: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-content: flex-start;
+    }
+    .word-token-chip {
+      background: var(--panel);
+      border: 1px solid var(--border-light);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      user-select: none;
+      transition: all 0.15s ease;
+    }
+    .word-token-chip:hover {
+      border-color: var(--accent);
+      background: rgba(0, 242, 254, 0.1);
+      transform: translateY(-1px);
+    }
+    .word-token-chip.active {
+      border-color: var(--accent);
+      background: rgba(0, 242, 254, 0.18);
+      box-shadow: 0 0 8px var(--accent-glow);
+    }
+    .tok-num {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-family: var(--mono);
+    }
+    .tok-word {
+      font-weight: 600;
+      color: #fff;
+    }
+    .tok-hex {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--accent);
+      background: rgba(0, 242, 254, 0.1);
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+    .tok-b60 {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--gold);
+      background: rgba(250, 204, 21, 0.1);
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    /* INSPECTOR PANEL (RIGHT) */
+    .inspector-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .ins-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    .ins-word-badge {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .ins-casing-badge {
+      font-size: 0.75rem;
+      padding: 2px 7px;
+      border-radius: 12px;
+      background: rgba(250, 204, 21, 0.15);
+      color: var(--gold);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      font-weight: 600;
+    }
+    .ins-body-row {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .ins-large-svg {
+      width: 94px;
+      height: 94px;
+      background: #080d1a;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .ins-table {
+      display: grid;
+      grid-template-columns: 85px 1fr;
+      gap: 4px 8px;
+      font-size: 0.8rem;
+      flex: 1;
+    }
+    .ins-k {
+      color: var(--text-muted);
+    }
+    .ins-v {
+      font-family: var(--mono);
+      color: #fff;
+      font-weight: 600;
+      word-break: break-all;
+    }
+    .ins-bin-display {
+      background: #080d19;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 6px 8px;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      letter-spacing: 1px;
+    }
+    .bit-dict { color: #8493a8; }
+    .bit-casing { color: var(--gold); font-weight: bold; }
+    .bit-idx { color: var(--accent); font-weight: bold; }
+
+    /* STATUS BADGE */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-weight: 600;
+      width: fit-content;
+    }
+    .status-idle {
+      background: rgba(132, 147, 168, 0.15);
+      border: 1px solid rgba(132, 147, 168, 0.3);
+      color: var(--text-muted);
+    }
+    .status-success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      color: var(--green);
+      box-shadow: 0 0 10px var(--green-glow);
+    }
+    .status-diff {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.4);
+      color: var(--red);
+    }
+
+    /* EXPLANATION / THEORY CARD */
+    .theory-box {
+      background: linear-gradient(135deg, rgba(18,26,46,0.9), rgba(13,19,34,0.95));
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.8rem;
+      line-height: 1.45;
+    }
+    .theory-title {
+      font-weight: 700;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.85rem;
+    }
+    .theory-list {
+      padding-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      color: var(--text-muted);
+    }
+    .theory-list li strong {
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- GLOBAL ADAPTIVE NAVIGATION -->
+  <header id="vsn-nav-header"></header>
+
+  <main class="main-wrap">
+    
+    <!-- HERO BANNER -->
+    <section class="hero-banner">
+      <div class="hero-title-row">
+        <h1 class="hero-title">
+          <span>⚡</span> Tiếng Việt Kiểu Hàn 2-Byte / Từ Đơn (V2B)
+        </h1>
+        <div class="hero-tag">VISCRIPT HANGUL BLOCKS • 16-BIT ENGINE</div>
+      </div>
+      <p class="hero-desc">
+        Tiếng Việt là ngôn ngữ đơn lập: <strong>Từ ghép chỉ là chuỗi các từ đơn âm tiết ghép lại</strong>. Mỗi từ đơn được biểu diễn thành <strong>1 khối chữ tượng hình vuông vức kiểu Hàn</strong> (ghép từ 60 nét Base60 tối giản) và tốn <strong>đúng 2 bytes</strong> (không cần dấu cách), giúp giảm <strong>60% – 66% dung lượng</strong> so với UTF-8!
+      </p>
+    </section>
+
+    <!-- PRESET SELECTION BAR -->
+    <div class="preset-bar">
+      <span class="preset-label">Mẫu thử nghiệm nhanh:</span>
+      <div class="preset-chips" id="preset-chips"></div>
+    </div>
+
+    <!-- METRICS DASHBOARD (TOP FULL-WIDTH) -->
+    <div class="panel" style="padding: 14px;">
+      <div class="panel-header" style="margin-bottom: 2px;">
+        <div class="panel-title">
+          <span>📊</span> So Sánh Dung Lượng Bộ Nhớ & Tỉ Lệ Tiết Kiệm
+        </div>
+        <div id="status-badge" class="status-badge status-idle">⚡ Đang tính toán...</div>
+      </div>
+
+      <div class="metric-grid">
+        <div class="metric-card">
+          <span class="metric-lbl">Số Từ Đơn (Khối Chữ)</span>
+          <span class="metric-val" id="metric-words">0</span>
+          <span class="metric-sub">Âm tiết tiếng Việt</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-lbl">UTF-8 Gốc</span>
+          <span class="metric-val" id="metric-utf8">0 B</span>
+          <span class="metric-sub">Ký tự có dấu + Space</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-lbl">UTF-16 Gốc</span>
+          <span class="metric-val" id="metric-utf16">0 B</span>
+          <span class="metric-sub">Tiêu chuẩn 2B/ký tự</span>
+        </div>
+        <div class="metric-card">
+          <span class="metric-lbl">Chuẩn V2B (2B/Khối)</span>
+          <span class="metric-val" id="metric-v2b" style="color: var(--accent);">0 B</span>
+          <span class="metric-sub">Không tốn dấu cách</span>
+        </div>
+        <div class="metric-card highlight">
+          <span class="metric-lbl">Dung Lượng Tiết Kiệm</span>
+          <span class="metric-val" id="metric-saving">0%</span>
+          <span class="metric-sub">Hệ số nén: <strong id="metric-ratio" style="color:#fff;">1.0x</strong></span>
+        </div>
+      </div>
+
+      <div>
+        <div style="display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-bottom: 4px;">
+          <span>Tỉ lệ giảm dung lượng so với UTF-8:</span>
+          <span style="color: var(--green); font-weight: 600;">Tiết kiệm cực đại ~65%</span>
+        </div>
+        <div class="bar-container">
+          <div class="bar-fill" id="progress-bar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN INTERACTIVE GRID -->
+    <div class="grid-layout">
+      
+      <!-- LEFT COLUMN: INPUT & HANGUL STAGE -->
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        
+        <!-- INPUT PANEL -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>✍️</span> Văn Bản Tiếng Việt Gốc (Quốc Ngữ)
+            </div>
+            <div class="panel-actions">
+              <button type="button" class="action-btn" id="btn-clear">🗑️ Xóa</button>
+            </div>
+          </div>
+          <textarea id="input-text" class="custom-textarea" placeholder="Nhập hoặc dán văn bản tiếng Việt bất kỳ vào đây..."></textarea>
+        </div>
+
+        <!-- HANGUL-STYLE CYBER BLOCKS (TIẾNG VIỆT KỲ LẠ KIỂU HÀN) -->
+        <div class="hangul-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>🇰🇷✨</span> Tiếng Việt Kỳ Lạ Kiểu Hàn (Mỗi Khối Chữ = 1 Từ = Đúng 2 Bytes)
+            </div>
+            <div class="panel-actions">
+              <div class="mode-tab-box">
+                <button type="button" class="mode-tab-btn active" id="btn-mode-grid" title="Xem theo thẻ khối vuông lớn 78px">🔲 Thẻ Khối</button>
+                <button type="button" class="mode-tab-btn" id="btn-mode-inline" title="Xem dòng văn bản tự nhiên như đoạn chữ Hàn">📜 Đọc Liền Mạch</button>
+              </div>
+            </div>
+          </div>
+          
+          <div id="hangul-stage" class="hangul-stage-grid"></div>
+        </div>
+
+        <!-- WORD TOKENS STREAM CHIPS -->
+        <div class="panel" style="padding: 12px;">
+          <div class="panel-header">
+            <div class="panel-title" style="font-size: 0.88rem;">
+              <span>🧩</span> Dòng Bóc Tách Token 16-Bit
+            </div>
+          </div>
+          <div class="token-stream-box" id="token-stream"></div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: INSPECTOR & ENCODED / DECODED ENGINE -->
+      <div style="display: flex; flex-direction: column; gap: 14px;">
+        
+        <!-- TOKEN BIT INSPECTOR -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>🔬</span> Cấu Trúc Khối Chữ Đang Chọn
+            </div>
+          </div>
+
+          <div class="inspector-card">
+            <div class="ins-title-row">
+              <div class="ins-word-badge" id="ins-word">---</div>
+              <div class="ins-casing-badge" id="ins-casing">---</div>
+            </div>
+
+            <div class="ins-body-row">
+              <div class="ins-large-svg" id="ins-svg-box">
+                <span style="color:#64748b; font-size:0.75rem;">(Chưa chọn)</span>
+              </div>
+              <div class="ins-table">
+                <span class="ins-k">Từ Điển:</span>
+                <span class="ins-v" id="ins-index">---</span>
+
+                <span class="ins-k">Mã 16-Bit:</span>
+                <span class="ins-v" id="ins-hex" style="color: var(--accent);">---</span>
+
+                <span class="ins-k">Base60:</span>
+                <span class="ins-v" id="ins-b60" style="color: var(--gold);">---</span>
+
+                <span class="ins-k">Điểm PUA:</span>
+                <span class="ins-v" id="ins-pua">---</span>
+              </div>
+            </div>
+
+            <div>
+              <div style="font-size: 0.72rem; color: var(--text-muted); margin-bottom: 4px;">
+                Phân bổ 16 Bits: <span style="color:#8493a8;">[Bit 15: Word]</span> &bull; <span style="color:var(--gold);">[Bit 14-13: Casing]</span> &bull; <span style="color:var(--accent);">[Bit 12-0: Index]</span>
+              </div>
+              <div class="ins-bin-display" id="ins-bin">00000000 00000000</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- HEX ENCODED STREAM -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>💾</span> Luồng Nhị Phân 16-Bit / Hex Stream (Đúng 2 Bytes/Từ)
+            </div>
+            <div class="panel-actions">
+              <button type="button" class="action-btn" id="btn-copy-hex">📋 Chép Hex</button>
+            </div>
+          </div>
+          <textarea id="hex-output" class="custom-textarea mono-output" readonly style="height: 80px;" placeholder="Luồng mã Hex 16-bit..."></textarea>
+        </div>
+
+        <!-- REVERSE DECODED ENGINE -->
+        <div class="panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <span>🔄</span> Giải Mã Ngược Hai Chiều (Lossless Roundtrip)
+            </div>
+            <div class="panel-actions">
+              <button type="button" class="action-btn" id="btn-copy-decoded">📋 Chép</button>
+            </div>
+          </div>
+          <textarea id="decoded-output" class="custom-textarea" readonly style="height: 80px;" placeholder="Kết quả giải mã ngược..."></textarea>
+        </div>
+
+        <!-- THEORY SUMMARY -->
+        <div class="theory-box">
+          <div class="theory-title">
+            <span>💡</span> Căn Cứ Ngôn Ngữ Học & Tối Ưu Hóa
+          </div>
+          <ul class="theory-list">
+            <li><strong>Chữ tượng hình kiểu Hàn:</strong> Mỗi từ đơn được tổ hợp thành 1 khối vuông vức gồm Phụ âm + Vần + Thanh điệu từ 60 nét Base60 tối giản.</li>
+            <li><strong>Không cần dấu cách:</strong> Cứ đúng 2 bytes là một khối chữ độc lập, không lãng phí 1 byte cho mỗi ký tự space.</li>
+            <li><strong>Siêu nén:</strong> Giảm 60% – 66% dung lượng so với UTF-8 gốc mà vẫn bảo toàn 100% nội dung.</li>
+          </ul>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script type="module" src="/v2b-demo.js"></script>
+</body>
+</html>

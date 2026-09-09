@@ -92,20 +92,130 @@ function updateCyberFontDisplay() {
   // Cập nhật byte counter
   const bytesEl = document.getElementById('cyber-font-bytes');
   const barEl = document.getElementById('cyber-font-bar');
+  if (bytesEl && barEl) {
+    const rawBytes = getUtf8ByteLength(txtDecrypted ? txtDecrypted.value : '');
+    const currentBytes = getUtf8ByteLength(b60); // tính kể cả khoảng trắng
+
+    if (rawBytes === 0) {
+      bytesEl.textContent = currentBytes > 0 ? currentBytes + ' B' : '';
+      barEl.style.width = '0%';
+    } else {
+      const pct = Math.round((currentBytes / rawBytes) * 100);
+      bytesEl.textContent = `${currentBytes}/${rawBytes}B=${pct}%`;
+      if (pct < 100) {
+        barEl.style.background = '#0f0';
+        barEl.style.width = Math.min(100, pct) + '%';
+      } else if (pct === 100) {
+        barEl.style.background = '#aa0';
+        barEl.style.width = '100%';
+      } else {
+        barEl.style.background = '#f00';
+        barEl.style.width = '100%';
+      }
+    }
+  }
+
+  // Đồng thời cập nhật hàng ViScript font
+  updateViScriptFontDisplay();
+}
+
+// ==================== VISCRIPT FONT PREVIEW (V2B PUA) ====================
+let V2B_MAPPING = null;
+
+fetch('/v2b-mapping.json')
+  .then(res => {
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  })
+  .then(data => {
+    V2B_MAPPING = data;
+    updateViScriptFontDisplay();
+  })
+  .catch(err => {
+    console.warn('Lỗi load v2b-mapping.json:', err);
+  });
+
+const TONE_SWAP_PAIRS = [
+  ['oá', 'óa'], ['oà', 'òa'], ['oả', 'ỏa'], ['oã', 'õa'], ['oạ', 'ọa'],
+  ['oé', 'óe'], ['oè', 'òe'], ['oẻ', 'ỏe'], ['oẽ', 'õe'], ['oẹ', 'ọe'],
+  ['uý', 'úy'], ['uỳ', 'ùy'], ['uỷ', 'ủy'], ['uỹ', 'ũy'], ['uỵ', 'ụy'],
+  ['uá', 'úa'], ['uà', 'ùa'], ['uả', 'ủa'], ['uã', 'ũa'], ['uạ', 'ụa'],
+  ['ué', 'úe'], ['uè', 'ùe'], ['uẻ', 'ủe'], ['uẽ', 'ũe'], ['uẹ', 'ụe'],
+  ['iá', 'ía'], ['ià', 'ìa'], ['iả', 'ỉa'], ['iã', 'ĩa'], ['iạ', 'ịa'],
+];
+
+function getV2bCodePoint(word) {
+  if (!V2B_MAPPING || !word) return undefined;
+  const lower = word.toLowerCase();
+  if (V2B_MAPPING[lower] !== undefined) return V2B_MAPPING[lower];
+  for (const [v1, v2] of TONE_SWAP_PAIRS) {
+    if (lower.includes(v1)) {
+      const alt = lower.replace(v1, v2);
+      if (V2B_MAPPING[alt] !== undefined) return V2B_MAPPING[alt];
+    } else if (lower.includes(v2)) {
+      const alt = lower.replace(v2, v1);
+      if (V2B_MAPPING[alt] !== undefined) return V2B_MAPPING[alt];
+    }
+  }
+  return undefined;
+}
+
+function encodeToV2bPua(text) {
+  if (!text) return '';
+  const regex = /([a-zA-Z\u00C0-\u024F\u1E00-\u1EFF]+)|([^a-zA-Z\u00C0-\u024F\u1E00-\u1EFF]+)/g;
+  let res = '';
+  let match;
+  while ((match = regex.exec(text)) !== null) {
+    if (match[1]) {
+      const cp = getV2bCodePoint(match[1]);
+      if (cp !== undefined) {
+        res += String.fromCodePoint(cp);
+      } else {
+        res += match[1];
+      }
+    } else if (match[2]) {
+      // Bỏ khoảng trắng thường (space, tab) để tiết kiệm dung lượng tuyệt đối, giữ lại xuống dòng \n và dấu câu
+      const clean = match[2].replace(/[ \t]+/g, '');
+      res += clean;
+    }
+  }
+  return res;
+}
+
+export function updateViScriptFontDisplay() {
+  const preview = document.getElementById('viscript-font-preview');
+  if (!preview) return;
+  const rawText = txtDecrypted ? txtDecrypted.value : '';
+  const puaText = encodeToV2bPua(rawText);
+  preview.textContent = puaText;
+
+  const bytesEl = document.getElementById('viscript-font-bytes');
+  const barEl = document.getElementById('viscript-font-bar');
   if (!bytesEl || !barEl) return;
 
-  const rawBytes = getUtf8ByteLength(txtDecrypted ? txtDecrypted.value : '');
-  const currentBytes = getUtf8ByteLength(b60); // tính kể cả khoảng trắng
+  const rawBytes = getUtf8ByteLength(rawText);
+  
+  // Tính dung lượng chuẩn theo hệ mã nhị phân 16-bit:
+  // Mỗi ký tự PUA = đúng 2 bytes; dấu cách/xuống dòng = 1 byte
+  let pua16Bytes = 0;
+  for (const ch of puaText) {
+    const cp = ch.codePointAt(0);
+    if (cp >= 0xE000 && cp <= 0xF8FF) {
+      pua16Bytes += 2;
+    } else {
+      pua16Bytes += getUtf8ByteLength(ch);
+    }
+  }
 
   if (rawBytes === 0) {
-    bytesEl.textContent = currentBytes > 0 ? currentBytes + ' B' : '';
+    bytesEl.textContent = pua16Bytes > 0 ? pua16Bytes + ' B' : '';
     barEl.style.width = '0%';
     return;
   }
-  const pct = Math.round((currentBytes / rawBytes) * 100);
-  bytesEl.textContent = `${currentBytes}/${rawBytes}B=${pct}%`;
+  const pct = Math.round((pua16Bytes / rawBytes) * 100);
+  bytesEl.textContent = `${pua16Bytes}/${rawBytes}B=${pct}%`;
   if (pct < 100) {
-    barEl.style.background = '#0f0';
+    barEl.style.background = '#00f2fe';
     barEl.style.width = Math.min(100, pct) + '%';
   } else if (pct === 100) {
     barEl.style.background = '#aa0';
@@ -113,6 +223,47 @@ function updateCyberFontDisplay() {
   } else {
     barEl.style.background = '#f00';
     barEl.style.width = '100%';
+  }
+}
+
+function copyViScriptPua() {
+  const preview = document.getElementById('viscript-font-preview');
+  const text = preview ? preview.textContent : '';
+  if (!text) {
+    if (typeof window.showToast === 'function') window.showToast('⚠️ Chưa có ký tự ViScript để copy!');
+    return;
+  }
+  const notify = () => {
+    if (typeof window.showToast === 'function') window.showToast('📋 Đã sao chép ký tự ViScript (PUA)!');
+    else if (typeof cyberAlert === 'function') cyberAlert('Đã sao chép ký tự ViScript (PUA)!');
+  };
+  if (navigator.clipboard?.writeText) {
+    navigator.clipboard.writeText(text).then(notify).catch(() => {
+      fallbackCopy(text);
+      notify();
+    });
+  } else {
+    fallbackCopy(text);
+    notify();
+  }
+  function fallbackCopy(str) {
+    const ta = document.createElement('textarea');
+    ta.value = str;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('viscript-font-preview')?.addEventListener('click', copyViScriptPua);
+    document.getElementById('btn-copy-viscript-pua')?.addEventListener('click', copyViScriptPua);
+  });
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    document.getElementById('viscript-font-preview')?.addEventListener('click', copyViScriptPua);
+    document.getElementById('btn-copy-viscript-pua')?.addEventListener('click', copyViScriptPua);
   }
 }
 

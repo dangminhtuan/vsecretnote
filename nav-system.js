@@ -114,6 +114,56 @@ export const VSN_PAGES = [
     aliases: ['/font-maker.html', '/font-maker']
   },
   {
+    id: 'viscript',
+    title: 'Chữ Việt Kiểu Hàn (ViScript)',
+    shortTitle: 'ViScript',
+    badge: 'HANGUL STYLE',
+    desc: 'Biểu diễn Base60 theo khối tượng hình Hangul',
+    icon: '🇰🇷',
+    path: '/viscript.html',
+    aliases: ['/viscript.html', '/viscript']
+  },
+  {
+    id: 'geo-font',
+    title: '60 Nét Tối Giản (Mnemonic Script)',
+    shortTitle: '60 Nét Gợi Hình',
+    badge: 'BASE60 MNEMONIC',
+    desc: '60 ký tự hình học tối giản gợi hình chữ Latinh/số',
+    icon: '💠',
+    path: '/geo-font.html',
+    aliases: ['/geo-font.html', '/geo-font']
+  },
+  {
+    id: 'v2b-demo',
+    title: 'Chuẩn Nén 2-Byte (V2B)',
+    shortTitle: 'Nén 2-Byte V2B',
+    badge: '2-BYTE SYLLABLE',
+    desc: 'Mã hóa 2-Byte mỗi từ đơn tiếng Việt, siêu nén 65%',
+    icon: '⚡',
+    path: '/v2b-demo.html',
+    aliases: ['/v2b-demo.html', '/v2b-demo']
+  },
+  {
+    id: 'viscript-encoder',
+    title: 'Bộ Gõ Font ViScript (PUA)',
+    shortTitle: 'Bộ Gõ Font ViScript',
+    badge: 'TTF FONT PUA',
+    desc: 'Gõ tiếng Việt → Chuỗi PUA hiển thị bằng Font cài đặt V2B-ViScript',
+    icon: '🔤',
+    path: '/viscript-encoder.html',
+    aliases: ['/viscript-encoder.html', '/viscript-encoder']
+  },
+  {
+    id: 'glyph-studio',
+    title: 'Xưởng Thiết Kế Nét (Glyph Studio)',
+    shortTitle: 'Xưởng Nét',
+    badge: 'GLYPH STUDIO',
+    desc: 'Tự do ghép nét thẳng & cong để tạo ký tự Base60',
+    icon: '✏️',
+    path: '/glyph-studio.html',
+    aliases: ['/glyph-studio.html', '/glyph-studio']
+  },
+  {
     id: 'dict',
     title: 'Từ Điển B60 (Cũ)',
     shortTitle: 'Từ Điển Cũ',
