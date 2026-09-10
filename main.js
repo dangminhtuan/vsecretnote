@@ -71,6 +71,37 @@ function getUtf8ByteLength(str) {
   return new Blob([str]).size;
 }
 
+// ===== CLIPBOARD HELPER (HTTP LAN IP / HTTPS / Mobile) =====
+function safeCopyToClipboard(text) {
+  if (!text) return Promise.resolve(false);
+  // Modern API (HTTPS / localhost)
+  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function') {
+    return navigator.clipboard.writeText(text)
+      .then(() => true)
+      .catch(() => _execCommandCopy(text));
+  }
+  // Fallback: off-screen textarea (HTTP LAN, iOS Safari, Android)
+  return Promise.resolve(_execCommandCopy(text));
+}
+function _execCommandCopy(text) {
+  let ta;
+  try {
+    ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', '');
+    Object.assign(ta.style, {
+      position: 'fixed', top: '0', left: '-9999px',
+      width: '2em', height: '2em', opacity: '0', zIndex: '-1'
+    });
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    return !!document.execCommand('copy');
+  } catch (e) { return false; }
+  finally { if (ta) document.body.removeChild(ta); }
+}
+
 let isCaseSupportEnabled = localStorage.getItem('pref_view_case') === 'true';
 
 function formatB60WithCase(b60, originalWord) {
@@ -1353,14 +1384,23 @@ function setupCopyClear(idBtn, idClear, targetInput) {
 }
 
 
-  // Nút copy mới
-  document.getElementById('btn-copy-text')?.addEventListener('click', () => { navigator.clipboard.writeText(txtDecrypted?.value || ''); });
-  document.getElementById('btn-copy-compressed')?.addEventListener('click', () => { navigator.clipboard.writeText(txtCompressed?.value || ''); });
-  document.getElementById('btn-copy-unicode-symbols')?.addEventListener('click', () => { navigator.clipboard.writeText(txtUnicodeSymbols?.value || ''); });
-  document.getElementById('btn-copy-continuous')?.addEventListener('click', () => { navigator.clipboard.writeText(txtCompressedContinuous?.value || ''); });
-  document.getElementById('btn-copy-fake')?.addEventListener('click', () => { navigator.clipboard.writeText(txtFakeViet?.value || ''); });
-  document.getElementById('btn-copy-time')?.addEventListener('click', () => { navigator.clipboard.writeText(txtEncrypted?.value || ''); });
-  document.getElementById('btn-copy-time5')?.addEventListener('click', () => { navigator.clipboard.writeText(txtTime5?.value || ''); });
+  // Nút copy từng hàng — dùng safeCopyToClipboard (hoạt động trên HTTP LAN)
+  const _wiredRowCopy = (id, getVal, label) => {
+    document.getElementById(id)?.addEventListener('click', () => {
+      const val = getVal() || '';
+      if (!val) { showToast(`⚠️ ${label} đang trống!`); return; }
+      safeCopyToClipboard(val).then(ok =>
+        showToast(ok ? `📋 Đã copy ${label}!` : `⚠️ Copy thất bại!`)
+      );
+    });
+  };
+  _wiredRowCopy('btn-copy-text',            () => txtDecrypted?.value,           'TEXT gốc');
+  _wiredRowCopy('btn-copy-compressed',      () => txtCompressed?.value,          'BASE60');
+  _wiredRowCopy('btn-copy-unicode-symbols', () => txtUnicodeSymbols?.value,      'Ký hiệu Unicode');
+  _wiredRowCopy('btn-copy-continuous',      () => txtCompressedContinuous?.value,'Nén liên tiếp');
+  _wiredRowCopy('btn-copy-fake',            () => txtFakeViet?.value,            'Fake Viet');
+  _wiredRowCopy('btn-copy-time',            () => txtEncrypted?.value,           'TIME');
+  _wiredRowCopy('btn-copy-time5',           () => txtTime5?.value,               'TIME-5');
 
   // Nút clear mới
   document.getElementById('btn-clear-continuous')?.addEventListener('click', () => { if(txtCompressedContinuous) txtCompressedContinuous.value = ''; syncFromCompressedContinuous(); });
@@ -4163,7 +4203,22 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     }
   }
 
-  // Attach click listener to all textareas
+  function showContextMenuAt(ta) {
+    if (!isToolbarEnabled || !ctxMenu) return;
+    activeContextInput = ta;
+    const rect = ta.getBoundingClientRect();
+    ctxMenu.style.display = 'flex';
+    let topPos = rect.top + window.scrollY - 45;
+    if (rect.top < 60) topPos = rect.bottom + window.scrollY + 8;
+    const menuW = ctxMenu.offsetWidth || 240;
+    let leftPos = rect.right + window.scrollX - menuW;
+    const vw = document.documentElement.clientWidth || window.innerWidth;
+    leftPos = Math.max(4 + window.scrollX, Math.min(leftPos, window.scrollX + vw - menuW - 4));
+    ctxMenu.style.top = topPos + 'px';
+    ctxMenu.style.left = leftPos + 'px';
+  }
+
+  // ===== 모든 ô text: bổ sung txtUnicodeSymbols + gắn focus & click =====
   const allTextareas = [
     txtDecrypted,
     txtCompressed,
@@ -4174,32 +4229,19 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     txtTime5,
     txtCVNSS4,
     txtFakeViet,
+    txtUnicodeSymbols,
     document.getElementById('camel-case-input'),
     document.getElementById('no-accent-input')
   ].filter(Boolean);
 
   allTextareas.forEach(ta => {
-    ta.addEventListener('focus', (e) => {
-      if (!isToolbarEnabled) return;
-      // Show context menu at top right of the textarea
-      activeContextInput = ta;
-      const rect = ta.getBoundingClientRect();
-      
-      ctxMenu.style.display = 'flex';
-      // Position it near the top-right of the textarea, accounting for scroll
-      let topPos = rect.top + window.scrollY - 45; // a bit above
-      if (rect.top < 60) {
-        topPos = rect.bottom + window.scrollY + 8;
-      }
-      let leftPos = rect.right + window.scrollX - ctxMenu.offsetWidth;
-      if (leftPos < 0) leftPos = rect.left + window.scrollX;
-      
-      ctxMenu.style.top = topPos + 'px';
-      ctxMenu.style.left = leftPos + 'px';
-    });
+    // focus: hiển thị menu khi ô nhận focus lần đầu
+    ta.addEventListener('focus', () => showContextMenuAt(ta));
+    // click: hiển thị lại menu ngay cả khi ô đã có focus sẵn
+    ta.addEventListener('click', () => showContextMenuAt(ta));
   });
 
-  // Hide when clicking outside
+  // Ẩn menu khi click ra ngoài
   document.addEventListener('click', (e) => {
     if (ctxMenu && ctxMenu.style.display === 'flex') {
       if (!ctxMenu.contains(e.target) && e.target.tagName !== 'TEXTAREA') {
@@ -4208,43 +4250,46 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     }
   });
 
-  // Context Menu Buttons
-  document.getElementById('ctx-close')?.addEventListener('click', hideContextMenu);
-
+  // ===== NÚT ^C — COPY =====
+  // preventDefault trên mousedown/pointerdown để KHÔNG làm mất selection của textarea
   const btnCtxCopy = document.getElementById('ctx-copy');
-  btnCtxCopy?.addEventListener('mousedown', (e) => e.preventDefault());
+  ['mousedown','pointerdown','touchstart'].forEach(ev =>
+    btnCtxCopy?.addEventListener(ev, e => e.preventDefault(), { passive: false })
+  );
   btnCtxCopy?.addEventListener('click', () => {
     if (!activeContextInput) return;
     const start = activeContextInput.selectionStart;
-    const end = activeContextInput.selectionEnd;
+    const end   = activeContextInput.selectionEnd;
     const hasSelection = (start !== undefined && end !== undefined && start !== end);
     const val = activeContextInput.value || '';
     const textToCopy = hasSelection ? val.substring(start, end) : val;
 
-    if (textToCopy) {
-      navigator.clipboard.writeText(textToCopy).then(() => {
-        showToast('Đã copy [^C]!');
-        hideContextMenu();
-      });
-    }
+    if (!textToCopy) { showToast('⚠️ Ô trống!'); return; }
+    safeCopyToClipboard(textToCopy).then(ok => {
+      showToast(ok ? '📋 Đã copy [^C]!' : '⚠️ Copy thất bại!');
+      hideContextMenu();
+    });
   });
 
+  // ===== NÚT ^X — CUT =====
   const btnCtxCut = document.getElementById('ctx-cut') || document.getElementById('ctx-clear');
-  btnCtxCut?.addEventListener('mousedown', (e) => e.preventDefault());
+  ['mousedown','pointerdown','touchstart'].forEach(ev =>
+    btnCtxCut?.addEventListener(ev, e => e.preventDefault(), { passive: false })
+  );
   btnCtxCut?.addEventListener('click', () => {
     if (!activeContextInput) return;
     const start = activeContextInput.selectionStart;
-    const end = activeContextInput.selectionEnd;
+    const end   = activeContextInput.selectionEnd;
     const hasSelection = (start !== undefined && end !== undefined && start !== end);
     const val = activeContextInput.value || '';
     const textToCut = hasSelection ? val.substring(start, end) : val;
 
-    if (!textToCut) {
-      hideContextMenu();
-      return;
-    }
+    if (!textToCut) { showToast('⚠️ Ô trống!'); hideContextMenu(); return; }
 
-    const doCut = () => {
+    // Copy trước, sau đó mới xóa — đảm bảo clipboard nhận đủ data
+    safeCopyToClipboard(textToCut).then(ok => {
+      if (!ok) { showToast('⚠️ Không thể copy vào clipboard!'); return; }
+      // Thực hiện xóa nội dung (cut)
       if (hasSelection) {
         activeContextInput.value = val.substring(0, start) + val.substring(end);
         activeContextInput.selectionStart = activeContextInput.selectionEnd = start;
@@ -4256,52 +4301,56 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
       } else {
         activeContextInput.dispatchEvent(new Event('input'));
       }
-      showToast('Đã cắt [^X]!');
+      showToast('✂️ Đã cắt [^X]!');
       hideContextMenu();
-    };
-
-    if (navigator.clipboard?.writeText) {
-      navigator.clipboard.writeText(textToCut).then(doCut).catch(() => {
-        document.execCommand('copy');
-        doCut();
-      });
-    } else {
-      document.execCommand('copy');
-      doCut();
-    }
+    });
   });
 
+  // ===== NÚT ^V — PASTE =====
+  // KHÔNG preventDefault trên mousedown để giữ focus context vào nút,
+  // nhưng NGAY LẬP TỨC focus lại textarea trước khi execCommand
   const btnCtxPaste = document.getElementById('ctx-paste');
-  btnCtxPaste?.addEventListener('mousedown', (e) => e.preventDefault());
   btnCtxPaste?.addEventListener('click', async () => {
     if (!activeContextInput) return;
-    try {
-      let text = '';
-      if (navigator.clipboard?.readText) {
-        text = await navigator.clipboard.readText();
-      }
-      if (!text) {
-        activeContextInput.focus();
-        document.execCommand('paste');
-        showToast('Đã dán [^V]!');
-        hideContextMenu();
-        return;
-      }
-      const start = activeContextInput.selectionStart ?? activeContextInput.value.length;
-      const end = activeContextInput.selectionEnd ?? activeContextInput.value.length;
-      const val = activeContextInput.value || '';
-      activeContextInput.value = val.substring(0, start) + text + val.substring(end);
-      activeContextInput.selectionStart = activeContextInput.selectionEnd = start + text.length;
-      activeContextInput.dispatchEvent(new Event('input'));
-      showToast('Đã dán [^V]!');
-    } catch (err) {
-      console.warn('Lỗi đọc clipboard:', err);
-      activeContextInput.focus();
-      document.execCommand('paste');
-      showToast('Đã dán [^V]!');
+    const targetInput = activeContextInput; // cache lại trước khi hideContextMenu reset nó
+
+    // Thử Async Clipboard API trước (chỉ hoạt động trên HTTPS)
+    if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
+      try {
+        const text = await navigator.clipboard.readText();
+        if (text) {
+          const start = targetInput.selectionStart ?? targetInput.value.length;
+          const end   = targetInput.selectionEnd   ?? targetInput.value.length;
+          const val   = targetInput.value || '';
+          targetInput.value = val.substring(0, start) + text + val.substring(end);
+          targetInput.selectionStart = targetInput.selectionEnd = start + text.length;
+          targetInput.dispatchEvent(new Event('input'));
+          showToast('📋 Đã dán [^V]!');
+          hideContextMenu();
+          return;
+        }
+      } catch (_) { /* fall through to execCommand */ }
     }
+
+    // Fallback: focus về ô rồi execCommand('paste')
+    // execCommand('paste') chỉ hoạt động khi element đang focused
     hideContextMenu();
+    targetInput.focus();
+    try {
+      const ok = document.execCommand('paste');
+      if (ok) {
+        targetInput.dispatchEvent(new Event('input'));
+        showToast('📋 Đã dán [^V]!');
+      } else {
+        showToast('👉 Nhấn Ctrl+V / giữ để dán');
+      }
+    } catch (_) {
+      showToast('👉 Nhấn Ctrl+V / giữ để dán');
+    }
   });
+
+  // ===== NÚT CLOSE & FULLSCREEN (giữ nguyên) =====
+  document.getElementById('ctx-close')?.addEventListener('click', hideContextMenu);
 
   document.getElementById('ctx-full')?.addEventListener('click', () => {
     if (activeContextInput) {
