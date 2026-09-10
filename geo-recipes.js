@@ -90,8 +90,8 @@ export const GLYPH_RECIPES = [
   { id: 40, char: '9', path: '<circle cx="50" cy="38" r="17" fill="none" /><path d="M 67 38 L 67 66 A 14 14 0 0 1 42 78" fill="none" />' },
   // 41: 'A' - Gạch xiên nghịch 45° nét dài \
   { id: 41, char: 'A', path: '<line x1="26" y1="26" x2="74" y2="74" />' },
-  // 42: 'B' - Chữ B hoa 2 vòm bụng (Rộng thoáng, có thanh ngang định hình)
-  { id: 42, char: 'B', path: '<line x1="28" y1="22" x2="28" y2="78" /><path d="M 28 22 L 50 22 A 14 14 0 0 1 50 50 L 28 50" fill="none" /><path d="M 28 50 L 52 50 A 14 14 0 0 1 52 78 L 28 78" fill="none" />' },
+  // 42: 'B' - Chữ B hoa 2 vòm bụng (Kích thước thanh thoát, vừa vặn cân đối)
+  { id: 42, char: 'B', path: '<line x1="32" y1="30" x2="32" y2="72" /><path d="M 32 30 L 48 30 A 10 10 0 0 1 48 50 L 32 50" fill="none" /><path d="M 32 50 L 49 50 A 11 11 0 0 1 49 72 L 32 72" fill="none" />' },
   // 43: 'E' - Chữ T xoay 90° ⊢
   { id: 43, char: 'E', path: '<line x1="32" y1="22" x2="32" y2="78" /><line x1="32" y1="50" x2="72" y2="50" />' },
   // 44: 'F' - Chữ T xoay trái ⊣

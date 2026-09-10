@@ -78,7 +78,7 @@ const GLYPH_RECIPES = [
   { id: 39, char: '8', path: '<circle cx="50" cy="38" r="14" /><circle cx="50" cy="64" r="16" />' },
   { id: 40, char: '9', path: '<circle cx="50" cy="38" r="17" /><path d="M 67 38 L 67 66 A 14 14 0 0 1 42 78" />' },
   { id: 41, char: 'A', path: '<line x1="26" y1="26" x2="74" y2="74" />' },
-  { id: 42, char: 'B', path: '<line x1="28" y1="22" x2="28" y2="78" /><path d="M 28 22 L 50 22 A 14 14 0 0 1 50 50 L 28 50" /><path d="M 28 50 L 52 50 A 14 14 0 0 1 52 78 L 28 78" />' },
+  { id: 42, char: 'B', path: '<line x1="32" y1="30" x2="32" y2="72" /><path d="M 32 30 L 48 30 A 10 10 0 0 1 48 50 L 32 50" /><path d="M 32 50 L 49 50 A 11 11 0 0 1 49 72 L 32 72" />' },
   { id: 43, char: 'E', path: '<line x1="32" y1="22" x2="32" y2="78" /><line x1="32" y1="50" x2="72" y2="50" />' },
   { id: 44, char: 'F', path: '<line x1="66" y1="22" x2="66" y2="78" /><line x1="66" y1="50" x2="28" y2="50" />' },
   { id: 45, char: 'H', path: '<polyline points="30,68 30,30 70,30 70,68" />' },
