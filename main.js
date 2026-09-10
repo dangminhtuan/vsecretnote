@@ -2160,8 +2160,10 @@ function toggleKeepView(forceState) {
     document.body.classList.remove('sandbox-mode');
     
     // Hide sandbox fixed action bars
+    const sandboxTopBar = document.getElementById('sandbox-top-bar');
     const sandboxTopLeft = document.getElementById('sandbox-top-left');
     const sandboxActions = document.getElementById('sandbox-actions');
+    if (sandboxTopBar) sandboxTopBar.style.display = 'none';
     if (sandboxTopLeft) sandboxTopLeft.style.display = 'none';
     if (sandboxActions) sandboxActions.style.display = 'none';
 

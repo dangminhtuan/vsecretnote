@@ -974,9 +974,28 @@ body.sandbox-mode #vk-suggestions {
   min-height: 25px !important;
 }
 
+#sandbox-top-bar {
+  display: none;
+  position: fixed;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 20px);
+  max-width: 460px;
+  z-index: 9999;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+body.sandbox-mode #sandbox-top-bar {
+  display: flex !important;
+}
+
 body.sandbox-mode #sandbox-actions,
 body.sandbox-mode #sandbox-top-left {
-    display: flex !important;
+  display: flex !important;
+  pointer-events: auto;
 }
 
 body.sandbox-mode #sandbox-debug-container {
