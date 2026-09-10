@@ -4234,11 +4234,34 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     document.getElementById('no-accent-input')
   ].filter(Boolean);
 
+  // Lưu vết vùng chọn khi người dùng bôi đen
+  let lastSelection = null;
+  function updateSelection(ta) {
+    if (!ta) return;
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    if (start !== undefined && end !== undefined && start !== end) {
+      lastSelection = { input: ta, start, end, text: (ta.value || '').substring(start, end) };
+    } else {
+      lastSelection = null;
+    }
+  }
+
   allTextareas.forEach(ta => {
     // focus: hiển thị menu khi ô nhận focus lần đầu
-    ta.addEventListener('focus', () => showContextMenuAt(ta));
+    ta.addEventListener('focus', () => {
+      showContextMenuAt(ta);
+      updateSelection(ta);
+    });
     // click: hiển thị lại menu ngay cả khi ô đã có focus sẵn
-    ta.addEventListener('click', () => showContextMenuAt(ta));
+    ta.addEventListener('click', () => {
+      showContextMenuAt(ta);
+      updateSelection(ta);
+    });
+    ta.addEventListener('select', () => updateSelection(ta));
+    ta.addEventListener('keyup', () => updateSelection(ta));
+    ta.addEventListener('mouseup', () => updateSelection(ta));
+    ta.addEventListener('touchend', () => updateSelection(ta));
   });
 
   // Ẩn menu khi click ra ngoài
@@ -4250,19 +4273,23 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     }
   });
 
-  // ===== NÚT ^C — COPY =====
-  // preventDefault trên mousedown/pointerdown để KHÔNG làm mất selection của textarea
+  // ===== NÚT ^C — COPY (Không preventDefault để đảm bảo hoạt động 100% trên Cảm ứng Mobile & PC) =====
   const btnCtxCopy = document.getElementById('ctx-copy');
-  ['mousedown','pointerdown','touchstart'].forEach(ev =>
-    btnCtxCopy?.addEventListener(ev, e => e.preventDefault(), { passive: false })
-  );
   btnCtxCopy?.addEventListener('click', () => {
     if (!activeContextInput) return;
-    const start = activeContextInput.selectionStart;
-    const end   = activeContextInput.selectionEnd;
-    const hasSelection = (start !== undefined && end !== undefined && start !== end);
     const val = activeContextInput.value || '';
-    const textToCopy = hasSelection ? val.substring(start, end) : val;
+    let textToCopy = val;
+
+    // Ưu tiên đoạn bôi đen nếu có
+    if (lastSelection && lastSelection.input === activeContextInput && lastSelection.text) {
+      textToCopy = lastSelection.text;
+    } else {
+      const start = activeContextInput.selectionStart;
+      const end   = activeContextInput.selectionEnd;
+      if (start !== undefined && end !== undefined && start !== end) {
+        textToCopy = val.substring(start, end);
+      }
+    }
 
     if (!textToCopy) { showToast('⚠️ Ô trống!'); return; }
     safeCopyToClipboard(textToCopy).then(ok => {
@@ -4271,31 +4298,44 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     });
   });
 
-  // ===== NÚT ^X — CUT =====
+  // ===== NÚT ^X — CUT (Không preventDefault, cắt selection hoặc xóa cả ô) =====
   const btnCtxCut = document.getElementById('ctx-cut') || document.getElementById('ctx-clear');
-  ['mousedown','pointerdown','touchstart'].forEach(ev =>
-    btnCtxCut?.addEventListener(ev, e => e.preventDefault(), { passive: false })
-  );
   btnCtxCut?.addEventListener('click', () => {
     if (!activeContextInput) return;
-    const start = activeContextInput.selectionStart;
-    const end   = activeContextInput.selectionEnd;
-    const hasSelection = (start !== undefined && end !== undefined && start !== end);
     const val = activeContextInput.value || '';
-    const textToCut = hasSelection ? val.substring(start, end) : val;
+    let textToCut = val;
+    let cutStart = 0;
+    let cutEnd = val.length;
+    let isPartial = false;
+
+    if (lastSelection && lastSelection.input === activeContextInput && lastSelection.text) {
+      textToCut = lastSelection.text;
+      cutStart = lastSelection.start;
+      cutEnd = lastSelection.end;
+      isPartial = true;
+    } else {
+      const start = activeContextInput.selectionStart;
+      const end   = activeContextInput.selectionEnd;
+      if (start !== undefined && end !== undefined && start !== end) {
+        textToCut = val.substring(start, end);
+        cutStart = start;
+        cutEnd = end;
+        isPartial = true;
+      }
+    }
 
     if (!textToCut) { showToast('⚠️ Ô trống!'); hideContextMenu(); return; }
 
     // Copy trước, sau đó mới xóa — đảm bảo clipboard nhận đủ data
     safeCopyToClipboard(textToCut).then(ok => {
       if (!ok) { showToast('⚠️ Không thể copy vào clipboard!'); return; }
-      // Thực hiện xóa nội dung (cut)
-      if (hasSelection) {
-        activeContextInput.value = val.substring(0, start) + val.substring(end);
-        activeContextInput.selectionStart = activeContextInput.selectionEnd = start;
+      if (isPartial) {
+        activeContextInput.value = val.substring(0, cutStart) + val.substring(cutEnd);
+        activeContextInput.selectionStart = activeContextInput.selectionEnd = cutStart;
       } else {
         activeContextInput.value = '';
       }
+      lastSelection = null;
       if (!activeContextInput.value.trim()) {
         clearAllTextareas();
       } else {
