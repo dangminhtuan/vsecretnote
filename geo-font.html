@@ -948,8 +948,8 @@
       // 1: 'd' - Móc lưỡi câu / chữ d khuyết
       { id: 1, family: 'Móc lưỡi câu / d khuyết', name: 'Nét móc câu d khuyết (d)', path: '<path d="M 50 20 L 50 50 A 18 15 0 0 0 50 80" fill="none" />', twin: 9, twinRelation: 'Đối ngẫu với D' },
       
-      // 2: 'g' - Trục đứng + đuôi xiên hất trái (Theo thiết kế trực tiếp của bạn!)
-      { id: 2, family: 'Trục đứng + đuôi xiên hất trái', name: 'Thẳng dài dọc + thẳng ngắn xiên hất trái (g)', path: '<polyline points="65,20 65,80 35,50" fill="none" />' },
+      // 2: 'g' - Tia sét hình học ziczac ↯ (Không mũi tên)
+      { id: 2, family: 'Tia sét ziczac ↯', name: 'Tia sét hình học 3 nhịp không mũi tên (g)', path: '<polyline points="60,20 38,48 58,48 36,80" fill="none" />' },
       
       // 3: 'G' - Cung C hoa đối xứng gương mở sang trái ⊃ (Theo yêu cầu: cong to đối xứng gương với C)
       { id: 3, family: 'Cung tròn lớn hoa ⊃', name: 'Cung tròn lớn mở sang trái (G) - Lật gương với C hoa', path: '<path d="M 24 22 A 30 30 0 1 1 24 78" fill="none" />', twin: 11, twinRelation: 'Lật gương hoàn hảo với C hoa' },
@@ -1068,8 +1068,8 @@
       // 41: 'A' - Nét nghiêng nghịch 45 độ \ (Theo yêu cầu: nét dài toàn khung)
       { id: 41, family: 'Nét nghiêng nghịch 45° \\ (Dài)', name: 'Gạch xiên nghịch 45 độ nét dài (A) - Đối ngẫu với i', path: '<line x1="26" y1="26" x2="74" y2="74" />', twin: 57, twinRelation: 'Đối ngẫu dài-ngắn với i (/)' },
       
-      // 42: 'B' - Trục đứng + hai cung tròn khép kín
-      { id: 42, family: 'Trục + hai bán nguyệt B', name: 'Chữ B hoa 2 vòm bụng (B)', path: '<line x1="32" y1="22" x2="32" y2="78" /><path d="M 32 22 A 16 16 0 0 1 32 50 A 16 16 0 0 1 32 78" fill="none" />' },
+      // 42: 'B' - Trục đứng + hai cung tròn khép kín (Rộng thoáng, thanh ngang định hình)
+      { id: 42, family: 'Trục + hai bán nguyệt B', name: 'Chữ B hoa 2 vòm bụng (B)', path: '<line x1="28" y1="22" x2="28" y2="78" /><path d="M 28 22 L 50 22 A 14 14 0 0 1 50 50 L 28 50" fill="none" /><path d="M 28 50 L 52 50 A 14 14 0 0 1 52 78 L 28 78" fill="none" />' },
       
       // 43: 'E' - Chữ T xoay 90 độ ⊢ (Trục đứng trái + gạch ngang giữa chĩa phải - Bộ tứ chữ T)
       { id: 43, family: 'Chữ T xoay 90° ⊢', name: 'Trục đứng trái + gạch ngang giữa (E)', path: '<line x1="32" y1="22" x2="32" y2="78" /><line x1="32" y1="50" x2="72" y2="50" />', twin: 44, twinRelation: 'Đối ngẫu xoay 180° với F' },
@@ -1244,7 +1244,7 @@
             name: 'Cụm Trục + Phân Nhánh (Stem + Branch)',
             relation: 'Trục đứng/xiên kết hợp nhánh hất và vát đỉnh',
             items: [
-              { idx: 2,  char: 'g', note: 'Trục + hất trái' },
+              { idx: 2,  char: 'g', note: 'Tia sét ziczac ↯' },
               { idx: 21, char: 'y', note: 'Xiên + nhánh trái' },
               { idx: 29, char: 'R', note: 'Mái vát đỉnh phải' }
             ]

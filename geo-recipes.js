@@ -10,8 +10,8 @@ export const GLYPH_RECIPES = [
   { id: 0, char: 'c', path: '<path d="M 68 28 A 25 25 0 0 0 68 72" fill="none" />' },
   // 1: 'd' - Nét móc lưỡi câu / chữ d khuyết
   { id: 1, char: 'd', path: '<path d="M 50 20 L 50 50 A 18 15 0 0 0 50 80" fill="none" />' },
-  // 2: 'g' - Trục đứng + đuôi xiên hất trái
-  { id: 2, char: 'g', path: '<polyline points="65,20 65,80 35,50" fill="none" />' },
+  // 2: 'g' - Tia sét hình học ziczac ↯ (Không mũi tên)
+  { id: 2, char: 'g', path: '<polyline points="60,20 38,48 58,48 36,80" fill="none" />' },
   // 3: 'G' - Cung C hoa cong to đối xứng gương
   { id: 3, char: 'G', path: '<path d="M 24 22 A 30 30 0 1 1 24 78" fill="none" />' },
   // 4: 'j' - Nét móc câu nhỏ gọn
@@ -90,8 +90,8 @@ export const GLYPH_RECIPES = [
   { id: 40, char: '9', path: '<circle cx="50" cy="38" r="17" fill="none" /><path d="M 67 38 L 67 66 A 14 14 0 0 1 42 78" fill="none" />' },
   // 41: 'A' - Gạch xiên nghịch 45° nét dài \
   { id: 41, char: 'A', path: '<line x1="26" y1="26" x2="74" y2="74" />' },
-  // 42: 'B' - Chữ B hoa 2 vòm bụng
-  { id: 42, char: 'B', path: '<line x1="32" y1="22" x2="32" y2="78" /><path d="M 32 22 A 16 16 0 0 1 32 50 A 16 16 0 0 1 32 78" fill="none" />' },
+  // 42: 'B' - Chữ B hoa 2 vòm bụng (Rộng thoáng, có thanh ngang định hình)
+  { id: 42, char: 'B', path: '<line x1="28" y1="22" x2="28" y2="78" /><path d="M 28 22 L 50 22 A 14 14 0 0 1 50 50 L 28 50" fill="none" /><path d="M 28 50 L 52 50 A 14 14 0 0 1 52 78 L 28 78" fill="none" />' },
   // 43: 'E' - Chữ T xoay 90° ⊢
   { id: 43, char: 'E', path: '<line x1="32" y1="22" x2="32" y2="78" /><line x1="32" y1="50" x2="72" y2="50" />' },
   // 44: 'F' - Chữ T xoay trái ⊣

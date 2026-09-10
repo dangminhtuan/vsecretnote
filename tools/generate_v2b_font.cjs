@@ -38,7 +38,7 @@ const B60_MAPPING = [
 const GLYPH_RECIPES = [
   { id: 0,  char: 'c', path: '<path d="M 68 28 A 25 25 0 0 0 68 72" />' },
   { id: 1,  char: 'd', path: '<path d="M 50 20 L 50 50 A 18 15 0 0 0 50 80" />' },
-  { id: 2,  char: 'g', path: '<polyline points="65,20 65,80 35,50" />' },
+  { id: 2,  char: 'g', path: '<polyline points="60,20 38,48 58,48 36,80" />' },
   { id: 3,  char: 'G', path: '<path d="M 24 22 A 30 30 0 1 1 24 78" />' },
   { id: 4,  char: 'j', path: '<path d="M 56 32 L 56 58 A 12 12 0 0 1 32 68" />' },
   { id: 5,  char: 'k', path: '<polyline points="64,30 34,50 64,70" />' },
@@ -78,7 +78,7 @@ const GLYPH_RECIPES = [
   { id: 39, char: '8', path: '<circle cx="50" cy="38" r="14" /><circle cx="50" cy="64" r="16" />' },
   { id: 40, char: '9', path: '<circle cx="50" cy="38" r="17" /><path d="M 67 38 L 67 66 A 14 14 0 0 1 42 78" />' },
   { id: 41, char: 'A', path: '<line x1="26" y1="26" x2="74" y2="74" />' },
-  { id: 42, char: 'B', path: '<line x1="32" y1="22" x2="32" y2="78" /><path d="M 32 22 A 16 16 0 0 1 32 50 A 16 16 0 0 1 32 78" />' },
+  { id: 42, char: 'B', path: '<line x1="28" y1="22" x2="28" y2="78" /><path d="M 28 22 L 50 22 A 14 14 0 0 1 50 50 L 28 50" /><path d="M 28 50 L 52 50 A 14 14 0 0 1 52 78 L 28 78" />' },
   { id: 43, char: 'E', path: '<line x1="32" y1="22" x2="32" y2="78" /><line x1="32" y1="50" x2="72" y2="50" />' },
   { id: 44, char: 'F', path: '<line x1="66" y1="22" x2="66" y2="78" /><line x1="66" y1="50" x2="28" y2="50" />' },
   { id: 45, char: 'H', path: '<polyline points="30,68 30,30 70,30 70,68" />' },

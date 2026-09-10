@@ -48,6 +48,7 @@ const txtCompressed = document.getElementById('compressed-input');
 const txtFakeViet = document.getElementById('fake-viet-input');
 const txtTime5 = document.getElementById('time-5-input');
 const txtCompressedContinuous = document.getElementById('compressed-continuous-input');
+const txtUnicodeSymbols = document.getElementById('unicode-symbols-input');
 const txtCVNSS4 = document.getElementById('cvnss4-input');
 const txtHolyHours = document.getElementById('holy-hours-input');
 const txtTwins = document.getElementById('twins-input');
@@ -80,6 +81,39 @@ function formatB60WithCase(b60, originalWord) {
   if (isAllCaps) return 'O' + b60;
   if (isTitle) return 'I' + b60;
   return b60;
+}
+
+// ===== 🔶 UNICODE GEOMETRIC SYMBOLS (ZERO-FONT MAPPING) =====
+export const B60_TO_UNICODE = {
+  'c': '⊂', 'd': 'ᑯ', 'g': '↯', 'G': '⊃', 'j': 'j', 'k': '<', 'K': '>', 'h': '♡', 'v': '∨', 'D': 'D',
+  'm': 'm', 'C': 'C', 'r': '┌', 's': '┘', 'n': '∩', 'b': 'b', 'l': '│', 'Q': '□', 'S': 'S', 'z': '┐',
+  'N': 'N', 'y': 'y', 'L': '└', 'W': 'W', 'p': 'p', 'f': '⊥', 'q': '⊏', 't': '+', 'T': '⊤', 'R': 'R',
+  'x': '×', '0': '⊙', '1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8',
+  '9': '9', 'A': '\\', 'B': 'B', 'E': '⊢', 'F': '⊣', 'H': '⊓', 'o': 'o', 'J': 'J', 'M': 'M', 'P': '⊐',
+  'U': '⊔', 'V': '∧', 'X': 'X', 'Y': 'Y', 'Z': 'Z', 'a': '—', 'e': '=', 'i': '/', 'u': '∪', 'w': 'w'
+};
+
+export const UNICODE_TO_B60 = {};
+for (const [b, u] of Object.entries(B60_TO_UNICODE)) {
+  UNICODE_TO_B60[u] = b;
+}
+
+export function b60ToUnicodeSymbols(b60) {
+  if (!b60) return '';
+  return b60.split('').map(ch => B60_TO_UNICODE[ch] || ch).join('');
+}
+
+export function unicodeSymbolsToB60(uni) {
+  if (!uni) return '';
+  return uni.split('').map(ch => UNICODE_TO_B60[ch] || ch).join('');
+}
+
+function updateUnicodeSymbolsDisplay() {
+  const txtUni = document.getElementById('unicode-symbols-input');
+  if (!txtUni) return;
+  if (document.activeElement === txtUni) return;
+  const b60 = txtCompressed ? txtCompressed.value : '';
+  txtUni.value = b60ToUnicodeSymbols(b60);
 }
 
 function updateCyberFontDisplay() {
@@ -115,8 +149,9 @@ function updateCyberFontDisplay() {
     }
   }
 
-  // Đồng thời cập nhật hàng ViScript font
+  // Đồng thời cập nhật hàng ViScript font & hàng Unicode Symbols
   updateViScriptFontDisplay();
+  updateUnicodeSymbolsDisplay();
 }
 
 // ==================== VISCRIPT FONT PREVIEW (V2B PUA) ====================
@@ -435,7 +470,7 @@ export const HOLY_HOUR_CODES = {
   '1515': '151501', // bướm
   '1616': '161601', // liếm
   '1717': '171700', // chim
-  '1818': '181802', // sờ
+  '1818': '181805', // sạc (thanh nặng vần ac, thay cho sàc lỗi)
   '1919': '191900', // ôm
   '2020': '202005', // ngực
   '2121': '212101', // nhấp (yys)
@@ -575,6 +610,7 @@ export function clearAllTextareas() {
   if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = '';
   if (txtTime5) txtTime5.value = '';
   if (txtCompressedContinuous) txtCompressedContinuous.value = '';
+  if (txtUnicodeSymbols) txtUnicodeSymbols.value = '';
   if (txtCVNSS4) txtCVNSS4.value = '';
   if (txtHolyHours) txtHolyHours.value = '';
   if (txtTwins) txtTwins.value = '';
@@ -857,6 +893,20 @@ function syncFromCompressedContinuous() {
   }
 }
 
+function syncFromUnicodeSymbols() {
+  if (!txtUnicodeSymbols) return;
+  const rawText = txtUnicodeSymbols.value;
+  if (!rawText.trim()) {
+    clearAllTextareas();
+    return;
+  }
+  const b60 = unicodeSymbolsToB60(rawText);
+  if (txtCompressed) {
+    txtCompressed.value = b60;
+    syncFromCompressed();
+  }
+}
+
 
 function syncFromCVNSS4() {
   const text = (txtCVNSS4 ? txtCVNSS4.value : '').trim();
@@ -928,7 +978,7 @@ function syncFromCVNSS4() {
   
   if (typeof updateCompressionStats === 'function') updateCompressionStats();
   updateCyberFontDisplay();
-  autoResizeAll();
+  if (typeof autoResizeAll === 'function') autoResizeAll();
   forceSave();
 }
 
@@ -1130,6 +1180,7 @@ if (txtCompressed) txtCompressed.addEventListener('input', syncFromCompressed);
 if (txtFakeViet) txtFakeViet.addEventListener('input', syncFromFakeViet);
 if (txtTime5) txtTime5.addEventListener('input', syncFromTime5);
 if (txtCompressedContinuous) txtCompressedContinuous.addEventListener('input', syncFromCompressedContinuous);
+if (txtUnicodeSymbols) txtUnicodeSymbols.addEventListener('input', syncFromUnicodeSymbols);
 if (txtHolyHours) txtHolyHours.addEventListener('input', syncFromHolyHours);
 if (txtTwins) txtTwins.addEventListener('input', syncFromTwins);
 const inpCamelCase = document.getElementById('camel-case-input');
@@ -1305,6 +1356,7 @@ function setupCopyClear(idBtn, idClear, targetInput) {
   // Nút copy mới
   document.getElementById('btn-copy-text')?.addEventListener('click', () => { navigator.clipboard.writeText(txtDecrypted?.value || ''); });
   document.getElementById('btn-copy-compressed')?.addEventListener('click', () => { navigator.clipboard.writeText(txtCompressed?.value || ''); });
+  document.getElementById('btn-copy-unicode-symbols')?.addEventListener('click', () => { navigator.clipboard.writeText(txtUnicodeSymbols?.value || ''); });
   document.getElementById('btn-copy-continuous')?.addEventListener('click', () => { navigator.clipboard.writeText(txtCompressedContinuous?.value || ''); });
   document.getElementById('btn-copy-fake')?.addEventListener('click', () => { navigator.clipboard.writeText(txtFakeViet?.value || ''); });
   document.getElementById('btn-copy-time')?.addEventListener('click', () => { navigator.clipboard.writeText(txtEncrypted?.value || ''); });
@@ -1325,14 +1377,15 @@ let multiCopySelected = []; // [{id, label, val}]
 
 const MXC_FIELDS = [
   { id: 'text-input',                  label: 'TEXT gốc'       },
-  { id: 'compressed-continuous-input', label: 'Nén liên tiếp'  },
   { id: 'compressed-input',            label: 'BASE60'          },
+  { id: 'compressed-continuous-input', label: 'Nén liên tiếp'  },
   { id: 'cvnss4-input',                label: 'CVNSS4'          },
   { id: 'fake-viet-input',             label: 'Fake Viet'       },
   { id: 'camel-case-input',            label: 'camelCase'       },
   { id: 'no-accent-input',             label: 'Không dấu'       },
   { id: 'time-input',                  label: 'TIME'            },
   { id: 'time-5-input',                label: 'TIME-5'          },
+  { id: 'unicode-symbols-input',       label: 'Ký hiệu Unicode' },
 ];
 
 const mxcSheet   = document.getElementById('mxc-sheet');
@@ -3185,14 +3238,16 @@ const ALL_BOX_IDS = [
   'group-cvnss4',
   'group-fakeviet',
   'group-camel',
-  'group-noaccent'
+  'group-noaccent',
+  'group-unicode-symbols'
 ];
 const MINIMAL_BOX_IDS = [
   'group-text',
   'group-compressed',
   'group-continuous',
   'group-holy',
-  'group-twins'
+  'group-twins',
+  'group-unicode-symbols'
 ];
 
 let visibleBoxes = null;
@@ -3207,6 +3262,8 @@ try {
 
 if (!Array.isArray(visibleBoxes) || visibleBoxes.length === 0) {
   visibleBoxes = [...ALL_BOX_IDS];
+} else if (!visibleBoxes.includes('group-unicode-symbols')) {
+  visibleBoxes.push('group-unicode-symbols');
 }
 
 function applyBoxVisibility() {
@@ -4484,7 +4541,7 @@ const gameState = {
     { word: 'bướm', b60: 'bbd', time: '151501' },
     { word: 'liếm', b60: 'lld', time: '161601' },
     { word: 'chim', b60: 'QQc', time: '171700' },
-    { word: 'sờ', b60: 'SSg', time: '181802' },
+    { word: 'sạc', b60: 'SSj', time: '181805' },
     { word: 'ôm', b60: 'zzc', time: '191900' },
     { word: 'ngực', b60: 'NNk', time: '202005' },
     { word: 'nhấp', b60: 'yyc', time: '212100' },

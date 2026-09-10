@@ -15,7 +15,7 @@
       }
       @font-face {
         font-family: 'V2B ViScript';
-        src: url('/V2B-ViScript.ttf?v=7') format('truetype');
+        src: url('/V2B-ViScript.ttf?v=9') format('truetype');
         font-display: swap;
       }
       #cyber-font-preview {
@@ -144,6 +144,10 @@
                   <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
                     <input type="checkbox" class="chk-box-toggle" data-target="group-noaccent" checked style="accent-color: #888; width: 13px; height: 13px; cursor: pointer;">
                     <span>11. 📝 Không dấu liền</span>
+                  </label>
+                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
+                    <input type="checkbox" class="chk-box-toggle" data-target="group-unicode-symbols" checked style="accent-color: #ffd166; width: 13px; height: 13px; cursor: pointer;">
+                    <span>12. 🔶 Ký hiệu Unicode [Zero-Font]</span>
                   </label>
                 </div>
               </div>
@@ -460,6 +464,15 @@
               </div>
               <span id="viscript-font-bytes" style="font-size: 11px; font-family: monospace; color: #888; min-width: 80px;"></span>
             </div>
+          </div>
+
+          <!-- Unicode Geometric Symbols (Zero-Font) -->
+          <div class="input-group" id="group-unicode-symbols" style="margin-top: 5px;">
+            <div class="label-row" style="display: flex; justify-content: space-between; align-items: center;">
+              <label for="unicode-symbols-input" style="color: #ffd166; letter-spacing: 1px;">UNICODE SYMBOLS [ZERO-FONT]</label>
+              <button id="btn-copy-unicode-symbols" class="cyber-btn-small" style="font-size: 10px; padding: 1px 6px; color: #ffd166; border-color: #ffd166; background: rgba(255,209,102,0.1); cursor: pointer;" title="Sao chép chuỗi ký hiệu Unicode">📋 Copy</button>
+            </div>
+            <textarea id="unicode-symbols-input" placeholder="Mã ký hiệu hình học Unicode (Google Docs, Zalo, Word không cần cài font)..." spellcheck="false" style="font-size: 15px; letter-spacing: 1.5px; color: #ffd166;"></textarea>
           </div>
 
           <!-- ✨ PROMPT MACHINE - Bottom Sheet -->
