@@ -3342,52 +3342,109 @@ if (chkViewCase) {
   });
 }
 
-// 5. Toggle Visible Textboxes (Bật/Tắt từng ô text)
-const ALL_BOX_IDS = [
-  'group-text',
-  'group-compressed',
-  'group-continuous',
-  'group-holy',
-  'group-twins',
-  'group-time',
-  'group-time5',
-  'group-cvnss4',
-  'group-fakeviet',
-  'group-camel',
-  'group-noaccent',
-  'group-unicode-symbols'
+// 5. Toggle Visible Textboxes, Reordering & Custom Minimal View
+const BOX_DEFINITIONS = [
+  { id: 'group-text', shortLabel: 'Tiếng Việt gốc', icon: '🟢', color: '#00ff66' },
+  { id: 'group-compressed', shortLabel: 'Base60', icon: '🟣', color: '#a855f7' },
+  { id: 'group-continuous', shortLabel: 'Base60 liền', icon: '🔤', color: '#a855f7' },
+  { id: 'group-holy', shortLabel: 'Giờ thiêng [4 số]', icon: '🟡', color: '#ffaa00' },
+  { id: 'group-twins', shortLabel: 'Kỳ quan gần nhất', icon: '✨', color: '#00ffaa' },
+  { id: 'group-cyber-font', shortLabel: 'Cyber Font [TTF]', icon: '🔠', color: '#58a6ff' },
+  { id: 'group-viscript-font', shortLabel: 'ViScript Font [V2B]', icon: '🖋️', color: '#00f2fe' },
+  { id: 'group-unicode-symbols', shortLabel: 'Ký hiệu Unicode [Zero]', icon: '🔶', color: '#ffd166' },
+  { id: 'group-time', shortLabel: 'Thời gian [6 số]', icon: '⏱️', color: '#00f0ff' },
+  { id: 'group-time5', shortLabel: 'Thời gian [5 số]', icon: '🔢', color: '#00f0ff' },
+  { id: 'group-cvnss4', shortLabel: 'CVNSS 4.0', icon: '⚡', color: '#f0f' },
+  { id: 'group-fakeviet', shortLabel: 'Mã Giả Việt', icon: '♰', color: '#ff5555' },
+  { id: 'group-camel', shortLabel: 'camelCase', icon: '🐫', color: '#ffaa00' },
+  { id: 'group-noaccent', shortLabel: 'Không dấu liền', icon: '📝', color: '#888' }
 ];
-const MINIMAL_BOX_IDS = [
-  'group-text',
-  'group-compressed',
-  'group-continuous',
-  'group-holy',
-  'group-twins',
+
+const DEFAULT_ALL_BOX_IDS = BOX_DEFINITIONS.map(b => b.id);
+const DEFAULT_MINIMAL_BOX_IDS = [
+  'group-cyber-font',
+  'group-viscript-font',
   'group-unicode-symbols'
 ];
 
+// --- Thứ tự các ô (Order) ---
+let boxOrder = [...DEFAULT_ALL_BOX_IDS];
+try {
+  const savedOrder = localStorage.getItem('pref_box_order');
+  if (savedOrder) {
+    const parsed = JSON.parse(savedOrder);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      // Giữ thứ tự đã lưu và bổ sung các ô mới chưa có trong savedOrder
+      boxOrder = parsed.filter(id => DEFAULT_ALL_BOX_IDS.includes(id));
+      DEFAULT_ALL_BOX_IDS.forEach(id => {
+        if (!boxOrder.includes(id)) boxOrder.push(id);
+      });
+    }
+  }
+} catch (e) {
+  console.error(e);
+}
+
+// --- Trạng thái Bật/Tắt (Visible) ---
 let visibleBoxes = null;
 try {
-  const saved = localStorage.getItem('pref_visible_boxes');
-  if (saved) {
-    visibleBoxes = JSON.parse(saved);
+  const savedVisible = localStorage.getItem('pref_visible_boxes');
+  if (savedVisible) {
+    visibleBoxes = JSON.parse(savedVisible);
   }
 } catch (e) {
   console.error(e);
 }
 
 if (!Array.isArray(visibleBoxes) || visibleBoxes.length === 0) {
-  visibleBoxes = [...ALL_BOX_IDS];
-} else if (!visibleBoxes.includes('group-unicode-symbols')) {
-  visibleBoxes.push('group-unicode-symbols');
+  visibleBoxes = [...DEFAULT_ALL_BOX_IDS];
+} else {
+  // Đảm bảo các ô mới được bật mặc định nếu chưa từng lưu
+  if (!visibleBoxes.includes('group-cyber-font')) visibleBoxes.push('group-cyber-font');
+  if (!visibleBoxes.includes('group-viscript-font')) visibleBoxes.push('group-viscript-font');
+  if (!visibleBoxes.includes('group-unicode-symbols')) visibleBoxes.push('group-unicode-symbols');
 }
 
+// --- Cấu hình chế độ Gọn (Minimal) ---
+let minimalBoxes = [...DEFAULT_MINIMAL_BOX_IDS];
+try {
+  const savedMinimal = localStorage.getItem('pref_minimal_boxes');
+  if (savedMinimal) {
+    const parsed = JSON.parse(savedMinimal);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      minimalBoxes = parsed.filter(id => DEFAULT_ALL_BOX_IDS.includes(id));
+    }
+  }
+} catch (e) {
+  console.error(e);
+}
+
+// Hàm áp dụng thứ tự hiển thị trong DOM
+function applyBoxOrder() {
+  const mainContainer = document.querySelector('.converter-box.editor-box');
+  if (!mainContainer) return;
+  
+  boxOrder.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.parentNode === mainContainer) {
+      mainContainer.appendChild(el);
+      // Giữ tutor-card và cụm controls đi liền ngay sau group-text
+      if (id === 'group-text') {
+        const tutor = document.getElementById('tutor-card');
+        const controls = mainContainer.querySelector('.controls');
+        if (tutor && tutor.parentNode === mainContainer) mainContainer.appendChild(tutor);
+        if (controls && controls.parentNode === mainContainer) mainContainer.appendChild(controls);
+      }
+    }
+  });
+  localStorage.setItem('pref_box_order', JSON.stringify(boxOrder));
+}
+
+// Hàm áp dụng ẩn/hiện các ô
 function applyBoxVisibility() {
-  document.querySelectorAll('.chk-box-toggle').forEach(chk => {
-    const targetId = chk.dataset.target;
-    const isVisible = visibleBoxes.includes(targetId);
-    chk.checked = isVisible;
-    const el = document.getElementById(targetId);
+  boxOrder.forEach(id => {
+    const el = document.getElementById(id);
+    const isVisible = visibleBoxes.includes(id);
     if (el) {
       el.style.display = isVisible ? '' : 'none';
     }
@@ -3395,31 +3452,162 @@ function applyBoxVisibility() {
   localStorage.setItem('pref_visible_boxes', JSON.stringify(visibleBoxes));
 }
 
-document.querySelectorAll('.chk-box-toggle').forEach(chk => {
-  chk.addEventListener('change', () => {
-    const targetId = chk.dataset.target;
-    if (chk.checked) {
-      if (!visibleBoxes.includes(targetId)) visibleBoxes.push(targetId);
-    } else {
-      visibleBoxes = visibleBoxes.filter(id => id !== targetId);
-    }
-    applyBoxVisibility();
-  });
-});
+// Hàm render toàn bộ danh sách điều khiển trong menu Bật/Tắt
+function renderViewMenu() {
+  const listEl = document.getElementById('view-textboxes-list');
+  if (!listEl) return;
+  const prevScroll = listEl.scrollTop;
 
+  const defMap = new Map(BOX_DEFINITIONS.map(b => [b.id, b]));
+  listEl.innerHTML = '';
+
+  boxOrder.forEach((id, index) => {
+    const def = defMap.get(id);
+    if (!def) return;
+
+    const isVisible = visibleBoxes.includes(id);
+    const isPinned = minimalBoxes.includes(id);
+    const isFirst = index === 0;
+    const isLast = index === boxOrder.length - 1;
+
+    const row = document.createElement('div');
+    row.className = 'box-view-row';
+    row.style.cssText = 'display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 5px 8px; min-height: 36px; border-radius: 6px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); box-sizing: border-box;';
+
+    // 1. Cụm nút di chuyển ▲ ▼
+    const reorderDiv = document.createElement('div');
+    reorderDiv.style.cssText = 'display: flex; gap: 3px; flex-shrink: 0;';
+
+    const btnUp = document.createElement('button');
+    btnUp.innerHTML = '▲';
+    btnUp.title = isFirst ? 'Đang ở trên cùng' : 'Di chuyển lên';
+    btnUp.disabled = isFirst;
+    btnUp.style.cssText = `width: 24px; height: 24px; background: #001a14; border: 1px solid ${isFirst ? '#22332a' : '#00ffcc'}; color: ${isFirst ? '#44554c' : '#00ffcc'}; border-radius: 4px; font-size: 11px; cursor: ${isFirst ? 'default' : 'pointer'}; display: flex; align-items: center; justify-content: center; padding: 0; line-height: 1;`;
+    if (!isFirst) {
+      btnUp.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const temp = boxOrder[index];
+        boxOrder[index] = boxOrder[index - 1];
+        boxOrder[index - 1] = temp;
+        applyBoxOrder();
+        renderViewMenu();
+      });
+    }
+
+    const btnDown = document.createElement('button');
+    btnDown.innerHTML = '▼';
+    btnDown.title = isLast ? 'Đang ở dưới cùng' : 'Di chuyển xuống';
+    btnDown.disabled = isLast;
+    btnDown.style.cssText = `width: 24px; height: 24px; background: #001a14; border: 1px solid ${isLast ? '#22332a' : '#00ffcc'}; color: ${isLast ? '#44554c' : '#00ffcc'}; border-radius: 4px; font-size: 11px; cursor: ${isLast ? 'default' : 'pointer'}; display: flex; align-items: center; justify-content: center; padding: 0; line-height: 1;`;
+    if (!isLast) {
+      btnDown.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const temp = boxOrder[index];
+        boxOrder[index] = boxOrder[index + 1];
+        boxOrder[index + 1] = temp;
+        applyBoxOrder();
+        renderViewMenu();
+      });
+    }
+
+    reorderDiv.appendChild(btnUp);
+    reorderDiv.appendChild(btnDown);
+
+    // 2. Checkbox & Nhãn text to rõ (Chống bấm trượt)
+    const label = document.createElement('label');
+    label.style.cssText = 'display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; cursor: pointer; user-select: none; margin: 0;';
+
+    const chk = document.createElement('input');
+    chk.type = 'checkbox';
+    chk.className = 'chk-box-toggle';
+    chk.dataset.target = id;
+    chk.checked = isVisible;
+    chk.style.cssText = `accent-color: ${def.color}; width: 16px; height: 16px; flex-shrink: 0; cursor: pointer;`;
+    chk.addEventListener('change', () => {
+      if (chk.checked) {
+        if (!visibleBoxes.includes(id)) visibleBoxes.push(id);
+      } else {
+        visibleBoxes = visibleBoxes.filter(x => x !== id);
+      }
+      applyBoxVisibility();
+      renderViewMenu();
+    });
+
+    const spanText = document.createElement('span');
+    spanText.style.cssText = `font-size: 13.5px; color: ${isVisible ? '#eee' : '#666'}; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: monospace; font-weight: 500; letter-spacing: 0.2px;`;
+    spanText.textContent = `${index + 1}. ${def.icon} ${def.shortLabel}`;
+
+    label.appendChild(chk);
+    label.appendChild(spanText);
+
+    // 3. Nút Ghim vào chế độ Gọn (Pin button)
+    const btnPin = document.createElement('button');
+    btnPin.innerHTML = '📌';
+    btnPin.title = isPinned ? 'Đang nằm trong chế độ Gọn (Bấm để gỡ)' : 'Ghim ô này vào chế độ Gọn';
+    btnPin.style.cssText = `width: 28px; height: 28px; flex-shrink: 0; border-radius: 4px; border: 1px solid ${isPinned ? '#00ffcc' : '#334438'}; background: ${isPinned ? 'rgba(0, 255, 204, 0.22)' : '#08120d'}; color: ${isPinned ? '#00ffcc' : '#55665b'}; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.2s;`;
+    btnPin.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (minimalBoxes.includes(id)) {
+        minimalBoxes = minimalBoxes.filter(x => x !== id);
+      } else {
+        minimalBoxes.push(id);
+      }
+      localStorage.setItem('pref_minimal_boxes', JSON.stringify(minimalBoxes));
+      renderViewMenu();
+      if (typeof showToast === 'function') {
+        const actionText = minimalBoxes.includes(id) ? 'Đã ghim vào' : 'Đã gỡ khỏi';
+        showToast(`📌 ${actionText} chế độ Gọn: ${def.shortLabel}`);
+      }
+    });
+
+    row.appendChild(reorderDiv);
+    row.appendChild(label);
+    row.appendChild(btnPin);
+    listEl.appendChild(row);
+  });
+
+  listEl.scrollTop = prevScroll;
+}
+
+// Bấm nút [Gọn]
 document.getElementById('btn-view-minimal')?.addEventListener('click', (e) => {
   e.stopPropagation();
-  visibleBoxes = [...MINIMAL_BOX_IDS];
+  if (minimalBoxes.length === 0) {
+    if (typeof showToast === 'function') showToast('⚠️ Chưa có ô nào trong danh sách Gọn! Hãy ghim [📌] ít nhất 1 ô.');
+    return;
+  }
+  visibleBoxes = [...minimalBoxes];
   applyBoxVisibility();
+  renderViewMenu();
+  if (typeof showToast === 'function') showToast(`👁️ Đã bật chế độ Gọn (${minimalBoxes.length} ô)`);
 });
 
+// Bấm nút [Tất cả]
 document.getElementById('btn-view-all')?.addEventListener('click', (e) => {
   e.stopPropagation();
-  visibleBoxes = [...ALL_BOX_IDS];
+  visibleBoxes = [...DEFAULT_ALL_BOX_IDS];
   applyBoxVisibility();
+  renderViewMenu();
+  if (typeof showToast === 'function') showToast('👁️ Đã hiển thị toàn bộ tất cả các ô');
 });
 
+// Bấm nút [📌 Đặt làm Gọn]
+document.getElementById('btn-save-as-minimal')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (visibleBoxes.length === 0) {
+    if (typeof showToast === 'function') showToast('⚠️ Không có ô nào đang bật để lưu vào Gọn!');
+    return;
+  }
+  minimalBoxes = [...visibleBoxes];
+  localStorage.setItem('pref_minimal_boxes', JSON.stringify(minimalBoxes));
+  renderViewMenu();
+  if (typeof showToast === 'function') showToast(`📌 Đã lưu ${minimalBoxes.length} ô đang hiển thị làm cấu hình Gọn!`);
+});
+
+// Khởi chạy thứ tự, hiển thị & render menu
+applyBoxOrder();
 applyBoxVisibility();
+renderViewMenu();
 
 // ===== 🔗 SHARE LINK =====
 document.getElementById('btn-share-link')?.addEventListener('click', () => {

@@ -76,87 +76,44 @@
             <div style="position: relative; display: inline-block;">
               <button id="btn-view-options" class="cyber-btn" title="Tùy chọn hiển thị (View)" style="border-color: #00ffcc; color: #00ffcc; background: #000; cursor: pointer; font-size: 16px; width: 36px; height: 36px; border-radius: 5px; display: flex; align-items: center; justify-content: center; padding: 0; transition: all 0.2s;">👁️</button>
               
-              <div id="view-options-menu" style="display: none; position: absolute; top: 42px; left: 0; z-index: 10001; background: rgba(5, 15, 10, 0.98); border: 1px solid #00ffcc; box-shadow: 0 4px 24px rgba(0, 255, 204, 0.4); border-radius: 6px; padding: 10px; min-width: 225px; max-height: 80vh; overflow-y: auto; backdrop-filter: blur(12px); flex-direction: column; gap: 8px;">
-                <div style="font-size: 10px; color: #888; font-family: monospace; font-weight: bold; border-bottom: 1px solid #224433; padding-bottom: 4px; letter-spacing: 1px;">⚙️ TÙY CHỌN TIỆN ÍCH</div>
+              <div id="view-options-menu" style="display: none; position: absolute; top: 42px; left: 0; z-index: 10001; background: rgba(5, 15, 10, 0.98); border: 1px solid #00ffcc; box-shadow: 0 4px 24px rgba(0, 255, 204, 0.4); border-radius: 8px; padding: 12px 14px; min-width: 320px; max-width: 92vw; max-height: 85vh; overflow-y: auto; backdrop-filter: blur(12px); flex-direction: column; gap: 10px;">
+                <div style="font-size: 11px; color: #888; font-family: monospace; font-weight: bold; border-bottom: 1px solid #224433; padding-bottom: 6px; letter-spacing: 1px;">⚙️ TÙY CHỌN TIỆN ÍCH</div>
                 
-                <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #ccc; cursor: pointer; user-select: none;">
-                  <input type="checkbox" id="chk-view-vk" style="accent-color: #00ffcc; width: 13px; height: 13px; cursor: pointer;">
-                  <span>⌨️ Bàn phím ảo</span>
-                </label>
-                
-                <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #ccc; cursor: pointer; user-select: none;">
-                  <input type="checkbox" id="chk-view-tutor" checked style="accent-color: #00ff66; width: 13px; height: 13px; cursor: pointer;">
-                  <span>🎓 Trợ giảng ghi nhớ</span>
-                </label>
-                
-                <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #ccc; cursor: pointer; user-select: none;">
-                  <input type="checkbox" id="chk-view-toolbar" checked style="accent-color: #ffaa00; width: 13px; height: 13px; cursor: pointer;">
-                  <span>📋 Thanh Copy nổi</span>
-                </label>
+                <div style="display: flex; flex-direction: column; gap: 6px;">
+                  <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #ccc; cursor: pointer; user-select: none; padding: 2px 4px;">
+                    <input type="checkbox" id="chk-view-vk" style="accent-color: #00ffcc; width: 16px; height: 16px; cursor: pointer;">
+                    <span>⌨️ Bàn phím ảo</span>
+                  </label>
+                  
+                  <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #ccc; cursor: pointer; user-select: none; padding: 2px 4px;">
+                    <input type="checkbox" id="chk-view-tutor" checked style="accent-color: #00ff66; width: 16px; height: 16px; cursor: pointer;">
+                    <span>🎓 Trợ giảng ghi nhớ</span>
+                  </label>
+                  
+                  <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #ccc; cursor: pointer; user-select: none; padding: 2px 4px;">
+                    <input type="checkbox" id="chk-view-toolbar" checked style="accent-color: #ffaa00; width: 16px; height: 16px; cursor: pointer;">
+                    <span>📋 Thanh Copy nổi</span>
+                  </label>
 
-                <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #ccc; cursor: pointer; user-select: none;">
-                  <input type="checkbox" id="chk-view-case" style="accent-color: #58a6ff; width: 13px; height: 13px; cursor: pointer;">
-                  <span>🔠 Hỗ trợ Chữ Hoa (I/O)</span>
-                </label>
-
-                <!-- PHÂN VÙNG BẬT TẮT Ô TEXT -->
-                <div style="margin-top: 4px; padding-top: 6px; border-top: 1px solid #224433; display: flex; justify-content: space-between; align-items: center;">
-                  <span style="font-size: 10px; color: #00ffcc; font-family: monospace; font-weight: bold; letter-spacing: 0.5px;">📝 BẬT/TẮT Ô TEXT</span>
-                  <div style="display: flex; gap: 4px;">
-                    <button id="btn-view-minimal" style="background: #002b22; color: #00ffcc; border: 1px solid #00ffcc; font-size: 9px; padding: 1px 5px; border-radius: 3px; cursor: pointer; font-family: monospace;" title="Chỉ hiện 5 ô cốt lõi: Tiếng Việt, Base60, Base60 liền, Giờ Thiêng, Kỳ Quan">Gọn</button>
-                    <button id="btn-view-all" style="background: #112; color: #aaa; border: 1px solid #445; font-size: 9px; padding: 1px 5px; border-radius: 3px; cursor: pointer; font-family: monospace;" title="Hiện toàn bộ 11 ô">Tất cả</button>
-                  </div>
+                  <label style="display: flex; align-items: center; gap: 10px; font-size: 13px; color: #ccc; cursor: pointer; user-select: none; padding: 2px 4px;">
+                    <input type="checkbox" id="chk-view-case" style="accent-color: #58a6ff; width: 16px; height: 16px; cursor: pointer;">
+                    <span>🔠 Hỗ trợ Chữ Hoa (I/O)</span>
+                  </label>
                 </div>
 
-                <div id="view-textboxes-list" style="display: flex; flex-direction: column; gap: 6px;">
-                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
-                    <input type="checkbox" class="chk-box-toggle" data-target="group-text" checked style="accent-color: #00ff66; width: 13px; height: 13px; cursor: pointer;">
-                    <span>1. 🟢 Tiếng Việt gốc</span>
-                  </label>
-                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
-                    <input type="checkbox" class="chk-box-toggle" data-target="group-compressed" checked style="accent-color: #a855f7; width: 13px; height: 13px; cursor: pointer;">
-                    <span>2. 🟣 Base60</span>
-                  </label>
-                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
-                    <input type="checkbox" class="chk-box-toggle" data-target="group-continuous" checked style="accent-color: #a855f7; width: 13px; height: 13px; cursor: pointer;">
-                    <span>3. 🔤 Base60 liền</span>
-                  </label>
-                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
-                    <input type="checkbox" class="chk-box-toggle" data-target="group-holy" checked style="accent-color: #ffaa00; width: 13px; height: 13px; cursor: pointer;">
-                    <span>4. 🟡 Giờ thiêng [4 số]</span>
-                  </label>
-                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
-                    <input type="checkbox" class="chk-box-toggle" data-target="group-twins" checked style="accent-color: #00ffaa; width: 13px; height: 13px; cursor: pointer;">
-                    <span>5. ✨ Kỳ quan gần nhất</span>
-                  </label>
-                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
-                    <input type="checkbox" class="chk-box-toggle" data-target="group-time" checked style="accent-color: #00f0ff; width: 13px; height: 13px; cursor: pointer;">
-                    <span>6. ⏱️ Thời gian [6 số]</span>
-                  </label>
-                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
-                    <input type="checkbox" class="chk-box-toggle" data-target="group-time5" checked style="accent-color: #00f0ff; width: 13px; height: 13px; cursor: pointer;">
-                    <span>7. 🔢 Thời gian [5 số]</span>
-                  </label>
-                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
-                    <input type="checkbox" class="chk-box-toggle" data-target="group-cvnss4" checked style="accent-color: #f0f; width: 13px; height: 13px; cursor: pointer;">
-                    <span>8. ⚡ CVNSS 4.0</span>
-                  </label>
-                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
-                    <input type="checkbox" class="chk-box-toggle" data-target="group-fakeviet" checked style="accent-color: #ff5555; width: 13px; height: 13px; cursor: pointer;">
-                    <span>9. ♰ Mã Giả Việt</span>
-                  </label>
-                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
-                    <input type="checkbox" class="chk-box-toggle" data-target="group-camel" checked style="accent-color: #ffaa00; width: 13px; height: 13px; cursor: pointer;">
-                    <span>10. 🐫 camelCase</span>
-                  </label>
-                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
-                    <input type="checkbox" class="chk-box-toggle" data-target="group-noaccent" checked style="accent-color: #888; width: 13px; height: 13px; cursor: pointer;">
-                    <span>11. 📝 Không dấu liền</span>
-                  </label>
-                  <label style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: #eee; cursor: pointer; user-select: none;">
-                    <input type="checkbox" class="chk-box-toggle" data-target="group-unicode-symbols" checked style="accent-color: #ffd166; width: 13px; height: 13px; cursor: pointer;">
-                    <span>12. 🔶 Ký hiệu Unicode [Zero-Font]</span>
-                  </label>
+                <!-- PHÂN VÙNG BẬT TẮT Ô TEXT -->
+                <div style="margin-top: 4px; padding-top: 8px; border-top: 1px solid #224433; display: flex; flex-direction: column; gap: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; flex-wrap: wrap;">
+                    <span style="font-size: 11.5px; color: #00ffcc; font-family: monospace; font-weight: bold; letter-spacing: 0.5px;">📝 BẬT/TẮT Ô TEXT</span>
+                    <div style="display: flex; gap: 5px; align-items: center;">
+                      <button id="btn-view-minimal" style="background: #002b22; color: #00ffcc; border: 1px solid #00ffcc; font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-family: monospace; font-weight: bold;" title="Hiển thị theo danh sách Gọn đã ghim">Gọn</button>
+                      <button id="btn-view-all" style="background: #112; color: #aaa; border: 1px solid #445; font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-family: monospace;" title="Hiển thị toàn bộ tất cả các ô">Tất cả</button>
+                      <button id="btn-save-as-minimal" style="background: #261f00; color: #ffea00; border: 1px solid #886600; font-size: 11px; padding: 3px 8px; border-radius: 4px; cursor: pointer; font-family: monospace; font-weight: bold;" title="Lưu danh sách các ô đang bật hiện tại thành cấu hình Gọn">📌 Đặt làm Gọn</button>
+                    </div>
+                  </div>
+
+                  <!-- Danh sách ô (Render động từ main.js) -->
+                  <div id="view-textboxes-list" style="display: flex; flex-direction: column; gap: 5px; max-height: 380px; overflow-y: auto; padding-right: 2px;"></div>
                 </div>
               </div>
             </div>
@@ -448,7 +405,7 @@
           </div>
 
           <!-- Cyber Font Preview -->
-          <div class="input-group" style="background: #000; border: 1px solid #1e3a5f; border-radius: 6px; padding: 6px 10px;">
+          <div class="input-group" id="group-cyber-font" style="background: #000; border: 1px solid #1e3a5f; border-radius: 6px; padding: 6px 10px;">
             <div class="label-row" style="margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center;">
               <label style="color: #58a6ff; letter-spacing: 1px;">CYBER FONT [TTF PREVIEW]</label>
               <button id="btn-copy-cyber-font" class="cyber-btn-small" style="font-size: 10px; padding: 1px 6px; color: #58a6ff; border-color: #1e3a5f; background: rgba(88,166,255,0.1); cursor: pointer;" title="Sao chép mã Base60">📋 Copy</button>
