@@ -52,7 +52,7 @@ const GLYPH_RECIPES = [
   { id: 13, char: 's', path: '<polyline points="65,34 65,66 25,66" />' },
   { id: 14, char: 'n', path: '<path d="M 28 62 A 22 22 0 0 1 72 62" />' },
   { id: 15, char: 'b', path: '<path d="M 36 22 L 36 78 A 18 18 0 0 0 36 42" />' },
-  { id: 16, char: 'l', path: '<line x1="50" y1="18" x2="50" y2="82" />' },
+  { id: 16, char: 'l', path: '<line x1="50" y1="28" x2="50" y2="72" />' },
   { id: 17, char: 'Q', path: '<rect x="30" y="30" width="40" height="40" />' },
   { id: 18, char: 'S', path: '<path d="M 64 22 C 32 14, 26 40, 50 50 C 74 60, 68 86, 36 78" />' },
   { id: 19, char: 'z', path: '<polyline points="25,34 65,34 65,66" />' },

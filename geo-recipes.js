@@ -38,8 +38,8 @@ export const GLYPH_RECIPES = [
   { id: 14, char: 'n', path: '<path d="M 28 62 A 22 22 0 0 1 72 62" fill="none" />' },
   // 15: 'b' - Trục đứng liền bụng phải
   { id: 15, char: 'b', path: '<path d="M 36 22 L 36 78 A 18 18 0 0 0 36 42" fill="none" />' },
-  // 16: 'l' - Nét gạch dọc 90 độ
-  { id: 16, char: 'l', path: '<line x1="50" y1="18" x2="50" y2="82" />' },
+  // 16: 'l' - Nét gạch dọc 90 độ (Cân đối, vừa vặn)
+  { id: 16, char: 'l', path: '<line x1="50" y1="28" x2="50" y2="72" />' },
   // 17: 'Q' - Hình vuông khép kín □
   { id: 17, char: 'Q', path: '<rect x="30" y="30" width="40" height="40" rx="4" fill="none" />' },
   // 18: 'S' - Chữ S hoa 2 vòm đối xứng tâm
