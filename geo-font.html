@@ -963,8 +963,8 @@
       // 6: 'K' - Chữ V xoay ngang 90 độ mở sang trái > (Theo yêu cầu: nét dài sải rộng)
       { id: 6, family: 'Góc nhọn mở trái > (Nét dài)', name: 'Chữ V xoay 90° mở trái nét dài (K)', path: '<polyline points="22,24 78,50 22,76" fill="none" />', twin: 5, twinRelation: 'Đối ngẫu dài-ngắn với k' },
       
-      // 7: 'h' - Khung vuông mở dưới ⊓ (Bộ Ngũ Hình Vuông - Cổng vòm vuông 2 chân)
-      { id: 7, family: 'Khung vuông mở dưới ⊓', name: 'Khung vuông thiếu cạnh đáy (h) - Cổng vòm 2 chân', path: '<polyline points="30,68 30,30 70,30 70,68" fill="none" />', twin: 50, twinRelation: 'Xoay 180° với U (⊔)' },
+      // 7: 'h' - Trái tim hình học đáy nhọn ♡
+      { id: 7, family: 'Trái tim hình học ♡', name: 'Trái tim hình học đáy nhọn (h)', path: '<path d="M 50 42 A 14 14 0 0 0 22 42 L 50 80 L 78 42 A 14 14 0 0 0 50 42 Z" fill="none" />', twin: 45, twinRelation: 'Đối ngẫu với H' },
       
       // 8: 'v' - Góc nhọn chữ v nhỏ chĩa xuống ∨ (Bộ tứ góc nhọn)
       { id: 8, family: 'Góc nhọn v nhỏ ∨', name: 'Góc nhọn chóp dưới (v)', path: '<polyline points="32,44 50,76 68,44" fill="none" />', twin: 51, twinRelation: 'Đảo ngược đỉnh/đáy với V (^)' },
@@ -1077,8 +1077,8 @@
       // 44: 'F' - Chữ T xoay trái ⊣ (Theo thiết kế trực tiếp của bạn!)
       { id: 44, family: 'Chữ T xoay trái ⊣', name: 'Trục đứng phải + gạch ngang giữa chĩa trái (F)', path: '<line x1="66" y1="22" x2="66" y2="78" /><line x1="66" y1="50" x2="28" y2="50" />', twin: 43, twinRelation: 'Đối ngẫu xoay 180° với E' },
       
-      // 45: 'H' - Hai thanh đứng song song || (Dấu = xoay 90 độ)
-      { id: 45, family: 'Song song đứng ||', name: 'Cặp thanh dọc song song (H)', path: '<line x1="38" y1="22" x2="38" y2="78" /><line x1="62" y1="22" x2="62" y2="78" />', twin: 56, twinRelation: 'Xoay 90° với e' },
+      // 45: 'H' - Khung vuông mở dưới ⊓ (Cổng vòm vuông 2 chân)
+      { id: 45, family: 'Khung vuông mở dưới ⊓', name: 'Cổng vòm vuông 2 chân mở dưới (H)', path: '<polyline points="30,68 30,30 70,30 70,68" fill="none" />', twin: 50, twinRelation: 'Xoay 180° với U (⊔)' },
       
       // 46: 'o' - Vòng tròn nhỏ xoe ở giữa
       { id: 46, family: 'Vòng tròn nhỏ ○', name: 'Chữ o thường tròn xoe (o)', path: '<circle cx="50" cy="50" r="18" fill="none" />', twin: 17, twinRelation: 'Đối ngẫu Tròn - Vuông với Q (□)' },
@@ -1093,7 +1093,7 @@
       { id: 49, family: 'Khung vuông mở trái ⊐', name: 'Khung vuông thiếu cạnh trái (P) - Lật gương với q', path: '<polyline points="32,30 70,30 70,70 32,70" fill="none" />', twin: 26, twinRelation: 'Lật gương với q (⊏)' },
 
       // 50: 'U' - Khung chữ U vuông mở trên ⊔ (Bộ Ngũ Hình Vuông - Đối ngẫu Vuông/Tròn với u thường)
-      { id: 50, family: 'Khung chữ U vuông ⊔', name: 'Khung vuông thiếu cạnh trên (U) - Mở ngửa đỉnh', path: '<polyline points="30,32 30,70 70,70 70,32" fill="none" />', twin: 58, twinRelation: 'Đối ngẫu Vuông - Tròn với u (∪) & xoay 180° với h' },
+      { id: 50, family: 'Khung chữ U vuông ⊔', name: 'Khung vuông thiếu cạnh trên (U) - Mở ngửa đỉnh', path: '<polyline points="30,32 30,70 70,70 70,32" fill="none" />', twin: 45, twinRelation: 'Xoay 180° với H (⊓) & Đối ngẫu Vuông - Tròn với u (∪)' },
       
       // 51: 'V' - Chóp nón lớn ^ chĩa lên nét dài (Theo yêu cầu của bạn!)
       { id: 51, family: 'Chóp nón lớn ^ (Nét dài)', name: 'Góc nhọn chóp nón đỉnh nét dài (V)', path: '<polyline points="24,78 50,22 76,78" fill="none" />', twin: 8, twinRelation: 'Đảo ngược đỉnh/đáy với v (∨)' },
@@ -1111,7 +1111,7 @@
       { id: 55, family: 'Một gạch ngang đơn -', name: 'Thanh ngang đơn giản giữa khung (a)', path: '<line x1="26" y1="50" x2="74" y2="50" />' },
       
       // 56: 'e' - Hai vạch ngang song song = (Theo chỉ thị của bạn!)
-      { id: 56, family: 'Hai vạch ngang song song =', name: 'Hai thanh ngang song song (e)', path: '<line x1="28" y1="40" x2="72" y2="40" /><line x1="28" y1="60" x2="72" y2="60" />', twin: 45, twinRelation: 'Xoay 90° với H' },
+      { id: 56, family: 'Hai vạch ngang song song =', name: 'Hai thanh ngang song song (e)', path: '<line x1="28" y1="40" x2="72" y2="40" /><line x1="28" y1="60" x2="72" y2="60" />' },
       
       // 57: 'i' - Nét nghiêng 45 độ ngắn / (Theo yêu cầu: nét ngắn ở tâm)
       { id: 57, family: 'Nét nghiêng 45° ngắn /', name: 'Gạch xiên thuận 45 độ ngắn (i) - Đối ngẫu với A', path: '<line x1="40" y1="60" x2="60" y2="40" />', twin: 41, twinRelation: 'Đối ngẫu ngắn-dài với A (\\)' },
@@ -1185,14 +1185,14 @@
         clusters: [
           {
             name: 'Cụm Họ Hình Vuông 4 Hướng & Kín (Square Family)',
-            relation: '★ Khối vuông kín Q (□) & 4 hướng mở: Phải q (⊏) ➔ Trái P (⊐) ➔ Trên U (⊔) ➔ Dưới h (⊓)',
+            relation: '★ Khối vuông kín Q (□) & 4 hướng mở: Phải q (⊏) ➔ Trái P (⊐) ➔ Trên U (⊔) ➔ Dưới H (⊓)',
             highlight: true,
             items: [
               { idx: 17, char: 'Q', note: 'Vuông kín □ (Trung tâm)' },
               { idx: 26, char: 'q', note: 'Mở phải ⊏ (Khuyết phải)' },
               { idx: 49, char: 'P', note: 'Mở trái ⊐ (Khuyết trái - Lật q)' },
               { idx: 50, char: 'U', note: 'Mở trên ⊔ (Khuyết trên - U vuông)' },
-              { idx: 7,  char: 'h', note: 'Mở dưới ⊓ (Khuyết dưới - Cổng vòm)' }
+              { idx: 45, char: 'H', note: 'Mở dưới ⊓ (Khuyết dưới - Cổng vòm H)' }
             ]
           },
           {
@@ -1224,11 +1224,12 @@
             ]
           },
           {
-            name: 'Cụm Hai Nét Song Song (Parallel Twins)',
-            relation: 'Song song ngang và xoay 90° thành đứng',
+            name: 'Cụm Ký Hiệu Biểu Trưng & Song Song (Heart & Parallel)',
+            relation: '★ Trái tim lãng mạn h (♥) & Hai vạch ngang song song e (=)',
+            highlight: true,
             items: [
-              { idx: 56, char: 'e', note: 'Ngang đôi =' },
-              { idx: 45, char: 'H', note: 'Dọc đôi || (90°)' }
+              { idx: 7,  char: 'h', note: 'Trái tim lãng mạn ♥ (Hoa, hồng, hẹn, hôn)' },
+              { idx: 56, char: 'e', note: 'Hai vạch ngang song song =' }
             ]
           },
           {

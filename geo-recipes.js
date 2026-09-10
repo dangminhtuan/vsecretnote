@@ -20,8 +20,8 @@ export const GLYPH_RECIPES = [
   { id: 5, char: 'k', path: '<polyline points="64,30 34,50 64,70" fill="none" />' },
   // 6: 'K' - Góc nhọn mở trái nét dài
   { id: 6, char: 'K', path: '<polyline points="22,24 78,50 22,76" fill="none" />' },
-  // 7: 'h' - Khung vuông mở dưới ⊓
-  { id: 7, char: 'h', path: '<polyline points="30,68 30,30 70,30 70,68" fill="none" />' },
+  // 7: 'h' - Trái tim hình học đáy nhọn ♡
+  { id: 7, char: 'h', path: '<path d="M 50 42 A 14 14 0 0 0 22 42 L 50 80 L 78 42 A 14 14 0 0 0 50 42 Z" fill="none" />' },
   // 8: 'v' - Góc nhọn v nhỏ ∨
   { id: 8, char: 'v', path: '<polyline points="32,44 50,76 68,44" fill="none" />' },
   // 9: 'D' - Bán nguyệt lớn khép kín quay phải
@@ -96,8 +96,8 @@ export const GLYPH_RECIPES = [
   { id: 43, char: 'E', path: '<line x1="32" y1="22" x2="32" y2="78" /><line x1="32" y1="50" x2="72" y2="50" />' },
   // 44: 'F' - Chữ T xoay trái ⊣
   { id: 44, char: 'F', path: '<line x1="66" y1="22" x2="66" y2="78" /><line x1="66" y1="50" x2="28" y2="50" />' },
-  // 45: 'H' - Hai thanh đứng song song ||
-  { id: 45, char: 'H', path: '<line x1="38" y1="22" x2="38" y2="78" /><line x1="62" y1="22" x2="62" y2="78" />' },
+  // 45: 'H' - Cổng vòm vuông mở dưới ⊓
+  { id: 45, char: 'H', path: '<polyline points="30,68 30,30 70,30 70,68" fill="none" />' },
   // 46: 'o' - Vòng tròn nhỏ xoe ở giữa ○
   { id: 46, char: 'o', path: '<circle cx="50" cy="50" r="18" fill="none" />' },
   // 47: 'J' - Ngang đỉnh + móc cong lớn J
