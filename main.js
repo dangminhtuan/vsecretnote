@@ -117,7 +117,7 @@ function formatB60WithCase(b60, originalWord) {
 // ===== 🔶 UNICODE GEOMETRIC SYMBOLS (ZERO-FONT MAPPING) =====
 export const B60_TO_UNICODE = {
   'c': '⊂', 'd': 'ᑯ', 'g': '↯', 'G': '⊃', 'j': 'j', 'k': '<', 'K': '>', 'h': '♡', 'v': '∨', 'D': 'D',
-  'm': 'm', 'C': 'C', 'r': '┌', 's': '┘', 'n': '∩', 'b': 'b', 'l': '│', 'Q': '□', 'S': 'S', 'z': '┐',
+  'm': 'm', 'C': 'C', 'r': '┌', 's': '┘', 'n': '∩', 'b': 'b', 'l': 'l', 'Q': '□', 'S': 'S', 'z': '┐',
   'N': 'N', 'y': 'y', 'L': '└', 'W': 'W', 'p': 'p', 'f': '⊥', 'q': '⊏', 't': '+', 'T': '⊤', 'R': 'R',
   'x': '×', '0': '⊙', '1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8',
   '9': '9', 'A': '\\', 'B': 'B', 'E': '⊢', 'F': '⊣', 'H': '⊓', 'o': 'o', 'J': 'J', 'M': 'M', 'P': '⊐',
@@ -128,6 +128,8 @@ export const UNICODE_TO_B60 = {};
 for (const [b, u] of Object.entries(B60_TO_UNICODE)) {
   UNICODE_TO_B60[u] = b;
 }
+UNICODE_TO_B60['│'] = 'l'; // Tương thích ngược với nét sổ đứng Box Drawing cũ
+UNICODE_TO_B60['|'] = 'l'; // Tương thích ngược với ký tự gạch đứng ASCII pipe
 
 export function b60ToUnicodeSymbols(b60) {
   if (!b60) return '';
@@ -926,6 +928,28 @@ function syncFromCompressedContinuous() {
 
 function syncFromUnicodeSymbols() {
   if (!txtUnicodeSymbols) return;
+
+  // Tự động chuyển đổi các ký tự Base60 vừa gõ/dán thành ký hiệu Unicode hình học (IME thông minh)
+  const raw = txtUnicodeSymbols.value;
+  let transformed = '';
+  let hasChange = false;
+  for (let i = 0; i < raw.length; i++) {
+    const ch = raw[i];
+    const m = B60_TO_UNICODE[ch];
+    if (m && m !== ch) {
+      transformed += m;
+      hasChange = true;
+    } else {
+      transformed += ch;
+    }
+  }
+  if (hasChange) {
+    const selStart = txtUnicodeSymbols.selectionStart;
+    const selEnd = txtUnicodeSymbols.selectionEnd;
+    txtUnicodeSymbols.value = transformed;
+    txtUnicodeSymbols.setSelectionRange(selStart, selEnd);
+  }
+
   const rawText = txtUnicodeSymbols.value;
   if (!rawText.trim()) {
     clearAllTextareas();
@@ -1211,7 +1235,57 @@ if (txtCompressed) txtCompressed.addEventListener('input', syncFromCompressed);
 if (txtFakeViet) txtFakeViet.addEventListener('input', syncFromFakeViet);
 if (txtTime5) txtTime5.addEventListener('input', syncFromTime5);
 if (txtCompressedContinuous) txtCompressedContinuous.addEventListener('input', syncFromCompressedContinuous);
-if (txtUnicodeSymbols) txtUnicodeSymbols.addEventListener('input', syncFromUnicodeSymbols);
+if (txtUnicodeSymbols) {
+  // Bắt phím thông minh: chuyển đổi ký tự Base60 thành Unicode ngay khi gõ
+  txtUnicodeSymbols.addEventListener('beforeinput', (e) => {
+    if ((e.inputType === 'insertText' || e.inputType === 'insertFromPaste') && e.data) {
+      let transformed = '';
+      let hasChange = false;
+      for (const ch of e.data) {
+        const m = B60_TO_UNICODE[ch];
+        if (m && m !== ch) {
+          transformed += m;
+          hasChange = true;
+        } else {
+          transformed += ch;
+        }
+      }
+      if (hasChange) {
+        e.preventDefault();
+        const start = txtUnicodeSymbols.selectionStart;
+        const end = txtUnicodeSymbols.selectionEnd;
+        txtUnicodeSymbols.setRangeText(transformed, start, end, 'end');
+        txtUnicodeSymbols.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+  });
+
+  // Dán văn bản: chuyển đổi toàn bộ chuỗi Base60 sang ký hiệu Unicode
+  txtUnicodeSymbols.addEventListener('paste', (e) => {
+    const pasteData = (e.clipboardData || window.clipboardData)?.getData('text');
+    if (!pasteData) return;
+    let transformed = '';
+    let hasChange = false;
+    for (const ch of pasteData) {
+      const m = B60_TO_UNICODE[ch];
+      if (m && m !== ch) {
+        transformed += m;
+        hasChange = true;
+      } else {
+        transformed += ch;
+      }
+    }
+    if (hasChange) {
+      e.preventDefault();
+      const start = txtUnicodeSymbols.selectionStart;
+      const end = txtUnicodeSymbols.selectionEnd;
+      txtUnicodeSymbols.setRangeText(transformed, start, end, 'end');
+      txtUnicodeSymbols.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  });
+
+  txtUnicodeSymbols.addEventListener('input', syncFromUnicodeSymbols);
+}
 if (txtHolyHours) txtHolyHours.addEventListener('input', syncFromHolyHours);
 if (txtTwins) txtTwins.addEventListener('input', syncFromTwins);
 const inpCamelCase = document.getElementById('camel-case-input');
