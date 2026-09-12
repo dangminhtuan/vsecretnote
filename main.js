@@ -46,6 +46,7 @@ const txtDecrypted = document.getElementById('text-input');
 const txtEncrypted = document.getElementById('time-input');
 const txtCompressed = document.getElementById('compressed-input');
 const txtFakeViet = document.getElementById('fake-viet-input');
+const txtFakeVietMinimal = document.getElementById('fakeviet-minimal-input');
 const txtTime5 = document.getElementById('time-5-input');
 const txtCompressedContinuous = document.getElementById('compressed-continuous-input');
 const txtUnicodeSymbols = document.getElementById('unicode-symbols-input');
@@ -639,6 +640,7 @@ export function clearAllTextareas() {
   if (txtEncrypted) txtEncrypted.value = '';
   if (txtCompressed) txtCompressed.value = '';
   if (txtFakeViet) txtFakeViet.value = '';
+  if (txtFakeVietMinimal) txtFakeVietMinimal.value = '';
   if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = '';
   if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = '';
   if (txtTime5) txtTime5.value = '';
@@ -699,6 +701,7 @@ export function syncFromHolyHours() {
   if (txtTwins) txtTwins.value = twinsParts.join(' ');
   if (txtTime5) txtTime5.value = timeTo5Digit(fullTime);
   if (txtFakeViet) txtFakeViet.value = toFakeViet(fullWords);
+  if (txtFakeVietMinimal) txtFakeVietMinimal.value = toFakeVietMinimal(fullWords);
   if (document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = toCamelCase(fullWords);
   if (document.getElementById('no-accent-input')) document.getElementById('no-accent-input').value = toNoAccentContinuous(fullWords);
   if (txtCVNSS4) txtCVNSS4.value = wordParts.map(w => encodeCVNSS4Word(w)).join(' ');
@@ -808,6 +811,7 @@ function syncFromDecrypted() {
   if(txtTwins && document.activeElement !== txtTwins) txtTwins.value = twinsParts.join(' ').replace(/\s+/g, ' ').trim();
   
   if(txtFakeViet) txtFakeViet.value = toFakeViet(text);
+  if(txtFakeVietMinimal) txtFakeVietMinimal.value = toFakeVietMinimal(text);
   
   if(document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = typeof toCamelCase === 'function' ? toCamelCase(txtDecrypted ? txtDecrypted.value : '') : '';
   
@@ -879,6 +883,7 @@ function syncFromTime() {
   if(txtTwins && document.activeElement !== txtTwins) txtTwins.value = twinsParts.join(' ').replace(/\s+/g, ' ').trim();
 
   if(txtFakeViet) txtFakeViet.value = toFakeViet(txtDecrypted.value);
+  if(txtFakeVietMinimal) txtFakeVietMinimal.value = toFakeVietMinimal(txtDecrypted.value);
 
   if(document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = typeof toCamelCase === 'function' ? toCamelCase(txtDecrypted ? txtDecrypted.value : '') : '';
 
@@ -1025,6 +1030,7 @@ function syncFromCVNSS4() {
   if (txtTwins) txtTwins.value = allTwinsParts.join(' ').replace(/\s+/g, ' ').trim();
   
   if(txtFakeViet) txtFakeViet.value = typeof toFakeViet === 'function' ? toFakeViet(txtDecrypted.value) : '';
+  if(txtFakeVietMinimal) txtFakeVietMinimal.value = typeof toFakeVietMinimal === 'function' ? toFakeVietMinimal(txtDecrypted.value) : '';
   
   if(document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = typeof toCamelCase === 'function' ? toCamelCase(txtDecrypted ? txtDecrypted.value : '') : '';
   
@@ -1121,6 +1127,7 @@ function syncFromCompressed() {
   }
 
   if(txtFakeViet) txtFakeViet.value = toFakeViet(txtDecrypted.value);
+  if(txtFakeVietMinimal) txtFakeVietMinimal.value = toFakeVietMinimal(txtDecrypted.value);
 
   if(document.getElementById('camel-case-input')) document.getElementById('camel-case-input').value = typeof toCamelCase === 'function' ? toCamelCase(txtDecrypted ? txtDecrypted.value : '') : '';
 
@@ -1164,6 +1171,41 @@ function fromFakeViet(fakeText) {
     if (c === '-') return ' ';
     return REV_FAKE_VIET_MAP[c] || c;
   }).join('');
+}
+
+// ===== MÃ GIẢ VIỆT TỐI GIẢN (1-1 ZERO-FONT BYPASS) =====
+export const FAKE_VIET_MINIMAL_MAP = {
+  // 26 chữ cái thường
+  'a': '—', 'b': 'b', 'c': '⊂', 'd': 'ᑯ', 'e': '=', 'f': '⊥', 'g': '↯',
+  'h': '♡', 'i': '|', 'j': 'j', 'k': '<', 'l': 'l', 'm': 'm', 'n': '∩',
+  'o': '⊙', 'p': 'p', 'q': '⊏', 'r': '┌', 's': '┘', 't': '+', 'u': '∪',
+  'v': '∨', 'w': 'w', 'x': '×', 'y': 'y', 'z': '┐',
+  // 26 chữ cái hoa
+  'A': '\\', 'B': 'B', 'C': 'C', 'D': 'D', 'E': '⊢', 'F': '⊣', 'G': '⊃',
+  'H': '⊓', 'I': '|', 'J': 'J', 'K': '>', 'L': '└', 'M': 'M', 'N': 'N',
+  'O': '⊙', 'P': '⊐', 'Q': '□', 'R': 'R', 'S': 'S', 'T': '⊤', 'U': '⊔',
+  'V': '∧', 'W': 'W', 'X': 'X', 'Y': 'Y', 'Z': 'Z'
+};
+
+export const REV_FAKE_VIET_MINIMAL_MAP = {};
+for (const [k, v] of Object.entries(FAKE_VIET_MINIMAL_MAP)) {
+  if (!REV_FAKE_VIET_MINIMAL_MAP[v]) {
+    REV_FAKE_VIET_MINIMAL_MAP[v] = k;
+  }
+}
+REV_FAKE_VIET_MINIMAL_MAP['/'] = 'i';
+REV_FAKE_VIET_MINIMAL_MAP['o'] = 'o';
+REV_FAKE_VIET_MINIMAL_MAP['O'] = 'O';
+
+export function toFakeVietMinimal(text) {
+  if (!text) return '';
+  const noTone = removeAccentsStr(text);
+  return [...noTone].map(c => FAKE_VIET_MINIMAL_MAP[c] || c).join('');
+}
+
+export function fromFakeVietMinimal(minimalText) {
+  if (!minimalText) return '';
+  return [...minimalText].map(c => REV_FAKE_VIET_MINIMAL_MAP[c] || c).join('');
 }
 
 function timeTo5Digit(timeStr) {
@@ -1214,6 +1256,42 @@ function syncFromFakeViet() {
   syncFromDecrypted();
 }
 
+function syncFromFakeVietMinimal() {
+  if (!txtFakeVietMinimal) return;
+
+  // Tự động chuyển đổi các ký tự vừa gõ/dán thành ký hiệu tối giản (IME thông minh)
+  const raw = txtFakeVietMinimal.value;
+  let transformed = '';
+  let hasChange = false;
+  for (let i = 0; i < raw.length; i++) {
+    const ch = raw[i];
+    const m = FAKE_VIET_MINIMAL_MAP[ch];
+    if (m && m !== ch) {
+      transformed += m;
+      hasChange = true;
+    } else {
+      transformed += ch;
+    }
+  }
+  if (hasChange) {
+    const selStart = txtFakeVietMinimal.selectionStart;
+    const selEnd = txtFakeVietMinimal.selectionEnd;
+    txtFakeVietMinimal.value = transformed;
+    txtFakeVietMinimal.setSelectionRange(selStart, selEnd);
+  }
+
+  const rawText = txtFakeVietMinimal.value;
+  if (!rawText.trim()) {
+    clearAllTextareas();
+    return;
+  }
+  const decoded = fromFakeVietMinimal(rawText);
+  if (txtDecrypted) {
+    txtDecrypted.value = decoded;
+    syncFromDecrypted();
+  }
+}
+
 function syncFromTime5() {
   if(!txtTime5) return;
   const t6 = from5Digit(txtTime5.value);
@@ -1233,6 +1311,57 @@ function syncFromTime5() {
 if (txtEncrypted) txtEncrypted.addEventListener('input', syncFromTime);
 if (txtCompressed) txtCompressed.addEventListener('input', syncFromCompressed);
 if (txtFakeViet) txtFakeViet.addEventListener('input', syncFromFakeViet);
+if (txtFakeVietMinimal) {
+  // Bắt phím thông minh: chuyển đổi ký tự thành ký hiệu tối giản ngay khi gõ
+  txtFakeVietMinimal.addEventListener('beforeinput', (e) => {
+    if ((e.inputType === 'insertText' || e.inputType === 'insertFromPaste') && e.data) {
+      let transformed = '';
+      let hasChange = false;
+      for (const ch of e.data) {
+        const m = FAKE_VIET_MINIMAL_MAP[ch];
+        if (m && m !== ch) {
+          transformed += m;
+          hasChange = true;
+        } else {
+          transformed += ch;
+        }
+      }
+      if (hasChange) {
+        e.preventDefault();
+        const start = txtFakeVietMinimal.selectionStart;
+        const end = txtFakeVietMinimal.selectionEnd;
+        txtFakeVietMinimal.setRangeText(transformed, start, end, 'end');
+        txtFakeVietMinimal.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    }
+  });
+
+  // Dán văn bản: chuyển đổi toàn bộ chuỗi sang ký hiệu tối giản
+  txtFakeVietMinimal.addEventListener('paste', (e) => {
+    const pasteData = (e.clipboardData || window.clipboardData)?.getData('text');
+    if (!pasteData) return;
+    let transformed = '';
+    let hasChange = false;
+    for (const ch of pasteData) {
+      const m = FAKE_VIET_MINIMAL_MAP[ch];
+      if (m && m !== ch) {
+        transformed += m;
+        hasChange = true;
+      } else {
+        transformed += ch;
+      }
+    }
+    if (hasChange) {
+      e.preventDefault();
+      const start = txtFakeVietMinimal.selectionStart;
+      const end = txtFakeVietMinimal.selectionEnd;
+      txtFakeVietMinimal.setRangeText(transformed, start, end, 'end');
+      txtFakeVietMinimal.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  });
+
+  txtFakeVietMinimal.addEventListener('input', syncFromFakeVietMinimal);
+}
 if (txtTime5) txtTime5.addEventListener('input', syncFromTime5);
 if (txtCompressedContinuous) txtCompressedContinuous.addEventListener('input', syncFromCompressedContinuous);
 if (txtUnicodeSymbols) {
@@ -1452,6 +1581,7 @@ function setupCopyClear(idBtn, idClear, targetInput) {
       else if (targetInput === txtEncrypted) syncFromTime();
       else if (targetInput === txtCompressed) syncFromCompressed();
       else if (targetInput === txtFakeViet) syncFromFakeViet();
+      else if (targetInput === txtFakeVietMinimal) syncFromFakeVietMinimal();
       else if (targetInput === txtTime5) syncFromTime5();
     });
   }
@@ -1473,6 +1603,7 @@ function setupCopyClear(idBtn, idClear, targetInput) {
   _wiredRowCopy('btn-copy-unicode-symbols', () => txtUnicodeSymbols?.value,      'Ký hiệu Unicode');
   _wiredRowCopy('btn-copy-continuous',      () => txtCompressedContinuous?.value,'Nén liên tiếp');
   _wiredRowCopy('btn-copy-fake',            () => txtFakeViet?.value,            'Fake Viet');
+  _wiredRowCopy('btn-copy-fakeviet-minimal',() => txtFakeVietMinimal?.value,     'Giả Việt Tối giản');
   _wiredRowCopy('btn-copy-time',            () => txtEncrypted?.value,           'TIME');
   _wiredRowCopy('btn-copy-time5',           () => txtTime5?.value,               'TIME-5');
 
@@ -1495,6 +1626,7 @@ const MXC_FIELDS = [
   { id: 'compressed-continuous-input', label: 'Nén liên tiếp'  },
   { id: 'cvnss4-input',                label: 'CVNSS4'          },
   { id: 'fake-viet-input',             label: 'Fake Viet'       },
+  { id: 'fakeviet-minimal-input',      label: 'Giả Việt Tối giản' },
   { id: 'camel-case-input',            label: 'camelCase'       },
   { id: 'no-accent-input',             label: 'Không dấu'       },
   { id: 'time-input',                  label: 'TIME'            },
@@ -3356,6 +3488,7 @@ const BOX_DEFINITIONS = [
   { id: 'group-time5', shortLabel: 'Thời gian [5 số]', icon: '🔢', color: '#00f0ff' },
   { id: 'group-cvnss4', shortLabel: 'CVNSS 4.0', icon: '⚡', color: '#f0f' },
   { id: 'group-fakeviet', shortLabel: 'Mã Giả Việt', icon: '♰', color: '#ff5555' },
+  { id: 'group-fakeviet-minimal', shortLabel: 'Giả Việt Tối giản', icon: '✨', color: '#ff77aa' },
   { id: 'group-camel', shortLabel: 'camelCase', icon: '🐫', color: '#ffaa00' },
   { id: 'group-noaccent', shortLabel: 'Không dấu liền', icon: '📝', color: '#888' }
 ];
@@ -3403,6 +3536,7 @@ if (!Array.isArray(visibleBoxes) || visibleBoxes.length === 0) {
   if (!visibleBoxes.includes('group-cyber-font')) visibleBoxes.push('group-cyber-font');
   if (!visibleBoxes.includes('group-viscript-font')) visibleBoxes.push('group-viscript-font');
   if (!visibleBoxes.includes('group-unicode-symbols')) visibleBoxes.push('group-unicode-symbols');
+  if (!visibleBoxes.includes('group-fakeviet-minimal')) visibleBoxes.push('group-fakeviet-minimal');
 }
 
 // --- Cấu hình chế độ Gọn (Minimal) ---
@@ -4493,6 +4627,7 @@ document.getElementById('btn-sandbox-hashtag')?.addEventListener('click', () => 
     txtTime5,
     txtCVNSS4,
     txtFakeViet,
+    txtFakeVietMinimal,
     txtUnicodeSymbols,
     document.getElementById('camel-case-input'),
     document.getElementById('no-accent-input')
@@ -5363,6 +5498,7 @@ window.handleTopLeftQuiz = function(selectedB60, correctB60, correctFullCode, bt
     const enc = document.getElementById('time-input');
     const comp = document.getElementById('compressed-input');
     const fake = document.getElementById('fake-viet-input');
+    const fakeMin = document.getElementById('fakeviet-minimal-input');
     
     if (enc) enc.value = correctFullCode;
     if (comp) comp.value = correctB60;
@@ -5374,6 +5510,9 @@ window.handleTopLeftQuiz = function(selectedB60, correctB60, correctFullCode, bt
     }
     if (fake && typeof toFakeViet === 'function' && dec) {
        try { fake.value = toFakeViet(dec.value); } catch(e){}
+    }
+    if (fakeMin && typeof toFakeVietMinimal === 'function' && dec) {
+       try { fakeMin.value = toFakeVietMinimal(dec.value); } catch(e){}
     }
     
     // Ép đồng bộ các ô còn lại (Time5, Liên tục...)
