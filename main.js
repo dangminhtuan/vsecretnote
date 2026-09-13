@@ -1177,12 +1177,12 @@ function fromFakeViet(fakeText) {
 export const FAKE_VIET_MINIMAL_MAP = {
   // 26 chữ cái thường
   'a': '—', 'b': 'b', 'c': '⊂', 'd': 'ᑯ', 'e': '=', 'f': '⊥', 'g': '↯',
-  'h': '♡', 'i': '|', 'j': 'j', 'k': '<', 'l': 'l', 'm': 'm', 'n': '∩',
+  'h': '♡', 'i': '/', 'j': 'j', 'k': '<', 'l': '|', 'm': 'm', 'n': '∩',
   'o': '⊙', 'p': 'p', 'q': '⊏', 'r': '┌', 's': '┘', 't': '+', 'u': '∪',
   'v': '∨', 'w': 'w', 'x': '×', 'y': 'y', 'z': '┐',
   // 26 chữ cái hoa
   'A': '\\', 'B': 'B', 'C': 'C', 'D': 'D', 'E': '⊢', 'F': '⊣', 'G': '⊃',
-  'H': '⊓', 'I': '|', 'J': 'J', 'K': '>', 'L': '└', 'M': 'M', 'N': 'N',
+  'H': '⊓', 'I': '/', 'J': 'J', 'K': '>', 'L': '└', 'M': 'M', 'N': 'N',
   'O': '⊙', 'P': '⊐', 'Q': '□', 'R': 'R', 'S': 'S', 'T': '⊤', 'U': '⊔',
   'V': '∧', 'W': 'W', 'X': 'X', 'Y': 'Y', 'Z': 'Z'
 };
@@ -1194,6 +1194,10 @@ for (const [k, v] of Object.entries(FAKE_VIET_MINIMAL_MAP)) {
   }
 }
 REV_FAKE_VIET_MINIMAL_MAP['/'] = 'i';
+REV_FAKE_VIET_MINIMAL_MAP['|'] = 'l';
+REV_FAKE_VIET_MINIMAL_MAP['l'] = 'l';
+REV_FAKE_VIET_MINIMAL_MAP['—'] = 'a';
+REV_FAKE_VIET_MINIMAL_MAP['-'] = 'a';
 REV_FAKE_VIET_MINIMAL_MAP['o'] = 'o';
 REV_FAKE_VIET_MINIMAL_MAP['O'] = 'O';
 
