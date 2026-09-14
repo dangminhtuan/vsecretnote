@@ -119,9 +119,9 @@ function formatB60WithCase(b60, originalWord) {
 export const B60_TO_UNICODE = {
   'c': '⊂', 'd': 'ᑯ', 'g': '↯', 'G': '⊃', 'j': 'j', 'k': '<', 'K': '>', 'h': '♡', 'v': '∨', 'D': 'D',
   'm': 'm', 'C': 'C', 'r': '┌', 's': '┘', 'n': '∩', 'b': 'b', 'l': 'l', 'Q': '□', 'S': 'S', 'z': '┐',
-  'N': 'N', 'Y': 'Y', 'L': '└', 'W': 'W', 'p': 'p', 'f': '⊥', 'q': '⊏', 't': '+', 'T': '⊤', 'R': 'R',
+  'N': 'N', 'H': 'H', 'L': '└', 'W': 'W', 'p': 'p', 'f': '⊥', 'q': '⊏', 't': '+', 'T': '⊤', 'R': 'R',
   'x': '×', '0': '⊙', '1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8',
-  '9': '9', 'A': '\\', 'B': 'B', 'E': '⊢', 'F': '⊣', 'H': '⊓', 'o': 'o', 'J': 'J', 'M': 'M', 'P': '⊐',
+  '9': '9', 'A': '\\', 'B': 'B', 'E': '⊢', 'F': '⊣', 'Y': 'Y', 'o': 'o', 'J': 'J', 'M': 'M', 'P': '⊐',
   'U': '⊔', 'V': '∧', 'X': 'X', 'y': 'y', 'Z': 'Z', 'a': '—', 'e': '=', 'i': '⸝', 'u': '∪', 'w': 'w'
 };
 
@@ -1188,7 +1188,7 @@ export const FAKE_VIET_MINIMAL_MAP = {
   ...FAKE_VIET_MINIMAL_SINGLE_MAP,
   'd': 'ᑯ', 'f': '⊥', 'j': 'j', 'q': '⊏', 'w': 'w', 'y': 'y', 'z': '┐',
   'A': '\\', 'B': 'B', 'C': 'C', 'D': 'D', 'E': '⊢', 'F': '⊣', 'G': '⊃',
-  'H': '⊓', 'I': '⸝', 'J': 'J', 'K': '>', 'L': '└', 'M': 'M', 'N': 'N',
+  'H': 'H', 'I': '⸝', 'J': 'J', 'K': '>', 'L': '└', 'M': 'M', 'N': 'N',
   'O': 'o', 'P': '⊐', 'Q': '□', 'R': 'R', 'S': 'S', 'T': '⊤', 'U': '⊔',
   'V': '∧', 'W': 'W', 'X': 'X', 'Y': 'Y', 'Z': 'Z'
 };
@@ -1224,7 +1224,7 @@ export function toFakeVietMinimal(text) {
   clean = clean.replace(/p[h♡]/gi, '⊥');
   clean = clean.replace(/⊂[h♡]/gi, 'C');
   clean = clean.replace(/\+[r┌]/gi, 'R');
-  clean = clean.replace(/∩[h♡]/gi, 'Y');
+  clean = clean.replace(/∩[h♡]/gi, 'H');
   clean = clean.replace(/↯[h♡]/gi, '⊃');
   clean = clean.replace(/⊏[u∪]/gi, '⊏');
   clean = clean.replace(/[↯g][i⸝]/gi, 'j');
@@ -1236,14 +1236,14 @@ export function toFakeVietMinimal(text) {
   clean = clean.replace(/ph/gi, '⊥');
   clean = clean.replace(/ch/gi, 'C');
   clean = clean.replace(/tr/gi, 'R');
-  clean = clean.replace(/nh/gi, 'Y');
+  clean = clean.replace(/nh/gi, 'H');
   clean = clean.replace(/gh/gi, '⊃');
   clean = clean.replace(/qu/gi, '⊏');
   clean = clean.replace(/gi/gi, 'j');
   clean = clean.replace(/[đd]/gi, 'ᑯ');
 
   // 5. Thay thế nguyên âm và phụ âm đơn còn lại
-  const COMPOUND_SET = new Set(['W', 'N', '>', '⊤', '⊥', 'C', 'R', 'Y', '⊃', '⊏', 'j', 'ᑯ']);
+  const COMPOUND_SET = new Set(['W', 'N', '>', '⊤', '⊥', 'C', 'R', 'H', '⊃', '⊏', 'j', 'ᑯ']);
   return [...clean].map(ch => {
     if (COMPOUND_SET.has(ch)) return ch;
     const lower = ch.toLowerCase();
@@ -1254,11 +1254,11 @@ export function toFakeVietMinimal(text) {
 export function fromFakeVietMinimal(text) {
   if (!text) return '';
   const MAP = {
-    'W': 'ngh', 'N': 'ng', '>': 'kh', '⊤': 'th', '⊥': 'ph', 'C': 'ch', 'R': 'tr', 'Y': 'nh',
+    'W': 'ngh', 'N': 'ng', '>': 'kh', '⊤': 'th', '⊥': 'ph', 'C': 'ch', 'R': 'tr', 'H': 'nh',
     '⊃': 'gh', '⊏': 'qu', 'j': 'gi', 'ᑯ': 'd', '⊂': 'c', '<': 'k', '+': 't',
     'p': 'p', '↯': 'g', '∩': 'n', '┌': 'r', '┘': 's', 'b': 'b', '|': 'l',
     'm': 'm', '∨': 'v', '×': 'x', '♡': 'h', '—': 'a', '=': 'e', '⸝': 'i',
-    '/': 'i', '∪': 'u', 'o': 'o', '0': '0', '⊙': 'o', 'y': 'y'
+    '/': 'i', '∪': 'u', 'o': 'o', '0': '0', '⊙': 'o', 'y': 'y', 'Y': 'nh'
   };
 
   return [...text].map(ch => MAP[ch] !== undefined ? MAP[ch] : ch).join('');

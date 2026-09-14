@@ -74,7 +74,7 @@ const FAKE_VIET_MINIMAL_MAP = {
   'x': '×', 'h': '♡', 'a': '—', 'e': '=', 'i': '⸝', 'u': '∪', 'o': 'o',
   'd': 'ᑯ', 'f': '⊥', 'j': 'j', 'q': '⊏', 'w': 'w', 'y': 'y', 'z': '┐',
   'A': '\\', 'B': 'B', 'C': 'C', 'D': 'D', 'E': '⊢', 'F': '⊣', 'G': '⊃',
-  'H': '⊓', 'I': '⸝', 'J': 'J', 'K': '>', 'L': '└', 'M': 'M', 'N': 'N',
+  'H': 'H', 'I': '⸝', 'J': 'J', 'K': '>', 'L': '└', 'M': 'M', 'N': 'N',
   'O': 'o', 'P': '⊐', 'Q': '□', 'R': 'R', 'S': 'S', 'T': '⊤', 'U': '⊔',
   'V': '∧', 'W': 'W', 'X': 'X', 'Y': 'Y', 'Z': 'Z'
 };
@@ -92,7 +92,7 @@ function toFakeVietMinimal(text) {
   clean = clean.replace(/p[h♡]/gi, '⊥');
   clean = clean.replace(/⊂[h♡]/gi, 'C');
   clean = clean.replace(/\+[r┌]/gi, 'R');
-  clean = clean.replace(/∩[h♡]/gi, 'Y');
+  clean = clean.replace(/∩[h♡]/gi, 'H');
   clean = clean.replace(/↯[h♡]/gi, '⊃');
   clean = clean.replace(/⊏[u∪]/gi, '⊏');
   clean = clean.replace(/[↯g][i⸝]/gi, 'j');
@@ -103,13 +103,13 @@ function toFakeVietMinimal(text) {
   clean = clean.replace(/ph/gi, '⊥');
   clean = clean.replace(/ch/gi, 'C');
   clean = clean.replace(/tr/gi, 'R');
-  clean = clean.replace(/nh/gi, 'Y');
+  clean = clean.replace(/nh/gi, 'H');
   clean = clean.replace(/gh/gi, '⊃');
   clean = clean.replace(/qu/gi, '⊏');
   clean = clean.replace(/gi/gi, 'j');
   clean = clean.replace(/[đd]/gi, 'ᑯ');
 
-  const COMPOUND_SET = new Set(['W', 'N', '>', '⊤', '⊥', 'C', 'R', 'Y', '⊃', '⊏', 'j', 'ᑯ']);
+  const COMPOUND_SET = new Set(['W', 'N', '>', '⊤', '⊥', 'C', 'R', 'H', '⊃', '⊏', 'j', 'ᑯ']);
   return [...clean].map(ch => {
     if (COMPOUND_SET.has(ch)) return ch;
     const lower = ch.toLowerCase();
