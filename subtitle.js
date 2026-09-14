@@ -83,7 +83,21 @@ function toFakeVietMinimal(text) {
   if (!text) return '';
   let clean = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
+  // 1. Phụ âm tiếng Việt gốc trước
   clean = clean.replace(/ngh/gi, 'W');
+  clean = clean.replace(/nh/gi, 'H');
+  clean = clean.replace(/ch/gi, 'C');
+  clean = clean.replace(/tr/gi, 'R');
+  clean = clean.replace(/ng/gi, 'N');
+  clean = clean.replace(/kh/gi, '>');
+  clean = clean.replace(/th/gi, '⊤');
+  clean = clean.replace(/ph/gi, '⊥');
+  clean = clean.replace(/gh/gi, '⊃');
+  clean = clean.replace(/qu/gi, '⊏');
+  clean = clean.replace(/gi/gi, 'j');
+  clean = clean.replace(/[đd]/gi, 'ᑯ');
+
+  // 2. Ký hiệu gõ rời / tương thích ngược
   clean = clean.replace(/N[h♡]/g, 'W');
   clean = clean.replace(/∩[↯g][h♡]/gi, 'W');
   clean = clean.replace(/∩[↯g]/gi, 'N');
@@ -96,18 +110,6 @@ function toFakeVietMinimal(text) {
   clean = clean.replace(/↯[h♡]/gi, '⊃');
   clean = clean.replace(/⊏[u∪]/gi, '⊏');
   clean = clean.replace(/[↯g][i⸝]/gi, 'j');
-
-  clean = clean.replace(/ng/gi, 'N');
-  clean = clean.replace(/kh/gi, '>');
-  clean = clean.replace(/th/gi, '⊤');
-  clean = clean.replace(/ph/gi, '⊥');
-  clean = clean.replace(/ch/gi, 'C');
-  clean = clean.replace(/tr/gi, 'R');
-  clean = clean.replace(/nh/gi, 'H');
-  clean = clean.replace(/gh/gi, '⊃');
-  clean = clean.replace(/qu/gi, '⊏');
-  clean = clean.replace(/gi/gi, 'j');
-  clean = clean.replace(/[đd]/gi, 'ᑯ');
 
   const COMPOUND_SET = new Set(['W', 'N', '>', '⊤', '⊥', 'C', 'R', 'H', '⊃', '⊏', 'j', 'ᑯ']);
   return [...clean].map(ch => {

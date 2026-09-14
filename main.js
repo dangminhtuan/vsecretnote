@@ -1212,10 +1212,24 @@ export function toFakeVietMinimal(text) {
   // 1. Tách dấu thanh chuẩn NFD
   let clean = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-  // 2. Quy chuẩn phụ âm 3 chữ Latin trước
+  // 2. Quy chuẩn tất cả phụ âm tiếng Việt gốc trước (case-insensitive)
+  // Ưu tiên 3 chữ trước: ngh
   clean = clean.replace(/ngh/gi, 'W');
+  // Sau đó là các phụ âm ghép 2 chữ: nh, ch, tr, ng, kh, th, ph, gh, qu, gi, đ/d
+  // (Đặc biệt nh/gi phải chạy trước các luật ký hiệu N[h♡] để từ viết hoa 'Nhớ', 'Nhà' không bị nuốt thành 'W')
+  clean = clean.replace(/nh/gi, 'H');
+  clean = clean.replace(/ch/gi, 'C');
+  clean = clean.replace(/tr/gi, 'R');
+  clean = clean.replace(/ng/gi, 'N');
+  clean = clean.replace(/kh/gi, '>');
+  clean = clean.replace(/th/gi, '⊤');
+  clean = clean.replace(/ph/gi, '⊥');
+  clean = clean.replace(/gh/gi, '⊃');
+  clean = clean.replace(/qu/gi, '⊏');
+  clean = clean.replace(/gi/gi, 'j');
+  clean = clean.replace(/[đd]/gi, 'ᑯ');
 
-  // 3. Gom gộp thông minh các ký hiệu gõ rời / tương thích ngược (N là ký hiệu HOA của ng, KHÔNG dùng cờ /i để tránh nhầm với nh)
+  // 3. Gom gộp thông minh các ký hiệu gõ rời / tương thích ngược
   clean = clean.replace(/N[h♡]/g, 'W');
   clean = clean.replace(/∩[↯g][h♡]/gi, 'W');
   clean = clean.replace(/∩[↯g]/gi, 'N');
@@ -1229,20 +1243,7 @@ export function toFakeVietMinimal(text) {
   clean = clean.replace(/⊏[u∪]/gi, '⊏');
   clean = clean.replace(/[↯g][i⸝]/gi, 'j');
 
-  // 4. Quy chuẩn phụ âm ghép 2 chữ theo geo-font.html
-  clean = clean.replace(/ng/gi, 'N');
-  clean = clean.replace(/kh/gi, '>');
-  clean = clean.replace(/th/gi, '⊤');
-  clean = clean.replace(/ph/gi, '⊥');
-  clean = clean.replace(/ch/gi, 'C');
-  clean = clean.replace(/tr/gi, 'R');
-  clean = clean.replace(/nh/gi, 'H');
-  clean = clean.replace(/gh/gi, '⊃');
-  clean = clean.replace(/qu/gi, '⊏');
-  clean = clean.replace(/gi/gi, 'j');
-  clean = clean.replace(/[đd]/gi, 'ᑯ');
-
-  // 5. Thay thế nguyên âm và phụ âm đơn còn lại
+  // 4. Thay thế nguyên âm và phụ âm đơn còn lại
   const COMPOUND_SET = new Set(['W', 'N', '>', '⊤', '⊥', 'C', 'R', 'H', '⊃', '⊏', 'j', 'ᑯ']);
   return [...clean].map(ch => {
     if (COMPOUND_SET.has(ch)) return ch;
