@@ -28,8 +28,8 @@ function sfy(ay) { return Math.round(ASCENDER - ay * CELL / 100); }
 // ============================================================
 const B60_MAPPING = [
   'c','d','g','G','j','k','K','h','v','D','m','C','r','s','n','b','l','Q','S','z',
-  'N','y','L','W','p','f','q','t','T','R','x','0','1','2','3','4','5','6','7','8',
-  '9','A','B','E','F','H','o','J','M','P','U','V','X','Y','Z','a','e','i','u','w'
+  'N','Y','L','W','p','f','q','t','T','R','x','0','1','2','3','4','5','6','7','8',
+  '9','A','B','E','F','H','o','J','M','P','U','V','X','y','Z','a','e','i','u','w'
 ];
 
 // ============================================================
@@ -57,7 +57,7 @@ const GLYPH_RECIPES = [
   { id: 18, char: 'S', path: '<path d="M 64 22 C 32 14, 26 40, 50 50 C 74 60, 68 86, 36 78" />' },
   { id: 19, char: 'z', path: '<polyline points="25,34 65,34 65,66" />' },
   { id: 20, char: 'N', path: '<polyline points="30,78 30,22 70,78 70,22" />' },
-  { id: 21, char: 'y', path: '<line x1="68" y1="24" x2="32" y2="80" /><line x1="32" y1="24" x2="50" y2="52" />' },
+  { id: 21, char: 'Y', path: '<polyline points="26,24 50,52 74,24" /><line x1="50" y1="52" x2="50" y2="80" />' },
   { id: 22, char: 'L', path: '<polyline points="34,22 34,78 76,78" />' },
   { id: 23, char: 'W', path: '<polyline points="20,24 35,78 50,42 65,78 80,24" />' },
   { id: 24, char: 'p', path: '<path d="M 36 80 L 36 28 A 18 18 0 0 1 36 64" />' },
@@ -89,7 +89,7 @@ const GLYPH_RECIPES = [
   { id: 50, char: 'U', path: '<polyline points="30,32 30,70 70,70 70,32" />' },
   { id: 51, char: 'V', path: '<polyline points="24,78 50,22 76,78" />' },
   { id: 52, char: 'X', path: '<line x1="24" y1="24" x2="76" y2="76" /><line x1="76" y1="24" x2="24" y2="76" />' },
-  { id: 53, char: 'Y', path: '<polyline points="26,24 50,52 74,24" /><line x1="50" y1="52" x2="50" y2="80" />' },
+  { id: 53, char: 'y', path: '<line x1="68" y1="24" x2="32" y2="80" /><line x1="32" y1="24" x2="50" y2="52" />' },
   { id: 54, char: 'Z', path: '<polyline points="26,24 74,24 26,76 74,76" />' },
   { id: 55, char: 'a', path: '<line x1="22" y1="50" x2="78" y2="50" />' },
   { id: 56, char: 'e', path: '<line x1="24" y1="38" x2="76" y2="38" /><line x1="24" y1="62" x2="76" y2="62" />' },
@@ -545,8 +545,12 @@ async function main() {
     const ab = font.toArrayBuffer();
     const buf = Buffer.from(ab);
     fs.writeFileSync(outPath, buf);
+    const pubPath = path.join(__dirname, '..', 'public', 'V2B-ViScript.ttf');
+    const rootPath = path.join(__dirname, '..', 'V2B-ViScript.ttf');
+    fs.writeFileSync(pubPath, buf);
+    fs.writeFileSync(rootPath, buf);
     const kb = (buf.length / 1024).toFixed(1);
-    console.log(`\n🎉 Font đã tạo: ${outPath} (${kb} KB)`);
+    console.log(`\n🎉 Font đã tạo và đồng bộ: ${outPath}, ${pubPath} (${kb} KB)`);
   } catch(e) {
     console.error('Lỗi ghi file:', e.message);
     process.exit(1);

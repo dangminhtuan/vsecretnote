@@ -82,18 +82,39 @@ const FAKE_VIET_MINIMAL_MAP = {
 function toFakeVietMinimal(text) {
   if (!text) return '';
   let clean = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  clean = clean.replace(/N[h♡]/gi, 'W');
+
+  clean = clean.replace(/ngh/gi, 'W');
+  clean = clean.replace(/N[h♡]/g, 'W');
   clean = clean.replace(/∩[↯g][h♡]/gi, 'W');
   clean = clean.replace(/∩[↯g]/gi, 'N');
   clean = clean.replace(/<[h♡]/gi, '>');
   clean = clean.replace(/\+[h♡]/gi, '⊤');
+  clean = clean.replace(/p[h♡]/gi, '⊥');
   clean = clean.replace(/⊂[h♡]/gi, 'C');
-  clean = clean.replace(/\[\+[h♡]\]/gi, '⊤');
-  clean = clean.replace(/[t+][h♡]/gi, '⊤');
-  clean = clean.replace(/[g↯][h♡]/gi, '↯');
-  clean = clean.replace(/[k<][h♡]/gi, '>');
-  clean = clean.replace(/[p][h♡]/gi, '⊥');
-  return [...clean].map(c => FAKE_VIET_MINIMAL_MAP[c] || c).join('');
+  clean = clean.replace(/\+[r┌]/gi, 'R');
+  clean = clean.replace(/∩[h♡]/gi, 'Y');
+  clean = clean.replace(/↯[h♡]/gi, '⊃');
+  clean = clean.replace(/⊏[u∪]/gi, '⊏');
+  clean = clean.replace(/[↯g][i⸝]/gi, 'j');
+
+  clean = clean.replace(/ng/gi, 'N');
+  clean = clean.replace(/kh/gi, '>');
+  clean = clean.replace(/th/gi, '⊤');
+  clean = clean.replace(/ph/gi, '⊥');
+  clean = clean.replace(/ch/gi, 'C');
+  clean = clean.replace(/tr/gi, 'R');
+  clean = clean.replace(/nh/gi, 'Y');
+  clean = clean.replace(/gh/gi, '⊃');
+  clean = clean.replace(/qu/gi, '⊏');
+  clean = clean.replace(/gi/gi, 'j');
+  clean = clean.replace(/[đd]/gi, 'ᑯ');
+
+  const COMPOUND_SET = new Set(['W', 'N', '>', '⊤', '⊥', 'C', 'R', 'Y', '⊃', '⊏', 'j', 'ᑯ']);
+  return [...clean].map(ch => {
+    if (COMPOUND_SET.has(ch)) return ch;
+    const lower = ch.toLowerCase();
+    return FAKE_VIET_MINIMAL_MAP[lower] || ch;
+  }).join('');
 }
 
 // ===== 🐫 CAMELCASE & 📝 NO ACCENT =====

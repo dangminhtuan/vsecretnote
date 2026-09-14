@@ -2,3 +2,10 @@ node_modules/
 dist/
 .vite/
 *.log
+
+# Android (vboard)
+vboard/.gradle/
+vboard/build/
+vboard/*/build/
+vboard/local.properties
+vboard/.idea/

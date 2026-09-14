@@ -6,7 +6,7 @@ b3	03 [B3] a e i u w y (Nguyên âm thường (a e i u w y))
 b4	04 [B4] 0 1 2 3 4 5 (VNI 1 (0 1 2 3 4 5))		
 b5	05 [B5] 6 7 8 9 B C (VNI 2 (6 7 8 9 B C))		
 b6	06 [B6] A E o U W Y (Nguyên âm A, E, o, U, W, Y)		
-cm	07 [PA-Chính] 24 PA Chính: c, đ➔d, g, gh➔G, gi➔j, k, kh➔K, h, v, d➔D, m, ch➔C, r, s, n, b, l, ch➔Q, s➔S, Ø➔z, ng➔N, nh➔y, l➔L, ngh➔W		
+cm	07 [PA-Chính] 24 PA Chính: c, đ➔d, g, gh➔G, gi➔j, k, kh➔K, h, v, d➔D, m, ch➔C, r, s, n, b, l, ch➔Q, s➔S, Ø➔z, ng➔N, nh➔Y, l➔L, ngh➔W		
 cp	08 [PA-Phụ] 7 PA Phụ: p, ph➔f, qu➔q, t, th➔T, tr➔R, x		
 dz	09 [Dấu-Ngang] z Z a 0 6 A (B1..B6)		
 ds	10 [Dấu-Sắc] s S e 1 7 E (B1..B6)		
@@ -38,7 +38,7 @@ uv	35 [U] Vần: u: u/-/- | U: êu/oăc/ư | Dấu: u (B3 Hỏi), U (B6 Hỏi)
 v	36 [V] PA: v | Vần: v: ia/ip/ung | V: êch/oăm/yt		
 w	37 [W] PA: ngh➔W | Vần: w: -/-/- | W: anh/oăng/ươc | Dấu: w (B3 Ngã), W (B6 Ngã)		
 x	38 [X] PA: x | Vần: x: ăc/ơi/ưm | X: êm/oăt/yêng | Dấu: x (B1 Ngã), X (B2 Ngã)		
-yv	39 [Y] PA: nh➔y | Vần: y: âp/ot/y | Y: ênh/iê/ăk | Dấu: y (B3 Nặng), Y (B6 Nặng)		
+yv	39 [Y] PA: nh➔Y | Vần: y: ênh/iê/ăk | Y: âp/ot/y | Dấu: y (B3 Nặng), Y (B6 Nặng)		
 z	40 [Z] PA: Ø➔z | Vần: z: ôm/ong/ưa | Z: êp/eng/n | Dấu: z (B1 Ngang), Z (B2 Ngang)		
 ov	41 [Vần O & Ký tự o] Vần 'o' Tiếng Việt ➔ Mã: 4 (Index 35, ví dụ cho➔C4Z, to➔T4Z) | Ký tự Base60 'o' ➔ Vần: en (đen➔doz), Dấu: B6 Huyền		
 0	42 [Số 0] Vần: 0: ăm/ô/yêm | Dấu: 0 (B4 Ngang)		

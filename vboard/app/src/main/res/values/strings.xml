@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Vboard</string>
+    <string name="subtype_vi">Tiếng Việt (Vboard Cypher)</string>
+    <string name="accessibility_service_desc">Vboard Trợ Năng Rảnh Tay: Tự động tìm ô nhập văn bản và điền bằng giọng nói mà không cần chạm màn hình.</string>
+    <string name="handsfree_notif_channel">Kênh Dịch Vụ Rảnh Tay Vboard</string>
+    <string name="handsfree_notif_title">🎙️ Vboard Rảnh Tay (Hands-free)</string>
+    <string name="handsfree_notif_content">Đang lắng nghe khẩu lệnh \'Chiến thôi\'...</string>
+</resources>

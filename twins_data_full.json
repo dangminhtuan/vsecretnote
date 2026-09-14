@@ -271,12 +271,12 @@
   },
   {
     "word": "nhập",
-    "code": "yyj",
+    "code": "YYj",
     "pattern": "head",
     "patternName": "Lặp Đầu",
-    "rep": "y + y",
-    "group": "Lặp đầu yy",
-    "mnemonic": "Nhịp đôi mở đầu yy, chuyển vần sang j (nhập)"
+    "rep": "Y + Y",
+    "group": "Lặp đầu YY",
+    "mnemonic": "Nhịp đôi mở đầu YY, chuyển vần sang j (nhập)"
   },
   {
     "word": "diện",
@@ -523,12 +523,12 @@
   },
   {
     "word": "nhiệt",
-    "code": "yjJ",
+    "code": "YjJ",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
     "rep": "j + J",
     "group": "Lặp đuôi jJ",
-    "mnemonic": "Khởi đầu bằng y, kết thúc bằng cặp đôi jJ (nhiệt)"
+    "mnemonic": "Khởi đầu bằng Y, kết thúc bằng cặp đôi jJ (nhiệt)"
   },
   {
     "word": "món",
@@ -739,12 +739,12 @@
   },
   {
     "word": "nhuận",
-    "code": "yhy",
+    "code": "Yhy",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "y ... y",
-    "group": "Kẹp y...y",
-    "mnemonic": "Kẹp đối xứng hai đầu y...y ôm vần h (nhuận)"
+    "rep": "Y ... y",
+    "group": "Kẹp Y...y",
+    "mnemonic": "Kẹp đối xứng hai đầu Y...y ôm vần h (nhuận)"
   },
   {
     "word": "huỳnh",
@@ -1018,12 +1018,12 @@
   },
   {
     "word": "sót",
-    "code": "syS",
+    "code": "sYS",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
     "rep": "s ... S",
     "group": "Kẹp s...S",
-    "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần y (sót)"
+    "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần Y (sót)"
   },
   {
     "word": "đậm",
@@ -1135,12 +1135,12 @@
   },
   {
     "word": "nhựa",
-    "code": "yzy",
+    "code": "Yzy",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "y ... y",
-    "group": "Kẹp y...y",
-    "mnemonic": "Kẹp đối xứng hai đầu y...y ôm vần z (nhựa)"
+    "rep": "Y ... y",
+    "group": "Kẹp Y...y",
+    "mnemonic": "Kẹp đối xứng hai đầu Y...y ôm vần z (nhựa)"
   },
   {
     "word": "sánh",
@@ -1513,12 +1513,12 @@
   },
   {
     "word": "giọt",
-    "code": "jyJ",
+    "code": "jYJ",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
     "rep": "j ... J",
     "group": "Kẹp j...J",
-    "mnemonic": "Kẹp đối xứng hai đầu j...J ôm vần y (giọt)"
+    "mnemonic": "Kẹp đối xứng hai đầu j...J ôm vần Y (giọt)"
   },
   {
     "word": "giặt",
@@ -1630,12 +1630,12 @@
   },
   {
     "word": "nhục",
-    "code": "ygy",
+    "code": "Ygy",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "y ... y",
-    "group": "Kẹp y...y",
-    "mnemonic": "Kẹp đối xứng hai đầu y...y ôm vần g (nhục)"
+    "rep": "Y ... y",
+    "group": "Kẹp Y...y",
+    "mnemonic": "Kẹp đối xứng hai đầu Y...y ôm vần g (nhục)"
   },
   {
     "word": "quát",
@@ -1729,12 +1729,12 @@
   },
   {
     "word": "quỵ",
-    "code": "qyY",
+    "code": "qYY",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
-    "rep": "y + Y",
-    "group": "Lặp đuôi yY",
-    "mnemonic": "Khởi đầu bằng q, kết thúc bằng cặp đôi yY (quỵ)"
+    "rep": "Y + Y",
+    "group": "Lặp đuôi YY",
+    "mnemonic": "Khởi đầu bằng q, kết thúc bằng cặp đôi YY (quỵ)"
   },
   {
     "word": "gai",
@@ -1828,12 +1828,12 @@
   },
   {
     "word": "nhược",
-    "code": "yWy",
+    "code": "YWy",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "y ... y",
-    "group": "Kẹp y...y",
-    "mnemonic": "Kẹp đối xứng hai đầu y...y ôm vần W (nhược)"
+    "rep": "Y ... y",
+    "group": "Kẹp Y...y",
+    "mnemonic": "Kẹp đối xứng hai đầu Y...y ôm vần W (nhược)"
   },
   {
     "word": "bong",
@@ -1891,12 +1891,12 @@
   },
   {
     "word": "nhuộm",
-    "code": "y5y",
+    "code": "Y5y",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "y ... y",
-    "group": "Kẹp y...y",
-    "mnemonic": "Kẹp đối xứng hai đầu y...y ôm vần 5 (nhuộm)"
+    "rep": "Y ... y",
+    "group": "Kẹp Y...y",
+    "mnemonic": "Kẹp đối xứng hai đầu Y...y ôm vần 5 (nhuộm)"
   },
   {
     "word": "rảnh",
@@ -2152,12 +2152,12 @@
   },
   {
     "word": "kỵ",
-    "code": "kyy",
+    "code": "kYy",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
-    "rep": "y + y",
-    "group": "Lặp đuôi yy",
-    "mnemonic": "Khởi đầu bằng k, kết thúc bằng cặp đôi yy (kỵ)"
+    "rep": "Y + y",
+    "group": "Lặp đuôi Yy",
+    "mnemonic": "Khởi đầu bằng k, kết thúc bằng cặp đôi Yy (kỵ)"
   },
   {
     "word": "ia",
@@ -2188,12 +2188,12 @@
   },
   {
     "word": "tỵ",
-    "code": "tyY",
+    "code": "tYY",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
-    "rep": "y + Y",
-    "group": "Lặp đuôi yY",
-    "mnemonic": "Khởi đầu bằng t, kết thúc bằng cặp đôi yY (tỵ)"
+    "rep": "Y + Y",
+    "group": "Lặp đuôi YY",
+    "mnemonic": "Khởi đầu bằng t, kết thúc bằng cặp đôi YY (tỵ)"
   },
   {
     "word": "chướng",
@@ -2206,12 +2206,12 @@
   },
   {
     "word": "nhôm",
-    "code": "yzz",
+    "code": "Yzz",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
     "rep": "z + z",
     "group": "Lặp đuôi zz",
-    "mnemonic": "Khởi đầu bằng y, kết thúc bằng cặp đôi zz (nhôm)"
+    "mnemonic": "Khởi đầu bằng Y, kết thúc bằng cặp đôi zz (nhôm)"
   },
   {
     "word": "mẹo",
@@ -2305,12 +2305,12 @@
   },
   {
     "word": "nhựt",
-    "code": "yTy",
+    "code": "YTy",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "y ... y",
-    "group": "Kẹp y...y",
-    "mnemonic": "Kẹp đối xứng hai đầu y...y ôm vần T (nhựt)"
+    "rep": "Y ... y",
+    "group": "Kẹp Y...y",
+    "mnemonic": "Kẹp đối xứng hai đầu Y...y ôm vần T (nhựt)"
   },
   {
     "word": "vụng",
@@ -2404,12 +2404,12 @@
   },
   {
     "word": "nhác",
-    "code": "ySs",
+    "code": "YSs",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
     "rep": "S + s",
     "group": "Lặp đuôi Ss",
-    "mnemonic": "Khởi đầu bằng y, kết thúc bằng cặp đôi Ss (nhác)"
+    "mnemonic": "Khởi đầu bằng Y, kết thúc bằng cặp đôi Ss (nhác)"
   },
   {
     "word": "bẩy",
@@ -2422,12 +2422,12 @@
   },
   {
     "word": "nhuệ",
-    "code": "yGy",
+    "code": "YGy",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "y ... y",
-    "group": "Kẹp y...y",
-    "mnemonic": "Kẹp đối xứng hai đầu y...y ôm vần G (nhuệ)"
+    "rep": "Y ... y",
+    "group": "Kẹp Y...y",
+    "mnemonic": "Kẹp đối xứng hai đầu Y...y ôm vần G (nhuệ)"
   },
   {
     "word": "bầy",
@@ -2440,12 +2440,12 @@
   },
   {
     "word": "nhấp",
-    "code": "yys",
+    "code": "YYs",
     "pattern": "head",
     "patternName": "Lặp Đầu",
-    "rep": "y + y",
-    "group": "Lặp đầu yy",
-    "mnemonic": "Nhịp đôi mở đầu yy, chuyển vần sang s (nhấp)"
+    "rep": "Y + Y",
+    "group": "Lặp đầu YY",
+    "mnemonic": "Nhịp đôi mở đầu YY, chuyển vần sang s (nhấp)"
   },
   {
     "word": "vía",
@@ -2710,12 +2710,12 @@
   },
   {
     "word": "sấp",
-    "code": "sys",
+    "code": "sYs",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
     "rep": "s ... s",
     "group": "Kẹp s...s",
-    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần y (sấp)"
+    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần Y (sấp)"
   },
   {
     "word": "chong",
@@ -2809,12 +2809,12 @@
   },
   {
     "word": "mỵ",
-    "code": "myy",
+    "code": "mYy",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
-    "rep": "y + y",
-    "group": "Lặp đuôi yy",
-    "mnemonic": "Khởi đầu bằng m, kết thúc bằng cặp đôi yy (mỵ)"
+    "rep": "Y + y",
+    "group": "Lặp đuôi Yy",
+    "mnemonic": "Khởi đầu bằng m, kết thúc bằng cặp đôi Yy (mỵ)"
   },
   {
     "word": "ứa",
@@ -2827,12 +2827,12 @@
   },
   {
     "word": "nhọt",
-    "code": "yyJ",
+    "code": "YYJ",
     "pattern": "head",
     "patternName": "Lặp Đầu",
-    "rep": "y + y",
-    "group": "Lặp đầu yy",
-    "mnemonic": "Nhịp đôi mở đầu yy, chuyển vần sang J (nhọt)"
+    "rep": "Y + Y",
+    "group": "Lặp đầu YY",
+    "mnemonic": "Nhịp đôi mở đầu YY, chuyển vần sang J (nhọt)"
   },
   {
     "word": "inh",
@@ -2926,12 +2926,12 @@
   },
   {
     "word": "nhót",
-    "code": "yyS",
+    "code": "YYS",
     "pattern": "head",
     "patternName": "Lặp Đầu",
-    "rep": "y + y",
-    "group": "Lặp đầu yy",
-    "mnemonic": "Nhịp đôi mở đầu yy, chuyển vần sang S (nhót)"
+    "rep": "Y + Y",
+    "group": "Lặp đầu YY",
+    "mnemonic": "Nhịp đôi mở đầu YY, chuyển vần sang S (nhót)"
   },
   {
     "word": "gãi",
@@ -3016,12 +3016,12 @@
   },
   {
     "word": "lỵ",
-    "code": "lyy",
+    "code": "lYy",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
-    "rep": "y + y",
-    "group": "Lặp đuôi yy",
-    "mnemonic": "Khởi đầu bằng l, kết thúc bằng cặp đôi yy (lỵ)"
+    "rep": "Y + y",
+    "group": "Lặp đuôi Yy",
+    "mnemonic": "Khởi đầu bằng l, kết thúc bằng cặp đôi Yy (lỵ)"
   },
   {
     "word": "sắng",
@@ -3187,21 +3187,21 @@
   },
   {
     "word": "nhuỵ",
-    "code": "yby",
+    "code": "Yby",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "y ... y",
-    "group": "Kẹp y...y",
-    "mnemonic": "Kẹp đối xứng hai đầu y...y ôm vần b (nhuỵ)"
+    "rep": "Y ... y",
+    "group": "Kẹp Y...y",
+    "mnemonic": "Kẹp đối xứng hai đầu Y...y ôm vần b (nhuỵ)"
   },
   {
     "word": "giập",
-    "code": "jyj",
+    "code": "jYj",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
     "rep": "j ... j",
     "group": "Kẹp j...j",
-    "mnemonic": "Kẹp đối xứng hai đầu j...j ôm vần y (giập)"
+    "mnemonic": "Kẹp đối xứng hai đầu j...j ôm vần Y (giập)"
   },
   {
     "word": "xơi",
@@ -3322,12 +3322,12 @@
   },
   {
     "word": "nhử",
-    "code": "yUu",
+    "code": "YUu",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
     "rep": "U + u",
     "group": "Lặp đuôi Uu",
-    "mnemonic": "Khởi đầu bằng y, kết thúc bằng cặp đôi Uu (nhử)"
+    "mnemonic": "Khởi đầu bằng Y, kết thúc bằng cặp đôi Uu (nhử)"
   },
   {
     "word": "rỏi",
@@ -3700,12 +3700,12 @@
   },
   {
     "word": "nhón",
-    "code": "ySS",
+    "code": "YSS",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
     "rep": "S + S",
     "group": "Lặp đuôi SS",
-    "mnemonic": "Khởi đầu bằng y, kết thúc bằng cặp đôi SS (nhón)"
+    "mnemonic": "Khởi đầu bằng Y, kết thúc bằng cặp đôi SS (nhón)"
   },
   {
     "word": "ruỗng",
@@ -3979,21 +3979,21 @@
   },
   {
     "word": "nhụa",
-    "code": "ycy",
+    "code": "Ycy",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "y ... y",
-    "group": "Kẹp y...y",
-    "mnemonic": "Kẹp đối xứng hai đầu y...y ôm vần c (nhụa)"
+    "rep": "Y ... y",
+    "group": "Kẹp Y...y",
+    "mnemonic": "Kẹp đối xứng hai đầu Y...y ôm vần c (nhụa)"
   },
   {
     "word": "nhoẹt",
-    "code": "yJJ",
+    "code": "YJJ",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
     "rep": "J + J",
     "group": "Lặp đuôi JJ",
-    "mnemonic": "Khởi đầu bằng y, kết thúc bằng cặp đôi JJ (nhoẹt)"
+    "mnemonic": "Khởi đầu bằng Y, kết thúc bằng cặp đôi JJ (nhoẹt)"
   },
   {
     "word": "giong",
@@ -4114,12 +4114,12 @@
   },
   {
     "word": "nhong",
-    "code": "yzZ",
+    "code": "YzZ",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
     "rep": "z + Z",
     "group": "Lặp đuôi zZ",
-    "mnemonic": "Khởi đầu bằng y, kết thúc bằng cặp đôi zZ (nhong)"
+    "mnemonic": "Khởi đầu bằng Y, kết thúc bằng cặp đôi zZ (nhong)"
   },
   {
     "word": "hoải",
@@ -4132,12 +4132,12 @@
   },
   {
     "word": "vỵ",
-    "code": "vyy",
+    "code": "vYy",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
-    "rep": "y + y",
-    "group": "Lặp đuôi yy",
-    "mnemonic": "Khởi đầu bằng v, kết thúc bằng cặp đôi yy (vỵ)"
+    "rep": "Y + y",
+    "group": "Lặp đuôi Yy",
+    "mnemonic": "Khởi đầu bằng v, kết thúc bằng cặp đôi Yy (vỵ)"
   },
   {
     "word": "só",
@@ -4411,12 +4411,12 @@
   },
   {
     "word": "sếnh",
-    "code": "sYs",
+    "code": "sys",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
     "rep": "s ... s",
     "group": "Kẹp s...s",
-    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần Y (sếnh)"
+    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần y (sếnh)"
   },
   {
     "word": "rỉa",
@@ -4618,12 +4618,12 @@
   },
   {
     "word": "hỵ",
-    "code": "hyy",
+    "code": "hYy",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
-    "rep": "y + y",
-    "group": "Lặp đuôi yy",
-    "mnemonic": "Khởi đầu bằng h, kết thúc bằng cặp đôi yy (hỵ)"
+    "rep": "Y + y",
+    "group": "Lặp đuôi Yy",
+    "mnemonic": "Khởi đầu bằng h, kết thúc bằng cặp đôi Yy (hỵ)"
   },
   {
     "word": "poọng",
@@ -4708,12 +4708,12 @@
   },
   {
     "word": "dỵ",
-    "code": "Dyy",
+    "code": "DYy",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
-    "rep": "y + y",
-    "group": "Lặp đuôi yy",
-    "mnemonic": "Khởi đầu bằng D, kết thúc bằng cặp đôi yy (dỵ)"
+    "rep": "Y + y",
+    "group": "Lặp đuôi Yy",
+    "mnemonic": "Khởi đầu bằng D, kết thúc bằng cặp đôi Yy (dỵ)"
   },
   {
     "word": "oong",
@@ -4726,12 +4726,12 @@
   },
   {
     "word": "nhự",
-    "code": "yUy",
+    "code": "YUy",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "y ... y",
-    "group": "Kẹp y...y",
-    "mnemonic": "Kẹp đối xứng hai đầu y...y ôm vần U (nhự)"
+    "rep": "Y ... y",
+    "group": "Kẹp Y...y",
+    "mnemonic": "Kẹp đối xứng hai đầu Y...y ôm vần U (nhự)"
   },
   {
     "word": "liễm",
@@ -4915,12 +4915,12 @@
   },
   {
     "word": "nhuật",
-    "code": "ydy",
+    "code": "Ydy",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "y ... y",
-    "group": "Kẹp y...y",
-    "mnemonic": "Kẹp đối xứng hai đầu y...y ôm vần d (nhuật)"
+    "rep": "Y ... y",
+    "group": "Kẹp Y...y",
+    "mnemonic": "Kẹp đối xứng hai đầu Y...y ôm vần d (nhuật)"
   },
   {
     "word": "lốn",
@@ -5032,12 +5032,12 @@
   },
   {
     "word": "nhụi",
-    "code": "yjy",
+    "code": "Yjy",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "y ... y",
-    "group": "Kẹp y...y",
-    "mnemonic": "Kẹp đối xứng hai đầu y...y ôm vần j (nhụi)"
+    "rep": "Y ... y",
+    "group": "Kẹp Y...y",
+    "mnemonic": "Kẹp đối xứng hai đầu Y...y ôm vần j (nhụi)"
   },
   {
     "word": "lưn",
@@ -5365,12 +5365,12 @@
   },
   {
     "word": "nhụng",
-    "code": "yvy",
+    "code": "Yvy",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "y ... y",
-    "group": "Kẹp y...y",
-    "mnemonic": "Kẹp đối xứng hai đầu y...y ôm vần v (nhụng)"
+    "rep": "Y ... y",
+    "group": "Kẹp Y...y",
+    "mnemonic": "Kẹp đối xứng hai đầu Y...y ôm vần v (nhụng)"
   },
   {
     "word": "mụt",

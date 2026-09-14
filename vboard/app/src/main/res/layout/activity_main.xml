@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Header -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⚡ Vboard Control Center"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#1A73E8"
+            android:layout_marginBottom="4dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Bàn phím Mật mã &amp; Trợ lý Giọng nói Rảnh tay (True Hands-free)"
+            android:textSize="13sp"
+            android:textColor="#5F6368"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Card 1: Chế độ Rảnh tay 100% -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#DADCE0">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🎙️ CHẾ ĐỘ RẢNH TAY (HANDS-FREE)"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#202124"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Khẩu lệnh: Nói 'Chiến thôi [nội dung]' hoặc nói 'Chiến thôi', đợi máy rung rồi nói tiếp. Chữ sẽ tự động điền vào ô chat/nhập liệu mà không cần chạm tay!"
+                    android:textSize="13sp"
+                    android:textColor="#444746"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Trạng thái quyền Trợ Năng -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:id="@+id/tv_accessibility_status"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Quyền Trợ Năng (Accessibility): Kiểm tra..."
+                        android:textSize="13sp"
+                        android:textColor="#333333" />
+
+                    <Button
+                        android:id="@+id/btn_grant_accessibility"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Cấp quyền"
+                        android:textSize="12sp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+                </LinearLayout>
+
+                <!-- Nút Bật/Tắt Lắng nghe Rảnh tay -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_toggle_handsfree"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="BẬT CHẾ ĐỘ LẮNG NGHE RẢNH TAY"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:backgroundTint="#1A73E8"
+                    android:layout_marginTop="4dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Card 2: Khu vực thử nghiệm trực tiếp -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#DADCE0">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🧪 THỬ NGHIỆM TẠI CHỖ (TEST BENCH)"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#202124"
+                    android:layout_marginBottom="6dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Focus vào ô dưới đây (hoặc mở bất kỳ app nào khác như Zalo/SMS) rồi nói 'Chiến thôi [lời muốn nói]':"
+                    android:textSize="12sp"
+                    android:textColor="#5F6368"
+                    android:layout_marginBottom="8dp" />
+
+                <EditText
+                    android:id="@+id/et_test_input"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="80dp"
+                    android:gravity="top|start"
+                    android:hint="Chữ nhận diện từ giọng nói sẽ tự động xuất hiện ở đây..."
+                    android:background="@android:drawable/editbox_background_normal"
+                    android:padding="12dp"
+                    android:textSize="15sp"
+                    android:textColor="#000000" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Card 3: Cài đặt Bàn phím IME -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#DADCE0">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⌨️ CÀI ĐẶT BÀN PHÍM VBOARD (IME)"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:textColor="#202124"
+                    android:layout_marginBottom="8dp" />
+
+                <Button
+                    android:id="@+id/btn_enable_ime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="1. BẬT BÀN PHÍM VBOARD (SYSTEM SETTINGS)"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_marginBottom="6dp" />
+
+                <Button
+                    android:id="@+id/btn_select_ime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="2. CHỌN VBOARD LÀM BÀN PHÍM MẶC ĐỊNH"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+</ScrollView>

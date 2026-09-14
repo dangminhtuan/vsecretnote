@@ -197,7 +197,7 @@ export const decodeWord = (code) => {
 
 // --- BASE60 COMPRESSION ENGINE (TELEX + VNI ENHANCED) ---
 export const BASE60_HH = [
-  'c', 'd', 'g', 'G', 'j', 'k', 'K', 'h', 'v', 'D', 'm', 'C', 'r', 's', 'n', 'b', 'l', 'Q', 'S', 'z', 'N', 'y', 'L', 'W'
+  'c', 'd', 'g', 'G', 'j', 'k', 'K', 'h', 'v', 'D', 'm', 'C', 'r', 's', 'n', 'b', 'l', 'Q', 'S', 'z', 'N', 'Y', 'L', 'W'
 ];
 export const BASE60_HH_EXTRA = [
   'p', 'f', 'q', 't', 'T', 'R', 'x'

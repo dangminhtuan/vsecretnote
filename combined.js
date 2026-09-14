@@ -175,9 +175,9 @@ const ENGLISH_DICT = [
 // Các giá trị còn lại (24-59) sẽ là các số và chữ còn lại (trừ o, O).
 const BASE60_MAPPING = [
   // 00-31: Logical Mnemonic Consonants
-  'c', 'd', 'g', 'G', 'j', 'k', 'K', 'h', 'v', 'D', 'm', 'C', 'r', 's', 'n', 'b', 'l', 'Q', 'S', 'z', 'N', 'y', 'L', 'W', 'p', 'f', 'q', 't', 'T', 'R', 'x', '0',
+  'c', 'd', 'g', 'G', 'j', 'k', 'K', 'h', 'v', 'D', 'm', 'C', 'r', 's', 'n', 'b', 'l', 'Q', 'S', 'z', 'N', 'Y', 'L', 'W', 'p', 'f', 'q', 't', 'T', 'R', 'x', '0',
   // 32-59: Remaining unused characters
-  '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'E', 'F', 'H', 'I', 'J', 'M', 'P', 'U', 'V', 'X', 'Y', 'Z', 'a', 'e', 'i', 'u', 'w'
+  '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'E', 'F', 'H', 'I', 'J', 'M', 'P', 'U', 'V', 'X', 'y', 'Z', 'a', 'e', 'i', 'u', 'w'
 ];
 
 // === SHORT WORDS (Ngoại lệ ép nén 2 ký tự: hh 32-59) ===

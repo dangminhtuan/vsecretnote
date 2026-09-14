@@ -119,10 +119,10 @@ function formatB60WithCase(b60, originalWord) {
 export const B60_TO_UNICODE = {
   'c': '⊂', 'd': 'ᑯ', 'g': '↯', 'G': '⊃', 'j': 'j', 'k': '<', 'K': '>', 'h': '♡', 'v': '∨', 'D': 'D',
   'm': 'm', 'C': 'C', 'r': '┌', 's': '┘', 'n': '∩', 'b': 'b', 'l': 'l', 'Q': '□', 'S': 'S', 'z': '┐',
-  'N': 'N', 'y': 'y', 'L': '└', 'W': 'W', 'p': 'p', 'f': '⊥', 'q': '⊏', 't': '+', 'T': '⊤', 'R': 'R',
+  'N': 'N', 'Y': 'Y', 'L': '└', 'W': 'W', 'p': 'p', 'f': '⊥', 'q': '⊏', 't': '+', 'T': '⊤', 'R': 'R',
   'x': '×', '0': '⊙', '1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8',
   '9': '9', 'A': '\\', 'B': 'B', 'E': '⊢', 'F': '⊣', 'H': '⊓', 'o': 'o', 'J': 'J', 'M': 'M', 'P': '⊐',
-  'U': '⊔', 'V': '∧', 'X': 'X', 'Y': 'Y', 'Z': 'Z', 'a': '—', 'e': '=', 'i': '⸝', 'u': '∪', 'w': 'w'
+  'U': '⊔', 'V': '∧', 'X': 'X', 'y': 'y', 'Z': 'Z', 'a': '—', 'e': '=', 'i': '⸝', 'u': '∪', 'w': 'w'
 };
 
 export const UNICODE_TO_B60 = {};
@@ -1212,8 +1212,11 @@ export function toFakeVietMinimal(text) {
   // 1. Tách dấu thanh chuẩn NFD
   let clean = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 
-  // 2. Gom gộp thông minh các ký hiệu gõ rời / tương thích ngược
-  clean = clean.replace(/N[h♡]/gi, 'W');
+  // 2. Quy chuẩn phụ âm 3 chữ Latin trước
+  clean = clean.replace(/ngh/gi, 'W');
+
+  // 3. Gom gộp thông minh các ký hiệu gõ rời / tương thích ngược (N là ký hiệu HOA của ng, KHÔNG dùng cờ /i để tránh nhầm với nh)
+  clean = clean.replace(/N[h♡]/g, 'W');
   clean = clean.replace(/∩[↯g][h♡]/gi, 'W');
   clean = clean.replace(/∩[↯g]/gi, 'N');
   clean = clean.replace(/<[h♡]/gi, '>');
@@ -1221,27 +1224,26 @@ export function toFakeVietMinimal(text) {
   clean = clean.replace(/p[h♡]/gi, '⊥');
   clean = clean.replace(/⊂[h♡]/gi, 'C');
   clean = clean.replace(/\+[r┌]/gi, 'R');
-  clean = clean.replace(/∩[h♡]/gi, 'y');
+  clean = clean.replace(/∩[h♡]/gi, 'Y');
   clean = clean.replace(/↯[h♡]/gi, '⊃');
   clean = clean.replace(/⊏[u∪]/gi, '⊏');
   clean = clean.replace(/[↯g][i⸝]/gi, 'j');
 
-  // 3. Quy chuẩn 24 phụ âm đầu theo geo-font.html (ưu tiên phụ âm dài trước)
-  clean = clean.replace(/ngh/gi, 'W');
+  // 4. Quy chuẩn phụ âm ghép 2 chữ theo geo-font.html
   clean = clean.replace(/ng/gi, 'N');
   clean = clean.replace(/kh/gi, '>');
   clean = clean.replace(/th/gi, '⊤');
   clean = clean.replace(/ph/gi, '⊥');
   clean = clean.replace(/ch/gi, 'C');
   clean = clean.replace(/tr/gi, 'R');
-  clean = clean.replace(/nh/gi, 'y');
+  clean = clean.replace(/nh/gi, 'Y');
   clean = clean.replace(/gh/gi, '⊃');
   clean = clean.replace(/qu/gi, '⊏');
   clean = clean.replace(/gi/gi, 'j');
   clean = clean.replace(/[đd]/gi, 'ᑯ');
 
-  // 4. Thay thế nguyên âm và phụ âm đơn còn lại
-  const COMPOUND_SET = new Set(['W', 'N', '>', '⊤', '⊥', 'C', 'R', 'y', '⊃', '⊏', 'j', 'ᑯ']);
+  // 5. Thay thế nguyên âm và phụ âm đơn còn lại
+  const COMPOUND_SET = new Set(['W', 'N', '>', '⊤', '⊥', 'C', 'R', 'Y', '⊃', '⊏', 'j', 'ᑯ']);
   return [...clean].map(ch => {
     if (COMPOUND_SET.has(ch)) return ch;
     const lower = ch.toLowerCase();
@@ -1251,32 +1253,15 @@ export function toFakeVietMinimal(text) {
 
 export function fromFakeVietMinimal(text) {
   if (!text) return '';
-  let out = '';
   const MAP = {
-    'W': 'ngh', 'N': 'ng', '>': 'kh', '⊤': 'th', '⊥': 'ph', 'C': 'ch', 'R': 'tr',
+    'W': 'ngh', 'N': 'ng', '>': 'kh', '⊤': 'th', '⊥': 'ph', 'C': 'ch', 'R': 'tr', 'Y': 'nh',
     '⊃': 'gh', '⊏': 'qu', 'j': 'gi', 'ᑯ': 'd', '⊂': 'c', '<': 'k', '+': 't',
     'p': 'p', '↯': 'g', '∩': 'n', '┌': 'r', '┘': 's', 'b': 'b', '|': 'l',
     'm': 'm', '∨': 'v', '×': 'x', '♡': 'h', '—': 'a', '=': 'e', '⸝': 'i',
-    '/': 'i', '∪': 'u', 'o': 'o', '0': '0', '⊙': 'o'
+    '/': 'i', '∪': 'u', 'o': 'o', '0': '0', '⊙': 'o', 'y': 'y'
   };
 
-  for (let i = 0; i < text.length; i++) {
-    const ch = text[i];
-    const prev = i > 0 ? text[i-1] : '';
-    const next = i < text.length - 1 ? text[i+1] : '';
-    
-    if (ch === 'y') {
-      // Xử lý thông minh: y sau phụ âm (|y, <y, my, +y, ┘y), sau ∪ (uy) hoặc đứng biệt lập là nguyên âm 'y'
-      if (['|', '<', 'm', '+', '┘', 'b', 'ᑯ', '┌', '∪'].includes(prev) || (!prev || prev === ' ') && (!next || next === ' ')) {
-        out += 'y';
-      } else {
-        out += 'nh';
-      }
-    } else {
-      out += MAP[ch] !== undefined ? MAP[ch] : ch;
-    }
-  }
-  return out;
+  return [...text].map(ch => MAP[ch] !== undefined ? MAP[ch] : ch).join('');
 }
 
 function timeTo5Digit(timeStr) {
