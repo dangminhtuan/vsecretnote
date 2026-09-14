@@ -122,7 +122,7 @@ export const B60_TO_UNICODE = {
   'N': 'N', 'y': 'y', 'L': '└', 'W': 'W', 'p': 'p', 'f': '⊥', 'q': '⊏', 't': '+', 'T': '⊤', 'R': 'R',
   'x': '×', '0': '⊙', '1': '1', '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8',
   '9': '9', 'A': '\\', 'B': 'B', 'E': '⊢', 'F': '⊣', 'H': '⊓', 'o': 'o', 'J': 'J', 'M': 'M', 'P': '⊐',
-  'U': '⊔', 'V': '∧', 'X': 'X', 'Y': 'Y', 'Z': 'Z', 'a': '—', 'e': '=', 'i': '/', 'u': '∪', 'w': 'w'
+  'U': '⊔', 'V': '∧', 'X': 'X', 'Y': 'Y', 'Z': 'Z', 'a': '—', 'e': '=', 'i': '⸝', 'u': '∪', 'w': 'w'
 };
 
 export const UNICODE_TO_B60 = {};
@@ -131,6 +131,7 @@ for (const [b, u] of Object.entries(B60_TO_UNICODE)) {
 }
 UNICODE_TO_B60['│'] = 'l'; // Tương thích ngược với nét sổ đứng Box Drawing cũ
 UNICODE_TO_B60['|'] = 'l'; // Tương thích ngược với ký tự gạch đứng ASCII pipe
+UNICODE_TO_B60['/'] = 'i'; // Tương thích ngược với ký tự gạch chéo ASCII cũ
 
 export function b60ToUnicodeSymbols(b60) {
   if (!b60) return '';
@@ -1173,17 +1174,22 @@ function fromFakeViet(fakeText) {
   }).join('');
 }
 
-// ===== MÃ GIẢ VIỆT TỐI GIẢN (1-1 ZERO-FONT BYPASS) =====
+// ===== MÃ GIẢ VIỆT TỐI GIẢN (ZERO-FONT BYPASS — BỘ QUY CHUẨN GEO-FONT BASE60) =====
+export const FAKE_VIET_MINIMAL_SINGLE_MAP = {
+  // Phụ âm đơn
+  'c': '⊂', 'k': '<', 't': '+', 'p': 'p', 'g': '↯', 'n': '∩',
+  'r': '┌', 's': '┘', 'b': 'b', 'l': '|', 'm': 'm', 'v': '∨',
+  'x': '×', 'h': '♡',
+  // Nguyên âm
+  'a': '—', 'e': '=', 'i': '⸝', 'u': '∪', 'o': 'o'
+};
+
 export const FAKE_VIET_MINIMAL_MAP = {
-  // 26 chữ cái thường
-  'a': '—', 'b': 'b', 'c': '⊂', 'd': 'ᑯ', 'e': '=', 'f': '⊥', 'g': '↯',
-  'h': '♡', 'i': '/', 'j': 'j', 'k': '<', 'l': '|', 'm': 'm', 'n': '∩',
-  'o': '⊙', 'p': 'p', 'q': '⊏', 'r': '┌', 's': '┘', 't': '+', 'u': '∪',
-  'v': '∨', 'w': 'w', 'x': '×', 'y': 'y', 'z': '┐',
-  // 26 chữ cái hoa
+  ...FAKE_VIET_MINIMAL_SINGLE_MAP,
+  'd': 'ᑯ', 'f': '⊥', 'j': 'j', 'q': '⊏', 'w': 'w', 'y': 'y', 'z': '┐',
   'A': '\\', 'B': 'B', 'C': 'C', 'D': 'D', 'E': '⊢', 'F': '⊣', 'G': '⊃',
-  'H': '⊓', 'I': '/', 'J': 'J', 'K': '>', 'L': '└', 'M': 'M', 'N': 'N',
-  'O': '⊙', 'P': '⊐', 'Q': '□', 'R': 'R', 'S': 'S', 'T': '⊤', 'U': '⊔',
+  'H': '⊓', 'I': '⸝', 'J': 'J', 'K': '>', 'L': '└', 'M': 'M', 'N': 'N',
+  'O': 'o', 'P': '⊐', 'Q': '□', 'R': 'R', 'S': 'S', 'T': '⊤', 'U': '⊔',
   'V': '∧', 'W': 'W', 'X': 'X', 'Y': 'Y', 'Z': 'Z'
 };
 
@@ -1195,21 +1201,82 @@ for (const [k, v] of Object.entries(FAKE_VIET_MINIMAL_MAP)) {
 }
 REV_FAKE_VIET_MINIMAL_MAP['/'] = 'i';
 REV_FAKE_VIET_MINIMAL_MAP['|'] = 'l';
-REV_FAKE_VIET_MINIMAL_MAP['l'] = 'l';
 REV_FAKE_VIET_MINIMAL_MAP['—'] = 'a';
 REV_FAKE_VIET_MINIMAL_MAP['-'] = 'a';
 REV_FAKE_VIET_MINIMAL_MAP['o'] = 'o';
-REV_FAKE_VIET_MINIMAL_MAP['O'] = 'O';
+REV_FAKE_VIET_MINIMAL_MAP['O'] = 'o';
+REV_FAKE_VIET_MINIMAL_MAP['⊙'] = 'o';
 
 export function toFakeVietMinimal(text) {
   if (!text) return '';
-  const noTone = removeAccentsStr(text);
-  return [...noTone].map(c => FAKE_VIET_MINIMAL_MAP[c] || c).join('');
+  // 1. Tách dấu thanh chuẩn NFD
+  let clean = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  // 2. Gom gộp thông minh các ký hiệu gõ rời / tương thích ngược
+  clean = clean.replace(/N[h♡]/gi, 'W');
+  clean = clean.replace(/∩[↯g][h♡]/gi, 'W');
+  clean = clean.replace(/∩[↯g]/gi, 'N');
+  clean = clean.replace(/<[h♡]/gi, '>');
+  clean = clean.replace(/\+[h♡]/gi, '⊤');
+  clean = clean.replace(/p[h♡]/gi, '⊥');
+  clean = clean.replace(/⊂[h♡]/gi, 'C');
+  clean = clean.replace(/\+[r┌]/gi, 'R');
+  clean = clean.replace(/∩[h♡]/gi, 'y');
+  clean = clean.replace(/↯[h♡]/gi, '⊃');
+  clean = clean.replace(/⊏[u∪]/gi, '⊏');
+  clean = clean.replace(/[↯g][i⸝]/gi, 'j');
+
+  // 3. Quy chuẩn 24 phụ âm đầu theo geo-font.html (ưu tiên phụ âm dài trước)
+  clean = clean.replace(/ngh/gi, 'W');
+  clean = clean.replace(/ng/gi, 'N');
+  clean = clean.replace(/kh/gi, '>');
+  clean = clean.replace(/th/gi, '⊤');
+  clean = clean.replace(/ph/gi, '⊥');
+  clean = clean.replace(/ch/gi, 'C');
+  clean = clean.replace(/tr/gi, 'R');
+  clean = clean.replace(/nh/gi, 'y');
+  clean = clean.replace(/gh/gi, '⊃');
+  clean = clean.replace(/qu/gi, '⊏');
+  clean = clean.replace(/gi/gi, 'j');
+  clean = clean.replace(/[đd]/gi, 'ᑯ');
+
+  // 4. Thay thế nguyên âm và phụ âm đơn còn lại
+  const COMPOUND_SET = new Set(['W', 'N', '>', '⊤', '⊥', 'C', 'R', 'y', '⊃', '⊏', 'j', 'ᑯ']);
+  return [...clean].map(ch => {
+    if (COMPOUND_SET.has(ch)) return ch;
+    const lower = ch.toLowerCase();
+    return FAKE_VIET_MINIMAL_SINGLE_MAP[lower] || ch;
+  }).join('');
 }
 
-export function fromFakeVietMinimal(minimalText) {
-  if (!minimalText) return '';
-  return [...minimalText].map(c => REV_FAKE_VIET_MINIMAL_MAP[c] || c).join('');
+export function fromFakeVietMinimal(text) {
+  if (!text) return '';
+  let out = '';
+  const MAP = {
+    'W': 'ngh', 'N': 'ng', '>': 'kh', '⊤': 'th', '⊥': 'ph', 'C': 'ch', 'R': 'tr',
+    '⊃': 'gh', '⊏': 'qu', 'j': 'gi', 'ᑯ': 'd', '⊂': 'c', '<': 'k', '+': 't',
+    'p': 'p', '↯': 'g', '∩': 'n', '┌': 'r', '┘': 's', 'b': 'b', '|': 'l',
+    'm': 'm', '∨': 'v', '×': 'x', '♡': 'h', '—': 'a', '=': 'e', '⸝': 'i',
+    '/': 'i', '∪': 'u', 'o': 'o', '0': '0', '⊙': 'o'
+  };
+
+  for (let i = 0; i < text.length; i++) {
+    const ch = text[i];
+    const prev = i > 0 ? text[i-1] : '';
+    const next = i < text.length - 1 ? text[i+1] : '';
+    
+    if (ch === 'y') {
+      // Xử lý thông minh: y sau phụ âm (|y, <y, my, +y, ┘y), sau ∪ (uy) hoặc đứng biệt lập là nguyên âm 'y'
+      if (['|', '<', 'm', '+', '┘', 'b', 'ᑯ', '┌', '∪'].includes(prev) || (!prev || prev === ' ') && (!next || next === ' ')) {
+        out += 'y';
+      } else {
+        out += 'nh';
+      }
+    } else {
+      out += MAP[ch] !== undefined ? MAP[ch] : ch;
+    }
+  }
+  return out;
 }
 
 function timeTo5Digit(timeStr) {
@@ -1263,25 +1330,15 @@ function syncFromFakeViet() {
 function syncFromFakeVietMinimal() {
   if (!txtFakeVietMinimal) return;
 
-  // Tự động chuyển đổi các ký tự vừa gõ/dán thành ký hiệu tối giản (IME thông minh)
+  // Tự động chuyển đổi các ký tự vừa gõ/dán thành ký hiệu tối giản & gom phụ âm ghép
   const raw = txtFakeVietMinimal.value;
-  let transformed = '';
-  let hasChange = false;
-  for (let i = 0; i < raw.length; i++) {
-    const ch = raw[i];
-    const m = FAKE_VIET_MINIMAL_MAP[ch];
-    if (m && m !== ch) {
-      transformed += m;
-      hasChange = true;
-    } else {
-      transformed += ch;
-    }
-  }
-  if (hasChange) {
+  const transformed = toFakeVietMinimal(raw);
+  if (transformed !== raw) {
     const selStart = txtFakeVietMinimal.selectionStart;
-    const selEnd = txtFakeVietMinimal.selectionEnd;
+    const diff = transformed.length - raw.length;
     txtFakeVietMinimal.value = transformed;
-    txtFakeVietMinimal.setSelectionRange(selStart, selEnd);
+    const newPos = Math.max(0, selStart + diff);
+    txtFakeVietMinimal.setSelectionRange(newPos, newPos);
   }
 
   const rawText = txtFakeVietMinimal.value;
@@ -1344,18 +1401,8 @@ if (txtFakeVietMinimal) {
   txtFakeVietMinimal.addEventListener('paste', (e) => {
     const pasteData = (e.clipboardData || window.clipboardData)?.getData('text');
     if (!pasteData) return;
-    let transformed = '';
-    let hasChange = false;
-    for (const ch of pasteData) {
-      const m = FAKE_VIET_MINIMAL_MAP[ch];
-      if (m && m !== ch) {
-        transformed += m;
-        hasChange = true;
-      } else {
-        transformed += ch;
-      }
-    }
-    if (hasChange) {
+    const transformed = toFakeVietMinimal(pasteData);
+    if (transformed && transformed !== pasteData) {
       e.preventDefault();
       const start = txtFakeVietMinimal.selectionStart;
       const end = txtFakeVietMinimal.selectionEnd;
@@ -1621,22 +1668,98 @@ function setupCopyClear(idBtn, idClear, targetInput) {
 // setupCopyClear('btn-copy-time5', 'btn-clear-time5', txtTime5);
 
 
-let multiCopyMode = false;
-let multiCopySelected = []; // [{id, label, val}]
-
-const MXC_FIELDS = [
-  { id: 'text-input',                  label: 'TEXT gốc'       },
-  { id: 'compressed-input',            label: 'BASE60'          },
-  { id: 'compressed-continuous-input', label: 'Nén liên tiếp'  },
-  { id: 'cvnss4-input',                label: 'CVNSS4'          },
-  { id: 'fake-viet-input',             label: 'Fake Viet'       },
-  { id: 'fakeviet-minimal-input',      label: 'Giả Việt Tối giản' },
-  { id: 'camel-case-input',            label: 'camelCase'       },
-  { id: 'no-accent-input',             label: 'Không dấu'       },
-  { id: 'time-input',                  label: 'TIME'            },
-  { id: 'time-5-input',                label: 'TIME-5'          },
-  { id: 'unicode-symbols-input',       label: 'Ký hiệu Unicode' },
+// ==================== BOX DEFINITIONS & SHARED VIEW CONFIGURATION ====================
+export const BOX_DEFINITIONS = [
+  { id: 'group-text', shortLabel: 'Tiếng Việt gốc', icon: '🟢', color: '#00ff66', targetId: 'text-input' },
+  { id: 'group-compressed', shortLabel: 'Base60', icon: '🟣', color: '#a855f7', targetId: 'compressed-input' },
+  { id: 'group-continuous', shortLabel: 'Base60 liền', icon: '🔤', color: '#a855f7', targetId: 'compressed-continuous-input' },
+  { id: 'group-holy', shortLabel: 'Giờ thiêng [4 số]', icon: '🟡', color: '#ffaa00', targetId: 'holy-hours-input' },
+  { id: 'group-twins', shortLabel: 'Kỳ quan gần nhất', icon: '✨', color: '#00ffaa', targetId: 'twins-input' },
+  { id: 'group-cyber-font', shortLabel: 'Cyber Font [TTF]', icon: '🔠', color: '#58a6ff', targetId: 'cyber-font-preview' },
+  { id: 'group-viscript-font', shortLabel: 'ViScript Font [V2B]', icon: '🖋️', color: '#00f2fe', targetId: 'viscript-font-preview' },
+  { id: 'group-unicode-symbols', shortLabel: 'Ký hiệu Unicode [Zero]', icon: '🔶', color: '#ffd166', targetId: 'unicode-symbols-input' },
+  { id: 'group-time', shortLabel: 'Thời gian [6 số]', icon: '⏱️', color: '#00f0ff', targetId: 'time-input' },
+  { id: 'group-time5', shortLabel: 'Thời gian [5 số]', icon: '🔢', color: '#00f0ff', targetId: 'time-5-input' },
+  { id: 'group-cvnss4', shortLabel: 'CVNSS 4.0', icon: '⚡', color: '#f0f', targetId: 'cvnss4-input' },
+  { id: 'group-fakeviet', shortLabel: 'Mã Giả Việt', icon: '♰', color: '#ff5555', targetId: 'fake-viet-input' },
+  { id: 'group-fakeviet-minimal', shortLabel: 'Giả Việt Tối giản', icon: '✨', color: '#ff77aa', targetId: 'fakeviet-minimal-input' },
+  { id: 'group-camel', shortLabel: 'camelCase', icon: '🐫', color: '#ffaa00', targetId: 'camel-case-input' },
+  { id: 'group-noaccent', shortLabel: 'Không dấu liền', icon: '📝', color: '#888', targetId: 'no-accent-input' }
 ];
+
+export function getBoxVal(def) {
+  if (!def || !def.targetId) return '';
+  const el = document.getElementById(def.targetId);
+  if (!el) return '';
+  if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT') {
+    return el.value.trim();
+  }
+  return (el.textContent || '').trim();
+}
+
+const DEFAULT_ALL_BOX_IDS = BOX_DEFINITIONS.map(b => b.id);
+const DEFAULT_MINIMAL_BOX_IDS = [
+  'group-cyber-font',
+  'group-viscript-font',
+  'group-unicode-symbols'
+];
+
+// --- Thứ tự các ô (Order) ---
+let boxOrder = [...DEFAULT_ALL_BOX_IDS];
+try {
+  const savedOrder = localStorage.getItem('pref_box_order');
+  if (savedOrder) {
+    const parsed = JSON.parse(savedOrder);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      boxOrder = parsed.filter(id => DEFAULT_ALL_BOX_IDS.includes(id));
+      DEFAULT_ALL_BOX_IDS.forEach(id => {
+        if (!boxOrder.includes(id)) boxOrder.push(id);
+      });
+    }
+  }
+} catch (e) {
+  console.error(e);
+}
+
+// --- Trạng thái Bật/Tắt (Visible) ---
+let visibleBoxes = null;
+try {
+  const savedVisible = localStorage.getItem('pref_visible_boxes');
+  if (savedVisible) {
+    visibleBoxes = JSON.parse(savedVisible);
+  }
+} catch (e) {
+  console.error(e);
+}
+
+if (!Array.isArray(visibleBoxes) || visibleBoxes.length === 0) {
+  visibleBoxes = [...DEFAULT_ALL_BOX_IDS];
+} else {
+  if (!visibleBoxes.includes('group-cyber-font')) visibleBoxes.push('group-cyber-font');
+  if (!visibleBoxes.includes('group-viscript-font')) visibleBoxes.push('group-viscript-font');
+  if (!visibleBoxes.includes('group-unicode-symbols')) visibleBoxes.push('group-unicode-symbols');
+  if (!visibleBoxes.includes('group-fakeviet-minimal')) visibleBoxes.push('group-fakeviet-minimal');
+  if (!visibleBoxes.includes('group-holy')) visibleBoxes.push('group-holy');
+  if (!visibleBoxes.includes('group-twins')) visibleBoxes.push('group-twins');
+}
+
+// --- Cấu hình chế độ Gọn (Minimal) ---
+let minimalBoxes = [...DEFAULT_MINIMAL_BOX_IDS];
+try {
+  const savedMinimal = localStorage.getItem('pref_minimal_boxes');
+  if (savedMinimal) {
+    const parsed = JSON.parse(savedMinimal);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      minimalBoxes = parsed.filter(id => DEFAULT_ALL_BOX_IDS.includes(id));
+    }
+  }
+} catch (e) {
+  console.error(e);
+}
+
+// ==================== [m^C] BATCH MULTI-COPY ====================
+let multiCopyMode = false;
+let multiCopySelected = []; // [{slotId, id, mode, val}]
 
 const mxcSheet   = document.getElementById('mxc-sheet');
 const mxcItems   = document.getElementById('mxc-items');
@@ -1654,13 +1777,19 @@ function mxcOpenSheet() {
   multiCopySelected = [];
   mxcItems.innerHTML = '';
 
-  MXC_FIELDS.forEach(({ id, label }) => {
-    const el = document.getElementById(id);
-    const val = el ? el.value.trim() : '';
+  const defMap = new Map(BOX_DEFINITIONS.map(b => [b.id, b]));
+  // Đồng bộ tuyệt đối: Duyệt theo đúng thứ tự boxOrder và chỉ hiển thị ô đang bật trong visibleBoxes
+  const activeBoxIds = boxOrder.filter(id => visibleBoxes.includes(id));
+
+  activeBoxIds.forEach(id => {
+    const def = defMap.get(id);
+    if (!def) return;
+
+    const val = getBoxVal(def);
     const hasVal = !!val;
 
     const row = document.createElement('div');
-    row.style.cssText = 'display:flex; align-items:center; gap:6px; padding:6px 8px; border:1px solid #0f0; border-radius:4px; user-select:none; background:#000;';
+    row.style.cssText = 'display:flex; align-items:center; gap:6px; padding:6px 8px; border:1px solid ' + (hasVal ? '#1e3a2b' : '#181818') + '; border-radius:4px; user-select:none; background:#000; transition:border-color 0.2s;';
     row.dataset.id = id;
 
     // --- Left badge (plain text) ---
@@ -1668,17 +1797,18 @@ function mxcOpenSheet() {
     badgeLeft.className = 'mxc-badge-plain';
     badgeLeft.dataset.mode = 'plain';
     badgeLeft.dataset.fieldId = id;
+    badgeLeft.title = hasVal ? 'Click để chọn copy văn bản gốc' : 'Ô này đang trống';
     badgeLeft.style.cssText = 'width:22px; height:22px; border:1px solid ' + (hasVal ? '#0f0' : '#333') + '; border-radius:3px; display:flex; align-items:center; justify-content:center; font-family:monospace; font-size:11px; color:#0f0; flex-shrink:0; cursor:' + (hasVal ? 'pointer' : 'default') + ';';
     badgeLeft.textContent = '';
 
     // --- Label ---
     const labelSpan = document.createElement('span');
-    labelSpan.style.cssText = 'font-family:monospace; font-size:11px; color:' + (hasVal ? '#0f0' : '#333') + '; flex-shrink:0; min-width:85px;';
-    labelSpan.textContent = label;
+    labelSpan.style.cssText = 'font-family:monospace; font-size:11px; color:' + (hasVal ? (def.color || '#00ffcc') : '#444') + '; flex-shrink:0; min-width:125px; font-weight:bold; letter-spacing:0.3px;';
+    labelSpan.textContent = `${def.icon} ${def.shortLabel}`;
 
     // --- Preview ---
     const preview = document.createElement('span');
-    preview.style.cssText = 'font-family:monospace; font-size:10px; color:' + (hasVal ? '#666' : '#333') + '; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;';
+    preview.style.cssText = 'font-family:monospace; font-size:10.5px; color:' + (hasVal ? '#aaa' : '#333') + '; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1;';
     preview.textContent = val || '(trống)';
 
     // --- Right badge (hashtag) ---
@@ -1686,6 +1816,7 @@ function mxcOpenSheet() {
     badgeRight.className = 'mxc-badge-hash';
     badgeRight.dataset.mode = 'hash';
     badgeRight.dataset.fieldId = id;
+    badgeRight.title = hasVal ? 'Click để chọn copy dạng #hashtag' : 'Ô này đang trống';
     badgeRight.style.cssText = 'width:22px; height:22px; border:1px solid ' + (hasVal ? '#0f0' : '#333') + '; border-radius:3px; display:flex; align-items:center; justify-content:center; font-family:monospace; font-size:11px; color:#0f0; flex-shrink:0; cursor:' + (hasVal ? 'pointer' : 'default') + '; flex-direction:column; line-height:1;';
     badgeRight.innerHTML = hasVal ? '<span style="font-size:8px;color:#888">#</span>' : '';
 
@@ -1705,8 +1836,8 @@ function mxcOpenSheet() {
           badge.style.background = 'transparent';
           badge.style.color = '#0f0';
           badge.style.border = '1px solid #0f0';
-          badge.textContent = mode === 'hash' ? '' : '';
           if (mode === 'hash') badge.innerHTML = '<span style="font-size:8px;color:#888">#</span>';
+          else badge.textContent = '';
         } else {
           multiCopySelected.push({ slotId, id, mode, val: outVal });
           const order = multiCopySelected.length;
@@ -1747,15 +1878,16 @@ function mxcRefreshBadges() {
       badge.textContent = idx + 1;
       badge.style.background = mode === 'hash' ? '#f0a' : '#0ff';
       badge.style.color = '#000';
+      badge.style.border = '1px solid ' + (mode === 'hash' ? '#f0a' : '#0ff');
     } else {
       badge.style.background = 'transparent';
       badge.style.color = '#0f0';
+      badge.style.border = '1px solid #0f0';
       if (mode === 'hash') badge.innerHTML = '<span style="font-size:8px;color:#888">#</span>';
       else badge.textContent = '';
     }
   });
 }
-
 
 function mxcCloseSheet() {
   if (mxcSheet) mxcSheet.style.display = 'none';
@@ -1787,12 +1919,14 @@ if (mxcCancel) {
 if (mxcDoCopy) {
   mxcDoCopy.addEventListener('click', () => {
     if (multiCopySelected.length === 0) {
-      if (typeof showEXPToast === 'function') showEXPToast('Chưa chọn ô nào!');
+      if (typeof window.showToast === 'function') window.showToast('Chưa chọn ô nào!');
+      else if (typeof showEXPToast === 'function') showEXPToast('Chưa chọn ô nào!');
       return;
     }
     const text = multiCopySelected.map(s => s.val).join(' ');
     const doCopy = () => {
-      if (typeof showEXPToast === 'function') showEXPToast('✓ Đã copy ' + multiCopySelected.length + ' mục!');
+      if (typeof window.showToast === 'function') window.showToast('✓ Đã copy ' + multiCopySelected.length + ' mục!');
+      else if (typeof showEXPToast === 'function') showEXPToast('✓ Đã copy ' + multiCopySelected.length + ' mục!');
       mxcCloseSheet();
     };
     if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -3479,83 +3613,7 @@ if (chkViewCase) {
 }
 
 // 5. Toggle Visible Textboxes, Reordering & Custom Minimal View
-const BOX_DEFINITIONS = [
-  { id: 'group-text', shortLabel: 'Tiếng Việt gốc', icon: '🟢', color: '#00ff66' },
-  { id: 'group-compressed', shortLabel: 'Base60', icon: '🟣', color: '#a855f7' },
-  { id: 'group-continuous', shortLabel: 'Base60 liền', icon: '🔤', color: '#a855f7' },
-  { id: 'group-holy', shortLabel: 'Giờ thiêng [4 số]', icon: '🟡', color: '#ffaa00' },
-  { id: 'group-twins', shortLabel: 'Kỳ quan gần nhất', icon: '✨', color: '#00ffaa' },
-  { id: 'group-cyber-font', shortLabel: 'Cyber Font [TTF]', icon: '🔠', color: '#58a6ff' },
-  { id: 'group-viscript-font', shortLabel: 'ViScript Font [V2B]', icon: '🖋️', color: '#00f2fe' },
-  { id: 'group-unicode-symbols', shortLabel: 'Ký hiệu Unicode [Zero]', icon: '🔶', color: '#ffd166' },
-  { id: 'group-time', shortLabel: 'Thời gian [6 số]', icon: '⏱️', color: '#00f0ff' },
-  { id: 'group-time5', shortLabel: 'Thời gian [5 số]', icon: '🔢', color: '#00f0ff' },
-  { id: 'group-cvnss4', shortLabel: 'CVNSS 4.0', icon: '⚡', color: '#f0f' },
-  { id: 'group-fakeviet', shortLabel: 'Mã Giả Việt', icon: '♰', color: '#ff5555' },
-  { id: 'group-fakeviet-minimal', shortLabel: 'Giả Việt Tối giản', icon: '✨', color: '#ff77aa' },
-  { id: 'group-camel', shortLabel: 'camelCase', icon: '🐫', color: '#ffaa00' },
-  { id: 'group-noaccent', shortLabel: 'Không dấu liền', icon: '📝', color: '#888' }
-];
-
-const DEFAULT_ALL_BOX_IDS = BOX_DEFINITIONS.map(b => b.id);
-const DEFAULT_MINIMAL_BOX_IDS = [
-  'group-cyber-font',
-  'group-viscript-font',
-  'group-unicode-symbols'
-];
-
-// --- Thứ tự các ô (Order) ---
-let boxOrder = [...DEFAULT_ALL_BOX_IDS];
-try {
-  const savedOrder = localStorage.getItem('pref_box_order');
-  if (savedOrder) {
-    const parsed = JSON.parse(savedOrder);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      // Giữ thứ tự đã lưu và bổ sung các ô mới chưa có trong savedOrder
-      boxOrder = parsed.filter(id => DEFAULT_ALL_BOX_IDS.includes(id));
-      DEFAULT_ALL_BOX_IDS.forEach(id => {
-        if (!boxOrder.includes(id)) boxOrder.push(id);
-      });
-    }
-  }
-} catch (e) {
-  console.error(e);
-}
-
-// --- Trạng thái Bật/Tắt (Visible) ---
-let visibleBoxes = null;
-try {
-  const savedVisible = localStorage.getItem('pref_visible_boxes');
-  if (savedVisible) {
-    visibleBoxes = JSON.parse(savedVisible);
-  }
-} catch (e) {
-  console.error(e);
-}
-
-if (!Array.isArray(visibleBoxes) || visibleBoxes.length === 0) {
-  visibleBoxes = [...DEFAULT_ALL_BOX_IDS];
-} else {
-  // Đảm bảo các ô mới được bật mặc định nếu chưa từng lưu
-  if (!visibleBoxes.includes('group-cyber-font')) visibleBoxes.push('group-cyber-font');
-  if (!visibleBoxes.includes('group-viscript-font')) visibleBoxes.push('group-viscript-font');
-  if (!visibleBoxes.includes('group-unicode-symbols')) visibleBoxes.push('group-unicode-symbols');
-  if (!visibleBoxes.includes('group-fakeviet-minimal')) visibleBoxes.push('group-fakeviet-minimal');
-}
-
-// --- Cấu hình chế độ Gọn (Minimal) ---
-let minimalBoxes = [...DEFAULT_MINIMAL_BOX_IDS];
-try {
-  const savedMinimal = localStorage.getItem('pref_minimal_boxes');
-  if (savedMinimal) {
-    const parsed = JSON.parse(savedMinimal);
-    if (Array.isArray(parsed) && parsed.length > 0) {
-      minimalBoxes = parsed.filter(id => DEFAULT_ALL_BOX_IDS.includes(id));
-    }
-  }
-} catch (e) {
-  console.error(e);
-}
+// (Cấu hình BOX_DEFINITIONS, boxOrder, visibleBoxes đã được chia sẻ đồng bộ ở phần trên)
 
 // Hàm áp dụng thứ tự hiển thị trong DOM
 function applyBoxOrder() {

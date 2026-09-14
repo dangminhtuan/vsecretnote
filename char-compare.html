@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bảng So Sánh Ký Tự Trực Quan (Char Compare)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #060911;
+      --card-bg: #0d1322;
+      --border: #1e2c4a;
+      --accent: #00f2fe;
+      --yellow: #ffd166;
+      --pink: #ff77aa;
+      --text: #e2e8f0;
+      --text-muted: #8493a8;
+      --mono: 'JetBrains Mono', monospace;
+    }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      padding: 16px 12px 60px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    header {
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      color: var(--accent);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .live-tester {
+      background: #090e1c;
+      border: 1px solid #233558;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 22px;
+    }
+    .live-tester label {
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: bold;
+      display: block;
+      margin-bottom: 8px;
+    }
+    .input-box {
+      width: 100%;
+      background: #04060a;
+      border: 1px solid #2d426d;
+      border-radius: 6px;
+      padding: 10px 12px;
+      color: #fff;
+      font-family: var(--mono);
+      font-size: 15px;
+      outline: none;
+    }
+    .input-box:focus {
+      border-color: var(--accent);
+    }
+    .section-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      color: var(--yellow);
+      margin: 22px 0 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .card:hover {
+      border-color: var(--accent);
+    }
+    .card.active-choice {
+      border-color: #ff5555;
+      background: rgba(255, 85, 85, 0.05);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .opt-name {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+    }
+    .badge {
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid;
+    }
+    .badge-curr {
+      color: #ff5555;
+      border-color: #ff5555;
+      background: rgba(255,85,85,0.1);
+    }
+    .badge-rec {
+      color: #00ffaa;
+      border-color: #00ffaa;
+      background: rgba(0,255,170,0.1);
+    }
+    .badge-info {
+      color: var(--accent);
+      border-color: var(--accent);
+      background: rgba(0,242,254,0.1);
+    }
+    .preview-line {
+      background: #04060a;
+      border: 1px solid #141d30;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-top: 6px;
+      font-size: 18px;
+      letter-spacing: 2.5px;
+      line-height: 1.6;
+      word-break: break-all;
+    }
+    .pink-text {
+      color: var(--pink);
+    }
+    .desc {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+    .btn-apply {
+      margin-top: 8px;
+      background: rgba(0, 242, 254, 0.12);
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: var(--mono);
+    }
+    .btn-apply:hover {
+      background: var(--accent);
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>🔬 Bảng So Sánh Ký Tự Trực Quan (Char Compare)</h1>
+    <p class="subtitle">
+      Kiểm tra độ cân đối thị giác, kích thước và khả năng lách kiểm duyệt bot AI cho từng phương án ký tự.
+    </p>
+  </header>
+
+  <!-- GÕ THỬ TÙY CHỌN -->
+  <div class="live-tester">
+    <label>✍️ Gõ câu bất kỳ để xem hiển thị tự động trên tất cả các phương án:</label>
+    <input type="text" id="custom-text" class="input-box" value="tôi muốn cùng bạn bè đi khắp nơi" spellcheck="false" placeholder="Nhập chữ tiếng Việt..." />
+  </div>
+
+  <div class="section-title">🔴 1. SO SÁNH CÁC PHƯƠNG ÁN THAY THẾ CHỮ "O" (Hiện tại là ⊙)</div>
+
+  <!-- Phương án 0: Hiện tại ⊙ -->
+  <div class="card active-choice">
+    <div class="card-header">
+      <span class="opt-name">0. HIỆN TẠI: Vòng tròn có chấm <code>⊙</code> (U+2299 Circled Dot)</span>
+      <span class="badge badge-curr">Bản Đang Dùng</span>
+    </div>
+    <div class="preview-line pink-text" id="out-opt0">
+      +⊙⸝ m∪⊙∩ ⊂∪∩↯ b—∩ b= ᑯ⸝ &lt;♡—p ∩⊙⸝
+    </div>
+    <div class="desc">
+      ⚠️ <strong>Nhược điểm:</strong> Ký hiệu toán học kích thước to (rộng 1266px trong font Segoe UI Symbol), có chấm tròn đậm đặc ở tâm khiến thị giác cảm thấy bị phình to, lấn át các chữ cái khác.
+    </div>
+  </div>
+
+  <!-- Phương án 1: Số 0 -->
+  <div class="card">
+    <div class="card-header">
+      <span class="opt-name">1. DÙNG SỐ KHÔNG <code>0</code> (U+0030 ASCII Digit 0)</span>
+      <span class="badge badge-info">Thon Dài & Siêu Dễ Nhận Diện</span>
+    </div>
+    <div class="preview-line pink-text" id="out-opt1">
+      +0⸝ m∪0∩ ⊂∪∩↯ b—∩ b= ᑯ⸝ &lt;♡—p ∩0⸝
+    </div>
+    <div class="desc">
+      💡 <strong>Đặc điểm:</strong> Kích thước thon gọn (rộng 950px), cao bằng các chữ hoa/chữ số. Người đọc nhận ra ngay lập tức phong cách "teen code / leet speak".<br>
+      ⚠️ <strong>Lưu ý:</strong> Một số bot AI kiểm duyệt MXH cơ bản có bộ lọc chuyển đổi <code>0 -> o</code> khi quét từ cấm.
+    </div>
+  </div>
+
+  <!-- Phương án 2: Cyrillic о -->
+  <div class="card">
+    <div class="card-header">
+      <span class="opt-name">2. CHỮ O CYRILLIC <code>о</code> (U+043E) — Homoglyph Tự Nhiên</span>
+      <span class="badge badge-rec">⭐ Khuyến Nghị: Chuẩn x-height & Lách Bot AI Vô Địch</span>
+    </div>
+    <div class="preview-line pink-text" id="out-opt2">
+      +о⸝ m∪о∩ ⊂∪∩↯ b—∩ b= ᑯ⸝ &lt;♡—p ∩о⸝
+    </div>
+    <div class="desc">
+      ✨ <strong>Tuyệt đỉnh thị giác:</strong> Kích thước bằng 100% chữ <code>o</code> thường (chiều cao 1040px, rộng 1008px), đứng cạnh <code>m, u, n, d</code> chuẩn tỉ lệ vàng tuyệt đối.<br>
+      🛡️ <strong>Bypass bot kiểm duyệt:</strong> Mã nhị phân là bảng chữ cái Nga (Cyrillic <code>0x043E</code>), bot quét từ khóa La-tinh (<code>0x6F</code>) sẽ <strong>hoàn toàn trượt mục tiêu</strong>, không bao giờ nhận ra từ khóa!
+    </div>
+  </div>
+
+  <!-- Phương án 3: White Circle ○ -->
+  <div class="card">
+    <div class="card-header">
+      <span class="opt-name">3. VÒNG TRÒN RỖNG <code>○</code> (U+25CB White Circle)</span>
+      <span class="badge badge-info">Hình Học Thanh Thoát</span>
+    </div>
+    <div class="preview-line pink-text" id="out-opt3">
+      +○⸝ m∪○∩ ⊂∪∩↯ b—∩ b= ᑯ⸝ &lt;♡—p ∩○⸝
+    </div>
+    <div class="desc">
+      💡 Giữ nguyên hình tròn hình học nhưng <strong>bỏ chấm đen ở tâm</strong>, giúp mắt nhìn thoáng đãng hơn, không còn cảm giác bị nặng nề như <code>⊙</code>.
+    </div>
+  </div>
+
+  <!-- Phương án 4: Medium Small White Circle ⚬ -->
+  <div class="card">
+    <div class="card-header">
+      <span class="opt-name">4. VÒNG TRÒN NHỎ GỌN <code>⚬</code> (U+26AC Medium Small White Circle)</span>
+      <span class="badge badge-info">Kích Thước Nhỏ (778px)</span>
+    </div>
+    <div class="preview-line pink-text" id="out-opt4">
+      +⚬⸝ m∪⚬∩ ⊂∪∩↯ b—∩ b= ᑯ⸝ &lt;♡—p ∩⚬⸝
+    </div>
+    <div class="desc">
+      💡 Vòng tròn cỡ vừa nhỏ, đường kính nhỏ hơn chữ thường một chút (cao 778px), tạo cảm giác rất xinh xắn, tinh gọn.
+    </div>
+  </div>
+
+  <!-- Phương án 5: Greek Omicron ο -->
+  <div class="card">
+    <div class="card-header">
+      <span class="opt-name">5. CHỮ OMICRON HY LẠP <code>ο</code> (U+03BF Greek Small Omicron)</span>
+      <span class="badge badge-info">Homoglyph Hy Lạp</span>
+    </div>
+    <div class="preview-line pink-text" id="out-opt5">
+      +ο⸝ m∪ο∩ ⊂∪∩↯ b—∩ b= ᑯ⸝ &lt;♡—p ∩ο⸝
+    </div>
+    <div class="desc">
+      💡 Tương tự Cyrillic, nhìn như chữ <code>o</code> thường nhưng là ký tự Hy Lạp, bot AI không lọc được.
+    </div>
+  </div>
+
+  <!-- Phương án 6: Chữ o thường Latinh gốc -->
+  <div class="card">
+    <div class="card-header">
+      <span class="opt-name">6. GIỮ NGUYÊN CHỮ <code>o</code> LA-TINH GỐC (U+006F)</span>
+      <span class="badge badge-info">Cực Kỳ Tự Nhiên</span>
+    </div>
+    <div class="preview-line pink-text" id="out-opt6">
+      +o⸝ m∪on ⊂∪n↯ b—n b= ᑯ⸝ &lt;♡—p n⊙⸝
+    </div>
+    <div class="desc">
+      💡 Vì các chữ cái xung quanh (như <code>t -> +, i -> ⸝, u -> ∪</code>) đã bị biến đổi hình học, nên bot AI vẫn không thể ghép thành từ có nghĩa, ngay cả khi chữ <code>o</code> giữ nguyên.
+    </div>
+  </div>
+
+  <script>
+    const MAP_BASE = {
+      'a': '—', 'b': 'b', 'c': '⊂', 'd': 'ᑯ', 'e': '=', 'f': '⊥', 'g': '↯',
+      'h': '♡', 'i': '⸝', 'j': 'j', 'k': '<', 'l': '|', 'm': 'm', 'n': '∩',
+      'p': 'p', 'q': '⊏', 'r': '┌', 's': '┘', 't': '+', 'u': '∪',
+      'v': '∨', 'w': 'w', 'x': '×', 'y': 'y', 'z': '┐',
+      'A': '\\', 'B': 'B', 'C': 'C', 'D': 'D', 'E': '⊢', 'F': '⊣', 'G': '⊃',
+      'H': '⊓', 'I': '⸝', 'J': 'J', 'K': '>', 'L': '└', 'M': 'M', 'N': 'N',
+      'P': '⊐', 'Q': '□', 'R': 'R', 'S': 'S', 'T': '⊤', 'U': '⊔',
+      'V': '∧', 'W': 'W', 'X': 'X', 'Y': 'Y', 'Z': 'Z'
+    };
+
+    function removeAccents(str) {
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
+    }
+
+    function renderWithO(text, oChar) {
+      const clean = removeAccents(text);
+      return [...clean].map(ch => {
+        if (ch === 'o' || ch === 'O') return oChar;
+        return MAP_BASE[ch] || ch;
+      }).join('');
+    }
+
+    const inputEl = document.getElementById('custom-text');
+    const oVariants = [
+      { id: 'out-opt0', char: '⊙' },
+      { id: 'out-opt1', char: '0' },
+      { id: 'out-opt2', char: 'о' }, // Cyrillic
+      { id: 'out-opt3', char: '○' }, // White Circle
+      { id: 'out-opt4', char: '⚬' }, // Medium Circle
+      { id: 'out-opt5', char: 'ο' }, // Greek
+      { id: 'out-opt6', char: 'o' }, // Latin
+    ];
+
+    function updateAll() {
+      const val = inputEl.value || 'tôi muốn cùng bạn bè đi khắp nơi';
+      oVariants.forEach(({ id, char }) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = renderWithO(val, char);
+      });
+    }
+
+    inputEl.addEventListener('input', updateAll);
+    updateAll();
+  </script>
+</body>
+</html>

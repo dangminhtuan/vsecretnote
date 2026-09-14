@@ -44,7 +44,8 @@ export default defineConfig({
         geo_font: resolve(import.meta.dirname, 'geo-font.html'),
         glyph_studio: resolve(import.meta.dirname, 'glyph-studio.html'),
         v2b_demo: resolve(import.meta.dirname, 'v2b-demo.html'),
-        viscript_encoder: resolve(import.meta.dirname, 'viscript-encoder.html')
+        viscript_encoder: resolve(import.meta.dirname, 'viscript-encoder.html'),
+        subtitle: resolve(import.meta.dirname, 'subtitle.html')
       }
     }
   }

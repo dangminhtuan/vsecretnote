@@ -1,14 +1,18 @@
 # Project Rules: vsecretnote (TimeCypher & ViScript)
 
-## Cung cấp Link Kiểm thử Mạng Nội bộ (LAN IP for Mobile & PC)
+## Cung cấp Link Kiểm thử: Song song Localhost (PC) & LAN IP (Mobile)
 - **Context**: BẤT KỲ TRƯỜNG HỢP NÀO trợ lý gửi link kiểm thử cho người dùng (hoàn thành tác vụ, phản hồi lệnh `br`, `r`, gợi ý link xem trước, kiểm thử tính năng...).
 - **Constraint**: 
   1. Đảm bảo cấu hình server web luôn mở lắng nghe mọi địa chỉ mạng (`host: '0.0.0.0'` hoặc `host: true` trong `vite.config.js`).
-  2. BẮT BUỘC LUÔN LUÔN cung cấp link theo **IP mạng nội bộ (LAN IPv4: `192.168.1.123`)** để người dùng có thể click mở trực tiếp trên cả máy tính lẫn điện thoại di động (`_m`) chung Wi-Fi. TUYỆT ĐỐI KHÔNG chỉ gửi mỗi link `localhost`.
+  2. **BẮT BUỘC LUÔN LUÔN CUNG CẤP CẢ 2 LINK RIÊNG BIỆT**, đặt nhãn trực quan rõ ràng để người dùng liếc qua là biết ngay:
+     - 💻 **Link Localhost (PC)**: Dùng để test trên máy tính, đảm bảo trình duyệt nhận diện Secure Context cho phép hoạt động đầy đủ tính năng Copy / Clipboard API.
+     - 📱 **Link LAN IP (Mobile)**: Dùng IP mạng nội bộ (`http://192.168.1.123:5173/<path>`) để test trên điện thoại di động (`_m`) qua Wi-Fi khi không ngồi trước máy tính.
   3. **Chỉ gửi link trang đang làm việc / có liên quan**:
-     - Mặc định chỉ gửi trang đang làm việc hoặc được yêu cầu (ví dụ: đang làm việc ở Studio/Sandbox thì CHỈ gửi link Trang chính).
-     - Tuyệt đối KHÔNG gửi kèm link các trang không liên quan (như demo bàn phím, bảng font...) nếu người dùng không yêu cầu hoặc tác vụ không đụng đến chúng.
-     - Định dạng link xuất ra chat: 📱 💻 **[Tên trang (PC & Mobile)](http://192.168.1.123:5173/<path_neu_co>)**
+     - Mặc định chỉ gửi trang đang làm việc hoặc được yêu cầu (ví dụ: đang làm việc ở Subtitle thì CHỈ gửi 2 link của Subtitle).
+     - Tuyệt đối KHÔNG gửi kèm link các trang không liên quan nếu người dùng không yêu cầu.
+  4. **Định dạng hiển thị chuẩn ra chat**:
+     - 💻 **[Tên trang - PC/Localhost (Hỗ trợ Copy)](http://localhost:5173/<path_neu_co>)**
+     - 📱 **[Tên trang - Mobile/LAN IP (Điện thoại)](http://192.168.1.123:5173/<path_neu_co>)**
 
 ## Tư duy Logic & Đối chiếu Vi sai khi Phân tích Lỗi (Differential Root-Cause Analysis)
 - **Context**: Khi người dùng báo lỗi kỹ thuật về một nút bấm, tính năng, hoặc hành vi bị hỏng ở một thành phần/ô nhập cụ thể.

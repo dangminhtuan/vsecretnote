@@ -25,6 +25,16 @@ export const VSN_PAGES = [
     aliases: ['/', '/index.html', '/index']
   },
   {
+    id: 'subtitle',
+    title: 'Phụ Đề Video SRT',
+    shortTitle: 'Phụ Đề SRT',
+    badge: 'SRT CIPHER',
+    desc: 'Mã hóa phụ đề video SRT & Song mã',
+    icon: '🎬',
+    path: '/subtitle.html',
+    aliases: ['/subtitle.html', '/subtitle']
+  },
+  {
     id: 'twins',
     title: 'Kỳ Quan Đối Xứng',
     shortTitle: 'Kỳ Quan Đối Xứng',
