@@ -14,15 +14,19 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.android.material.button.MaterialButton
+import com.google.android.material.card.MaterialCardView
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var tvAccessibilityStatus: TextView
     private lateinit var btnGrantAccessibility: Button
-    private lateinit var btnToggleHandsfree: MaterialButton
+    private lateinit var cardSwitchContainer: MaterialCardView
+    private lateinit var switchHandsfree: SwitchMaterial
+    private lateinit var tvSwitchSubtitle: TextView
     private lateinit var btnEnableIme: Button
     private lateinit var btnSelectIme: Button
+    private lateinit var btnOpenMacroSettings: Button
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -41,9 +45,12 @@ class MainActivity : AppCompatActivity() {
 
         tvAccessibilityStatus = findViewById(R.id.tv_accessibility_status)
         btnGrantAccessibility = findViewById(R.id.btn_grant_accessibility)
-        btnToggleHandsfree = findViewById(R.id.btn_toggle_handsfree)
+        cardSwitchContainer = findViewById(R.id.card_switch_container)
+        switchHandsfree = findViewById(R.id.switch_handsfree)
+        tvSwitchSubtitle = findViewById(R.id.tv_switch_subtitle)
         btnEnableIme = findViewById(R.id.btn_enable_ime)
         btnSelectIme = findViewById(R.id.btn_select_ime)
+        btnOpenMacroSettings = findViewById(R.id.btn_open_macro_settings)
 
         setupListeners()
         checkAndRequestPermissions()
@@ -62,31 +69,42 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Hãy tìm 'Vboard' trong danh sách và BẬT quyền Trợ năng!", Toast.LENGTH_LONG).show()
         }
 
-        // Nút Bật/Tắt Lắng nghe Rảnh tay
-        btnToggleHandsfree.setOnClickListener {
-            val hasAudioPermission = ContextCompat.checkSelfPermission(
-                this, Manifest.permission.RECORD_AUDIO
-            ) == PackageManager.PERMISSION_GRANTED
+        // Bấm vào bất kỳ đâu trên card cũng gạt công tắc
+        cardSwitchContainer.setOnClickListener {
+            switchHandsfree.isChecked = !switchHandsfree.isChecked
+        }
 
-            if (!hasAudioPermission) {
-                checkAndRequestPermissions()
-                return@setOnClickListener
-            }
+        // Sự kiện gạt công tắc Rảnh tay
+        switchHandsfree.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                val hasAudioPermission = ContextCompat.checkSelfPermission(
+                    this, Manifest.permission.RECORD_AUDIO
+                ) == PackageManager.PERMISSION_GRANTED
 
-            if (!HandsFreeAccessibilityService.isRunning()) {
-                Toast.makeText(this, "Vui lòng cấp quyền Trợ Năng trước khi bật rảnh tay!", Toast.LENGTH_LONG).show()
-                btnGrantAccessibility.performClick()
-                return@setOnClickListener
-            }
+                if (!hasAudioPermission) {
+                    switchHandsfree.isChecked = false
+                    checkAndRequestPermissions()
+                    return@setOnCheckedChangeListener
+                }
 
-            if (HandsFreeVoiceService.isServiceRunning) {
-                HandsFreeVoiceService.stop(this)
-                Toast.makeText(this, "Đã tắt chế độ lắng nghe rảnh tay.", Toast.LENGTH_SHORT).show()
+                if (!HandsFreeAccessibilityService.isRunning()) {
+                    switchHandsfree.isChecked = false
+                    Toast.makeText(this, "Vui lòng cấp quyền Trợ Năng trước khi bật rảnh tay!", Toast.LENGTH_LONG).show()
+                    btnGrantAccessibility.performClick()
+                    return@setOnCheckedChangeListener
+                }
+
+                if (!HandsFreeVoiceService.isServiceRunning) {
+                    HandsFreeVoiceService.start(this)
+                    Toast.makeText(this, "Đã BẬT! Nói 'Chiến thôi [nội dung]' bất cứ lúc nào.", Toast.LENGTH_SHORT).show()
+                }
             } else {
-                HandsFreeVoiceService.start(this)
-                Toast.makeText(this, "Đã BẬT! Giờ bạn có thể nói 'Chiến thôi [nội dung]' bất cứ lúc nào.", Toast.LENGTH_LONG).show()
+                if (HandsFreeVoiceService.isServiceRunning) {
+                    HandsFreeVoiceService.stop(this)
+                    Toast.makeText(this, "Đã tắt chế độ lắng nghe rảnh tay.", Toast.LENGTH_SHORT).show()
+                }
             }
-            updateUIState()
+            updateSwitchVisual(isChecked)
         }
 
         // Cài đặt Bàn phím IME
@@ -97,6 +115,11 @@ class MainActivity : AppCompatActivity() {
         btnSelectIme.setOnClickListener {
             val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showInputMethodPicker()
+        }
+
+        btnOpenMacroSettings.setOnClickListener {
+            val intent = Intent(this, MacroSettingsActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -115,12 +138,21 @@ class MainActivity : AppCompatActivity() {
         }
 
         val isVoiceRunning = HandsFreeVoiceService.isServiceRunning
-        if (isVoiceRunning) {
-            btnToggleHandsfree.text = "🔴 TẮT CHẾ ĐỘ LẮNG NGHE RẢNH TAY"
-            btnToggleHandsfree.setBackgroundColor(Color.parseColor("#D93025"))
+        switchHandsfree.isChecked = isVoiceRunning
+        updateSwitchVisual(isVoiceRunning)
+    }
+
+    private fun updateSwitchVisual(isRunning: Boolean) {
+        if (isRunning) {
+            tvSwitchSubtitle.text = "🟢 Đang hoạt động: Sẵn sàng nghe 'Chiến thôi'..."
+            tvSwitchSubtitle.setTextColor(Color.parseColor("#0F9D58"))
+            cardSwitchContainer.setCardBackgroundColor(Color.parseColor("#E6F4EA"))
+            cardSwitchContainer.strokeColor = Color.parseColor("#34A853")
         } else {
-            btnToggleHandsfree.text = "🎙️ BẬT CHẾ ĐỘ LẮNG NGHE RẢNH TAY"
-            btnToggleHandsfree.setBackgroundColor(Color.parseColor("#1A73E8"))
+            tvSwitchSubtitle.text = "⚪ Đang tắt: Gạt sang để kích hoạt rảnh tay"
+            tvSwitchSubtitle.setTextColor(Color.parseColor("#5F6368"))
+            cardSwitchContainer.setCardBackgroundColor(Color.parseColor("#F1F3F4"))
+            cardSwitchContainer.strokeColor = Color.parseColor("#DADCE0")
         }
     }
 

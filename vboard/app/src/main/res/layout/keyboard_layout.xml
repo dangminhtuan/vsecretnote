@@ -3,85 +3,262 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="#EFEFEF">
+    android:background="#21262D">
 
-    <!-- Toolbar like Gboard -->
+    <!-- Toolbar trên cùng: Mode hiện tại & Nút ? HELP -->
     <LinearLayout
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="42dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:background="#FFFFFF"
-        android:paddingHorizontal="8dp"
-        android:elevation="2dp">
+        android:background="#161B22"
+        android:paddingHorizontal="8dp">
 
         <TextView
             android:id="@+id/btn_mode"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TEXT MODE"
-            android:textSize="14sp"
+            android:text="🟢 0: Tiếng Việt gốc"
+            android:textSize="13sp"
             android:textStyle="bold"
-            android:textColor="#333333"
-            android:padding="8dp"
-            android:background="?android:attr/selectableItemBackground"
+            android:textColor="#58A6FF"
+            android:background="#1F242C"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
             android:clickable="true"
             android:focusable="true"/>
 
-        <View
+        <TextView
+            android:id="@+id/tv_layer_status"
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="Tầng: Thường"
+            android:textSize="12sp"
+            android:textColor="#8B949E"/>
 
         <TextView
-            android:id="@+id/btn_notes"
+            android:id="@+id/btn_help"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="📋 NOTES"
+            android:text="❓"
             android:textSize="14sp"
-            android:textColor="#333333"
-            android:padding="8dp"
-            android:background="?android:attr/selectableItemBackground"
+            android:textStyle="bold"
+            android:textColor="#3FB950"
+            android:background="#1F242C"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/btn_settings"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⚙️"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#C9D1D9"
+            android:background="#1F242C"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:layout_marginStart="6dp"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:id="@+id/btn_mic"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎙️"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="#58A6FF"
+            android:background="#1F242C"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:layout_marginStart="6dp"
             android:clickable="true"
             android:focusable="true"/>
     </LinearLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp">
+        android:layout_height="260dp">
 
-        <!-- Custom View for Swipe Keyboard -->
+        <!-- Bàn phím vẽ tùy biến 5 hàng -->
         <vn.ehou.vsecretkeyboard.SwipeKeyboardView
             android:id="@+id/swipe_keyboard_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#EFEFEF" />
+            android:background="#1C2128" />
 
-        <!-- Notes Drawer Overlay -->
+        <!-- Bảng Trợ giúp Overlay ? HELP -->
         <LinearLayout
-            android:id="@+id/notes_drawer"
+            android:id="@+id/help_drawer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="#FFFFFF"
+            android:background="#0D1117"
             android:visibility="gone"
-            android:elevation="4dp">
+            android:elevation="6dp">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Ghi chú (Notes)"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="#000000"
-                android:padding="12dp"
-                android:background="#EEEEEE"/>
-            
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_notes"
+                android:layout_height="36dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#161B22"
+                android:paddingHorizontal="10dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/help_drawer_title"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#58A6FF"/>
+
+                <TextView
+                    android:id="@+id/btn_close_help"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✕ Đóng"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#F85149"
+                    android:padding="6dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
+
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Mục 1: Vuốt 6 Hướng & La Bàn HUD -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🧭 QUỆT 6 HƯỚNG &amp; LA BÀN NỔI (0ms):"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#58A6FF"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="⬆️ Sắc  •  ⬅️ Huyền  •  ➡️ Hỏi\n↙️ Ngã  •  ⬇️ Nặng  •  ↘️ Gốc TV (ă, â, đ, ê, ô, ơ, ư, uâ, iê...)\n💡 Khi vuốt, La bàn HUD sẽ nổi ngay phía trên ngón tay hiển thị 6 góc và ký tự thực tế!"
+                        android:textSize="11sp"
+                        android:lineSpacingExtra="2dp"
+                        android:textColor="#E6EDF3"
+                        android:layout_marginBottom="8dp"/>
+
+                    <!-- Mục 2: 2 Siêu Phím Phụ Âm Kép -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="⚡ 2 SIÊU PHÍM PHỤ ÂM KÉP (D &amp; Z):"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#3FB950"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="[d] Tap: d  •  Vuốt: ⬆️ tr, ⬅️ nh, ➡️ kh, ↙️ gh, ⬇️ th, ↘️ đ\n[z] Tap: z  •  Vuốt: ⬆️ qu, ⬅️ ph, ➡️ gi, ↙️ ch, ⬇️ ng, ↘️ ngh\n💡 Chạm giữ [d] hoặc [z] để Nở hoa 5 phụ âm xung quanh!"
+                        android:textSize="11sp"
+                        android:lineSpacingExtra="2dp"
+                        android:textColor="#E6EDF3"
+                        android:layout_marginBottom="8dp"/>
+
+                    <!-- Mục 3: Khóa Cố Định 3 Phím Góc -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="🔒 BẤM ĐÚP 3 PHÍM GÓC ĐỂ GHIM CỐ ĐỊNH:"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#D29922"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="[⇧ Shift] x2 = Caps Lock (⇪ HOA liên tục)\n[❖ Mode] x2 = Ghim chặt tầng Mode (❖ 🔒)\n[ớ] x2 = Ghim gõ tầng [ớ] (ớ 🔒 liên tục nhiều từ)"
+                        android:textSize="11sp"
+                        android:lineSpacingExtra="2dp"
+                        android:textColor="#E6EDF3"
+                        android:layout_marginBottom="8dp"/>
+
+                    <!-- Mục 4: Cử Chỉ Space & Backspace -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="👈 CỬ CHỈ TRƯỢT SPACE &amp; BACKSPACE:"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#F0883E"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="[Space]: Trượt trái/phải để di chuyển con trỏ mượt mà.\n[⌫]: Kéo sang trái: đến m = xóa 1 từ, n = xóa 2 từ, b = xóa 3 từ... Rung phản hồi mỗi từ!"
+                        android:textSize="11sp"
+                        android:lineSpacingExtra="2dp"
+                        android:textColor="#E6EDF3"
+                        android:layout_marginBottom="8dp"/>
+
+                    <!-- Mục 5: 15 Mode Cơ số 16 -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="❖ 15 MODE CƠ SỐ 16 (0..e):"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#BC8CFF"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="[0] 🟢 Gốc  •  [1] 🟣 Base60  •  [2] 🔤 Base60 liền\n[3] 🟡 Giờ 4 số  •  [4] ✨ Kỳ quan  •  [5] 🔠 Cyber Font\n[6] 🖊️ ViScript  •  [7] 🔶 Unicode Zero  •  [8] ⏱️ Giờ 6 số\n[9] 🔢 Giờ 5 số  •  [a] ⚡ CVNSS  •  [b] ✝️ Giả Việt\n[c] 🐫 camelCase  •  [d] 📝 Không dấu  •  [e] 🌟 Giả Việt ngắn"
+                        android:textSize="11sp"
+                        android:lineSpacingExtra="2dp"
+                        android:textColor="#E6EDF3"
+                        android:layout_marginBottom="8dp"/>
+
+                    <!-- Mục 6: Tiện Ích Biên Tập & Bôi Đen -->
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="✂️ BIÊN TẬP &amp; BÔI ĐEN (BẬT MODE):"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textColor="#58A6FF"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="[,] |🔤 Đầu câu  •  [s] 🔤. Cuối câu\n[x] ⏮| Đầu bài  •  [v] |⏭ Cuối bài  •  [p] ¶ Cả đoạn\n[Space] 📑 Chọn hết  •  [.] 📋 Dán  •  [h] 🔠 Hoa/thường\n[z] ↶ Undo  •  [r] ↷ Redo  •  [n] 🧹 Xóa hết\n[w] &quot;&quot;  •  [t] ()  •  [y] []  •  [q] {} Bọc ngoặc\n[i, j, k, l] ▲◀▼▶ Con trỏ  •  [u, o] ⇤ Đầu dòng ⇥ Cuối dòng"
+                        android:textSize="11sp"
+                        android:lineSpacingExtra="2dp"
+                        android:textColor="#E6EDF3"/>
+                </LinearLayout>
+            </ScrollView>
         </LinearLayout>
 
     </FrameLayout>

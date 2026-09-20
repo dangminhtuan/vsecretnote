@@ -61,6 +61,12 @@
             </intent-filter>
         </activity>
 
+        <!-- Giao diện Cài đặt Tốc ký (Word Macro Settings) -->
+        <activity
+            android:name=".MacroSettingsActivity"
+            android:exported="true"
+            android:label="Cài đặt Tốc ký (Word Macro)" />
+
     </application>
 
 </manifest>

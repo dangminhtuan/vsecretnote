@@ -20,8 +20,8 @@ import androidx.core.app.NotificationCompat
 import java.util.Locale
 
 /**
- * Service chạy nền lắng nghe âm thanh liên tục (Foreground Service):
- * Bắt khẩu lệnh "Chiến thôi" và chuyển tiếp nội dung cần nhập sang HandsFreeAccessibilityService.
+ * Service chạy nền lắng nghe giọng nói với tốc độ phản hồi tức thì (Live Streaming):
+ * Nhận diện từ khóa "Chiến thôi" linh hoạt và stream chữ trực tiếp theo thời gian thực (0.2s).
  */
 class HandsFreeVoiceService : Service(), RecognitionListener {
 
@@ -33,8 +33,15 @@ class HandsFreeVoiceService : Service(), RecognitionListener {
         var isServiceRunning = false
             private set
 
-        fun start(context: Context) {
-            val intent = Intent(context, HandsFreeVoiceService::class.java)
+        var instance: HandsFreeVoiceService? = null
+            private set
+
+        var onListeningStateChanged: ((Boolean) -> Unit)? = null
+
+        fun start(context: Context, forceListen: Boolean = false) {
+            val intent = Intent(context, HandsFreeVoiceService::class.java).apply {
+                if (forceListen) putExtra("force_listen", true)
+            }
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 context.startForegroundService(intent)
             } else {
@@ -52,9 +59,57 @@ class HandsFreeVoiceService : Service(), RecognitionListener {
     private val mainHandler = Handler(Looper.getMainLooper())
     private var isAwaitingContent = false
     private var isListening = false
+    private var hasBeepedForCurrentTrigger = false
+
+    fun isCurrentlyListening(): Boolean = isAwaitingContent
+
+    // Bộ đếm thời gian tự hủy chế độ chờ sau 6 giây
+    private val timeoutRunnable = Runnable {
+        if (isAwaitingContent) {
+            isAwaitingContent = false
+            hasBeepedForCurrentTrigger = false
+            HandsFreeAccessibilityService.instance?.resetSessionBase()
+            updateNotification("Nói: 'Chiến thôi [nội dung]'")
+            onListeningStateChanged?.invoke(false)
+            Log.d(TAG, "Đã hết thời gian chờ nội dung (Timeout 6s).")
+        }
+    }
+
+    fun forceStartListening() {
+        mainHandler.post {
+            isAwaitingContent = true
+            hasBeepedForCurrentTrigger = true
+            HandsFreeAccessibilityService.instance?.resetSessionBase()
+            HandsFreeAccessibilityService.instance?.playBeep()
+            HandsFreeAccessibilityService.instance?.vibratePattern(longArrayOf(0, 50, 40, 50))
+            
+            mainHandler.removeCallbacks(timeoutRunnable)
+            mainHandler.postDelayed(timeoutRunnable, 7000)
+
+            updateNotification("🎙️ Đang lắng nghe... Hãy nói nội dung!")
+            onListeningStateChanged?.invoke(true)
+
+            if (!isListening) {
+                startListening()
+            }
+        }
+    }
+
+    fun stopForceListening() {
+        mainHandler.post {
+            isAwaitingContent = false
+            hasBeepedForCurrentTrigger = false
+            mainHandler.removeCallbacks(timeoutRunnable)
+            HandsFreeAccessibilityService.instance?.resetSessionBase()
+            stopListening()
+            updateNotification("Nói: 'Chiến thôi [nội dung]'")
+            onListeningStateChanged?.invoke(false)
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
+        instance = this
         isServiceRunning = true
         createNotificationChannel()
         startForeground(NOTIFICATION_ID, buildNotification("Đang sẵn sàng lắng nghe khẩu lệnh..."))
@@ -64,13 +119,23 @@ class HandsFreeVoiceService : Service(), RecognitionListener {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent?.getBooleanExtra("force_listen", false) == true) {
+            mainHandler.postDelayed({
+                forceStartListening()
+            }, 300)
+        }
         return START_STICKY
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
+        if (instance == this) {
+            instance = null
+        }
         isServiceRunning = false
+        onListeningStateChanged?.invoke(false)
+        mainHandler.removeCallbacksAndMessages(null)
         stopListening()
         destroySpeechRecognizer()
         super.onDestroy()
@@ -148,7 +213,7 @@ class HandsFreeVoiceService : Service(), RecognitionListener {
                     putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, "vi-VN")
                     putExtra(RecognizerIntent.EXTRA_ONLY_RETURN_LANGUAGE_PREFERENCE, "vi-VN")
                     putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
-                    putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3)
+                    putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
                     putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
                 }
 
@@ -157,7 +222,7 @@ class HandsFreeVoiceService : Service(), RecognitionListener {
             } catch (e: Exception) {
                 Log.e(TAG, "Lỗi khi gọi startListening: ${e.message}")
                 isListening = false
-                scheduleRestart(1000)
+                scheduleRestart(800)
             }
         }
     }
@@ -169,10 +234,14 @@ class HandsFreeVoiceService : Service(), RecognitionListener {
         } catch (_: Exception) {}
     }
 
-    private fun scheduleRestart(delayMs: Long = 300) {
+    private fun scheduleRestart(delayMs: Long = 200) {
         isListening = false
         if (!isServiceRunning) return
         mainHandler.removeCallbacksAndMessages(null)
+        // Duy trì lại timeout nếu đang chờ nội dung
+        if (isAwaitingContent) {
+            mainHandler.postDelayed(timeoutRunnable, 6000)
+        }
         mainHandler.postDelayed({
             startListening()
         }, delayMs)
@@ -181,7 +250,9 @@ class HandsFreeVoiceService : Service(), RecognitionListener {
     // --- RecognitionListener Callbacks ---
 
     override fun onReadyForSpeech(params: Bundle?) {
-        updateNotification(if (isAwaitingContent) "Đang nghe nội dung cần nhập..." else "Nói: 'Chiến thôi [nội dung]'")
+        if (!isAwaitingContent) {
+            hasBeepedForCurrentTrigger = false
+        }
     }
 
     override fun onBeginningOfSpeech() {}
@@ -196,7 +267,6 @@ class HandsFreeVoiceService : Service(), RecognitionListener {
 
     override fun onError(error: Int) {
         isListening = false
-        // Error 7 = NO_MATCH, Error 6 = SPEECH_TIMEOUT (thường xuyên xảy ra khi người dùng im lặng)
         val isQuietTimeout = (error == SpeechRecognizer.ERROR_NO_MATCH || error == SpeechRecognizer.ERROR_SPEECH_TIMEOUT)
         if (!isQuietTimeout) {
             Log.w(TAG, "SpeechRecognizer báo mã lỗi: $error")
@@ -204,61 +274,120 @@ class HandsFreeVoiceService : Service(), RecognitionListener {
                 destroySpeechRecognizer()
             }
         }
-        scheduleRestart(if (isQuietTimeout) 250 else 800)
+        scheduleRestart(if (isQuietTimeout) 150 else 600)
     }
 
+    /**
+     * ⚡ LIVE STREAMING: Chữ vừa được phát âm là điền ngay vào ô màn hình lập tức!
+     */
+    override fun onPartialResults(partialResults: Bundle?) {
+        val matches = partialResults?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+        val text = matches?.firstOrNull() ?: ""
+        if (text.isNotBlank()) {
+            handleSpokenText(text, isFinal = false)
+        }
+    }
+
+    /**
+     * Chốt câu khi người dùng kết thúc phát ngôn
+     */
     override fun onResults(results: Bundle?) {
         isListening = false
         val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
         val text = matches?.firstOrNull() ?: ""
 
         if (text.isNotBlank()) {
-            handleSpokenText(text)
+            handleSpokenText(text, isFinal = true)
+        } else if (isAwaitingContent) {
+            // Không nhận diện được gì thêm
+            HandsFreeAccessibilityService.instance?.resetSessionBase()
         }
-        scheduleRestart(350)
+        scheduleRestart(200)
     }
-
-    override fun onPartialResults(partialResults: Bundle?) {}
 
     override fun onEvent(eventType: Int, params: Bundle?) {}
 
     /**
-     * Xử lý chuỗi giọng nói nhận được
+     * Phân tích giọng nói và stream ngay tức thì
      */
-    private fun handleSpokenText(spokenText: String) {
+    private fun handleSpokenText(spokenText: String, isFinal: Boolean) {
         val lower = spokenText.lowercase(Locale.getDefault()).trim()
-        Log.i(TAG, "Giọng nói nhận được: '$spokenText'")
+        val triggers = listOf("chiến thôi", "chienthoi", "chiến thui", "chiến đi", "chiến", "alo vboard")
 
-        // Danh sách các biến thể khẩu lệnh "Chiến thôi"
-        val triggers = listOf("chiến thôi", "chienthoi", "chiến thui", "chiến", "chiến đi", "alo vboard")
-        var matchedTrigger: String? = null
+        var triggerIndex = -1
+        var triggerLength = 0
 
         for (trigger in triggers) {
-            if (lower.startsWith(trigger)) {
-                matchedTrigger = trigger
+            val idx = lower.indexOf(trigger)
+            if (idx != -1) {
+                triggerIndex = idx
+                triggerLength = trigger.length
                 break
             }
         }
 
-        if (matchedTrigger != null) {
-            val content = lower.removePrefix(matchedTrigger).trimStart(',', '.', ' ', ':', ';')
-            if (content.isNotBlank()) {
-                // Trường hợp 1: Người dùng nói liền mạch "Chiến thôi tối nay đi nhậu nhé"
-                updateNotification("Đã nhập: $content")
-                HandsFreeAccessibilityService.instance?.injectText(content)
+        if (triggerIndex != -1) {
+            // Phát hiện thấy từ khóa "Chiến thôi" (dù nằm ở đầu hay giữa câu)
+            if (!hasBeepedForCurrentTrigger) {
+                hasBeepedForCurrentTrigger = true
+                HandsFreeAccessibilityService.instance?.playBeep()
+                HandsFreeAccessibilityService.instance?.vibratePattern(longArrayOf(0, 50, 40, 50))
+            }
+
+            // Lấy toàn bộ phần lời nói nằm sau chữ "chiến thôi"
+            val rawContent = spokenText.substring(triggerIndex + triggerLength).trimStart(',', '.', ' ', ':', ';', '-')
+            if (rawContent.isNotBlank()) {
+                // Người dùng nói liền mạch: "Chiến thôi [nội dung...]"
                 isAwaitingContent = false
+                mainHandler.removeCallbacks(timeoutRunnable)
+                val formatted = VietnamesePunctuationFormatter.format(rawContent)
+                val transcoded = VSecretKeyboardService.transcodeText(formatted)
+                updateNotification("⚡ Live: $transcoded")
+                dispatchVoiceText(transcoded, isFinal)
+                if (isFinal) {
+                    hasBeepedForCurrentTrigger = false
+                    onListeningStateChanged?.invoke(false)
+                }
             } else {
-                // Trường hợp 2: Người dùng chỉ mới nói "Chiến thôi"
-                // Rung 2 nhịp báo "Tôi đang nghe, hãy nói nội dung tiếp theo!"
-                HandsFreeAccessibilityService.instance?.vibratePattern(longArrayOf(0, 70, 70, 70))
-                updateNotification("Đã nhận 'Chiến thôi'! Hãy nói nội dung...")
-                isAwaitingContent = true
+                // Người dùng mới chỉ nói "Chiến thôi"
+                if (!isAwaitingContent) {
+                    isAwaitingContent = true
+                    HandsFreeAccessibilityService.instance?.resetSessionBase()
+                    mainHandler.removeCallbacks(timeoutRunnable)
+                    mainHandler.postDelayed(timeoutRunnable, 6000)
+                    updateNotification("🎙️ Đã nhận 'Chiến thôi'! Hãy nói nội dung...")
+                    onListeningStateChanged?.invoke(true)
+                }
             }
         } else if (isAwaitingContent) {
-            // Trường hợp 2 tiếp theo: Nhận nội dung ngay sau khi đã thức tỉnh
-            updateNotification("Đã nhập: $spokenText")
-            HandsFreeAccessibilityService.instance?.injectText(spokenText)
-            isAwaitingContent = false
+            // Đang trong trạng thái chờ nội dung sau tiếng bíp
+            mainHandler.removeCallbacks(timeoutRunnable)
+            if (!isFinal) {
+                mainHandler.postDelayed(timeoutRunnable, 6000)
+            }
+            val formatted = VietnamesePunctuationFormatter.format(spokenText)
+            val transcoded = VSecretKeyboardService.transcodeText(formatted)
+            updateNotification("⚡ Live: $transcoded")
+            dispatchVoiceText(transcoded, isFinal)
+            if (isFinal) {
+                isAwaitingContent = false
+                hasBeepedForCurrentTrigger = false
+                onListeningStateChanged?.invoke(false)
+            }
+        }
+    }
+
+    /**
+     * Phân phối text giọng nói:
+     * 1. Ưu tiên điền trực tiếp qua InputConnection (0ms) nếu bàn phím vBoard đang mở
+     * 2. Fallback sang AccessibilityService nếu đang dùng rảnh tay nền
+     */
+    private fun dispatchVoiceText(text: String, isFinal: Boolean) {
+        val injectedDirectly = VSecretKeyboardService.injectVoiceText(text, isFinal)
+        if (!injectedDirectly) {
+            HandsFreeAccessibilityService.instance?.injectStreamingText(text, isFinal)
+        } else if (isFinal) {
+            HandsFreeAccessibilityService.instance?.vibratePattern(longArrayOf(0, 30))
         }
     }
 }

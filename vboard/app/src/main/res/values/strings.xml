@@ -6,4 +6,6 @@
     <string name="handsfree_notif_channel">Kênh Dịch Vụ Rảnh Tay Vboard</string>
     <string name="handsfree_notif_title">🎙️ Vboard Rảnh Tay (Hands-free)</string>
     <string name="handsfree_notif_content">Đang lắng nghe khẩu lệnh \'Chiến thôi\'...</string>
+    <string name="btn_help_text">\? HELP</string>
+    <string name="help_drawer_title">\? Tra cứu 15 Mode &amp; Phím tắt Cơ số 16</string>
 </resources>

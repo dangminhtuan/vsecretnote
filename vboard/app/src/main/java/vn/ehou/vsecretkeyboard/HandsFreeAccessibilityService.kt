@@ -2,6 +2,8 @@ package vn.ehou.vsecretkeyboard
 
 import android.accessibilityservice.AccessibilityService
 import android.content.Context
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
@@ -13,7 +15,8 @@ import android.view.accessibility.AccessibilityNodeInfo
 /**
  * Service Trợ Năng Vboard:
  * Đóng vai trò là "ngón tay vô hình" tự động quét màn hình hiện tại
- * tìm ô nhập liệu (EditText / ô chat Zalo, Messenger, SMS...) và điền văn bản vào.
+ * tìm ô nhập liệu (Facebook, Zalo, Messenger, SMS...) và điền văn bản vào.
+ * Hỗ trợ chế độ Live Streaming (vừa nói chữ bay ra ngay lập tức).
  */
 class HandsFreeAccessibilityService : AccessibilityService() {
 
@@ -25,6 +28,9 @@ class HandsFreeAccessibilityService : AccessibilityService() {
         fun isRunning(): Boolean = instance != null
     }
 
+    private var activeNodeTextBeforeSession: String? = null
+    private var lastTargetNode: AccessibilityNodeInfo? = null
+
     override fun onServiceConnected() {
         super.onServiceConnected()
         instance = this
@@ -32,7 +38,13 @@ class HandsFreeAccessibilityService : AccessibilityService() {
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        // Lắng nghe các sự kiện thay đổi cửa sổ hoặc focus nếu cần lưu cache
+        // Cập nhật khi có sự kiện focus vào ô nhập liệu mới
+        if (event?.eventType == AccessibilityEvent.TYPE_VIEW_FOCUSED) {
+            val source = event.source
+            if (source != null && isInputNode(source)) {
+                lastTargetNode = source
+            }
+        }
     }
 
     override fun onInterrupt() {
@@ -48,60 +60,87 @@ class HandsFreeAccessibilityService : AccessibilityService() {
     }
 
     /**
-     * Điền văn bản vào ô nhập liệu đang hiển thị trên màn hình
-     * @param text Nội dung cần điền
-     * @param append true: nối thêm vào cuối nếu đã có chữ; false: thay thế toàn bộ
+     * Bắt đầu một phiên nhập liệu giọng nói mới
      */
-    fun injectText(text: String, append: Boolean = true): Boolean {
+    fun resetSessionBase() {
+        activeNodeTextBeforeSession = null
+    }
+
+    /**
+     * Điền văn bản theo thời gian thực (Real-time Live Streaming):
+     * @param text Nội dung hiện tại (từng phần hoặc toàn bộ)
+     * @param isFinal true: kết thúc câu; false: đang nói (partial)
+     */
+    fun injectStreamingText(text: String, isFinal: Boolean): Boolean {
         val targetNode = findTargetInputNode()
         if (targetNode == null) {
-            Log.e(TAG, "Không tìm thấy ô nhập liệu (EditText) nào trên màn hình.")
-            vibratePattern(longArrayOf(0, 50, 50, 50)) // Rung báo lỗi
+            Log.e(TAG, "Không tìm thấy ô nhập liệu nào trên màn hình.")
             return false
         }
 
         try {
-            // Tự động focus hoặc click vào ô text nếu chưa được focus
             if (!targetNode.isFocused) {
                 targetNode.performAction(AccessibilityNodeInfo.ACTION_FOCUS)
             }
 
-            val currentText = targetNode.text?.toString() ?: ""
-            val newText = if (append && currentText.isNotBlank()) {
-                "$currentText $text"
-            } else {
-                text
+            // Ghi nhớ nội dung đã có trong ô trước khi bắt đầu nói câu này
+            if (activeNodeTextBeforeSession == null) {
+                activeNodeTextBeforeSession = targetNode.text?.toString() ?: ""
             }
+
+            val base = activeNodeTextBeforeSession ?: ""
+            val newText = if (base.isNotBlank()) "$base $text" else text
 
             val arguments = Bundle().apply {
                 putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, newText)
             }
             val success = targetNode.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, arguments)
 
-            if (success) {
-                Log.i(TAG, "Đã điền thành công: '$text' vào ô ${targetNode.className}")
-                vibrateSuccess()
-            } else {
-                Log.w(TAG, "Gửi lệnh ACTION_SET_TEXT thất bại.")
+            // Đặt con trỏ về cuối đoạn text
+            try {
+                val selectionArgs = Bundle().apply {
+                    putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_START_INT, newText.length)
+                    putInt(AccessibilityNodeInfo.ACTION_ARGUMENT_SELECTION_END_INT, newText.length)
+                }
+                targetNode.performAction(AccessibilityNodeInfo.ACTION_SET_SELECTION, selectionArgs)
+            } catch (_: Exception) {}
+
+            if (isFinal) {
+                activeNodeTextBeforeSession = null // Chốt phiên này
+                if (success) {
+                    vibrateSuccess()
+                }
             }
             return success
         } catch (e: Exception) {
-            Log.e(TAG, "Lỗi khi điền text vào node: ${e.message}", e)
+            Log.e(TAG, "Lỗi khi điền text stream: ${e.message}", e)
             return false
         }
     }
 
     /**
-     * Quét tìm ô EditText trên màn hình hiện tại
+     * Điền toàn bộ văn bản một lần (cho các trường hợp không dùng stream)
+     */
+    fun injectText(text: String, append: Boolean = true): Boolean {
+        return injectStreamingText(text, isFinal = true)
+    }
+
+    /**
+     * Quét tìm ô EditText trên màn hình hiện tại (Facebook, Zalo, Messenger, SMS...)
      */
     private fun findTargetInputNode(): AccessibilityNodeInfo? {
-        // Ưu tiên 1: Lấy node đang có con trỏ nhập liệu (Focus Input)
+        // Ưu tiên 1: Node đang có con trỏ nhập liệu (Focus Input)
         val focused = findFocus(AccessibilityNodeInfo.FOCUS_INPUT)
         if (focused != null && isInputNode(focused)) {
             return focused
         }
 
-        // Ưu tiên 2: Quét toàn bộ cây giao diện của cửa sổ đang kích hoạt
+        // Ưu tiên 2: Node vừa mới focus gần nhất
+        lastTargetNode?.let {
+            if (isInputNode(it)) return it
+        }
+
+        // Ưu tiên 3: Quét cây giao diện của cửa sổ đang kích hoạt
         val root = rootInActiveWindow ?: return null
         return findFirstInputNode(root)
     }
@@ -126,6 +165,18 @@ class HandsFreeAccessibilityService : AccessibilityService() {
     }
 
     /**
+     * Phát tiếng bíp trong trẻo tức thì (0.1 giây) khi nhận diện khẩu lệnh "Chiến thôi"
+     */
+    fun playBeep() {
+        try {
+            val toneGen = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 85)
+            toneGen.startTone(ToneGenerator.TONE_PROP_BEEP, 120)
+        } catch (e: Exception) {
+            Log.w(TAG, "Không thể phát âm thanh bíp: ${e.message}")
+        }
+    }
+
+    /**
      * Phản hồi xúc giác (rung nhẹ) báo hiệu đã điền chữ thành công
      */
     fun vibrateSuccess() {
@@ -133,16 +184,16 @@ class HandsFreeAccessibilityService : AccessibilityService() {
             val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
             if (vibrator != null && vibrator.hasVibrator()) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+                    vibrator.vibrate(VibrationEffect.createOneShot(80, VibrationEffect.DEFAULT_AMPLITUDE))
                 } else {
-                    vibrator.vibrate(100)
+                    vibrator.vibrate(80)
                 }
             }
         } catch (_: Exception) {}
     }
 
     /**
-     * Rung thông báo theo nhịp (VD: Bíp-Bíp báo đã nhận khẩu lệnh "Chiến thôi")
+     * Rung thông báo theo nhịp
      */
     fun vibratePattern(pattern: LongArray) {
         try {
