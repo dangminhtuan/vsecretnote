@@ -62,7 +62,7 @@ const topRules = [];
 let ruleIndex = 1;
 
 // 1.1. 26 Ký tự Alphabet (A..Z)
-const vowels = new Set(['a', 'e', 'i', 'o', 'u', 'y']);
+const vowels = new Set(['a', 'i']); // Chỉ riêng 'a' và 'i' giữ hậu tố 'v' (av, iv), còn 'e', 'o', 'u', 'y' để nguyên
 const alphabet26 = 'abcdefghijklmnopqrstuvwxyz'.split('');
 alphabet26.forEach(char => {
   const lower = char;
@@ -83,12 +83,12 @@ digits.forEach(d => {
 
 // 2. HELPER CHO THẺ 9 VẦN HỌC SÂU (Đã import từ vcomp.js: tự động khử trùng nhóm vần cho Cặp Lặp & Tam Hoa)
 
-// 3. BUILD FORWARD (F), BACKWARD (B), LEARNING (L)
+// 3. BUILD FORWARD (F), TRA GỌN 0 (0), THẺ HỌC 9 (9)
 const filteredWords = REAL_VIETNAMESE_WORDS.filter(w => w !== 'pết' && w !== 'pềt');
 
 const F_lines = [];
-const B_lines = [];
-const L_lines = [];
+const Zero_lines = [];
+const Nine_lines = [];
 
 filteredWords.forEach(word => {
   const enc = encodeWord(word);
@@ -99,22 +99,22 @@ filteredWords.forEach(word => {
   // F (Forward): Mã -> Từ (gõ TWf ra thành)
   F_lines.push(`${b60}\t${word}\t\t`);
 
-  // B (Backward): Từ + p -> Mã (gõ thànhp ra TWf)
-  B_lines.push(`${word}p\t${b60}\t\t`);
+  // 0 (Tra gọn phím 0): Từ + 0 -> Mã (gõ thành0 ra TWf, không vỡ Telex)
+  Zero_lines.push(`${word}0\t${b60}\t\t`);
 
-  // L (Learning): Từ + l -> Thẻ 9 vần ma trận (gõ thànhl ra TWf: ay,ôp,ưt | ANH,oăng,ươc | ap,ôc,ươn)
+  // 9 (Học sâu phím 9): Từ + 9 -> Thẻ mẹo ma trận (gõ thành9 ra TWf: mẹo vần)
   const card = buildLearningCard(b60, word);
-  L_lines.push(`${word}l\t${card}\t\t`);
+  Nine_lines.push(`${word}9\t${card}\t\t`);
 });
 
 const header = '# Gboard Dictionary version:2\n# Gboard Dictionary format:shortcut\tword\tlanguage_tag\tpos_tag\n';
 const R_lines = topRules.map(line => line.includes('\t') ? `${line}\t\t` : `${line}\t\t\t`);
 
 const components = {
-  R: R_lines,
   F: F_lines,
-  B: B_lines,
-  L: L_lines
+  '0': Zero_lines,
+  '9': Nine_lines,
+  R: R_lines
 };
 
 function createZip(zipFileName, contentLines) {
@@ -130,9 +130,9 @@ function createZip(zipFileName, contentLines) {
   execSync(`powershell -Command "Compress-Archive -Path '${tempTxtFile}' -DestinationPath '${destZip}' -Force"`);
 }
 
-// 4. SINH 16 TỔ HỢP MODULAR CHO GBOARD
+// 4. SINH 16 TỔ HỢP MODULAR CHO GBOARD (F, 0, 9, R)
 console.log("-> Bắt đầu tạo 16 file Zip tổ hợp...");
-const keys = ['R', 'F', 'B', 'L'];
+const keys = ['F', '0', '9', 'R'];
 for (let i = 0; i < 16; i++) {
   const activeKeys = [];
   const contentLines = [];
@@ -150,35 +150,41 @@ for (let i = 0; i < 16; i++) {
   console.log(`   ✓ ${zipName} (${contentLines.length} mục)`);
 }
 
-// 4.1. Tạo thêm các alias zip với ký hiệu P thay vì B (P = B: Tra gọn phím p)
-fs.copyFileSync(path.join(publicDir, 'Gboard_Dict_R_B_L.zip'), path.join(publicDir, 'Gboard_Dict_R_P_L.zip'));
-fs.copyFileSync(path.join(publicDir, 'Gboard_Dict_B_L.zip'), path.join(publicDir, 'Gboard_Dict_P_L.zip'));
-fs.copyFileSync(path.join(publicDir, 'Gboard_Dict_R_B.zip'), path.join(publicDir, 'Gboard_Dict_R_P.zip'));
-fs.copyFileSync(path.join(publicDir, 'Gboard_Dict_B.zip'), path.join(publicDir, 'Gboard_Dict_P.zip'));
-console.log("   ✓ Đã tạo các alias tiện dụng: Gboard_Dict_R_P_L.zip, Gboard_Dict_P_L.zip, Gboard_Dict_R_P.zip, Gboard_Dict_P.zip");
+// 4.1. Tạo các alias tiện dụng và tương thích ngược
+const fullZip = path.join(publicDir, 'Gboard_Dict_F_0_9_R.zip');
+fs.copyFileSync(fullZip, path.join(publicDir, 'PersonalDictionary.zip'));
+fs.copyFileSync(fullZip, path.join(publicDir, 'gboard_dictionary.zip'));
+fs.copyFileSync(fullZip, path.join(publicDir, 'PersonalDictionary_1Way.zip'));
+fs.copyFileSync(fullZip, path.join(publicDir, 'PersonalDictionary_2Way.zip'));
+fs.copyFileSync(fullZip, path.join(publicDir, 'Gboard_Dict_R_P_L.zip'));
 
-// 5. SINH CÁC FILE TEXT VÀ CÁC ZIP MẶC ĐỊNH CHO MENU
-console.log("-> Bắt đầu đồng bộ các file Text và Zip mặc định...");
+const zeroNineZip = path.join(publicDir, 'Gboard_Dict_0_9.zip');
+fs.copyFileSync(zeroNineZip, path.join(publicDir, 'Gboard_Dict_P_L.zip'));
 
-// 5.1. File mặc định (R + P + L): dictionary_2way.txt, PersonalDictionary.zip, PersonalDictionary_1Way.zip, PersonalDictionary_2Way.zip, gboard_dictionary.zip
-const contentRPL = header + [...R_lines, ...B_lines, ...L_lines].join('\n');
-fs.writeFileSync(path.join(publicDir, 'dictionary_2way.txt'), contentRPL, 'utf8');
-fs.writeFileSync(path.join(publicDir, 'gboard_dictionary.txt'), contentRPL, 'utf8');
-fs.copyFileSync(path.join(publicDir, 'Gboard_Dict_R_P_L.zip'), path.join(publicDir, 'PersonalDictionary.zip'));
-fs.copyFileSync(path.join(publicDir, 'Gboard_Dict_R_P_L.zip'), path.join(publicDir, 'PersonalDictionary_1Way.zip'));
-fs.copyFileSync(path.join(publicDir, 'Gboard_Dict_R_P_L.zip'), path.join(publicDir, 'PersonalDictionary_2Way.zip'));
-fs.copyFileSync(path.join(publicDir, 'Gboard_Dict_R_P_L.zip'), path.join(publicDir, 'gboard_dictionary.zip'));
-console.log("   ✓ PersonalDictionary.zip, gboard_dictionary.zip (R + P + L)");
+const zeroZip = path.join(publicDir, 'Gboard_Dict_0.zip');
+fs.copyFileSync(zeroZip, path.join(publicDir, 'Gboard_Fast_Memo.zip'));
+fs.copyFileSync(zeroZip, path.join(publicDir, 'Gboard_Dict_P.zip'));
 
-// 5.2. File Rules (36 quy tắc): rules_dictionary.txt, Gboard_ToneRules.zip
+const nineZip = path.join(publicDir, 'Gboard_Dict_9.zip');
+fs.copyFileSync(nineZip, path.join(publicDir, 'Gboard_Dict_L.zip'));
+
+const ruleZip = path.join(publicDir, 'Gboard_Dict_R.zip');
+fs.copyFileSync(ruleZip, path.join(publicDir, 'Gboard_ToneRules.zip'));
+
+console.log("   ✓ Đã tạo các alias tiện dụng (PersonalDictionary.zip, Gboard_Fast_Memo.zip, Gboard_Dict_R_P_L.zip...)");
+
+// 5. SINH CÁC FILE TEXT TĨNH
+console.log("-> Bắt đầu đồng bộ các file Text mặc định...");
+
+// 5.1. File mặc định (Toàn bộ F + 0 + 9 + R)
+const contentFull = header + [...R_lines, ...F_lines, ...Zero_lines, ...Nine_lines].join('\n');
+fs.writeFileSync(path.join(publicDir, 'dictionary_2way.txt'), contentFull, 'utf8');
+fs.writeFileSync(path.join(publicDir, 'gboard_dictionary.txt'), contentFull, 'utf8');
+fs.writeFileSync(path.join(publicDir, 'dictionary_1way.txt'), header + F_lines.join('\n'), 'utf8');
+
+// 5.2. File Rules (36 quy tắc)
 const contentRules = header + R_lines.join('\n');
 fs.writeFileSync(path.join(publicDir, 'rules_dictionary.txt'), contentRules, 'utf8');
-fs.copyFileSync(path.join(publicDir, 'Gboard_Dict_R.zip'), path.join(publicDir, 'Gboard_ToneRules.zip'));
-console.log("   ✓ Gboard_ToneRules.zip, rules_dictionary.txt (R - 36 quy tắc)");
-
-// 5.3. File Tra gọn p: Gboard_Fast_Memo.zip
-fs.copyFileSync(path.join(publicDir, 'Gboard_Dict_P.zip'), path.join(publicDir, 'Gboard_Fast_Memo.zip'));
-console.log("   ✓ Gboard_Fast_Memo.zip (P)");
 
 // Dọn dẹp dictionary.txt tạm trong public
 const tempTxt = path.join(publicDir, 'dictionary.txt');

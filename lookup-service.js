@@ -236,15 +236,15 @@ export function processLookup(query) {
     }
   }
 
-  // Check for Gboard Shortcuts (p: Tra gọn Base60, l: Thẻ 9 vần Học sâu)
+  // Check for Gboard Shortcuts (0/p: Tra gọn Base60, 9/l: Thẻ Học mẹo)
   const qLower = q.toLowerCase();
-  if (qLower.length >= 2 && (qLower.endsWith('p') || qLower.endsWith('l'))) {
+  if (qLower.length >= 2 && (qLower.endsWith('0') || qLower.endsWith('9') || qLower.endsWith('p') || qLower.endsWith('l'))) {
     const suffix = qLower.slice(-1);
     const subWord = q.slice(0, -1);
     const enc = encodeSingleWord(subWord);
     if (enc && enc.success) {
       const b60 = enc.baseCode;
-      if (suffix === 'p') {
+      if (suffix === '0' || suffix === 'p') {
         return {
           success: true,
           type: 'gboard_memo',
@@ -253,11 +253,11 @@ export function processLookup(query) {
           code: b60,
           result: b60,
           shortcut: q,
-          summary: `[Gboard Tiện Dụng] ${q} ➔ ${b60} (Mã Base60 gọn)`,
-          mnemonic: `Gboard Tiện Dụng: Gõ "${q}" sẽ gợi ý mã Base60 "${b60}"`,
+          summary: `[Gboard Tra Gọn] ${q} ➔ ${b60} (Mã Base60 gọn)`,
+          mnemonic: `Gboard Tra Gọn: Gõ "${q}" sẽ gợi ý mã Base60 "${b60}"`,
           breakdown: enc.breakdown
         };
-      } else if (suffix === 'l') {
+      } else if (suffix === '9' || suffix === 'l') {
         const card = buildLearningCard(b60, subWord);
         return {
           success: true,
@@ -268,8 +268,8 @@ export function processLookup(query) {
           result: card,
           card,
           shortcut: q,
-          summary: `[Gboard Học Sâu] ${q} ➔ ${card}`,
-          mnemonic: `Gboard Học Sâu: Gõ "${q}" sẽ gợi ý thẻ 9 vần "${card}"`,
+          summary: `[Gboard Thẻ Mẹo] ${q} ➔ ${card}`,
+          mnemonic: `Gboard Thẻ Mẹo: Gõ "${q}" sẽ gợi ý thẻ mẹo "${card}"`,
           breakdown: enc.breakdown
         };
       }

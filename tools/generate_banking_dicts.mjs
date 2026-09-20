@@ -136,8 +136,8 @@ filteredWords.forEach(word => {
 
   const unaccented = stripAllAccents(word);
 
-  // Gói P: Fast Memo (thànhp ➔ TWf)
-  fastMemoLines.push(`${word}p\t${b60}\t\t`);
+  // Gói 0: Fast Memo (thành0 ➔ TWf)
+  fastMemoLines.push(`${word}0\t${b60}\t\t`);
 
   // Gói T: Banking Telex (thanhf ➔ TWf, muoons ➔ ...)
   const tlx = toTelex(word);

@@ -1267,18 +1267,20 @@ function checkUrlParams() {
   });
 
   // ==========================================
-  // DYNAMIC GBOARD DICTIONARY COMBINATIONS (R, P, L)
+  // DYNAMIC GBOARD DICTIONARY COMBINATIONS (F, 0, 9, R)
   // ==========================================
   function updateGboardDownloadLink() {
+    const chkF = document.getElementById('chk-f');
+    const chk0 = document.getElementById('chk-0');
+    const chk9 = document.getElementById('chk-9');
     const chkRule = document.getElementById('chk-rule');
-    const chkP = document.getElementById('chk-p');
-    const chkL = document.getElementById('chk-l');
-    if (!chkRule || !chkP || !chkL) return;
+    if (!chkF || !chk0 || !chk9 || !chkRule) return;
 
     const activeKeys = [];
+    if (chkF.checked) activeKeys.push('F');
+    if (chk0.checked) activeKeys.push('0');
+    if (chk9.checked) activeKeys.push('9');
     if (chkRule.checked) activeKeys.push('R');
-    if (chkP.checked) activeKeys.push('P');
-    if (chkL.checked) activeKeys.push('L');
 
     const dlLink = document.getElementById('dl-link');
     const dlFilename = document.getElementById('dl-filename');
@@ -1308,14 +1310,14 @@ function checkUrlParams() {
 
     dlLink.href = `/${zipName}`;
     dlLink.download = zipName;
-    dlLink.textContent = activeKeys.length === 3 ? '📥 TẢI TỪ ĐIỂN TỔ HỢP (.ZIP)' : `📥 TẢI GÓI [${activeKeys.join(' + ')}] (.ZIP)`;
+    dlLink.textContent = activeKeys.length === 4 ? '📥 TẢI TỪ ĐIỂN TỔ HỢP (.ZIP)' : `📥 TẢI GÓI [${activeKeys.join(' + ')}] (.ZIP)`;
 
     if (dlFilename) {
       dlFilename.textContent = zipName;
     }
   }
 
-  ['chk-rule', 'chk-p', 'chk-l'].forEach(id => {
+  ['chk-f', 'chk-0', 'chk-9', 'chk-rule'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', updateGboardDownloadLink);
   });
   

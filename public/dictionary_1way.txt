@@ -1,53 +1,5 @@
 # Gboard Dictionary version:2
 # Gboard Dictionary format:shortcut	word	language_tag	pos_tag
-b1	01 [B1] z s f r x j (Telex thường (z s f r x j))		
-b2	02 [B2] Z S F R X J (Telex HOA (Z S F R X J))		
-b3	03 [B3] 0 1 2 3 4 5 (VNI số (0 1 2 3 4 5))		
-cm	04 [PA-Chính] 24 PA Chính: c, đ➔d, g, gh➔G, gi➔j, k, kh➔K, h, v, d➔D, m, ch➔C, r, s, n, b, l, ch➔Q, s➔S, Ø➔z, ng➔N, nh➔H, l➔L, ngh➔W		
-cp	05 [PA-Phụ] 7 PA Phụ: p, ph➔f, qu➔q, t, th➔T, tr➔R, x		
-dz	06 [Dấu-Ngang] z Z 0 (B1..B3)		
-ds	07 [Dấu-Sắc] s S 1 (B1..B3)		
-df	08 [Dấu-Huyền] f F 2 (B1..B3)		
-dr	09 [Dấu-Hỏi] r R 3 (B1..B3)		
-dx	10 [Dấu-Ngã] x X 4 (B1..B3)		
-dj	11 [Dấu-Nặng] j J 5 (B1..B3)		
-av	12 [A/a] Vần: a: a/-/- | A: â/oap/uênh		
-b	13 [B/b] PA: b | Vần: b: ươm/oe/uy | B: ây/oat/uya		
-c	14 [C/c] PA: c | ch➔C | Vần: c: êt/iêc/ua | C: ich/oa/uôn		
-d	15 [D/d] PA: đ➔d | d➔D | Vần: d: ơ/iên/uât | D: âm/it/uôc		
-ev	16 [E/e] Vần: e: e/-/- | E: ê/oay/uych		
-f	17 [F/f] PA: ph➔f | Vần: f: ap/ôc/ươn | F: ec/oeo/uyn | Dấu: f: B1 Huyền, F: B2 Huyền		
-g	18 [G/g] PA: g | gh➔G | Vần: g: ach/iêng/uc | G: ai/iêp/uê		
-h	19 [H/h] PA: h | nh➔H | Vần: h: ôn/iêu/uân | H: âp/ot/y		
-iv	20 [I/i] Vần: i: i/-/- | Tiền tố: I (Title Case), O (UPPERCASE)		
-j	21 [J/j] PA: gi➔j | Vần: j: am/iêt/ui | J: eo/oet/uyt | Dấu: j: B1 Nặng, J: B2 Nặng		
-k	22 [K/k] PA: k | kh➔K | Vần: k: an/iu/um | K: ang/in/un		
-l	23 [L/l] PA: l | l➔L | Vần: l: iêm/oi/uyên | L: ôn/oăn/ưn		
-m	24 [M/m] PA: m | Vần: m: ut/inh/uôi | M: ep/ooc/uyu		
-n	25 [N/n] PA: n | ng➔N | Vần: n: ưng/oc/up | N: ưc/op/ưi		
-ov	26 [O/o] Vần: o: en/o/uyp		
-p	27 [P/p] PA: p | Vần: p: ao/ơm/ươi | P: et/oong/yn		
-q	28 [Q/q] PA: qu➔q | ch➔Q | Vần: q: at/ôi/ươp | Q: im/om/uyêt		
-r	29 [R/r] PA: r | tr➔R | Vần: r: ên/oai/uông | R: ă/ôt/ưu | Dấu: r: B1 Hỏi, R: B2 Hỏi		
-s	30 [S/s] PA: s | s➔S | Vần: s: ương/oan/uôt | S: ac/on/ynh | Dấu: s: B1 Sắc, S: B2 Sắc		
-t	31 [T/t] PA: t | th➔T | Vần: t: au/ông/ươt | T: ay/ôp/ưt		
-uv	32 [U/u] Vần: u: u/-/- | U: êu/oăc/ư		
-v	33 [V/v] PA: v | Vần: v: ia/ip/ung | V: êch/oăm/yt		
-w	34 [W/w] PA: ngh➔W | Vần: w: -/-/- | W: anh/oăng/ươc		
-x	35 [X/x] PA: x | Vần: x: ăc/ơi/ưm | X: êm/oăt/yêng | Dấu: x: B1 Ngã, X: B2 Ngã		
-yv	36 [Y/y] Vần: y: ênh/iê/ăk | Y: em/oem/uynh		
-z	37 [Z/z] PA: Ø➔z | Vần: z: ôm/ong/ưa | Z: êp/eng/n | Dấu: z: B1 Ngang, Z: B2 Ngang		
-ov	38 [Vần O & Ký tự o] Vần 'o' Tiếng Việt ➔ Mã: 4 (Index 35, ví dụ cho➔C4Z, to➔T4Z) | Ký tự Base60 'o' ➔ Vần: en/o/uyp (đen➔doz)		
-0	39 [Số 0] Vần: 0: ăm/ô/yêm | Dấu: B3 Ngang		
-1	40 [Số 1] Vần: 1: ăn/ơn/yên | Dấu: B3 Sắc		
-2	41 [Số 2] Vần: 2: ăng/ơp/yêt | Dấu: B3 Huyền		
-3	42 [Số 3] Vần: 3: ăp/ơt/yêu | Dấu: B3 Hỏi		
-4	43 [Số 4] Vần: 4: ăt/oen/ươu | Dấu: B3 Ngã		
-5	44 [Số 5] Vần: 5: âu/oac/uôm | Dấu: B3 Nặng		
-6	45 [Số 6] Vần: 6: âc/oach/uơ		
-7	46 [Số 7] Vần: 7: ân/oam/uâng		
-8	47 [Số 8] Vần: 8: âng/oang/uây		
-9	48 [Số 9] Vần: 9: ât/oanh/uêch		
 vaf	và		
 cc3	của		
 coS	có		

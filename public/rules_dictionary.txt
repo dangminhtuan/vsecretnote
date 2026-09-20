@@ -4,7 +4,7 @@ av	01 [A/a] Cứ bước qua chiếc CẦU, há mồm NGOÁP rồi HUỂNH hoang
 b	02 [B/b] Bắt BƯỚM mở TÒE loe, gặp NGUY trèo tót lên CÂY, sợ TOÁT mồ hôi tới KHUYA!		
 c	03 [C/c] Hát CA TIẾC con CUA rơi, đè CHỊCH bé HOA nếu thật sự MUỐN!		
 d	04 [D/d] CÁC TIÊN nữ XUẤT hiện, thú tính DÂM kẹp KHÍT như ngậm điếu THUỐC!		
-ev	05 [E/e] Cún con kêu đòi MẸ, ngoắt NGOÁY cái đuôi rồi HUÝCH vào chân!		
+e	05 [E/e] Cún con kêu đòi MẸ, ngoắt NGOÁY cái đuôi rồi HUÝCH vào chân!		
 f	06 [F/f] Trèo THÁP đầy MỐC LƯỢN bay, chạy HÉC-quyn quẹo NGHOEO đón BUYN! (Dấu Huyền)		
 g	07 [G/g] Cầm GẠCH đứng NGHIÊNG hối GIỤC, em GÁI vừa xong một HIỆP đòi về QUÊ!		
 h	08 [H/h] Sáng sớm HÔN đón CHIỀU XUÂN, bất ngờ HÉT to cười HOEM chọc HUYNH!		
@@ -14,17 +14,17 @@ k	11 [K/k] Vác CÁN đập CHÍN giãn CHUN, CÀNG khoe KHIẾU hì hục KHUÂ
 l	12 [L/l] Cúi xuống LIẾM láp, nàng ĐÒI đâm TRÚNG cái LỒN như con HOẴNG BỰ!		
 m	13 [M/m] Đòi MÚT cho DỊU rồi TRÙM mền như MÈO, cào KHOÉT vách rồi HUÝT sáo!		
 n	14 [N/n] Nổi NỨNG TƯƠI như VƯỢN, phanh bờ NGỰC CHO ghé vào NGỬI!		
-ov	15 [O/o] Vệt mực ĐEN làm HOEN gỉ chiếc xe BUÝP! (vần 'o' TV mã 4)		
+o	15 [O/o] Vệt mực ĐEN làm HOEN gỉ chiếc xe BUÝP! (vần 'o' TV mã 4)		
 p	16 [P/p] Thuyền CHAO đảo gặp CÔ gái TƯƠI, KẸT vào cái XOONG rớt LÌN xìn!		
 q	17 [Q/q] Bãi CÁT mồ CÔI bị CƯỚP, vỗ đầu CHIM gầy CÒM khen đẹp TUYỆT!		
 r	18 [R/r] Vừa RÊN không KỊP đuôi, mở miệng RĂN kẻo làm TOANG bình RƯỢU quý! (Dấu Hỏi)		
 s	19 [S/s] Đang SƯỚNG ra NƯỚC, LƯỚT tay vào SỜ, nàng bảo BỚT kẻo ĐỨT gân! (Dấu Sắc)		
 t	20 [T/t] Vượt bãi CHÔNG nhẹ lướt về SAU, giã CHÀY bánh XỐP ăn không DỨT!		
-uv	21 [U/u] Cùng san CHIA say MÊ, mở dấu NGOẶC ghi tên Lưu HUỲNH rực rỡ!		
+u	21 [U/u] Cùng san CHIA say MÊ, mở dấu NGOẶC ghi tên Lưu HUỲNH rực rỡ!		
 v	22 [V/v] Sờ đôi VÚ VIẾT thư rất VUI, mặt VẾCH chạy máy GIÊ kêu như xe BUYN!		
 w	23 [W/w] Khởi đầu từ GỐC TRỐNG RỖNG, xây THÀNH tóc XOĂNG tít là ĐƯỢC!		
 x	24 [X/x] Đi ra BẮC XƠI rượu bắt QUỲ, canh ĐÊM THOẮT cất tiếng LIỀNG! (Dấu Ngã)		
-yv	25 [Y/y] Dập NHẤP đau XÓT CHỤM lại, ban LỆNH máy GIÊ quét sạch quân GIẶC!		
+y	25 [Y/y] Dập NHẤP đau XÓT CHỤM lại, ban LỆNH máy GIÊ quét sạch quân GIẶC!		
 z	26 [Z/z] Vòng ÔM đừng LO hãy ỪA, vào BẾP cầm XẺNG xúc mảnh đất CẰN! (Dấu Ngang)		
 0	27 [Số 0] Ra suối TẮM mát rồi BƠM nước mặc áo YẾM (Dấu Ngang)		
 1	28 [Số 1] Không CẮN nhau để sống HƠN người trong bình YÊN (Dấu Sắc)		

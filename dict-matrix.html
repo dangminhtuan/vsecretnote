@@ -186,42 +186,50 @@
       <div class="dl-dropdown">
         <button class="tab-btn" id="dl-btn" onclick="document.getElementById('dl-menu').classList.toggle('show'); this.classList.toggle('active')">📥 TẢI TỪ ĐIỂN GBOARD ▾</button>
         <div class="dl-content" id="dl-menu" style="padding: 12px; color: #fff; min-width: 320px; box-sizing: border-box;">
-          <!-- 📦 TỪ ĐIỂN GBOARD TỔ HỢP (TINH GỌN 3 TRONG 1) -->
+          <!-- 📦 TỪ ĐIỂN GBOARD TỔ HỢP (TINH GỌN 4 TRONG 1) -->
           <div style="font-weight: bold; margin-bottom: 10px; color: #00ffcc; text-align: left; font-size: 12px; border-bottom: 1px dashed #004433; padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">
             <span>📦</span> <span>TỪ ĐIỂN GBOARD TỔ HỢP:</span>
           </div>
           
           <div style="display: flex; flex-direction: column; gap: 10px; text-align: left; margin-bottom: 14px;">
             <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
+              <input type="checkbox" id="chk-f" checked style="margin-top: 3px; cursor: pointer;" />
+              <div>
+                <strong style="color: #38bdf8; font-size: 11.5px;">🔤 [F] Gõ Mã ra Từ (Nén ➔ Từ)</strong>
+                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ mã Base60 bung ra từ tiếng Việt (TWf ➔ thành)</span>
+              </div>
+            </label>
+
+            <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
+              <input type="checkbox" id="chk-0" checked style="margin-top: 3px; cursor: pointer;" />
+              <div>
+                <strong style="color: #ffaa00; font-size: 11.5px;">⚡ [0] Tra Gọn Mã Base60 (Số 0)</strong>
+                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ từ + 0 (thành0 ➔ TWf) chèn nhanh mã, không vỡ Telex</span>
+              </div>
+            </label>
+
+            <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
+              <input type="checkbox" id="chk-9" checked style="margin-top: 3px; cursor: pointer;" />
+              <div>
+                <strong style="color: #00ff66; font-size: 11.5px;">🎓 [9] Thẻ Học Mẹo Vần (Số 9)</strong>
+                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ từ + 9 (thành9 ➔ TWf: mẹo...) hiện mẹo vần hoa thường</span>
+              </div>
+            </label>
+
+            <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
               <input type="checkbox" id="chk-rule" checked style="margin-top: 3px; cursor: pointer;" />
               <div>
-                <strong style="color: #38bdf8; font-size: 11.5px;">📜 [R] Quy tắc ma trận (36 quy tắc)</strong>
-                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gói gọn 36 phím (26 chữ cái + 10 số): đủ Phụ âm, Vần 3 bảng, Dấu</span>
-              </div>
-            </label>
-
-            <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
-              <input type="checkbox" id="chk-p" checked style="margin-top: 3px; cursor: pointer;" />
-              <div>
-                <strong style="color: #ffaa00; font-size: 11.5px;">⚡ [P] Tra gọn (Phím p)</strong>
-                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ từ + p (thànhp ➔ TWf) chèn nhanh mã Base60</span>
-              </div>
-            </label>
-
-            <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
-              <input type="checkbox" id="chk-l" checked style="margin-top: 3px; cursor: pointer;" />
-              <div>
-                <strong style="color: #00ff66; font-size: 11.5px;">🎓 [L] Học sâu (Phím l)</strong>
-                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ từ + l (thànhl ➔ TWf: ay,ôp,ưt | ANH...) hiện thẻ 9 vần</span>
+                <strong style="color: #e879f9; font-size: 11.5px;">📜 [R] 36 Quy Tắc Mẹo Ma Trận</strong>
+                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">36 câu chuyện mẹo vần ma trận (b, c, e, o... av, iv, 0..9)</span>
               </div>
             </label>
           </div>
 
           <div style="border-top: 1px solid #003315; padding-top: 10px; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; width: 100%;">
-            <a href="/Gboard_Dict_R_P_L.zip" id="dl-link" class="tab-btn" style="background: #00ffcc !important; color: #000000 !important; border-color: #00ffcc !important; text-decoration: none; width: 100%; justify-content: center; height: 38px; min-height: 38px; display: inline-flex; font-weight: bold;" download="Gboard_Dict_R_P_L.zip">
+            <a href="/Gboard_Dict_F_0_9_R.zip" id="dl-link" class="tab-btn" style="background: #00ffcc !important; color: #000000 !important; border-color: #00ffcc !important; text-decoration: none; width: 100%; justify-content: center; height: 38px; min-height: 38px; display: inline-flex; font-weight: bold;" download="Gboard_Dict_F_0_9_R.zip">
               📥 TẢI TỪ ĐIỂN TỔ HỢP (.ZIP)
             </a>
-            <span id="dl-filename" style="font-size: 10px; color: #00ffcc; text-align: center; font-family: monospace; display: block;">Gboard_Dict_R_P_L.zip</span>
+            <span id="dl-filename" style="font-size: 10px; color: #00ffcc; text-align: center; font-family: monospace; display: block;">Gboard_Dict_F_0_9_R.zip</span>
           </div>
         </div>
       </div>
