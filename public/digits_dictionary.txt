@@ -1,13 +1,13 @@
 # Gboard Dictionary version:2
 # Gboard Dictionary format:shortcut	word	language_tag	pos_tag
-ov	41 [Vần O & Ký tự o] Vần 'o' Tiếng Việt ➔ Mã: 4 (Index 35) | Ký tự Base60 'o' ➔ Vần: en (đen➔doz), Dấu: B6 Huyền		
-0	42 [Số 0] Vần: 0: ăm/ô/yêm | Dấu: 0 (B4 Ngang)		
-1	43 [Số 1] Vần: 1: ăn/ơn/yên | Dấu: 1 (B4 Sắc)		
-2	44 [Số 2] Vần: 2: ăng/ơp/yêt | Dấu: 2 (B4 Huyền)		
-3	45 [Số 3] Vần: 3: ăp/ơt/yêu | Dấu: 3 (B4 Hỏi)		
-4	46 [Số 4] Vần: 4: ăt/oen/ươu | Dấu: 4 (B4 Ngã)		
-5	47 [Số 5] Vần: 5: âu/oac/uôm | Dấu: 5 (B4 Nặng)		
-6	48 [Số 6] Vần: 6: âc/oach/uơ | Dấu: 6 (B5 Ngang)		
-7	49 [Số 7] Vần: 7: ân/oam/uâng | Dấu: 7 (B5 Sắc)		
-8	50 [Số 8] Vần: 8: âng/oang/uây | Dấu: 8 (B5 Huyền)		
-9	51 [Số 9] Vần: 9: ât/oanh/uêch | Dấu: 9 (B5 Hỏi)		
+ov	38 [Vần O & Ký tự o] Vần 'o' Tiếng Việt ➔ Mã: 4 (Index 35, ví dụ cho➔C4Z, to➔T4Z) | Ký tự Base60 'o' ➔ Vần: en/o/uyp (đen➔doz)		
+0	39 [Số 0] Vần: 0: ăm/ô/yêm | Dấu: B3 Ngang		
+1	40 [Số 1] Vần: 1: ăn/ơn/yên | Dấu: B3 Sắc		
+2	41 [Số 2] Vần: 2: ăng/ơp/yêt | Dấu: B3 Huyền		
+3	42 [Số 3] Vần: 3: ăp/ơt/yêu | Dấu: B3 Hỏi		
+4	43 [Số 4] Vần: 4: ăt/oen/ươu | Dấu: B3 Ngã		
+5	44 [Số 5] Vần: 5: âu/oac/uôm | Dấu: B3 Nặng		
+6	45 [Số 6] Vần: 6: âc/oach/uơ		
+7	46 [Số 7] Vần: 7: ân/oam/uâng		
+8	47 [Số 8] Vần: 8: âng/oang/uây		
+9	48 [Số 9] Vần: 9: ât/oanh/uêch		

@@ -6,7 +6,8 @@ import {
   BASE60_SS, 
   BASE60_HH, 
   BASE60_HH_EXTRA, 
-  BASE60_MM 
+  BASE60_MM,
+  buildLearningCard
 } from './vcomp.js';
 import { 
   CONSONANTS_BASE, 
@@ -232,6 +233,46 @@ export function processLookup(query) {
         continuous: codes.join(''),
         items: encodedList
       };
+    }
+  }
+
+  // Check for Gboard Shortcuts (p: Tra gọn Base60, l: Thẻ 9 vần Học sâu)
+  const qLower = q.toLowerCase();
+  if (qLower.length >= 2 && (qLower.endsWith('p') || qLower.endsWith('l'))) {
+    const suffix = qLower.slice(-1);
+    const subWord = q.slice(0, -1);
+    const enc = encodeSingleWord(subWord);
+    if (enc && enc.success) {
+      const b60 = enc.baseCode;
+      if (suffix === 'p') {
+        return {
+          success: true,
+          type: 'gboard_memo',
+          input: q,
+          word: subWord,
+          code: b60,
+          result: b60,
+          shortcut: q,
+          summary: `[Gboard Tiện Dụng] ${q} ➔ ${b60} (Mã Base60 gọn)`,
+          mnemonic: `Gboard Tiện Dụng: Gõ "${q}" sẽ gợi ý mã Base60 "${b60}"`,
+          breakdown: enc.breakdown
+        };
+      } else if (suffix === 'l') {
+        const card = buildLearningCard(b60, subWord);
+        return {
+          success: true,
+          type: 'gboard_learn',
+          input: q,
+          word: subWord,
+          code: b60,
+          result: card,
+          card,
+          shortcut: q,
+          summary: `[Gboard Học Sâu] ${q} ➔ ${card}`,
+          mnemonic: `Gboard Học Sâu: Gõ "${q}" sẽ gợi ý thẻ 9 vần "${card}"`,
+          breakdown: enc.breakdown
+        };
+      }
     }
   }
 

@@ -7,7 +7,8 @@ import {
 import {
   removeVietnameseTones, encodeWord, decodeWord,
   timeToBase60, base60ToTime,
-  BASE60_HH, BASE60_HH_EXTRA, BASE60_SS
+  BASE60_HH, BASE60_HH_EXTRA, BASE60_SS,
+  buildLearningCard
 } from './vcomp.js';
 
 // ==========================================
@@ -250,13 +251,10 @@ function buildMatrixData() {
           firstBaseWord = baseWords[0].word;
           baseCode = baseWords[0].b60;
         } else {
-          const hh = 19; // z
-          const c1 = BASE60_MAPPING[hh];
-          const c2 = rhymeChar;
           const s2 = tableIdx;
           const ss = s2 * 6 + t;
-          const c3 = BASE60_MAPPING[ss];
-          baseCode = `${c1}${c2}${c3}`;
+          const fakeTime = '19' + mm.toString().padStart(2, '0') + ss.toString().padStart(2, '0');
+          baseCode = timeToBase60(fakeTime);
         }
 
         // Extra PA (Group 2)
@@ -269,13 +267,10 @@ function buildMatrixData() {
           firstExtraWord = extraWords[0].word;
           extraCode = extraWords[0].b60;
         } else {
-          const hh = 0; // p
-          const c1 = BASE60_MAPPING[hh];
-          const c2 = rhymeChar;
           const s2 = tableIdx + 3;
           const ss = s2 * 6 + t;
-          const c3 = BASE60_MAPPING[ss];
-          extraCode = `${c1}${c2}${c3}`;
+          const fakeTime = '00' + mm.toString().padStart(2, '0') + ss.toString().padStart(2, '0');
+          extraCode = timeToBase60(fakeTime);
         }
 
         tonesData.push({
@@ -601,7 +596,14 @@ function initMultiSelect(containerId, dataList, selectedSet) {
 }
 
 function applyDictFilters() {
-  const fWord = document.getElementById('filter-word')?.value.trim().toLowerCase() || '';
+  let fWord = document.getElementById('filter-word')?.value.trim().toLowerCase() || '';
+  if (fWord.length > 2 && (fWord.endsWith('p') || fWord.endsWith('l'))) {
+    const trimmed = fWord.slice(0, -1);
+    const hasMatch = currentDataset.some(item => item.word.toLowerCase().includes(trimmed));
+    if (hasMatch) {
+      fWord = trimmed;
+    }
+  }
   const fB60 = document.getElementById('filter-b60')?.value.trim().toLowerCase() || '';
   const fTime = document.getElementById('filter-time')?.value.trim() || '';
   const fTime5 = document.getElementById('filter-time5')?.value.trim() || '';
@@ -1041,6 +1043,40 @@ function evaluateOmnibox(query) {
     };
   }
 
+  // 5.5. Check Gboard shortcuts: <word>p or <word>l
+  if (qLower.length >= 2 && (qLower.endsWith('p') || qLower.endsWith('l'))) {
+    const suffix = qLower.slice(-1);
+    const subWord = query.slice(0, -1);
+    const enc = encodeWord(subWord);
+    if (enc && !enc.startsWith('[')) {
+      const b60 = timeToBase60(enc);
+      if (suffix === 'p') {
+        return {
+          title: `⚡ Phím tắt Gboard Tra Gọn (Phím p): <b style="color:#ffea00; font-size:16px;">"${query}"</b> ➔ Mã: <span style="color:#00ff66; font-size:16px; font-weight:bold; background:#002200; padding:2px 8px; border:1px solid #00ff66; border-radius:3px;">${b60}</span>`,
+          html: `
+            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; font-size:12.5px;">
+              <span>Từ gốc: <b style="color:#fff;">"${subWord}"</b></span>
+              <span>Gợi ý Gboard: Gõ <b>${query}</b> sẽ chèn nhanh mã <b>${b60}</b></span>
+              <button class="cyber-btn-small" style="background:#00ffcc; color:#000; border:none; padding:3px 9px; cursor:pointer; font-weight:bold; border-radius:3px;" onclick="window.jumpToDictionary({ word: '${subWord}' })">🔍 Xem trong Từ Điển</button>
+            </div>
+          `
+        };
+      } else if (suffix === 'l') {
+        const card = buildLearningCard(b60, subWord);
+        return {
+          title: `🎓 Phím tắt Gboard Học Sâu (Phím l): <b style="color:#38bdf8; font-size:16px;">"${query}"</b> ➔ Thẻ 9 vần: <span style="color:#ffea00; font-size:14px; font-weight:bold; background:#001a26; padding:3px 8px; border:1px solid #38bdf8; border-radius:3px;">${card}</span>`,
+          html: `
+            <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap; font-size:12.5px;">
+              <span>Từ gốc: <b style="color:#fff;">"${subWord}"</b> (Mã: <b>${b60}</b>)</span>
+              <span>Gợi ý Gboard: Gõ <b>${query}</b> sẽ hiện thẻ ma trận <b>${card}</b></span>
+              <button class="cyber-btn-small" style="background:#00ffcc; color:#000; border:none; padding:3px 9px; cursor:pointer; font-weight:bold; border-radius:3px;" onclick="window.jumpToDictionary({ word: '${subWord}' })">🔍 Xem trong Từ Điển</button>
+            </div>
+          `
+        };
+      }
+    }
+  }
+
   // 6. Check if Vietnamese word (with diacritics)
   const encoded = encodeWord(query);
   if (encoded && !encoded.startsWith('[')) {
@@ -1231,81 +1267,60 @@ function checkUrlParams() {
   });
 
   // ==========================================
-  // DYNAMIC GBOARD DICTIONARY COMBINATIONS
+  // DYNAMIC GBOARD DICTIONARY COMBINATIONS (R, P, L)
   // ==========================================
   function updateGboardDownloadLink() {
-    const chkR = document.getElementById('chk-r');
-    const chkF = document.getElementById('chk-f');
-    const chkB = document.getElementById('chk-b');
+    const chkRule = document.getElementById('chk-rule');
+    const chkP = document.getElementById('chk-p');
     const chkL = document.getElementById('chk-l');
-    if (!chkR || !chkF || !chkB || !chkL) return;
+    if (!chkRule || !chkP || !chkL) return;
 
     const activeKeys = [];
-    if (chkR.checked) activeKeys.push('R');
-    if (chkF.checked) activeKeys.push('F');
-    if (chkB.checked) activeKeys.push('B');
+    if (chkRule.checked) activeKeys.push('R');
+    if (chkP.checked) activeKeys.push('P');
     if (chkL.checked) activeKeys.push('L');
-
-    const activeStr = activeKeys.length > 0 ? activeKeys.join('_') : 'EMPTY';
-    const zipName = `Gboard_Dict_${activeStr}.zip`;
 
     const dlLink = document.getElementById('dl-link');
     const dlFilename = document.getElementById('dl-filename');
-    if (dlLink) {
-      dlLink.href = `/${zipName}`;
-      dlLink.download = zipName;
+    if (!dlLink) return;
+
+    if (activeKeys.length === 0) {
+      dlLink.removeAttribute('href');
+      dlLink.removeAttribute('download');
+      dlLink.style.opacity = '0.35';
+      dlLink.style.pointerEvents = 'none';
+      dlLink.style.background = '#333333 !important';
+      dlLink.style.color = '#888888 !important';
+      dlLink.style.borderColor = '#555555 !important';
+      dlLink.textContent = '⚠️ Vui lòng chọn ít nhất 1 mục';
+      if (dlFilename) dlFilename.textContent = 'Chưa chọn từ điển';
+      return;
     }
+
+    dlLink.style.opacity = '1';
+    dlLink.style.pointerEvents = 'auto';
+    dlLink.style.background = '#00ffcc !important';
+    dlLink.style.color = '#000000 !important';
+    dlLink.style.borderColor = '#00ffcc !important';
+
+    const activeStr = activeKeys.join('_');
+    const zipName = `Gboard_Dict_${activeStr}.zip`;
+
+    dlLink.href = `/${zipName}`;
+    dlLink.download = zipName;
+    dlLink.textContent = activeKeys.length === 3 ? '📥 TẢI TỪ ĐIỂN TỔ HỢP (.ZIP)' : `📥 TẢI GÓI [${activeKeys.join(' + ')}] (.ZIP)`;
+
     if (dlFilename) {
       dlFilename.textContent = zipName;
     }
   }
 
-  // Quản lý tải tổ hợp Từ Điển Gboard TIỆN DỤNG (Học vần, VNI, Telex)
-  function updateUtilityDownloadLink() {
-    const chkN = document.getElementById('chk-util-n');
-    const chkV = document.getElementById('chk-util-v');
-    const chkT = document.getElementById('chk-util-t');
-    if (!chkN || !chkV || !chkT) return;
-
-    const activeKeys = [];
-    if (chkN.checked) activeKeys.push('N');
-    if (chkV.checked) activeKeys.push('V');
-    if (chkT.checked) activeKeys.push('T');
-
-    let zipName = '';
-    if (activeKeys.length === 0) {
-      zipName = 'Gboard_Utility_EMPTY.zip';
-    } else if (activeKeys.length === 1 && activeKeys[0] === 'N') {
-      zipName = 'Gboard_Learn_NoTone.zip';
-    } else if (activeKeys.length === 1 && activeKeys[0] === 'V') {
-      zipName = 'Gboard_Banking_VNI.zip';
-    } else if (activeKeys.length === 1 && activeKeys[0] === 'T') {
-      zipName = 'Gboard_Banking_Telex.zip';
-    } else {
-      zipName = `Gboard_Utility_${activeKeys.join('_')}.zip`;
-    }
-
-    const dlUtilLink = document.getElementById('dl-util-link');
-    const dlUtilFilename = document.getElementById('dl-util-filename');
-    if (dlUtilLink) {
-      dlUtilLink.href = `/${zipName}`;
-      dlUtilLink.download = zipName;
-    }
-    if (dlUtilFilename) {
-      dlUtilFilename.textContent = zipName;
-    }
-  }
-
-  ['chk-r', 'chk-f', 'chk-b', 'chk-l'].forEach(id => {
+  ['chk-rule', 'chk-p', 'chk-l'].forEach(id => {
     document.getElementById(id)?.addEventListener('change', updateGboardDownloadLink);
-  });
-  ['chk-util-n', 'chk-util-v', 'chk-util-t'].forEach(id => {
-    document.getElementById(id)?.addEventListener('change', updateUtilityDownloadLink);
   });
   
   // Chạy lần đầu khởi tạo
   updateGboardDownloadLink();
-  updateUtilityDownloadLink();
 
   // Đồng bộ toggle mở/đóng menu Tải Từ Điển Gboard với URL & Navbar
   const dlBtn = document.getElementById('dl-btn');

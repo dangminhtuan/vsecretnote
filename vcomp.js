@@ -195,7 +195,7 @@ export const decodeWord = (code) => {
   return prefix + tonedRhyme;
 };
 
-// --- BASE60 COMPRESSION ENGINE (TELEX + VNI ENHANCED) ---
+// --- BASE60 COMPRESSION ENGINE (3-TABLE TELEX + VNI) ---
 export const BASE60_HH = [
   'c', 'd', 'g', 'G', 'j', 'k', 'K', 'h', 'v', 'D', 'm', 'C', 'r', 's', 'n', 'b', 'l', 'Q', 'S', 'z', 'N', 'H', 'L', 'W'
 ];
@@ -203,19 +203,31 @@ export const BASE60_HH_EXTRA = [
   'p', 'f', 'q', 't', 'T', 'R', 'x'
 ];
 export const BASE60_MM = BASE60_MAPPING;
+
+// 3 Bảng Dấu Chuẩn (18 ký tự)
+export const TONE_TABLE_B1 = ['z', 's', 'f', 'r', 'x', 'j']; // Bảng 1: Telex thường
+export const TONE_TABLE_B2 = ['Z', 'S', 'F', 'R', 'X', 'J']; // Bảng 2: Telex HOA
+export const TONE_TABLE_B3 = ['0', '1', '2', '3', '4', '5']; // Bảng 3: VNI số
+
+export const BASE60_SS_TABLES = [
+  TONE_TABLE_B1,
+  TONE_TABLE_B2,
+  TONE_TABLE_B3
+];
+
 export const BASE60_SS = [
-  // s2=0 (Base Rhyme + Base PA): Telex thường
+  // s2=0 (Bảng 1 + PA Cơ bản): Telex thường
   'z', 's', 'f', 'r', 'x', 'j',
-  // s2=1 (Extra 1 Rhyme + Base PA): Telex hoa
+  // s2=1 (Bảng 2 + PA Cơ bản): Telex HOA
   'Z', 'S', 'F', 'R', 'X', 'J',
-  // s2=2 (Extra 2 Rhyme + Base PA): Nguyên âm thường
-  'a', 'e', 'i', 'u', 'w', 'y',
-  // s2=3 (Base Rhyme + Extra PA): VNI 0-5
+  // s2=2 (Bảng 3 + PA Cơ bản): VNI số
   '0', '1', '2', '3', '4', '5',
-  // s2=4 (Extra 1 Rhyme + Extra PA): VNI cao 6-9+BC
-  '6', '7', '8', '9', 'B', 'C',
-  // s2=5 (Extra 2 Rhyme + Extra PA): Nguyên âm HOA (+ o)
-  'A', 'E', 'o', 'U', 'W', 'Y',
+  // s2=3 (Bảng 1 + PA Phụ): Telex thường
+  'z', 's', 'f', 'r', 'x', 'j',
+  // s2=4 (Bảng 2 + PA Phụ): Telex HOA
+  'Z', 'S', 'F', 'R', 'X', 'J',
+  // s2=5 (Bảng 3 + PA Phụ): VNI số
+  '0', '1', '2', '3', '4', '5',
   // 36..59: English dictionary slots (24 chars)
   'c', 'd', 'g', 'G', 'k', 'K', 'h', 'v', 'D', 'm', 'n', 'b', 'l', 'Q', 'N', 'L', 'p', 'q', 't', 'T', 'H', 'M', 'P', 'V'
 ];
@@ -253,25 +265,45 @@ export function base60ToTime(base60Str) {
     const c2 = base60Str[1];
     const c3 = base60Str[2];
 
-    const ss = BASE60_SS.indexOf(c3);
-    if (ss !== -1) {
-      if (ss >= 36) {
-        const hh = BASE60_MAPPING.indexOf(c1);
-        const mm = BASE60_MAPPING.indexOf(c2);
-        if (hh !== -1 && mm !== -1) {
-          return hh.toString().padStart(2,'0') + mm.toString().padStart(2,'0') + ss.toString().padStart(2,'0');
-        }
-      } else {
-        const s2 = Math.floor(ss / 6);
-        const isExtra = s2 >= 3 && s2 <= 5;
-        const hh = isExtra ? BASE60_HH_EXTRA.indexOf(c1) : BASE60_HH.indexOf(c1);
-        const mm = BASE60_MM.indexOf(c2);
-        if (hh !== -1 && mm !== -1) {
-          return hh.toString().padStart(2,'0') + mm.toString().padStart(2,'0') + ss.toString().padStart(2,'0');
-        }
+    // 1. Kiểm tra từ điển tiếng Anh (ss >= 36)
+    const engSsIdx = BASE60_SS.slice(36).indexOf(c3);
+    if (engSsIdx !== -1 && !TONE_TABLE_B1.includes(c3) && !TONE_TABLE_B2.includes(c3) && !TONE_TABLE_B3.includes(c3)) {
+      const ss = 36 + engSsIdx;
+      const hh = BASE60_MAPPING.indexOf(c1);
+      const mm = BASE60_MAPPING.indexOf(c2);
+      if (hh !== -1 && mm !== -1) {
+        return hh.toString().padStart(2,'0') + mm.toString().padStart(2,'0') + ss.toString().padStart(2,'0');
       }
     }
 
+    // 2. Giải mã tiếng Việt theo 3 Bảng Dấu (18 ký tự)
+    let rhymeTable = -1;
+    let s1 = -1;
+
+    if (TONE_TABLE_B1.includes(c3)) {
+      rhymeTable = 0;
+      s1 = TONE_TABLE_B1.indexOf(c3);
+    } else if (TONE_TABLE_B2.includes(c3)) {
+      rhymeTable = 1;
+      s1 = TONE_TABLE_B2.indexOf(c3);
+    } else if (TONE_TABLE_B3.includes(c3)) {
+      rhymeTable = 2;
+      s1 = TONE_TABLE_B3.indexOf(c3);
+    }
+
+    if (rhymeTable !== -1 && s1 !== -1) {
+      const isExtra = BASE60_HH_EXTRA.includes(c1);
+      const hh = isExtra ? BASE60_HH_EXTRA.indexOf(c1) : BASE60_HH.indexOf(c1);
+      const mm = BASE60_MM.indexOf(c2);
+
+      if (hh !== -1 && mm !== -1) {
+        const s2 = (isExtra ? 3 : 0) + rhymeTable;
+        const ss = s2 * 6 + s1;
+        return hh.toString().padStart(2,'0') + mm.toString().padStart(2,'0') + ss.toString().padStart(2,'0');
+      }
+    }
+
+    // Fallback: raw mapping
     const i1 = BASE60_MAPPING.indexOf(base60Str[0]);
     const i2 = BASE60_MAPPING.indexOf(base60Str[1]);
     const i3 = BASE60_MAPPING.indexOf(base60Str[2]);
@@ -283,4 +315,113 @@ export function base60ToTime(base60Str) {
 }
 
 export const TOKEN_REGEX = /(<[^>]+>|\[[^\]]+\]|[a-zA-Z0-9_'\u00C0-\u024F\u1E00-\u1EFF]+)/;
+
+export const MNEMONIC_WORDS = {
+  '0': ['tắm', 'bơm', 'yếm'],
+  '1': ['cắn', 'hơn', 'yên'],
+  '2': ['trăng', 'chớp', 'yết'],
+  '3': ['bắp', 'bớt', 'yêu'],
+  '4': ['cắt', 'cho', 'hươu'],
+  '5': ['bầm', 'ngoác', 'buồm'],
+  '6': ['giấc', 'hoạch', 'quơ'],
+  '7': ['chân', 'ngoạm', 'quẫng'],
+  '8': ['tầng', 'choang', 'khuấy'],
+  '9': ['đất', 'doanh', 'huếch'],
+  'b': ['bướm', 'tòe', 'nguy'],
+  'B': ['cây', 'toát', 'khuya'],
+  'c': ['ca', 'tiếc', 'cua'],
+  'C': ['chịch', 'hoa', 'muốn'],
+  'd': ['các', 'tiên', 'xuất'],
+  'D': ['dâm', 'khít', 'thuốc'],
+  'g': ['gạch', 'nghiêng', 'giục'],
+  'G': ['gái', 'hiệp', 'quê'],
+  'k': ['cán', 'chín', 'chun'],
+  'K': ['càng', 'khiếu', 'khuân'],
+  'h': ['hôn', 'chiều', 'xuân'],
+  'H': ['hét', 'hoem', 'huynh'],
+  'v': ['vú', 'viết', 'vui'],
+  'V': ['vếch', 'giê', 'buyn'],
+  'm': ['mút', 'dịu', 'trùm'],
+  'M': ['mèo', 'khoét', 'huýt'],
+  'r': ['rên', 'kịp', 'đuôi'],
+  'R': ['răn', 'toang', 'rượu'],
+  's': ['sướng', 'nước', 'lướt'],
+  'S': ['sờ', 'bớt', 'đứt'],
+  'n': ['nứng', 'tươi', 'vượn'],
+  'N': ['ngực', 'cho', 'ngửi'],
+  'l': ['liếm', 'đòi', 'trúng'],
+  'L': ['lồn', 'hoẵng', 'bự'],
+  'q': ['cát', 'côi', 'cướp'],
+  'Q': ['chim', 'còm', 'tuyệt'],
+  'z': ['ôm', 'lo', 'ừa'],
+  'Z': ['bếp', 'xẻng', 'cằn'],
+  'y': ['nhấp', 'xót', 'chụm'],
+  'Y': ['lệnh', 'giê', 'giặc'],
+  'w': ['gốc', 'trống', 'rỗng'],
+  'W': ['thành', 'xoăng', 'được'],
+  'p': ['chao', 'cô', 'tươi'],
+  'P': ['kẹt', 'xoong', 'lìn'],
+  'f': ['tháp', 'mốc', 'lượn'],
+  'F': ['héc', 'nghoeo', 'buyn'],
+  't': ['sau', 'chông', 'lướt'],
+  'T': ['chày', 'xốp', 'dứt'],
+  'x': ['bắc', 'xơi', 'quỳ'],
+  'X': ['đêm', 'thoắt', 'liềng'],
+  'j': ['làm', 'miệt', 'lùi'],
+  'J': ['kẹo', 'choẹt', 'quýt'],
+  'a': ['hết'],
+  'A': ['cầu', 'ngoáp', 'huểnh'],
+  'e': ['kêu'],
+  'E': ['mẹ', 'ngoáy', 'huých'],
+  'u': ['chia'],
+  'U': ['mê', 'ngoặc', 'huỳnh'],
+  'o': ['đen', 'hoen', 'buýp'],
+  'i': ['đi']
+};
+
+// Tạo bảng map gộp cả chữ thường và chữ HOA cho từng phím bấm
+const BASE_KEY_WORDS = {};
+'abcdefghijklmnopqrstuvwxyz'.split('').forEach(char => {
+  const low = MNEMONIC_WORDS[char] || [];
+  const up = MNEMONIC_WORDS[char.toUpperCase()] || [];
+  const all = [...low, ...up].filter(w => w && w !== 'rỗng');
+  BASE_KEY_WORDS[char] = all;
+  BASE_KEY_WORDS[char.toUpperCase()] = all;
+});
+'0123456789'.split('').forEach(d => {
+  BASE_KEY_WORDS[d] = (MNEMONIC_WORDS[d] || []).filter(w => w && w !== 'rỗng');
+});
+
+// Thẻ học sâu Gboard (Gboard Learning Card) tích hợp Full Từ Mẹo Nhớ (Thường + HOA)
+export function buildLearningCard(b60, word) {
+  if (!b60 || b60.length !== 3) return '';
+  const searchWord = (word || '').toLowerCase();
+
+  // Gom phím duy nhất theo ký tự gốc (case-insensitive)
+  const uniqueKeys = [];
+  const seen = new Set();
+  for (let c of b60) {
+    const lowerC = c.toLowerCase();
+    if (!seen.has(lowerC)) {
+      seen.add(lowerC);
+      uniqueKeys.push(c);
+    }
+  }
+
+  const groups = uniqueKeys.map(c => {
+    const words = BASE_KEY_WORDS[c] || [c];
+    return words.map(w => {
+      if (w.toLowerCase() === searchWord) {
+        return w.toUpperCase();
+      }
+      return w;
+    }).join(',');
+  });
+
+  let card = `${b60}: ${groups.join(' | ')}`;
+  if (card.length > 100) {
+    card = `${b60}: ${groups.join('|')}`;
+  }
+  return card;
+}
 

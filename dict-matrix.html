@@ -186,86 +186,42 @@
       <div class="dl-dropdown">
         <button class="tab-btn" id="dl-btn" onclick="document.getElementById('dl-menu').classList.toggle('show'); this.classList.toggle('active')">📥 TẢI TỪ ĐIỂN GBOARD ▾</button>
         <div class="dl-content" id="dl-menu" style="padding: 12px; color: #fff; min-width: 320px; box-sizing: border-box;">
-          <!-- ⚡ PHÂN VÙNG 1: TỪ ĐIỂN GBOARD TIỆN DỤNG (ĐƯA LÊN TRÊN CÙNG) -->
-          <div style="font-weight: bold; margin-bottom: 10px; color: #ffaa00; text-align: left; font-size: 11.5px; border-bottom: 1px dashed #553300; padding-bottom: 6px;">⚡ TỪ ĐIỂN GBOARD TIỆN DỤNG:</div>
+          <!-- 📦 TỪ ĐIỂN GBOARD TỔ HỢP (TINH GỌN 3 TRONG 1) -->
+          <div style="font-weight: bold; margin-bottom: 10px; color: #00ffcc; text-align: left; font-size: 12px; border-bottom: 1px dashed #004433; padding-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+            <span>📦</span> <span>TỪ ĐIỂN GBOARD TỔ HỢP:</span>
+          </div>
           
-          <div style="display: flex; flex-direction: column; gap: 8px; text-align: left; margin-bottom: 12px;">
+          <div style="display: flex; flex-direction: column; gap: 10px; text-align: left; margin-bottom: 14px;">
             <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
-              <input type="checkbox" id="chk-util-n" checked style="margin-top: 3px; cursor: pointer;" />
+              <input type="checkbox" id="chk-rule" checked style="margin-top: 3px; cursor: pointer;" />
               <div>
-                <strong style="color: #ffea00; font-size: 11.5px;">🎓 1. Học Vần Không Dấu (.zip)</strong>
-                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Tự nhiên: muon | Thêm z cho từ có thật: thanhz, xemz</span>
+                <strong style="color: #38bdf8; font-size: 11.5px;">📜 [R] Quy tắc ma trận (36 quy tắc)</strong>
+                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gói gọn 36 phím (26 chữ cái + 10 số): đủ Phụ âm, Vần 3 bảng, Dấu</span>
               </div>
             </label>
 
             <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
-              <input type="checkbox" id="chk-util-v" style="margin-top: 3px; cursor: pointer;" />
+              <input type="checkbox" id="chk-p" checked style="margin-top: 3px; cursor: pointer;" />
               <div>
-                <strong style="color: #00ffcc; font-size: 11.5px;">⚡ 2. Tra VNI (.zip)</strong>
-                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Dồn số cuối (Lớn ➔ Nhỏ: duoc975, muon61, de963)</span>
+                <strong style="color: #ffaa00; font-size: 11.5px;">⚡ [P] Tra gọn (Phím p)</strong>
+                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ từ + p (thànhp ➔ TWf) chèn nhanh mã Base60</span>
               </div>
             </label>
 
             <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
-              <input type="checkbox" id="chk-util-t" style="margin-top: 3px; cursor: pointer;" />
+              <input type="checkbox" id="chk-l" checked style="margin-top: 3px; cursor: pointer;" />
               <div>
-                <strong style="color: #00ffcc; font-size: 11.5px;">⚡ 3. Tra Telex (.zip)</strong>
-                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ Telex (muoons) ➔ Chèn thẳng mã Base60</span>
+                <strong style="color: #00ff66; font-size: 11.5px;">🎓 [L] Học sâu (Phím l)</strong>
+                <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ từ + l (thànhl ➔ TWf: ay,ôp,ưt | ANH...) hiện thẻ 9 vần</span>
               </div>
             </label>
           </div>
 
-          <div style="border-top: 1px solid #003315; padding-top: 10px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; width: 100%;">
-            <a href="/Gboard_Learn_NoTone.zip" id="dl-util-link" class="tab-btn" style="background: #ffaa00 !important; color: #000000 !important; border-color: #ffaa00 !important; text-decoration: none; width: 100%; justify-content: center; height: 36px; min-height: 36px; display: inline-flex; font-weight: bold;" download="Gboard_Learn_NoTone.zip">
-              📥 TẢI TỪ ĐIỂN TIỆN DỤNG TỔ HỢP (.ZIP)
+          <div style="border-top: 1px solid #003315; padding-top: 10px; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; width: 100%;">
+            <a href="/Gboard_Dict_R_P_L.zip" id="dl-link" class="tab-btn" style="background: #00ffcc !important; color: #000000 !important; border-color: #00ffcc !important; text-decoration: none; width: 100%; justify-content: center; height: 38px; min-height: 38px; display: inline-flex; font-weight: bold;" download="Gboard_Dict_R_P_L.zip">
+              📥 TẢI TỪ ĐIỂN TỔ HỢP (.ZIP)
             </a>
-            <span id="dl-util-filename" style="font-size: 9.5px; color: #ffaa00; text-align: center; font-family: monospace; display: block;">Gboard_Learn_NoTone.zip</span>
-          </div>
-
-          <!-- ⚙️ PHÂN VÙNG 2: TỪ ĐIỂN HỌC SÂU (ĐƯA XUỐNG DƯỚI) -->
-          <div style="border-top: 1px dashed #004422; padding-top: 10px;">
-            <div style="font-weight: bold; margin-bottom: 10px; color: #38bdf8; text-align: left; font-size: 11.5px; border-bottom: 1px dashed #003315; padding-bottom: 6px;">⚙️ TỪ ĐIỂN HỌC SÂU:</div>
-            
-            <div style="display: flex; flex-direction: column; gap: 8px; text-align: left; margin-bottom: 12px;">
-              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
-                <input type="checkbox" id="chk-r" checked style="margin-top: 3px; cursor: pointer;" />
-                <div>
-                  <strong style="color: #00ffcc; font-size: 11.5px;">[R] Quy tắc ma trận</strong>
-                  <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">~50 quy tắc ma trận học thuộc (Bảng dấu, Phụ âm, 10 số...)</span>
-                </div>
-              </label>
-
-              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
-                <input type="checkbox" id="chk-f" checked style="margin-top: 3px; cursor: pointer;" />
-                <div>
-                  <strong style="color: #00ffcc; font-size: 11.5px;">[F] Dịch xuôi (Base60 ➔ Từ)</strong>
-                  <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ mã Base60 sẽ gợi ý ra chữ tiếng Việt hàng ngày.</span>
-                </div>
-              </label>
-
-              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
-                <input type="checkbox" id="chk-b" style="margin-top: 3px; cursor: pointer;" />
-                <div>
-                  <strong style="color: #ffaa00; font-size: 11.5px;">[B] Dịch ngược (Từ ➔ Base60)</strong>
-                  <span style="display: block; font-size: 9.5px; color: #ffbb66; line-height: 1.3;">Ép học! Bàn phím tự động thế từ thường bằng mã Base60.</span>
-                </div>
-              </label>
-
-              <label style="display: flex; align-items: flex-start; gap: 8px; cursor: pointer; user-select: none;">
-                <input type="checkbox" id="chk-l" style="margin-top: 3px; cursor: pointer;" />
-                <div>
-                  <strong style="color: #00ffcc; font-size: 11.5px;">[L] Học tập (Từ + 'l' ➔ Giải nghĩa)</strong>
-                  <span style="display: block; font-size: 9.5px; color: #aaa; line-height: 1.3;">Gõ thêm chữ l để hiện công thức giải nghĩa phím tắt (ví dụ: thànhl).</span>
-                </div>
-              </label>
-            </div>
-
-            <div style="border-top: 1px solid #003315; padding-top: 10px; display: flex; flex-direction: column; gap: 6px; box-sizing: border-box; width: 100%;">
-              <a href="/Gboard_Dict_R_F.zip" id="dl-link" class="tab-btn" style="background: #38bdf8 !important; color: #000000 !important; border-color: #38bdf8 !important; text-decoration: none; width: 100%; justify-content: center; height: 36px; min-height: 36px; display: inline-flex;" download="Gboard_Dict_R_F.zip">
-                📥 TẢI TỪ ĐIỂN HỌC SÂU TỔ HỢP (.ZIP)
-              </a>
-              <span id="dl-filename" style="font-size: 9.5px; color: #888; text-align: center; font-family: monospace; display: block;">Gboard_Dict_R_F.zip</span>
-            </div>
+            <span id="dl-filename" style="font-size: 10px; color: #00ffcc; text-align: center; font-family: monospace; display: block;">Gboard_Dict_R_P_L.zip</span>
           </div>
         </div>
       </div>
@@ -275,7 +231,7 @@
     <div id="smart-omnibox-container" style="background: rgba(0, 20, 15, 0.9); border: 1px solid #00ffcc; border-radius: 6px; padding: 10px 14px; margin-bottom: 12px; box-shadow: 0 0 15px rgba(0, 255, 204, 0.15);">
       <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
         <span style="font-size: 16px; color: #00ffcc;">⚡</span>
-        <input type="text" id="smart-omnibox-input" class="search-box" style="flex: 1; min-width: 220px; font-size: 13px; border-color: #00ffcc; background: #000; color: #00ffcc; padding: 7px 10px;" placeholder="💡 Gõ thử: b1..b6, c1, c2, '=', 't', 'w', 'thành', 'TW2' để tra nhanh..." autocomplete="off" />
+        <input type="text" id="smart-omnibox-input" class="search-box" style="flex: 1; min-width: 220px; font-size: 13px; border-color: #00ffcc; background: #000; color: #00ffcc; padding: 7px 10px;" placeholder="💡 Gõ thử: b1..b3, cm, cp, '=', 't', 'w', 'thành', 'TWf' để tra nhanh..." autocomplete="off" />
         <button id="btn-clear-omnibox" class="cyber-btn-small" style="display: none; background: #000; color: #ff5555; border: 1px solid #ff5555; cursor: pointer; padding: 5px 10px; border-radius: 4px;">✕ Xóa</button>
       </div>
       <div id="smart-omnibox-result" style="display: none; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #004433; animation: fadeIn 0.15s ease-out;">
@@ -301,8 +257,8 @@
         <strong style="color:#00ffcc;">Quy ước mã dấu ($C_3$):</strong>
         <span class="legend-badge code-badge base-p1" style="display:inline-block; width:auto; padding:2px 6px;">Bảng 1: Telex thường (z s f r x j)</span>
         <span class="legend-badge code-badge base-p2" style="display:inline-block; width:auto; padding:2px 6px;">Bảng 2: Telex HOA (Z S F R X J)</span>
-        <span class="legend-badge code-badge base-p3" style="display:inline-block; width:auto; padding:2px 6px;">Bảng 3: Nguyên âm (a e i u w y)</span>
-        <span class="legend-badge code-badge extra-p" style="display:inline-block; width:auto; padding:2px 6px;">PA Phụ: VNI (0-5, 6-C, A-Y)</span>
+        <span class="legend-badge code-badge base-p3" style="display:inline-block; width:auto; padding:2px 6px;">Bảng 3: VNI số (0 1 2 3 4 5)</span>
+        <span class="legend-badge code-badge extra-p" style="display:inline-block; width:auto; padding:2px 6px;">Dòng dưới: PA Phụ (p, ph, qu, t, th, tr, x)</span>
       </div>
 
       <div class="table-wrapper">

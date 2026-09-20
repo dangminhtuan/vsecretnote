@@ -1,53 +1,38 @@
 # Gboard Dictionary version:2
 # Gboard Dictionary format:shortcut	word	language_tag	pos_tag
-b1	01 [B1] z s f r x j (Telex thường (z s f r x j))		
-b2	02 [B2] Z S F R X J (Telex HOA (Z S F R X J))		
-b3	03 [B3] a e i u w y (Nguyên âm thường (a e i u w y))		
-b4	04 [B4] 0 1 2 3 4 5 (VNI 1 (0 1 2 3 4 5))		
-b5	05 [B5] 6 7 8 9 B C (VNI 2 (6 7 8 9 B C))		
-b6	06 [B6] A E o U W Y (Nguyên âm A, E, o, U, W, Y)		
-cm	07 [PA-Chính] 24 PA Chính: c, đ➔d, g, gh➔G, gi➔j, k, kh➔K, h, v, d➔D, m, ch➔C, r, s, n, b, l, ch➔Q, s➔S, Ø➔z, ng➔N, nh➔H, l➔L, ngh➔W		
-cp	08 [PA-Phụ] 7 PA Phụ: p, ph➔f, qu➔q, t, th➔T, tr➔R, x		
-dz	09 [Dấu-Ngang] z Z a 0 6 A (B1..B6)		
-ds	10 [Dấu-Sắc] s S e 1 7 E (B1..B6)		
-df	11 [Dấu-Huyền] f F i 2 8 o (B1..B6)		
-dr	12 [Dấu-Hỏi] r R u 3 9 U (B1..B6)		
-dx	13 [Dấu-Ngã] x X w 4 B W (B1..B6)		
-dj	14 [Dấu-Nặng] j J y 5 C Y (B1..B6)		
-av	15 [A] Vần: a: a/-/- | A: â/oap/uênh | Dấu: a (B3 Ngang), A (B6 Ngang)		
-b	16 [B] PA: b | Vần: b: ươm/oe/uy | B: ây/oat/uya | Dấu: B (B5 Ngã)		
-c	17 [C] PA: c, ch➔C | Vần: c: êt/iêc/ua | C: ich/oa/uôn | Dấu: C (B5 Nặng)		
-d	18 [D] PA: đ➔d, d➔D | Vần: d: ơ/iên/uât | D: âm/it/uôc		
-ev	19 [E] Vần: e: e/-/- | E: ê/oay/uych | Dấu: e (B3 Sắc), E (B6 Sắc)		
-f	20 [F] PA: ph➔f | Vần: f: ap/ôc/ươn | F: ec/oeo/uyn | Dấu: f (B1 Huyền), F (B2 Huyền)		
-g	21 [G] PA: g, gh➔G | Vần: g: ach/iêng/uc | G: ai/iêp/uê		
-h	22 [H] PA: h, nh➔H | Vần: h: ôn/iêu/uân | H: âp/ot/y		
-iv	23 [I] Vần: i: i/-/- | Dấu: i (B3 Huyền) | Tiền tố Hoa: I (Title Case), O (UPPERCASE)		
-j	24 [J] PA: gi➔j | Vần: j: am/iêt/ui | J: eo/oet/uyt | Dấu: j (B1 Nặng), J (B2 Nặng)		
-k	25 [K] PA: k, kh➔K | Vần: k: an/iu/um | K: ang/in/un		
-l	26 [L] PA: l, l➔L | Vần: l: iêm/oi/uyên | L: ôn/oăn/ưn		
-m	27 [M] PA: m | Vần: m: ut/inh/uôi | M: ep/ooc/uyu		
-n	28 [N] PA: n, ng➔N | Vần: n: ưng/oc/up | N: ưc/op/ưi		
-ov	29 [O] Vần: o: en/o/uyp | Dấu: o (B6 Huyền)		
-p	30 [P] PA: p | Vần: p: ao/ơm/ươi | P: et/oong/yn		
-q	31 [Q] PA: ch➔Q, qu➔q | Vần: q: at/ôi/ươp | Q: im/om/uyêt		
-r	32 [R] PA: r, tr➔R | Vần: r: ên/oai/uông | R: ă/ôt/ưu | Dấu: r (B1 Hỏi), R (B2 Hỏi)		
-s	33 [S] PA: s, s➔S | Vần: s: ương/oan/uôt | S: ac/on/ynh | Dấu: s (B1 Sắc), S (B2 Sắc)		
-t	34 [T] PA: t, th➔T | Vần: t: au/ông/ươt | T: ay/ôp/ưt		
-uv	35 [U] Vần: u: u/-/- | U: êu/oăc/ư | Dấu: u (B3 Hỏi), U (B6 Hỏi)		
-v	36 [V] PA: v | Vần: v: ia/ip/ung | V: êch/oăm/yt		
-w	37 [W] PA: ngh➔W | Vần: w: -/-/- | W: anh/oăng/ươc | Dấu: w (B3 Ngã), W (B6 Ngã)		
-x	38 [X] PA: x | Vần: x: ăc/ơi/ưm | X: êm/oăt/yêng | Dấu: x (B1 Ngã), X (B2 Ngã)		
-yv	39 [Y] Vần: y: ênh/iê/ăk | Y: em/oem/uynh | Dấu: y (B3 Nặng), Y (B6 Nặng)		
-z	40 [Z] PA: Ø➔z | Vần: z: ôm/ong/ưa | Z: êp/eng/n | Dấu: z (B1 Ngang), Z (B2 Ngang)		
-ov	41 [Vần O & Ký tự o] Vần 'o' Tiếng Việt ➔ Mã: 4 (Index 35, ví dụ cho➔C4Z, to➔T4Z) | Ký tự Base60 'o' ➔ Vần: en (đen➔doz), Dấu: B6 Huyền		
-0	42 [Số 0] Vần: 0: ăm/ô/yêm | Dấu: 0 (B4 Ngang)		
-1	43 [Số 1] Vần: 1: ăn/ơn/yên | Dấu: 1 (B4 Sắc)		
-2	44 [Số 2] Vần: 2: ăng/ơp/yêt | Dấu: 2 (B4 Huyền)		
-3	45 [Số 3] Vần: 3: ăp/ơt/yêu | Dấu: 3 (B4 Hỏi)		
-4	46 [Số 4] Vần: 4: ăt/oen/ươu | Dấu: 4 (B4 Ngã)		
-5	47 [Số 5] Vần: 5: âu/oac/uôm | Dấu: 5 (B4 Nặng)		
-6	48 [Số 6] Vần: 6: âc/oach/uơ | Dấu: 6 (B5 Ngang)		
-7	49 [Số 7] Vần: 7: ân/oam/uâng | Dấu: 7 (B5 Sắc)		
-8	50 [Số 8] Vần: 8: âng/oang/uây | Dấu: 8 (B5 Huyền)		
-9	51 [Số 9] Vần: 9: ât/oanh/uêch | Dấu: 9 (B5 Hỏi)		
+av	01 [A/a] Cứ bước qua chiếc CẦU, há mồm NGOÁP rồi HUỂNH hoang đi xa!		
+b	02 [B/b] Bắt BƯỚM mở TÒE loe, gặp NGUY trèo tót lên CÂY, sợ TOÁT mồ hôi tới KHUYA!		
+c	03 [C/c] Hát CA TIẾC con CUA rơi, đè CHỊCH bé HOA nếu thật sự MUỐN!		
+d	04 [D/d] CÁC TIÊN nữ XUẤT hiện, thú tính DÂM kẹp KHÍT như ngậm điếu THUỐC!		
+ev	05 [E/e] Cún con kêu đòi MẸ, ngoắt NGOÁY cái đuôi rồi HUÝCH vào chân!		
+f	06 [F/f] Trèo THÁP đầy MỐC LƯỢN bay, chạy HÉC-quyn quẹo NGHOEO đón BUYN! (Dấu Huyền)		
+g	07 [G/g] Cầm GẠCH đứng NGHIÊNG hối GIỤC, em GÁI vừa xong một HIỆP đòi về QUÊ!		
+h	08 [H/h] Sáng sớm HÔN đón CHIỀU XUÂN, bất ngờ HÉT to cười HOEM chọc HUYNH!		
+iv	09 [I/i] Thôi xách ba lô lên và ĐI! (Tiền tố: I hoa đầu, O hoa hết)		
+j	10 [J/j] Chăm LÀM MIỆT mài không LÙI, ngậm KẸO đỏ CHOẸT thơm mùi QUÝT! (Dấu Nặng)		
+k	11 [K/k] Vác CÁN đập CHÍN giãn CHUN, CÀNG khoe KHIẾU hì hục KHUÂN đồ!		
+l	12 [L/l] Cúi xuống LIẾM láp, nàng ĐÒI đâm TRÚNG cái LỒN như con HOẴNG BỰ!		
+m	13 [M/m] Đòi MÚT cho DỊU rồi TRÙM mền như MÈO, cào KHOÉT vách rồi HUÝT sáo!		
+n	14 [N/n] Nổi NỨNG TƯƠI như VƯỢN, phanh bờ NGỰC CHO ghé vào NGỬI!		
+ov	15 [O/o] Vệt mực ĐEN làm HOEN gỉ chiếc xe BUÝP! (vần 'o' TV mã 4)		
+p	16 [P/p] Thuyền CHAO đảo gặp CÔ gái TƯƠI, KẸT vào cái XOONG rớt LÌN xìn!		
+q	17 [Q/q] Bãi CÁT mồ CÔI bị CƯỚP, vỗ đầu CHIM gầy CÒM khen đẹp TUYỆT!		
+r	18 [R/r] Vừa RÊN không KỊP đuôi, mở miệng RĂN kẻo làm TOANG bình RƯỢU quý! (Dấu Hỏi)		
+s	19 [S/s] Đang SƯỚNG ra NƯỚC, LƯỚT tay vào SỜ, nàng bảo BỚT kẻo ĐỨT gân! (Dấu Sắc)		
+t	20 [T/t] Vượt bãi CHÔNG nhẹ lướt về SAU, giã CHÀY bánh XỐP ăn không DỨT!		
+uv	21 [U/u] Cùng san CHIA say MÊ, mở dấu NGOẶC ghi tên Lưu HUỲNH rực rỡ!		
+v	22 [V/v] Sờ đôi VÚ VIẾT thư rất VUI, mặt VẾCH chạy máy GIÊ kêu như xe BUYN!		
+w	23 [W/w] Khởi đầu từ GỐC TRỐNG RỖNG, xây THÀNH tóc XOĂNG tít là ĐƯỢC!		
+x	24 [X/x] Đi ra BẮC XƠI rượu bắt QUỲ, canh ĐÊM THOẮT cất tiếng LIỀNG! (Dấu Ngã)		
+yv	25 [Y/y] Dập NHẤP đau XÓT CHỤM lại, ban LỆNH máy GIÊ quét sạch quân GIẶC!		
+z	26 [Z/z] Vòng ÔM đừng LO hãy ỪA, vào BẾP cầm XẺNG xúc mảnh đất CẰN! (Dấu Ngang)		
+0	27 [Số 0] Ra suối TẮM mát rồi BƠM nước mặc áo YẾM (Dấu Ngang)		
+1	28 [Số 1] Không CẮN nhau để sống HƠN người trong bình YÊN (Dấu Sắc)		
+2	29 [Số 2] Ánh TRĂNG ló CHỚP nhoáng trên bảng YẾT kiến (Dấu Huyền)		
+3	30 [Số 3] Cầm BẮP ngô ăn BỚT trao người mình YÊU (Dấu Hỏi)		
+4	31 [Số 4] Cầm kéo CẮT cỏ CHO đàn HƯƠU (Dấu Ngã)		
+5	32 [Số 5] Vết thương BẦM dập mở toang NGOÁC cánh BUỒM (Dấu Nặng)		
+6	33 [Số 6] Tỉnh GIẤC hoàn thành kế HOẠCH tay QUƠ vội!		
+7	34 [Số 7] Bước đôi CHÂN há mồm NGOẠM thịt nhảy QUẪNG!		
+8	35 [Số 8] Lên TẦNG cao chén vỡ CHOANG tay KHUẤY trà!		
+9	36 [Số 9] Rơi xuống mảnh ĐẤT kinh DOANH nhà trống HUẾCH!		
