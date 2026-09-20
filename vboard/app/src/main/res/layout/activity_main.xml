@@ -247,6 +247,17 @@
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
                     app:backgroundTint="#1F6FEB"
+                    app:cornerRadius="8dp"
+                    android:layout_marginBottom="8dp" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_open_guide"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="📖 HƯỚNG DẪN SỬ DỤNG &amp; TRA CỨU PHÍM TẮT"
+                    android:textColor="#FFFFFF"
+                    android:textStyle="bold"
+                    app:backgroundTint="#238636"
                     app:cornerRadius="8dp" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

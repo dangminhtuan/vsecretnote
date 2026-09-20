@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0D1117">
+
+    <!-- Header Toolbar -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:background="#161B22"
+        android:paddingHorizontal="16dp"
+        android:elevation="4dp">
+
+        <ImageButton
+            android:id="@+id/btn_back_guide"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_revert"
+            app:tint="#58A6FF"
+            android:contentDescription="Quay lại" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="12dp"
+            android:text="📖 Hướng Dẫn &amp; Tra Cứu vBoard"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#E6EDF3" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Card 1: Quệt 6 Hướng & La Bàn -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="10dp"
+                app:cardBackgroundColor="#161B22"
+                app:strokeColor="#30363D"
+                app:strokeWidth="1dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🧭 QUỆT 6 HƯỚNG &amp; LA BÀN DẤU (0ms)"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#58A6FF"
+                        android:layout_marginBottom="6dp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• ⬆️ Vuốt Lên: Dấu Sắc (á, é, ó, ú, í...)\n• ⬅️ Vuốt Trái: Dấu Huyền (à, è, ò, ù, ì...)\n• ➡️ Vuốt Phải: Dấu Hỏi (ả, ẻ, ỏ, ủ, ỉ...)\n• ↙️ Vuốt Trái Dưới: Dấu Ngã (ã, ẽ, õ, ũ, ĩ...)\n• ⬇️ Vuốt Xuống: Dấu Nặng (ạ, ẹ, ọ, ụ, ị...)\n• ↘️ Vuốt Phải Dưới: Ký tự biến thể gốc TV (ă, â, đ, ê, ô, ơ, ư, uâ, iê...)\n\n💡 Khi ngón tay bắt đầu vuốt, La bàn HUD trực quan sẽ nổi lên ngay phía trên điểm chạm hiển thị chính xác ký tự đầu ra theo thời gian thực!"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp"
+                        android:textColor="#C9D1D9" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 2: 2 Siêu Phím Phụ Âm Kép D & Z -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="10dp"
+                app:cardBackgroundColor="#161B22"
+                app:strokeColor="#30363D"
+                app:strokeWidth="1dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⚡ 2 SIÊU PHÍM PHỤ ÂM KÉP (D &amp; Z)"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#3FB950"
+                        android:layout_marginBottom="6dp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• Phím [d]:\n   - Tap: chữ 'd'\n   - Vuốt: ⬆️ tr • ⬅️ nh • ➡️ kh • ↙️ gh • ⬇️ th • ↘️ đ\n\n• Phím [z]:\n   - Tap: chữ 'z'\n   - Vuốt: ⬆️ qu • ⬅️ ph • ➡️ gi • ↙️ ch • ⬇️ ng • ↘️ ngh\n\n💡 Chạm giữ phím [d] hoặc [z] (hoặc vuốt nhẹ) để Nở hoa bảng 5 phụ âm bao quanh!"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp"
+                        android:textColor="#C9D1D9" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 3: Multi-Clipboard -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="10dp"
+                app:cardBackgroundColor="#161B22"
+                app:strokeColor="#30363D"
+                app:strokeWidth="1dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📋 BỘ NHỚ TẠM ĐA NĂNG (MULTI-CLIPBOARD)"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#79C0FF"
+                        android:layout_marginBottom="6dp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• Bấm biểu tượng [📋] trên thanh công cụ bàn phím để mở Bộ Nhớ Tạm.\n• Tự động lưu mọi đoạn văn bản bạn vừa Copy từ Chrome, Zalo, Facebook, Tin nhắn... vào cơ sở dữ liệu bền vững.\n• Chạm 1 phát vào thẻ clip bất kỳ: Dán ngay lập tức vào văn bản!\n• Nút [📌]: Ghim đoạn văn bản quan trọng (số tài khoản, địa chỉ) để không bao giờ bị xóa.\n• Nút [🗑️]: Xóa nhanh từng mục hoặc xóa toàn bộ các mục chưa ghim."
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp"
+                        android:textColor="#C9D1D9" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 4: Khóa Phím Đúp & Cử Chỉ Vuốt -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="10dp"
+                app:cardBackgroundColor="#161B22"
+                app:strokeColor="#30363D"
+                app:strokeWidth="1dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🔒 BẤM ĐÚP KHÓA TẦNG &amp; CỬ CHỈ TRƯỢT"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#D29922"
+                        android:layout_marginBottom="6dp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="• [⇧ Shift] x2 (Nhấn đúp): Caps Lock (⇪ viết hoa liên tục).\n• [❖ Mode] x2: Ghim chặt tầng Mode (❖ 🔒) để biên tập nhiều thao tác liên tiếp.\n• [ớ] x2: Ghim gõ tầng [ớ] (ớ 🔒) để nhập nhiều từ tiếng Việt chuyên biệt.\n• [Space] (Dấu cách): Đặt ngón tay và trượt ngang trái/phải để di chuyển con trỏ chính xác từng ký tự.\n• [⌫] (Backspace): Đặt ngón tay kéo sang trái để xóa siêu tốc theo từng từ (kéo qua m = 1 từ, n = 2 từ, b = 3 từ...). Máy rung nhẹ mỗi từ xóa!"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp"
+                        android:textColor="#C9D1D9" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 5: 15 Mode Cơ Số 16 -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="10dp"
+                app:cardBackgroundColor="#161B22"
+                app:strokeColor="#30363D"
+                app:strokeWidth="1dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="❖ 15 MODE CƠ SỐ 16 (0..e)"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#BC8CFF"
+                        android:layout_marginBottom="6dp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="[0] 🟢 Tiếng Việt gốc (Chuẩn VNI/Telex thông thường)\n[1] 🟣 Base60 (Mã hóa phân tách dấu cách)\n[2] 🔤 Base60 liền (Mã hóa TimeCypher 3 ký tự viết liền)\n[3] 🟡 Giờ 4 số (TimeCypher rút gọn 4 chữ số)\n[4] ✨ Kỳ quan (Mã số kỳ quan thế giới)\n[5] 🔠 Cyber Font (Font số hóa đặc biệt)\n[6] 🖊️ ViScript (Bộ mã tốc ký âm tiết ViScript)\n[7] 🔶 Unicode Zero (Mã ký tự ẩn chống soi chiếu)\n[8] ⏱️ Giờ 6 số (Mã hóa giờ:phút:giây đầy đủ)\n[9] 🔢 Giờ 5 số (Mã nén thời gian)\n[a] ⚡ CVNSS (Chữ Việt Nhanh Siêu Sạch)\n[b] ✝️ Giả Việt (Mã hóa từ ngữ giả lập)\n[c] 🐫 camelCase (Tự động nối từ dạng camelCase code)\n[d] 📝 Không dấu (Tự động bỏ dấu thanh)\n[e] 🌟 Giả Việt ngắn (Dạng tối giản của Giả Việt)"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp"
+                        android:textColor="#C9D1D9" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Card 6: Tiện Ích Biên Tập & Bôi Đen -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="10dp"
+                app:cardBackgroundColor="#161B22"
+                app:strokeColor="#30363D"
+                app:strokeWidth="1dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✂️ BIÊN TẬP &amp; BÔI ĐEN (TRONG TẦNG MODE)"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="#FFA657"
+                        android:layout_marginBottom="6dp" />
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Khi bật [❖ Mode], các phím chuyển thành công cụ biên tập cực mạnh:\n• [,] |🔤: Bôi đen từ đầu câu đến vị trí con trỏ\n• [s] 🔤.: Bôi đen từ vị trí con trỏ đến hết câu\n• [x] ⏮|: Bôi đen ngược về đầu văn bản\n• [v] |⏭: Bôi đen xuôi về cuối văn bản\n• [p] ¶: Bôi đen toàn bộ đoạn văn hiện tại\n• [Space]: Chọn tất cả văn bản (Select All)\n• [.] 📋: Dán văn bản nhanh\n• [h] 🔠: Chuyển đổi Hoa / Thường cho từ đang chọn\n• [z] ↶: Hoàn tác (Undo)\n• [r] ↷: Làm lại (Redo)\n• [n] 🧹: Xóa sạch ô nhập liệu (Clear All)\n• [w], [t], [y], [q]: Tự động bọc ngoặc kép &quot;&quot;, tròn (), vuông [], nhọn {}\n• [i, j, k, l]: Phím điều hướng con trỏ Lên/Trái/Xuống/Phải\n• [u, o]: Nhảy nhanh về Đầu dòng (Home) và Cuối dòng (End)"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="3dp"
+                        android:textColor="#C9D1D9" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

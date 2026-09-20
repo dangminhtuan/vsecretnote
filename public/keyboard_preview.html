@@ -269,6 +269,28 @@
       </button>
     </div>
 
+    <!-- MODAL CHUYỂN ĐỔI CHẾ ĐỘ I/O (SPACEBAR LONG-PRESS) -->
+    <div id="iomode-modal" class="hidden absolute inset-2 bg-gray-900/95 backdrop-blur-md rounded-2xl z-50 p-4 border border-gray-700 shadow-2xl flex flex-col justify-between">
+      <div class="flex items-center justify-between border-b border-gray-700 pb-2">
+        <div class="flex items-center gap-2">
+          <span class="text-base">⌨️</span>
+          <h3 class="font-bold text-gray-100 text-sm">Chế độ Nhập & Xuất vBoard (I/O Mode)</h3>
+        </div>
+        <button onclick="closeIOModeModal()" class="w-7 h-7 rounded-lg bg-gray-800 text-gray-400 hover:text-white flex items-center justify-center font-bold">✕</button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto py-2.5 pr-1 flex flex-col gap-2 text-xs" id="iomode-options-container">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <div class="pt-2 border-t border-gray-700 flex justify-between items-center text-[11px] text-gray-400">
+        <span>Giữ phím <b>Space</b> bất kỳ lúc nào để đổi lại</span>
+        <button onclick="closeIOModeModal()" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold text-xs text-center">
+          Xong
+        </button>
+      </div>
+    </div>
+
     <!-- Footnote Tóm tắt -->
     <div class="pt-1.5 border-t border-gray-200 dark:border-gray-700/70 flex justify-between items-center text-[11px] text-gray-500 dark:text-gray-400 px-1">
       <span>• <b>Quệt 6 hướng (0ms)</b>: ⬆️ Sắc, ⬅️ Huyền, ➡️ Hỏi, ↙️ Ngã, ⬇️ Nặng, <b>↘️ Gốc TV (ô, ư, ê...)</b>.</span>
@@ -1283,7 +1305,7 @@
         const dx = e.changedTouches[0].clientX - gestureStartX;
         const dy = e.changedTouches[0].clientY - gestureStartY;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist >= 18) {
+        if (dist >= 18 && currentIOMode === 'vn_to_vn') {
           if (holdTimer) clearTimeout(holdTimer);
           handleFlickAction(key, vKey, dx, dy);
           setTimeout(() => { isTouchMode = false; }, 300);
@@ -1319,7 +1341,7 @@
       const dx = e.clientX - gestureStartX;
       const dy = e.clientY - gestureStartY;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist >= 18) {
+      if (dist >= 18 && currentIOMode === 'vn_to_vn') {
         if (holdTimer) clearTimeout(holdTimer);
         handleFlickAction(key, vKey, dx, dy);
         return;
@@ -1861,18 +1883,109 @@
     }
 
     // ========================================================
-    // D. HÀNG 5 DÙNG CHUNG (TỐI ƯU TUYỆT ĐỐI THEO TẦNG)
+    // D. QUẢN LÝ CHẾ ĐỘ NHẬP & XUẤT (I/O MODES) & SPACEBAR MENU
+    // ========================================================
+    const IO_MODES = [
+      { id: 'vn_to_vn', badge: 'VN ➔ VN', name: 'VN ➔ VN', desc: 'Tiếng Việt chuẩn (Bật la bàn chọn dấu)', color: 'text-gray-400 dark:text-gray-300' },
+      { id: 'b60_to_vn', badge: 'B60 ➔ VN', name: 'B60 ➔ VN', desc: 'Gõ Base60 ra Tiếng Việt (Tắt la bàn, bật Swipe)', color: 'text-emerald-500 dark:text-emerald-400 font-bold' },
+      { id: 'vn_to_b60', badge: 'VN ➔ B60', name: 'VN ➔ B60', desc: 'Gõ Tiếng Việt ra Mã Base60 (Tắt la bàn, bật Swipe)', color: 'text-purple-500 dark:text-purple-400 font-bold' },
+      { id: 'no_accent_to_vn', badge: 'K.Dấu ➔ VN', name: 'Không dấu ➔ VN', desc: 'Gõ không dấu tự động thêm dấu (Tắt la bàn, bật Swipe)', color: 'text-blue-500 dark:text-blue-400 font-bold' },
+      { id: 'b60_to_b60', badge: 'B60 ➔ B60', name: 'B60 ➔ B60', desc: 'Gõ Base60 giữ nguyên mã Base60 (Tắt la bàn, bật Swipe)', color: 'text-amber-500 dark:text-amber-400 font-bold' }
+    ];
+    let currentIOMode = localStorage.getItem('vboard_iomode') || 'vn_to_vn';
+
+    let spaceHoldTimer = null;
+    let isSpaceHolding = false;
+
+    function startSpaceHold() {
+      isSpaceHolding = false;
+      if (spaceHoldTimer) clearTimeout(spaceHoldTimer);
+      spaceHoldTimer = setTimeout(() => {
+        isSpaceHolding = true;
+        openIOModeModal();
+      }, 250);
+    }
+
+    function endSpaceHold() {
+      if (spaceHoldTimer) {
+        clearTimeout(spaceHoldTimer);
+        spaceHoldTimer = null;
+      }
+      if (isSpaceHolding) {
+        isSpaceHolding = false;
+        return false;
+      }
+      return true;
+    }
+
+    function openIOModeModal() {
+      const modal = document.getElementById('iomode-modal');
+      const container = document.getElementById('iomode-options-container');
+      if (!modal || !container) return;
+
+      container.innerHTML = IO_MODES.map(m => {
+        const isSelected = m.id === currentIOMode;
+        const activeBorder = isSelected ? 'border-blue-500 bg-blue-950/40 ring-1 ring-blue-500' : 'border-gray-700 bg-gray-800/80 hover:bg-gray-800';
+        return `
+          <button onclick="selectIOMode('${m.id}')" class="p-2.5 rounded-xl border ${activeBorder} flex items-center justify-between text-left transition-all">
+            <div class="flex flex-col gap-0.5">
+              <div class="flex items-center gap-2">
+                <span class="font-mono font-bold text-xs ${m.color}">[${m.badge}]</span>
+                <span class="font-bold text-white text-xs">${m.name}</span>
+              </div>
+              <span class="text-[11px] text-gray-400">${m.desc}</span>
+            </div>
+            ${isSelected ? '<span class="text-blue-400 font-bold text-base">✓</span>' : ''}
+          </button>
+        `;
+      }).join('');
+
+      modal.classList.remove('hidden');
+    }
+
+    function closeIOModeModal() {
+      const modal = document.getElementById('iomode-modal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    function selectIOMode(modeId) {
+      currentIOMode = modeId;
+      localStorage.setItem('vboard_iomode', modeId);
+      closeIOModeModal();
+      renderKeyboard();
+    }
+
+    function renderSpaceButton() {
+      const modeObj = IO_MODES.find(m => m.id === currentIOMode) || IO_MODES[0];
+      const isCustom = currentIOMode !== 'vn_to_vn';
+      const badgeHtml = `<span class="text-[9px] font-mono leading-none ${isCustom ? modeObj.color + ' bg-black/25 px-1 py-0.5 rounded border border-current/30' : 'text-gray-400 opacity-60'}">[${modeObj.badge}]</span>`;
+      return `
+        <button onpointerdown="startSpaceHold()" 
+                onpointerup="if (endSpaceHold()) { pressChar(' '); }" 
+                onpointercancel="if (spaceHoldTimer) clearTimeout(spaceHoldTimer);"
+                oncontextmenu="event.preventDefault(); openIOModeModal();"
+                class="flex-1 h-11 bg-white dark:bg-[#2c333e] text-gray-700 dark:text-gray-300 rounded-lg key-shadow key-btn flex flex-col items-center justify-center p-0.5" 
+                title="Bấm để cách • Bấm giữ để đổi Chế độ Nhập/Xuất (I/O Mode)">
+          <span class="text-xs font-semibold leading-tight">Space</span>
+          ${badgeHtml}
+        </button>
+      `;
+    }
+
+    // ========================================================
+    // E. HÀNG 5 DÙNG CHUNG (TỐI ƯU TUYỆT ĐỐI THEO TẦNG)
     // ========================================================
     function renderBottomRow(container, isMode, isVowel) {
       if (isVowel) {
-        // Tầng [ớ]: [❖ Mode] [ớ Guide (active)] [!] [Space] [:] [✕ Đóng]
+        // Tầng [ớ]: [❖ Mode] [ớ (active - toggle)] [?] [Space] ["] [🔍] [↵]
         container.innerHTML = `
           <button onclick="toggleModeMatrix()" class="w-12 h-11 bg-[#cfd8dc] dark:bg-[#374151] text-blue-700 dark:text-blue-300 font-bold rounded-lg key-shadow special-btn flex items-center justify-center text-sm">❖ Mode</button>
-          <button onclick="cancelVowelMode()" class="w-12 h-11 bg-emerald-600 text-white ring-2 ring-emerald-400 font-extrabold rounded-lg key-shadow special-btn flex items-center justify-center text-sm" title="Bản đồ [ớ] đang bật • Bấm để tắt">ớ</button>
+          <button onclick="cancelVowelMode()" class="w-11 h-11 bg-emerald-600 text-white ring-2 ring-emerald-400 font-extrabold rounded-lg key-shadow special-btn flex items-center justify-center text-sm" title="Bản đồ [ớ] đang bật • Bấm để tắt">ớ</button>
           <button onclick="commitDirectText('?')" class="w-9 h-11 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 rounded-lg key-shadow key-btn flex items-center justify-center font-bold text-base" title="Dấu hỏi chấm ?">?</button>
-          <button onclick="pressChar(' ')" class="flex-1 h-11 bg-white dark:bg-[#2c333e] text-gray-700 dark:text-gray-300 rounded-lg key-shadow key-btn flex items-center justify-center text-xs font-semibold">Space</button>
+          ${renderSpaceButton()}
           <button onclick="commitDirectText('&quot;')" class="w-9 h-11 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-900 dark:text-emerald-200 border border-emerald-300 dark:border-emerald-700 rounded-lg key-shadow key-btn flex items-center justify-center font-bold text-base" title="Dấu nháy kép &quot;">"</button>
-          <button onclick="cancelVowelMode()" class="w-24 h-11 bg-rose-700 hover:bg-rose-800 text-white rounded-lg key-shadow special-btn flex items-center justify-center text-xs font-bold">✕ Đóng [ớ]</button>
+          <button onclick="pressSearch()" class="w-10 h-11 bg-[#cfd8dc] dark:bg-[#374151] text-gray-800 dark:text-gray-200 rounded-lg key-shadow special-btn flex items-center justify-center text-sm">🔍</button>
+          <button onclick="pressChar('\\n')" class="w-12 h-11 bg-[#1A73E8] hover:bg-[#1557B0] text-white rounded-lg key-shadow special-btn flex items-center justify-center font-bold text-lg">↵</button>
         `;
       } else if (isMode) {
         // Tầng Mode: [❖ Mode] [ớ] [|🔤 Đầu câu] [Select All] [📋 Paste] [🔍] [↵]
@@ -1897,7 +2010,7 @@
           <button onclick="toggleModeMatrix()" class="w-12 h-11 bg-[#cfd8dc] dark:bg-[#374151] text-blue-700 dark:text-blue-300 font-bold rounded-lg key-shadow special-btn flex items-center justify-center text-sm" title="Bật/Tắt 15 Mode Cơ số 16">❖ Mode</button>
           <button onclick="toggleVowelGuide()" class="w-11 h-11 bg-emerald-100 dark:bg-emerald-950/70 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 font-bold rounded-lg key-shadow special-btn flex items-center justify-center text-sm" title="Bật Bản đồ Vùng Vàng [ớ]">ớ</button>
           <button onclick="pressChar(',')" class="w-9 h-11 bg-white dark:bg-[#2c333e] text-gray-900 dark:text-gray-100 rounded-lg key-shadow key-btn flex items-center justify-center font-bold text-base">,</button>
-          <button onclick="pressChar(' ')" class="flex-1 h-11 bg-white dark:bg-[#2c333e] text-gray-700 dark:text-gray-300 rounded-lg key-shadow key-btn flex items-center justify-center text-xs font-semibold">Space</button>
+          ${renderSpaceButton()}
           <button onclick="pressChar('.')" class="w-9 h-11 bg-white dark:bg-[#2c333e] text-gray-900 dark:text-gray-100 rounded-lg key-shadow key-btn flex items-center justify-center font-bold text-base">.</button>
           <button onclick="pressSearch()" class="w-10 h-11 bg-[#cfd8dc] dark:bg-[#374151] text-gray-800 dark:text-gray-200 rounded-lg key-shadow special-btn flex items-center justify-center text-sm">🔍</button>
           <button onclick="pressChar('\\n')" class="w-12 h-11 bg-[#1A73E8] hover:bg-[#1557B0] text-white rounded-lg key-shadow special-btn flex items-center justify-center font-bold text-lg">↵</button>
@@ -2298,6 +2411,196 @@
       return c1 + c2 + c3;
     }
 
+    function base60ToTime(base60Str) {
+      if (!base60Str || (base60Str.length !== 3 && base60Str.length !== 2 && base60Str.length !== 1)) return base60Str;
+
+      if (base60Str.length === 3) {
+        const c1 = base60Str[0];
+        const c2 = base60Str[1];
+        const c3 = base60Str[2];
+        const ss = BASE60_SS.indexOf(c3);
+        if (ss === -1) return base60Str;
+
+        let hh = -1;
+        if (ss >= 36) {
+          hh = BASE60_MAP_CHARS.indexOf(c1);
+        } else {
+          const s2 = Math.floor(ss / 6);
+          const isExtra = s2 >= 3 && s2 <= 5;
+          if (isExtra) {
+            hh = BASE60_HH_EXTRA.indexOf(c1);
+            if (hh === -1) hh = BASE60_MAP_CHARS.indexOf(c1);
+          } else {
+            hh = BASE60_HH.indexOf(c1);
+            if (hh === -1) hh = BASE60_MAP_CHARS.indexOf(c1);
+          }
+        }
+        const mm = BASE60_MAP_CHARS.indexOf(c2);
+        if (hh !== -1 && mm !== -1) {
+          return String(hh).padStart(2, '0') + String(mm).padStart(2, '0') + String(ss).padStart(2, '0');
+        }
+      } else if (base60Str.length === 2) {
+        const i1 = BASE60_MAP_CHARS.indexOf(base60Str[0]);
+        const i2 = BASE60_MAP_CHARS.indexOf(base60Str[1]);
+        if (i1 !== -1 && i2 !== -1) {
+          return String(i1).padStart(2, '0') + String(i2).padStart(2, '0') + '00';
+        }
+      } else if (base60Str.length === 1) {
+        const i1 = BASE60_MAP_CHARS.indexOf(base60Str[0]);
+        if (i1 !== -1) {
+          return String(i1).padStart(2, '0') + '0000';
+        }
+      }
+      return base60Str;
+    }
+
+    function applyToneToRhyme(rhyme, tone) {
+      if (tone === 0 || !rhyme) return rhyme;
+      const marks = ['', '\u0301', '\u0300', '\u0309', '\u0303', '\u0323'];
+      const m = marks[tone] || '';
+      const vowelPriority = ['ê', 'ơ', 'ô', 'â', 'ă', 'ư', 'e', 'o', 'a', 'i', 'u', 'y'];
+      for (const v of vowelPriority) {
+        const idx = rhyme.indexOf(v);
+        if (idx !== -1) {
+          const combined = rhyme.substring(0, idx + 1) + m + rhyme.substring(idx + 1);
+          return combined.normalize('NFC');
+        }
+      }
+      return (rhyme + m).normalize('NFC');
+    }
+
+    function decodeWordTimeCode(code) {
+      if (!code || code.length < 4) return code;
+      let c = code;
+      if (c.length === 4) c += '00';
+      if (c.length !== 6) return code;
+
+      const hh = parseInt(c.substring(0, 2), 10);
+      const mm = parseInt(c.substring(2, 4), 10);
+      const ss = parseInt(c.substring(4, 6), 10);
+      if (isNaN(hh) || isNaN(mm) || isNaN(ss)) return code;
+
+      const s2 = Math.floor(ss / 6);
+      const s1 = ss % 6;
+
+      let consonant = '';
+      let rhyme = '';
+
+      if (s2 >= 0 && s2 <= 2) {
+        consonant = CONSONANTS_BASE[hh] || '';
+      } else if (s2 >= 3 && s2 <= 5) {
+        consonant = CONSONANTS_EXTRA[hh] || '';
+      }
+
+      if (s2 === 0 || s2 === 3) rhyme = RHYMES_BASE[mm] || '';
+      else if (s2 === 1 || s2 === 4) rhyme = RHYMES_EXTRA_1[mm] || '';
+      else if (s2 === 2 || s2 === 5) rhyme = RHYMES_EXTRA_2[mm] || '';
+
+      if (!rhyme && !consonant) return code;
+      const tonedRhyme = applyToneToRhyme(rhyme, s1);
+      return consonant + tonedRhyme;
+    }
+
+    function decodeBase60ToVietnamese(b60) {
+      if (!b60) return b60;
+      function tryDecode(code) {
+        const time = base60ToTime(code);
+        if (time && time.length === 6 && /^\d+$/.test(time)) {
+          const word = decodeWordTimeCode(time);
+          if (word && word !== time) return word;
+        }
+        return null;
+      }
+
+      const res = tryDecode(b60);
+      if (res) return res;
+
+      // Thử các tổ hợp hoa/thường cho 2 ký tự đầu (ví dụ tw2 -> Tw2, tW2, TW2)
+      if (b60.length >= 2) {
+        const c0 = b60[0];
+        const c1 = b60[1];
+        const rest = b60.slice(2);
+        const v0 = Array.from(new Set([c0.toLowerCase(), c0.toUpperCase()]));
+        const v1 = Array.from(new Set([c1.toLowerCase(), c1.toUpperCase()]));
+        for (const a of v0) {
+          for (const b of v1) {
+            const candidate = a + b + rest;
+            if (candidate !== b60) {
+              const candRes = tryDecode(candidate);
+              if (candRes) return candRes;
+            }
+          }
+        }
+      }
+      return b60;
+    }
+
+    function encodeVietnameseToBase60(vnWord) {
+      if (!vnWord) return vnWord;
+      const time = encodeWordTimeCode(vnWord);
+      if (time) return timeToBase60(time);
+      return vnWord;
+    }
+
+    const COMMON_ACCENT_DICTIONARY = {
+      'vietnam': 'Việt Nam', 'viet': 'việt', 'nam': 'nam',
+      'homnay': 'hôm nay', 'nguoi': 'người', 'yeu': 'yêu',
+      'thuong': 'thương', 'truong': 'trường', 'hoc': 'học',
+      'tap': 'tập', 'cong': 'công', 'nghe': 'nghệ',
+      'thong': 'thông', 'tin': 'tin', 'du': 'dự',
+      'an': 'án', 'kiem': 'kiểm', 'tra': 'tra',
+      'ban': 'bạn', 'phim': 'phím', 'toc': 'tốc',
+      'do': 'độ', 'cao': 'cao', 'toi': 'tôi',
+      'chung': 'chúng', 'ta': 'ta', 'dang': 'đang',
+      'lam': 'làm', 'viec': 'việc', 'tot': 'tốt',
+      'dep': 'đẹp', 'rat': 'rất', 'on': 'ổn',
+      'dinh': 'định', 'chuc': 'chúc', 'mung': 'mừng',
+      'thanh': 'thành', 'pho': 'phố', 'ha': 'hà',
+      'noi': 'nội', 'sai': 'sài', 'gon': 'gòn'
+    };
+
+    function lookupAccentedWord(word) {
+      if (!word) return word;
+      const lower = word.toLowerCase();
+      if (COMMON_ACCENT_DICTIONARY[lower]) {
+        return COMMON_ACCENT_DICTIONARY[lower];
+      }
+      return word;
+    }
+
+    function applyIOModeTransform(word) {
+      if (!word) return word;
+      const clean = word.trim().replace(/^[,.!?;:\-"']+|[,.!?;:\-"']+$/g, '');
+      if (!clean) return word;
+
+      let converted = clean;
+      switch (currentIOMode) {
+        case 'b60_to_vn': {
+          converted = decodeBase60ToVietnamese(clean);
+          break;
+        }
+        case 'vn_to_b60': {
+          converted = encodeVietnameseToBase60(clean);
+          break;
+        }
+        case 'no_accent_to_vn': {
+          converted = lookupAccentedWord(clean);
+          break;
+        }
+        case 'b60_to_b60': {
+          break;
+        }
+        case 'vn_to_vn':
+        default: {
+          if (activeHexKey !== '0') {
+            converted = transcodeSingleWord(clean);
+          }
+          break;
+        }
+      }
+      return word.replace(clean, converted);
+    }
+
     function timeTo5Digit(timeStr) {
       if (!timeStr) return '';
       return timeStr.replace(/[0-9]+/g, (match) => {
@@ -2421,15 +2724,15 @@
       }
       const val = input.value;
 
-      if (c === ' ' && activeHexKey !== '0') {
+      if (c === ' ') {
         const textBefore = val.substring(0, start);
         const match = textBefore.match(/([a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+)$/);
         if (match) {
           const lastWord = match[1];
-          const transcoded = transcodeText(lastWord);
-          if (transcoded !== lastWord) {
+          const transformed = applyIOModeTransform(lastWord);
+          if (transformed !== lastWord) {
             const wordStart = start - lastWord.length;
-            const newBefore = val.substring(0, wordStart) + transcoded;
+            const newBefore = val.substring(0, wordStart) + transformed;
             const spaceAppend = (activeHexKey === '2' || activeHexKey === 'd' || activeHexKey === 'c') ? '' : ' ';
             input.value = newBefore + spaceAppend + val.substring(end);
             input.selectionStart = input.selectionEnd = newBefore.length + spaceAppend.length;
@@ -2513,7 +2816,7 @@
     }
 
     function simulateVoice(word) {
-      const output = transcodeText(word);
+      const output = (currentIOMode !== 'vn_to_vn') ? applyIOModeTransform(word) : transcodeText(word);
       const spaceAppend = (activeHexKey === '2' || activeHexKey === 'd' || activeHexKey === 'c') ? '' : ' ';
       pressChar(output + spaceAppend);
     }

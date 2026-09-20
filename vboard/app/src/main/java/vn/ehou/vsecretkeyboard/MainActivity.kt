@@ -121,6 +121,11 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, MacroSettingsActivity::class.java)
             startActivity(intent)
         }
+
+        findViewById<Button>(R.id.btn_open_guide).setOnClickListener {
+            val intent = Intent(this, GuideActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun updateUIState() {

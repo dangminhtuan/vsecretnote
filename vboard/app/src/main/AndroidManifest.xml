@@ -67,6 +67,12 @@
             android:exported="true"
             android:label="Cài đặt Tốc ký (Word Macro)" />
 
+        <!-- Giao diện Hướng dẫn & Tra cứu (Guide & Help) -->
+        <activity
+            android:name=".GuideActivity"
+            android:exported="true"
+            android:label="Hướng Dẫn &amp; Tra Cứu vBoard" />
+
     </application>
 
 </manifest>

@@ -75,4 +75,92 @@ object DataDictionary {
         "hello", "world", "love", "time", "fuck", "shit", "sex", "pussy", "dick", "cock", "boobs", "ass",
         "cyber", "matrix", "hacker", "system", "online", "code", "secret", "data"
     )
+
+    private val realWordsList = mutableListOf<String>()
+    private val wordRankMap = HashMap<String, Int>(8000)
+    private val wordSet = HashSet<String>(8000)
+    private val unaccentedMap = HashMap<String, MutableList<String>>(8000)
+    private val prefix1Map = HashMap<Char, MutableList<String>>(30)
+    @Volatile private var isInitialized = false
+
+    fun removeAccents(str: String): String {
+        val nfd = java.text.Normalizer.normalize(str, java.text.Normalizer.Form.NFD)
+        val clean = nfd.replace(Regex("[\\u0300-\\u036f]"), "")
+        return clean.replace('đ', 'd').replace('Đ', 'D')
+    }
+
+    fun initWords(assets: android.content.res.AssetManager) {
+        if (isInitialized) return
+        try {
+            // Nạp trước các từ tốc ký quan trọng nhất vào đầu danh sách chữ cái
+            for (w in (TWO_DIGIT_WORDS + SHORTCUT_WORDS)) {
+                val lower = w.lowercase()
+                val unacc = removeAccents(lower).lowercase()
+                val ch = unacc.firstOrNull()
+                if (ch != null) {
+                    val list = prefix1Map.getOrPut(ch) { mutableListOf() }
+                    if (!list.contains(lower)) {
+                        list.add(lower)
+                    }
+                }
+            }
+
+            assets.open("vn_words.txt").bufferedReader().useLines { lines ->
+                var rank = 0
+                for (line in lines) {
+                    val w = line.trim().lowercase()
+                    if (w.isNotEmpty()) {
+                        realWordsList.add(w)
+                        if (!wordRankMap.containsKey(w)) {
+                            wordRankMap[w] = rank
+                        }
+                        wordSet.add(w)
+                        val unacc = removeAccents(w).lowercase()
+                        unaccentedMap.getOrPut(unacc) { mutableListOf() }.add(w)
+
+                        val ch = unacc.firstOrNull()
+                        if (ch != null) {
+                            val list = prefix1Map.getOrPut(ch) { mutableListOf() }
+                            if (list.size < 15 && !list.contains(w)) {
+                                list.add(w)
+                            }
+                        }
+                        rank++
+                    }
+                }
+            }
+
+            for (w in (SHORTCUT_WORDS + TWO_DIGIT_WORDS)) {
+                val lower = w.lowercase()
+                val unacc = removeAccents(lower).lowercase()
+                val list = unaccentedMap.getOrPut(unacc) { mutableListOf() }
+                if (!list.contains(lower)) {
+                    list.add(lower)
+                }
+            }
+
+            isInitialized = true
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    fun isRealWord(word: String): Boolean {
+        val lower = word.lowercase()
+        return wordSet.contains(lower) || SHORTCUT_WORDS.contains(lower) || TWO_DIGIT_WORDS.contains(lower)
+    }
+
+    fun getWordRank(word: String): Int {
+        val lower = word.lowercase()
+        return wordRankMap[lower] ?: 99999
+    }
+
+    fun getAccentedCandidates(unaccented: String): List<String> {
+        val lower = unaccented.trim().lowercase()
+        return unaccentedMap[lower] ?: emptyList()
+    }
+
+    fun getTopWordsForChar(ch: Char): List<String> {
+        return prefix1Map[ch.lowercaseChar()] ?: emptyList()
+    }
 }

@@ -32,7 +32,16 @@ class SwipeKeyboardView @JvmOverloads constructor(
         MODE,
         VOWEL_SELECTOR,
         VOWEL_MATRIX,
-        MACRO_PALETTE
+        MACRO_PALETTE,
+        GUIDE
+    }
+
+    enum class IOMode(val badge: String, val displayName: String) {
+        VN_TO_VN("VN ➔ VN", "Tiếng Việt chuẩn"),
+        B60_TO_VN("B60 ➔ VN", "Gõ Base60 ra Tiếng Việt"),
+        VN_TO_B60("VN ➔ B60", "Gõ Tiếng Việt ra Base60"),
+        NO_ACCENT_TO_VN("K.Dấu ➔ VN", "Gõ không dấu tự thêm dấu"),
+        B60_TO_B60("B60 ➔ B60", "Gõ Base60 giữ nguyên Base60")
     }
 
     sealed class KeyboardAction {
@@ -60,8 +69,18 @@ class SwipeKeyboardView @JvmOverloads constructor(
         object MoveEnd : KeyboardAction()
         object Search : KeyboardAction()
         object Enter : KeyboardAction()
+        object OpenGuideLayer : KeyboardAction()
         data class SwitchMode(val hexKey: Char, val modeName: String, val icon: String) : KeyboardAction()
     }
+
+    data class GuideInfo(
+        val char: Char,
+        val consonant: String,
+        val rhyme1: String, // Góc trên-trái (Bảng 1)
+        val rhyme2: String, // Góc trên-phải (Bảng 2)
+        val rhyme3: String, // Góc dưới-trái (Bảng 3)
+        val tone: String    // Góc dưới-phải (Dấu thanh)
+    )
 
     private data class KeyModel(
         val id: String,
@@ -72,7 +91,8 @@ class SwipeKeyboardView @JvmOverloads constructor(
         val bgHex: String = "#2D333B",
         val textHex: String = "#E6EDF3",
         val isSpecial: Boolean = false,
-        val textSizeSp: Float = 17f
+        val textSizeSp: Float = 17f,
+        val guideInfo: GuideInfo? = null
     )
 
     var currentLayer: KeyboardLayer = KeyboardLayer.NORMAL
@@ -88,6 +108,28 @@ class SwipeKeyboardView @JvmOverloads constructor(
         private set
 
     var isKeepModeLayer: Boolean = false
+
+    var currentIOMode: IOMode = IOMode.VN_TO_VN
+        private set
+
+    fun cycleIOMode(): IOMode {
+        val modes = IOMode.values()
+        val nextIdx = (currentIOMode.ordinal + 1) % modes.size
+        currentIOMode = modes[nextIdx]
+        calculateKeys(width, height)
+        invalidate()
+        return currentIOMode
+    }
+
+    fun setIOMode(mode: IOMode) {
+        currentIOMode = mode
+        calculateKeys(width, height)
+        invalidate()
+    }
+
+    fun isCompassInputMode(): Boolean {
+        return currentIOMode == IOMode.VN_TO_VN || currentIOMode == IOMode.VN_TO_B60
+    }
 
     private var lastShiftTapTime: Long = 0L
     private var lastVowelTapTime: Long = 0L
@@ -111,6 +153,35 @@ class SwipeKeyboardView @JvmOverloads constructor(
 
     var onAction: ((KeyboardAction) -> Unit)? = null
     var onLayerChanged: ((KeyboardLayer) -> Unit)? = null
+    var onOpenIOModeMenu: (() -> Unit)? = null
+    var onSwipeWord: ((String) -> Unit)? = null
+    var onSwipeLivePreview: ((String) -> Unit)? = null
+    var onSwipeGesturePick: ((word: String, pickIndex: Int) -> Unit)? = null
+    var onHighlightSuggestion: ((pickIndex: Int) -> Unit)? = null
+    var onGuideKeyTapped: ((Char) -> Unit)? = null
+    var onGuideKeyLongPressed: ((Char) -> Unit)? = null
+
+    private var lastLiveAnalysisTime: Long = 0L
+    private var lastLivePreviewWord: String = ""
+
+    // Swipe Trail & Tracking cho các chế độ ngoài VN_TO_VN:
+    private var isSwiping: Boolean = false
+    private val swipePoints = mutableListOf<Point>()
+    private val swipePathPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#58A6FF")
+        style = Paint.Style.STROKE
+        strokeWidth = 10f
+        strokeCap = Paint.Cap.ROUND
+        strokeJoin = Paint.Join.ROUND
+    }
+    private val swipeGlowPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        color = Color.parseColor("#388BFD")
+        alpha = 90
+        style = Paint.Style.STROKE
+        strokeWidth = 20f
+        strokeCap = Paint.Cap.ROUND
+        strokeJoin = Paint.Join.ROUND
+    }
 
     var activeMacroKey: String = ""
         private set
@@ -182,6 +253,33 @@ class SwipeKeyboardView @JvmOverloads constructor(
         textAlign = Paint.Align.CENTER
     }
 
+    // Guide Layer Paints (4 góc + Phụ âm giữa)
+    private val guideConsonantPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.CENTER
+        color = Color.parseColor("#3FB950")
+        isFakeBoldText = true
+    }
+    private val guideRhyme1Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.LEFT
+        color = Color.parseColor("#E3B341")
+        isFakeBoldText = true
+    }
+    private val guideRhyme2Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.RIGHT
+        color = Color.parseColor("#BC8CFF")
+        isFakeBoldText = true
+    }
+    private val guideRhyme3Paint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.LEFT
+        color = Color.parseColor("#FFA657")
+        isFakeBoldText = true
+    }
+    private val guideTonePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        textAlign = Paint.Align.RIGHT
+        color = Color.parseColor("#F778BA")
+        isFakeBoldText = true
+    }
+
     // Constants
     private val shiftSymbolsRow1 = listOf("!", "@", "#", "$", "%", "^", "&", "*", "(", ")")
 
@@ -191,7 +289,7 @@ class SwipeKeyboardView @JvmOverloads constructor(
 
     fun setLayer(layer: KeyboardLayer) {
         currentLayer = layer
-        if (layer != KeyboardLayer.NORMAL) {
+        if (layer != KeyboardLayer.NORMAL && layer != KeyboardLayer.GUIDE) {
             if (!isCapsLock) isShiftActive = false
         }
         if (layer != KeyboardLayer.VOWEL_SELECTOR) {
@@ -306,6 +404,183 @@ class SwipeKeyboardView @JvmOverloads constructor(
             }
             KeyboardLayer.VOWEL_MATRIX -> calculateVowelMatrixKeys(width, rowHeight, padding)
             KeyboardLayer.MACRO_PALETTE -> calculateMacroKeys(width, rowHeight, padding)
+            KeyboardLayer.GUIDE -> calculateGuideKeys(width, rowHeight, padding)
+        }
+    }
+
+    private fun createGuideInfo(ch: Char): GuideInfo {
+        val item = MnemonicDatabase.get(ch)
+        val isUpper = (ch.isUpperCase() || (item != null && ch == item.upper))
+        val rhymes = if (item != null) {
+            if (isUpper) item.upperRhymes else item.lowerRhymes
+        } else emptyList()
+        val r1 = rhymes.getOrElse(0) { "" }
+        val r2 = rhymes.getOrElse(1) { "" }
+        val r3 = rhymes.getOrElse(2) { "" }
+        val consonant = MnemonicDatabase.getSmartConsonantLabel(ch)
+        val tone = MnemonicDatabase.getTone(ch)
+        return GuideInfo(ch, consonant, r1, r2, r3, tone)
+    }
+
+    private fun calculateGuideKeys(width: Int, rowHeight: Float, padding: Float) {
+        val w10 = width / 10f
+
+        // Hàng 1 (10 phím): 1..0 (Cặp số trong Mnemonic)
+        val r1Nums = listOf('1', '2', '3', '4', '5', '6', '7', '8', '9', '0')
+        for (i in r1Nums.indices) {
+            val baseChar = r1Nums[i]
+            val item = MnemonicDatabase.get(baseChar)
+            val displayChar = if (isShiftActive || isCapsLock) {
+                item?.upper?.toString() ?: baseChar.toString()
+            } else {
+                baseChar.toString()
+            }
+            val targetChar = displayChar[0]
+            val gInfo = createGuideInfo(targetChar)
+            val k = KeyModel(
+                id = "guide_0_$i",
+                baseLabel = baseChar.toString(),
+                displayChar = displayChar,
+                action = KeyboardAction.CommitText(displayChar),
+                bgHex = "#21262D",
+                textHex = "#E6EDF3",
+                guideInfo = gInfo
+            )
+            keyRects[k.id] = RectF(i * w10 + padding, padding, (i + 1) * w10 - padding, rowHeight - padding)
+            keyModels[k.id] = k
+        }
+
+        // Hàng 2 (10 phím): QWERTY
+        val rawR2 = listOf('q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p')
+        for (i in rawR2.indices) {
+            val baseChar = rawR2[i]
+            val item = MnemonicDatabase.get(baseChar)
+            val displayChar = if (isShiftActive || isCapsLock) {
+                item?.upper?.toString() ?: baseChar.uppercase()
+            } else {
+                baseChar.toString()
+            }
+            val targetChar = displayChar[0]
+            val gInfo = createGuideInfo(targetChar)
+            val k = KeyModel(
+                id = "guide_1_$i",
+                baseLabel = baseChar.toString(),
+                displayChar = displayChar,
+                action = KeyboardAction.CommitText(displayChar),
+                bgHex = "#21262D",
+                textHex = "#FFFFFF",
+                guideInfo = gInfo
+            )
+            keyRects[k.id] = RectF(i * w10 + padding, rowHeight + padding, (i + 1) * w10 - padding, rowHeight * 2 - padding)
+            keyModels[k.id] = k
+        }
+
+        // Hàng 3 (9 phím): ASDFGHJKL
+        val rawR3 = listOf('a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l')
+        val offset3 = w10 * 0.5f
+        for (i in rawR3.indices) {
+            val baseChar = rawR3[i]
+            val item = MnemonicDatabase.get(baseChar)
+            val displayChar = if (isShiftActive || isCapsLock) {
+                item?.upper?.toString() ?: baseChar.uppercase()
+            } else {
+                baseChar.toString()
+            }
+            val targetChar = displayChar[0]
+            val gInfo = createGuideInfo(targetChar)
+            val k = KeyModel(
+                id = "guide_2_$i",
+                baseLabel = baseChar.toString(),
+                displayChar = displayChar,
+                action = KeyboardAction.CommitText(displayChar),
+                bgHex = "#21262D",
+                textHex = "#FFFFFF",
+                guideInfo = gInfo
+            )
+            val xStart = offset3 + (i * w10)
+            keyRects[k.id] = RectF(xStart + padding, rowHeight * 2 + padding, xStart + w10 - padding, rowHeight * 3 - padding)
+            keyModels[k.id] = k
+        }
+
+        // Hàng 4 (9 phím): [⇧ Shift] + ZXCVBNM + [⌫]
+        val shiftW = width * 0.14f
+        val bkspW = width * 0.16f
+        val midW = (width - shiftW - bkspW) / 7f
+        val y4 = rowHeight * 3
+
+        val shiftDisplay = if (isCapsLock) "⇪" else "⇧"
+        val shiftBg = when {
+            isCapsLock -> "#1F6FEB"
+            isShiftActive -> "#D29922"
+            else -> "#30363D"
+        }
+        val shiftModel = KeyModel(
+            id = "guide_3_0",
+            baseLabel = shiftDisplay,
+            displayChar = shiftDisplay,
+            action = KeyboardAction.CommitText(""),
+            bgHex = shiftBg,
+            textHex = "#FFFFFF",
+            isSpecial = true,
+            textSizeSp = 20f
+        )
+        keyRects[shiftModel.id] = RectF(padding, y4 + padding, shiftW - padding, y4 + rowHeight - padding)
+        keyModels[shiftModel.id] = shiftModel
+
+        val rawR4 = listOf('z', 'x', 'c', 'v', 'b', 'n', 'm')
+        for (i in rawR4.indices) {
+            val baseChar = rawR4[i]
+            val item = MnemonicDatabase.get(baseChar)
+            val displayChar = if (isShiftActive || isCapsLock) {
+                item?.upper?.toString() ?: baseChar.uppercase()
+            } else {
+                baseChar.toString()
+            }
+            val targetChar = displayChar[0]
+            val gInfo = createGuideInfo(targetChar)
+            val k = KeyModel(
+                id = "guide_3_${i + 1}",
+                baseLabel = baseChar.toString(),
+                displayChar = displayChar,
+                action = KeyboardAction.CommitText(displayChar),
+                bgHex = "#21262D",
+                textHex = "#FFFFFF",
+                guideInfo = gInfo
+            )
+            val xStart = shiftW + (i * midW)
+            keyRects[k.id] = RectF(xStart + padding, y4 + padding, xStart + midW - padding, y4 + rowHeight - padding)
+            keyModels[k.id] = k
+        }
+
+        val bkspModel = KeyModel(
+            id = "guide_3_8",
+            baseLabel = "⌫",
+            displayChar = "⌫",
+            action = KeyboardAction.Backspace,
+            bgHex = "#30363D",
+            textHex = "#F85149",
+            isSpecial = true
+        )
+        keyRects[bkspModel.id] = RectF(width - bkspW + padding, y4 + padding, width - padding, y4 + rowHeight - padding)
+        keyModels[bkspModel.id] = bkspModel
+
+        // Hàng 5: [✕ Thoát: 0.18] [❖ Mode: 0.14] [Space: 0.38] [🔍: 0.14] [↵: 0.16] = 1.00
+        val y5 = rowHeight * 4
+        val r5Defs = listOf(
+            KeyModel("key_close_guide", "✕ Thoát", "✕ Thoát", action = KeyboardAction.CommitText(""), bgHex = "#DA3633", textHex = "#FFFFFF", isSpecial = true, textSizeSp = 13f),
+            KeyModel("key_mode_toggle", "❖", "❖", action = KeyboardAction.CommitText(""), bgHex = "#30363D", textHex = "#58A6FF", isSpecial = true),
+            KeyModel("space", "Space", "Space (Học Base60)", subLabel = "Guide", action = KeyboardAction.CommitText(" "), bgHex = "#2D333B", textHex = "#E6EDF3", textSizeSp = 13f),
+            KeyModel("search", "Search", "🔍", action = KeyboardAction.Search, bgHex = "#30363D", isSpecial = true),
+            KeyModel("enter", "Enter", "↵", action = KeyboardAction.Enter, bgHex = "#238636", textHex = "#FFFFFF", isSpecial = true)
+        )
+        val r5Weights = listOf(0.18f, 0.14f, 0.38f, 0.14f, 0.16f)
+        var curX = 0f
+        for (idx in r5Defs.indices) {
+            val k = r5Defs[idx]
+            val keyW = width * r5Weights[idx]
+            keyRects[k.id] = RectF(curX + padding, y5 + padding, curX + keyW - padding, y5 + rowHeight - padding)
+            keyModels[k.id] = k
+            curX += keyW
         }
     }
 
@@ -451,7 +726,7 @@ class SwipeKeyboardView @JvmOverloads constructor(
             KeyModel("util_s", "s", "🔤.", subLabel = "s", action = KeyboardAction.SelectToEndOfSentence, bgHex = "#388BFD"),
             KeyModel("mode_d", "d", "📝", subLabel = "d", action = KeyboardAction.SwitchMode('d', "d: Không dấu liền", "📝"), bgHex = "#238636"),
             KeyModel("util_f", "f", "…", subLabel = "f", action = KeyboardAction.CommitText(""), bgHex = "#30363D"),
-            KeyModel("util_g", "g", "…", subLabel = "g", action = KeyboardAction.CommitText(""), bgHex = "#30363D"),
+            KeyModel("mode_guide", "g", "📖", subLabel = "g", action = KeyboardAction.OpenGuideLayer, bgHex = "#1F6FEB", textHex = "#FFFFFF"),
             KeyModel("util_h", "h", "🔠", subLabel = "h", action = KeyboardAction.ToggleCase, bgHex = "#1F6FEB"),
             KeyModel("util_j", "j", "◀", subLabel = "j", action = KeyboardAction.MoveLeft, bgHex = "#238636"),
             KeyModel("util_k", "k", "▼", subLabel = "k", action = KeyboardAction.MoveDown, bgHex = "#238636"),
@@ -490,7 +765,7 @@ class SwipeKeyboardView @JvmOverloads constructor(
             KeyModel("util_v", "v", "|⏭", subLabel = "v", action = KeyboardAction.SelectToEnd, bgHex = "#BD561D"),
             KeyModel("mode_b", "b", "✝️", subLabel = "b", action = KeyboardAction.SwitchMode('b', "b: Mã Giả Việt", "✝️"), bgHex = "#484F58"),
             KeyModel("util_n", "n", "🧹", subLabel = "n", action = KeyboardAction.ClearAll, bgHex = "#DA3633"),
-            KeyModel("util_m", "m", "⌫W", subLabel = "m", action = KeyboardAction.DeleteWordBackward, bgHex = "#DA3633")
+            KeyModel("util_m", "m", "…", subLabel = "m", action = KeyboardAction.CommitText(""), bgHex = "#30363D")
         )
         for (i in r4Keys.indices) {
             val k = r4Keys[i]
@@ -796,16 +1071,17 @@ class SwipeKeyboardView @JvmOverloads constructor(
         val modeText = if (isKeepModeLayer || isMode) "#FFFFFF" else "#58A6FF"
 
         if (isVowel) {
-            // Tầng [ớ]: [❖ Mode: 0.12] [ớ: 0.11] [? : 0.10] [Space: 0.33] [" : 0.10] [✕ Đóng: 0.24] = 1.00
+            // Tầng [ớ]: [❖ Mode: 0.12] [ớ: 0.11] [? : 0.10] [Space: 0.31] [" : 0.10] [🔍: 0.12] [↵: 0.14] = 1.00
             val defs = listOf(
                 KeyModel("key_mode_toggle", "❖", if (isKeepModeLayer) "❖ 🔒" else "❖", action = KeyboardAction.CommitText(""), bgHex = modeBg, textHex = modeText, isSpecial = true),
                 KeyModel("key_vowel_toggle", "ớ", vowelLabel, action = KeyboardAction.CommitText(""), bgHex = vowelBg, textHex = vowelText, isSpecial = true, textSizeSp = if (isKeepVowelLayer) 14f else 18f),
                 KeyModel("vowel_4_1", "?", "?", action = KeyboardAction.CommitText("?"), bgHex = "#1D3B2F", textHex = "#7EE787", textSizeSp = 18f),
-                KeyModel("space", "Space", "Space", subLabel = "Trượt con trỏ", action = KeyboardAction.CommitText(" "), bgHex = "#2D333B", textHex = "#E6EDF3", textSizeSp = 14f),
+                KeyModel("space", "Space", "Space", subLabel = currentIOMode.badge, action = KeyboardAction.CommitText(" "), bgHex = "#2D333B", textHex = "#E6EDF3", textSizeSp = 14f),
                 KeyModel("vowel_4_3", "\"", "\"", action = KeyboardAction.WrapText("\"", "\""), bgHex = "#1D3B2F", textHex = "#7EE787", textSizeSp = 18f),
-                KeyModel("key_close_vowel", "✕", "✕ Đóng [ớ]", action = KeyboardAction.CommitText(""), bgHex = "#DA3633", textHex = "#FFFFFF", isSpecial = true, textSizeSp = 13f)
+                KeyModel("search", "Search", "🔍", action = KeyboardAction.Search, bgHex = "#30363D", isSpecial = true),
+                KeyModel("enter", "Enter", "↵", action = KeyboardAction.Enter, bgHex = "#238636", textHex = "#FFFFFF", isSpecial = true)
             )
-            val weights = listOf(0.12f, 0.11f, 0.10f, 0.33f, 0.10f, 0.24f)
+            val weights = listOf(0.12f, 0.11f, 0.10f, 0.31f, 0.10f, 0.12f, 0.14f)
             var curX = 0f
             for (idx in defs.indices) {
                 val k = defs[idx]
@@ -821,7 +1097,7 @@ class SwipeKeyboardView @JvmOverloads constructor(
                 KeyModel("key_vowel_toggle", "ớ", vowelLabel, action = KeyboardAction.CommitText(""), bgHex = vowelBg, textHex = vowelText, isSpecial = true, textSizeSp = if (isKeepVowelLayer) 13f else 15f),
                 KeyModel("mode_comma_sentence_start", "|🔤", "|🔤", subLabel = "Đầu câu", action = KeyboardAction.SelectToStartOfSentence, bgHex = "#BD561D", textHex = "#FFFFFF", textSizeSp = 13f),
                 KeyModel("space", "Select All", "Select All", action = KeyboardAction.SelectAll, bgHex = "#1F6FEB", textHex = "#FFFFFF", isSpecial = true, textSizeSp = 13f),
-                KeyModel("mode_dot_paste", "📋", "📋", subLabel = "Paste", action = KeyboardAction.Paste, bgHex = "#6E40C9", textHex = "#FFFFFF", textSizeSp = 14f),
+                KeyModel("mode_dot_paste", "…", "…", subLabel = "…", action = KeyboardAction.CommitText(""), bgHex = "#30363D", textHex = "#8B949E", textSizeSp = 14f),
                 KeyModel("search", "Search", "🔍", action = KeyboardAction.Search, bgHex = "#30363D", isSpecial = true),
                 KeyModel("enter", "Enter", "↵", action = KeyboardAction.Enter, bgHex = "#238636", textHex = "#FFFFFF", isSpecial = true)
             )
@@ -840,7 +1116,7 @@ class SwipeKeyboardView @JvmOverloads constructor(
                 KeyModel("key_mode_toggle", "❖", modeLabel, action = KeyboardAction.CommitText(""), bgHex = modeBg, textHex = modeText, isSpecial = true, textSizeSp = 12f),
                 KeyModel("key_vowel_toggle", "ớ", vowelLabel, action = KeyboardAction.CommitText(""), bgHex = vowelBg, textHex = vowelText, isSpecial = true, textSizeSp = if (isKeepVowelLayer) 13f else 16f),
                 KeyModel("norm_4_1", ",", ",", subLabel = "?", action = KeyboardAction.CommitText(","), textSizeSp = 18f),
-                KeyModel("space", "Space", "Space", subLabel = "Trượt con trỏ", action = KeyboardAction.CommitText(" "), bgHex = "#2D333B", textHex = "#E6EDF3", textSizeSp = 14f),
+                KeyModel("space", "Space", "Space", subLabel = currentIOMode.badge, action = KeyboardAction.CommitText(" "), bgHex = "#2D333B", textHex = "#E6EDF3", textSizeSp = 14f),
                 KeyModel("norm_4_3", ".", ".", subLabel = "\"", action = KeyboardAction.CommitText("."), textSizeSp = 18f),
                 KeyModel("search", "Search", "🔍", action = KeyboardAction.Search, bgHex = "#30363D", isSpecial = true),
                 KeyModel("enter", "Enter", "↵", action = KeyboardAction.Enter, bgHex = "#238636", textHex = "#FFFFFF", isSpecial = true)
@@ -1258,25 +1534,107 @@ class SwipeKeyboardView @JvmOverloads constructor(
             keyBorderPaint.color = Color.parseColor("#373E47")
             canvas.drawRoundRect(rect, 14f, 14f, keyBorderPaint)
 
-            if (model.subLabel != null) {
-                subTextPaint.textAlign = Paint.Align.LEFT
-                subTextPaint.color = Color.parseColor("#8B949E")
-                subTextPaint.textSize = 10f * resources.displayMetrics.scaledDensity
-                canvas.drawText(model.subLabel, rect.left + 8f, rect.top + 20f, subTextPaint)
-            }
+            val gInfo = model.guideInfo
+            if (gInfo != null) {
+                val density = resources.displayMetrics.density
+                val scaledDensity = resources.displayMetrics.scaledDensity
 
-            textPaint.color = Color.parseColor(model.textHex)
-            textPaint.textSize = model.textSizeSp * resources.displayMetrics.scaledDensity
-            textPaint.isFakeBoldText = model.isSpecial
-            val fontMetrics = textPaint.fontMetrics
-            val centerY = rect.centerY() - (fontMetrics.ascent + fontMetrics.descent) / 2
-            canvas.drawText(model.displayChar, rect.centerX(), centerY, textPaint)
+                // 1. Ký tự phím ở giữa (Căn giữa tâm nếu không có phụ âm, lệch nhẹ lên nếu có phụ âm)
+                val hasConsonant = gInfo.consonant.isNotEmpty()
+                textPaint.color = Color.parseColor(model.textHex)
+                textPaint.textSize = (if (hasConsonant) 14.5f else 17f) * scaledDensity
+                textPaint.isFakeBoldText = true
+                val fm = textPaint.fontMetrics
+                val charY = if (hasConsonant) {
+                    rect.centerY() - 3.5f * density - (fm.ascent + fm.descent) / 2
+                } else {
+                    rect.centerY() - (fm.ascent + fm.descent) / 2
+                }
+                canvas.drawText(model.displayChar, rect.centerX(), charY, textPaint)
+
+                // 2. Phụ âm ở giữa (ngay dưới ký tự phím)
+                if (gInfo.consonant.isNotEmpty()) {
+                    guideConsonantPaint.textSize = 9.5f * scaledDensity
+                    val cFm = guideConsonantPaint.fontMetrics
+                    val conY = rect.centerY() + 8.5f * density - (cFm.ascent + cFm.descent) / 2
+                    canvas.drawText(gInfo.consonant, rect.centerX(), conY, guideConsonantPaint)
+                }
+
+                // 3. Góc trên-trái: Vần 1 (Vàng #E3B341)
+                if (gInfo.rhyme1.isNotEmpty()) {
+                    guideRhyme1Paint.textSize = 8f * scaledDensity
+                    canvas.drawText(gInfo.rhyme1, rect.left + 4.5f * density, rect.top + 11.5f * density, guideRhyme1Paint)
+                }
+
+                // 4. Góc trên-phải: Vần 2 (Tím #BC8CFF)
+                if (gInfo.rhyme2.isNotEmpty()) {
+                    guideRhyme2Paint.textSize = 8f * scaledDensity
+                    canvas.drawText(gInfo.rhyme2, rect.right - 4.5f * density, rect.top + 11.5f * density, guideRhyme2Paint)
+                }
+
+                // 5. Góc dưới-trái: Vần 3 (Cam #FFA657)
+                if (gInfo.rhyme3.isNotEmpty()) {
+                    guideRhyme3Paint.textSize = 8f * scaledDensity
+                    canvas.drawText(gInfo.rhyme3, rect.left + 4.5f * density, rect.bottom - 4.5f * density, guideRhyme3Paint)
+                }
+
+                // 6. Góc dưới-phải: Dấu thanh (Hồng #F778BA)
+                if (gInfo.tone.isNotEmpty()) {
+                    guideTonePaint.textSize = 7.5f * scaledDensity
+                    canvas.drawText(gInfo.tone, rect.right - 4.5f * density, rect.bottom - 4.5f * density, guideTonePaint)
+                }
+            } else {
+                if (model.subLabel != null) {
+                    subTextPaint.textAlign = Paint.Align.LEFT
+                    subTextPaint.color = Color.parseColor("#8B949E")
+                    subTextPaint.textSize = 10f * resources.displayMetrics.scaledDensity
+                    canvas.drawText(model.subLabel, rect.left + 8f, rect.top + 20f, subTextPaint)
+                }
+
+                textPaint.color = Color.parseColor(model.textHex)
+                textPaint.textSize = model.textSizeSp * resources.displayMetrics.scaledDensity
+                textPaint.isFakeBoldText = model.isSpecial
+                val fontMetrics = textPaint.fontMetrics
+                val centerY = rect.centerY() - (fontMetrics.ascent + fontMetrics.descent) / 2
+                canvas.drawText(model.displayChar, rect.centerX(), centerY, textPaint)
+            }
+        }
+
+        // Vẽ vệt sáng vuốt chữ Swipe Trail khi vuốt
+        if (isSwiping && swipePoints.size > 1) {
+            drawSwipeTrail(canvas)
         }
 
         // Vẽ La bàn Flick Compass HUD nổi thời gian thực khi quệt
         if (isFlicking && pressedKeyId != null) {
             drawFlickCompassHUD(canvas)
         }
+    }
+
+    private fun getKeyCharacter(keyId: String?): String? {
+        if (keyId == null) return null
+        val gridChar = getGridKey(keyId)
+        if (gridChar != null) return gridChar
+        val model = keyModels[keyId]
+        if (model != null && !model.isSpecial && model.displayChar.length == 1) {
+            return model.displayChar.lowercase()
+        }
+        return null
+    }
+
+    private fun drawSwipeTrail(canvas: Canvas) {
+        if (swipePoints.size < 2) return
+        val path = android.graphics.Path()
+        path.moveTo(swipePoints[0].x, swipePoints[0].y)
+        for (i in 1 until swipePoints.size) {
+            val p0 = swipePoints[i - 1]
+            val p1 = swipePoints[i]
+            path.quadTo(p0.x, p0.y, (p0.x + p1.x) / 2, (p0.y + p1.y) / 2)
+        }
+        val last = swipePoints.last()
+        path.lineTo(last.x, last.y)
+        canvas.drawPath(path, swipeGlowPaint)
+        canvas.drawPath(path, swipePathPaint)
     }
 
     private fun findKeyAt(x: Float, y: Float): String? {
@@ -1301,13 +1659,15 @@ class SwipeKeyboardView @JvmOverloads constructor(
                 currentFlickDir = -1
                 isBkspSliding = false
                 bkspWordsDeleted = 0
+                isSwiping = false
+                swipePoints.clear()
 
                 val keyId = findKeyAt(x, y)
                 pressedKeyId = keyId
                 invalidate()
                 performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
 
-                // Hẹn giờ giữ phím 250ms để kích hoạt Ma trận Tốc ký (Word Macro Matrix)
+                // Hẹn giờ giữ phím 250ms để kích hoạt Ma trận Tốc ký hoặc Menu chọn chế độ
                 if (currentLayer == KeyboardLayer.NORMAL || currentLayer == KeyboardLayer.VOWEL_SELECTOR) {
                     if (keyId != null && (keyId.startsWith("norm_") || keyId.startsWith("vowel_"))) {
                         holdRunnable = Runnable {
@@ -1315,6 +1675,31 @@ class SwipeKeyboardView @JvmOverloads constructor(
                             openWordMacroMatrix(keyId)
                         }
                         holdHandler.postDelayed(holdRunnable!!, 250)
+                    } else if (keyId == "space") {
+                        holdRunnable = Runnable {
+                            didLongPress = true
+                            performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                            if (onOpenIOModeMenu != null) {
+                                onOpenIOModeMenu?.invoke()
+                            } else {
+                                val newMode = cycleIOMode()
+                                android.widget.Toast.makeText(context, "Chế độ: ${newMode.displayName} [${newMode.badge}]", android.widget.Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        holdHandler.postDelayed(holdRunnable!!, 250)
+                    }
+                } else if (currentLayer == KeyboardLayer.GUIDE) {
+                    if (keyId != null && keyId.startsWith("guide_") && !keyId.endsWith("_8") && !keyId.endsWith("_0")) {
+                        holdRunnable = Runnable {
+                            didLongPress = true
+                            val model = keyModels[keyId]
+                            val gChar = model?.guideInfo?.char
+                            if (gChar != null) {
+                                performHapticFeedback(HapticFeedbackConstants.LONG_PRESS)
+                                onGuideKeyLongPressed?.invoke(gChar)
+                            }
+                        }
+                        holdHandler.postDelayed(holdRunnable!!, 280)
                     }
                 }
                 return true
@@ -1364,14 +1749,63 @@ class SwipeKeyboardView @JvmOverloads constructor(
                 }
 
                 // Hiệu ứng La bàn Flick Compass HUD nổi thời gian thực khi quệt
-                if (dist >= 18f && pressedKeyId != null) {
-                    cancelHoldTimer()
-                    val newDir = getFlick6Direction(dx, dy)
-                    if (newDir != currentFlickDir || !isFlicking) {
-                        isFlicking = true
-                        currentFlickDir = newDir
-                        currentFlickDx = dx
-                        currentFlickDy = dy
+                // KÍCH HOẠT KHI Ở CHẾ ĐỘ NHẬP TIẾNG VIỆT (VN_TO_VN, VN_TO_B60)
+                if (isCompassInputMode()) {
+                    if (dist >= 18f && pressedKeyId != null) {
+                        cancelHoldTimer()
+                        val newDir = getFlick6Direction(dx, dy)
+                        if (newDir != currentFlickDir || !isFlicking) {
+                            isFlicking = true
+                            currentFlickDir = newDir
+                            currentFlickDx = dx
+                            currentFlickDy = dy
+                            invalidate()
+                        }
+                    }
+                } else {
+                    // CÁC CHẾ ĐỘ KHÁC (B60_TO_VN, NO_ACCENT_TO_VN, B60_TO_B60):
+                    // TẮT LA BÀN, BẬT CỬ CHỈ SWIPE ĐA PHÍM!
+                    if (dist >= 15f) {
+                        cancelHoldTimer()
+                        if (!isSwiping) {
+                            isSwiping = true
+                            swipePoints.clear()
+                            swipePoints.add(Point(touchStartX, touchStartY))
+                        }
+                        swipePoints.add(Point(x, y))
+
+                        // Phân tích đường vuốt thời gian thực (Live Candidate Preview)
+                        val now = SystemClock.uptimeMillis()
+                        if (now - lastLiveAnalysisTime >= 35) {
+                            lastLiveAnalysisTime = now
+                            val epsilon = 18f * resources.displayMetrics.density
+                            val density = resources.displayMetrics.density
+                            val isBase60 = (currentIOMode == IOMode.B60_TO_VN || currentIOMode == IOMode.B60_TO_B60)
+                            val analysis = SwipeGestureAnalyzer.analyzeSwipeTrajectory(
+                                swipePoints,
+                                epsilon,
+                                density,
+                                isBase60
+                            ) { px, py ->
+                                val kId = findKeyAt(px, py)
+                                getKeyCharacter(kId)
+                            }
+                            if (analysis.keys.isNotEmpty()) {
+                                val currentWord = analysis.keys.joinToString("")
+                                if (currentWord != lastLivePreviewWord) {
+                                    lastLivePreviewWord = currentWord
+                                    onSwipeLivePreview?.invoke(currentWord)
+                                }
+                            }
+                            if (analysis.isUpwardFlick) {
+                                swipePathPaint.color = Color.parseColor("#3FB950") // Xanh lá báo hiệu đang hất chọn
+                                onHighlightSuggestion?.invoke(analysis.flickPickIndex)
+                            } else {
+                                swipePathPaint.color = Color.parseColor("#58A6FF")
+                                onHighlightSuggestion?.invoke(-1)
+                            }
+                        }
+
                         invalidate()
                     }
                 }
@@ -1402,15 +1836,51 @@ class SwipeKeyboardView @JvmOverloads constructor(
                     return true
                 }
 
-                // Tắt HUD la bàn
-                isFlicking = false
-                currentFlickDir = -1
+                if (isCompassInputMode()) {
+                    // Tắt HUD la bàn
+                    isFlicking = false
+                    currentFlickDir = -1
 
-                // Quệt 6 hướng 0ms độ trễ
-                if (dist >= 18f && keyId != null) {
-                    handleFlickAction(keyId, dx, dy)
-                    invalidate()
-                    return true
+                    // Quệt 6 hướng 0ms độ trễ
+                    if (dist >= 18f && keyId != null) {
+                        handleFlickAction(keyId, dx, dy)
+                        invalidate()
+                        return true
+                    }
+                } else {
+                    // Xử lý hoàn tất vuốt từ (Swipe Trail) bằng thuật toán lọc đỉnh hình học
+                    if (isSwiping) {
+                        isSwiping = false
+                        val epsilon = 18f * resources.displayMetrics.density
+                        val density = resources.displayMetrics.density
+                        val isBase60 = (currentIOMode == IOMode.B60_TO_VN || currentIOMode == IOMode.B60_TO_B60)
+                        val analysis = SwipeGestureAnalyzer.analyzeSwipeTrajectory(
+                            swipePoints,
+                            epsilon,
+                            density,
+                            isBase60
+                        ) { px, py ->
+                            val kId = findKeyAt(px, py)
+                            getKeyCharacter(kId)
+                        }
+                        swipePoints.clear()
+                        swipePathPaint.color = Color.parseColor("#58A6FF")
+                        lastLivePreviewWord = ""
+                        onHighlightSuggestion?.invoke(-1)
+                        invalidate()
+
+                        if (analysis.keys.isNotEmpty()) {
+                            val swipedWord = analysis.keys.joinToString("")
+                            if (analysis.isUpwardFlick) {
+                                // Người dùng bẻ góc hất lên trên: Chốt thẳng từ gợi ý trong 1 nét vuốt duy nhất!
+                                onSwipeGesturePick?.invoke(swipedWord, analysis.flickPickIndex)
+                            } else {
+                                // Người dùng thả tay bình thường
+                                onSwipeWord?.invoke(swipedWord)
+                            }
+                            return true
+                        }
+                    }
                 }
 
                 // Chạm nhanh (Tap)
@@ -1430,6 +1900,11 @@ class SwipeKeyboardView @JvmOverloads constructor(
                 bkspWordsDeleted = 0
                 isFlicking = false
                 currentFlickDir = -1
+                isSwiping = false
+                swipePoints.clear()
+                swipePathPaint.color = Color.parseColor("#58A6FF")
+                lastLivePreviewWord = ""
+                onHighlightSuggestion?.invoke(-1)
                 invalidate()
                 return true
             }
@@ -1450,7 +1925,7 @@ class SwipeKeyboardView @JvmOverloads constructor(
                 toggleVowelSelector()
                 return
             }
-            "norm_3_0", "vowel_3_0", "key_shift_toggle", "key_vowel_shift_toggle" -> {
+            "norm_3_0", "vowel_3_0", "guide_3_0", "key_shift_toggle", "key_vowel_shift_toggle" -> {
                 if (currentLayer == KeyboardLayer.VOWEL_SELECTOR) {
                     toggleVowelShift()
                 } else {
@@ -1458,7 +1933,7 @@ class SwipeKeyboardView @JvmOverloads constructor(
                 }
                 return
             }
-            "key_close_vowel" -> {
+            "key_close_vowel", "key_close_guide" -> {
                 setLayer(KeyboardLayer.NORMAL)
                 return
             }
@@ -1486,7 +1961,13 @@ class SwipeKeyboardView @JvmOverloads constructor(
             }
         }
 
-        // 2. Chạm vào phím [d] trong tầng [ớ]: chạm nhẹ ra chữ đ
+        // 2. Chuyển sang Tầng Học Tập Guide khi bấm OpenGuideLayer (Mode ➔ g)
+        if (model.action is KeyboardAction.OpenGuideLayer) {
+            setLayer(KeyboardLayer.GUIDE)
+            return
+        }
+
+        // 3. Chạm vào phím [d] trong tầng [ớ]: chạm nhẹ ra chữ đ
         if (currentLayer == KeyboardLayer.VOWEL_SELECTOR) {
             val gridKey = getGridKey(keyId)
             if (gridKey == "d") {
@@ -1497,14 +1978,22 @@ class SwipeKeyboardView @JvmOverloads constructor(
             }
         }
 
-        // 3. Nếu đang ở Ma trận Tốc ký (MACRO_PALETTE), bấm phím từ hoặc bất kỳ hành động nào -> gõ và đóng ma trận
+        // 4. Nếu đang ở Ma trận Tốc ký (MACRO_PALETTE), bấm phím từ hoặc bất kỳ hành động nào -> gõ và đóng ma trận
         if (currentLayer == KeyboardLayer.MACRO_PALETTE) {
             onAction?.invoke(model.action)
             closeWordMacroMatrix()
             return
         }
 
-        // 4. Kích hoạt hành động chính
+        // 5. Nếu đang ở Tầng Học Tập (GUIDE), phát tín hiệu tap phím để cập nhật HUD thần chú
+        if (currentLayer == KeyboardLayer.GUIDE) {
+            val gChar = model.guideInfo?.char
+            if (gChar != null) {
+                onGuideKeyTapped?.invoke(gChar)
+            }
+        }
+
+        // 6. Kích hoạt hành động chính
         onAction?.invoke(model.action)
 
         // 4. Nhả Shift sau 1 ký tự gõ phím ở tầng Normal (chuẩn Gboard nếu không phải CapsLock)

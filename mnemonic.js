@@ -1,4 +1,4 @@
-// mnemonic.js - Toàn bộ 60 Ký Tự Base60 (30 Cặp Hàng Hoàn Chỉnh)
+// mnemonic.js - Toàn bộ 60 Ký Tự Base60 (30 Cặp Hàng Hoàn Chỉnh Chuẩn Xác 100%)
 
 export const MNEMONIC_DATA = [
   // ==================== CHỮ CÁI (24 CẶP) ====================
@@ -8,19 +8,19 @@ export const MNEMONIC_DATA = [
     upper: 'B',
     lowerIdx: 15,
     upperIdx: 42,
-    lowerPhrase: 'bướm ➔ tòe ➔ nguy',
-    upperPhrase: 'cây ➔ toát ➔ khuya',
-    lowerRhymes: ['ươm', 'oe', 'uy'],
-    upperRhymes: ['ây', 'oat', 'uya'],
+    lowerPhrase: 'bướm ➔ khoe ➔ tuy',
+    upperPhrase: 'đây ➔ thoát ➔ khuya',
+    lowerRhymes: ["ươm","oe","uy"],
+    upperRhymes: ["ây","oat","uya"],
     samples: [
       { word: 'bướm', code: 'bbs' },
-      { word: 'tòe', code: 'tbF' },
-      { word: 'nguy', code: 'Nb0' },
-      { word: 'cây', code: 'cBz' },
-      { word: 'toát', code: 'tBS' },
+      { word: 'khoe', code: 'KbZ' },
+      { word: 'tuy', code: 'tb0' },
+      { word: 'đây', code: 'dBz' },
+      { word: 'thoát', code: 'TBS' },
       { word: 'khuya', code: 'KB0' }
     ],
-    story: 'Bắt con <em>bướm</em>, nghịch mở <em>toè loe</em>, gặp <em>nguy</em> hiểm liền trèo tót lên <em>cây</em>, sợ <em>toát</em> mồ hôi tới tận đêm <em>khuya</em>!'
+    story: 'Bắt con <em>bướm</em> đẹp đem <em>khoe</em>, <em>tuy</em> vậy đến <em>đây</em> may mà <em>thoát</em> nạn lúc đêm <em>khuya</em>!'
   },
   {
     category: 'alpha',
@@ -28,19 +28,19 @@ export const MNEMONIC_DATA = [
     upper: 'C',
     lowerIdx: 0,
     upperIdx: 11,
-    lowerPhrase: 'ca ➔ tiếc ➔ cua',
-    upperPhrase: 'chịch ➔ hoa ➔ muốn',
-    lowerRhymes: ['a', 'iêc', 'ua'],
-    upperRhymes: ['ich', 'oa', 'uôn'],
+    lowerPhrase: 'kết ➔ việc ➔ mua',
+    upperPhrase: 'tích ➔ hoa ➔ muốn',
+    lowerRhymes: ["êt","iêc","ua"],
+    upperRhymes: ["ich","oa","uôn"],
     samples: [
-      { word: 'ca', code: 'caz' },
-      { word: 'tiếc', code: 'tcS' },
-      { word: 'cua', code: 'cc0' },
-      { word: 'chịch', code: 'CCj' },
+      { word: 'kết', code: 'kcs' },
+      { word: 'việc', code: 'vcJ' },
+      { word: 'mua', code: 'mc0' },
+      { word: 'tích', code: 'tCs' },
       { word: 'hoa', code: 'hCZ' },
       { word: 'muốn', code: 'mC1' }
     ],
-    story: 'Đang ngồi hát <em>ca</em>, làm rơi mất đĩa <em>tiếc</em> con <em>cua</em> hoàng đế, bực mình đè <em>chịch</em> cô bé tên <em>Hoa</em> nếu thực sự <em>muốn</em>!'
+    story: 'Tổng <em>kết</em> công <em>việc</em> đi <em>mua</em> sắm, tích lũy thành <em>tích</em> tặng nhánh <em>hoa</em> tươi nếu thực lòng <em>muốn</em>!'
   },
   {
     category: 'alpha',
@@ -48,19 +48,19 @@ export const MNEMONIC_DATA = [
     upper: 'D',
     lowerIdx: 1,
     upperIdx: 9,
-    lowerPhrase: 'các ➔ tiên ➔ xuất',
-    upperPhrase: 'dâm ➔ khít ➔ thuốc',
-    lowerRhymes: ['ac', 'iên', 'uât'],
-    upperRhymes: ['âm', 'it', 'uôc'],
+    lowerPhrase: 'cơ ➔ tiên ➔ xuất',
+    upperPhrase: 'tâm ➔ thịt ➔ thuốc',
+    lowerRhymes: ["ơ","iên","uât"],
+    upperRhymes: ["âm","it","uôc"],
     samples: [
-      { word: 'các', code: 'cSs' },
+      { word: 'cơ', code: 'cdz' },
       { word: 'tiên', code: 'tdZ' },
       { word: 'xuất', code: 'xd1' },
-      { word: 'dâm', code: 'DDz' },
-      { word: 'khít', code: 'KDS' },
+      { word: 'tâm', code: 'tDz' },
+      { word: 'thịt', code: 'TDJ' },
       { word: 'thuốc', code: 'TD1' }
     ],
-    story: '<em>Các</em> nàng <em>tiên</em> nữ giáng <em>xuất</em>, khơi dậy thú tính <em>dâm</em> cuồng nhiệt, ôm kẹp <em>khít</em> khao như ngậm điếu <em>thuốc</em>!'
+    story: 'Thời <em>cơ</em> nàng <em>tiên</em> giáng <em>xuất</em>, dốc hết con <em>tâm</em> nướng đĩa <em>thịt</em> thơm rồi châm điếu <em>thuốc</em>!'
   },
   {
     category: 'alpha',
@@ -69,18 +69,18 @@ export const MNEMONIC_DATA = [
     lowerIdx: 2,
     upperIdx: 3,
     lowerPhrase: 'gạch ➔ nghiêng ➔ giục',
-    upperPhrase: 'gái ➔ hiệp ➔ quê',
-    lowerRhymes: ['ach', 'iêng', 'uc'],
-    upperRhymes: ['ai', 'iêp', 'uê'],
+    upperPhrase: 'gái ➔ hiệp ➔ thuê',
+    lowerRhymes: ["ach","iêng","uc"],
+    upperRhymes: ["ai","iêp","uê"],
     samples: [
       { word: 'gạch', code: 'ggj' },
       { word: 'nghiêng', code: 'WgZ' },
       { word: 'giục', code: 'jg5' },
       { word: 'gái', code: 'gGs' },
       { word: 'hiệp', code: 'hGJ' },
-      { word: 'quê', code: 'qEz' }
+      { word: 'thuê', code: 'TG0' }
     ],
-    story: 'Cầm viên <em>gạch</em> đứng <em>nghiêng</em> người hối <em>giục</em>, bắt gặp em <em>gái</em> vừa chơi xong một <em>hiệp</em> đòi về <em>quê</em>!'
+    story: 'Cầm viên <em>gạch</em> đứng <em>nghiêng</em> người hối <em>giục</em>, bắt gặp em <em>gái</em> vừa chơi xong một <em>hiệp</em> ở căn nhà <em>thuê</em>!'
   },
   {
     category: 'alpha',
@@ -88,39 +88,39 @@ export const MNEMONIC_DATA = [
     upper: 'K',
     lowerIdx: 5,
     upperIdx: 6,
-    lowerPhrase: 'cán ➔ chín ➔ chun',
-    upperPhrase: 'càng ➔ khiếu ➔ khuân',
-    lowerRhymes: ['an', 'in', 'un'],
-    upperRhymes: ['ang', 'iêu', 'uân'],
+    lowerPhrase: 'bạn ➔ chịu ➔ trùm',
+    upperPhrase: 'tháng ➔ tin ➔ bún',
+    lowerRhymes: ["an","iu","um"],
+    upperRhymes: ["ang","in","un"],
     samples: [
-      { word: 'cán', code: 'cks' },
-      { word: 'chín', code: 'CKS' },
-      { word: 'chun', code: 'CK0' },
-      { word: 'càng', code: 'cKf' },
-      { word: 'khiếu', code: 'KhS' },
-      { word: 'khuân', code: 'Kh0' }
+      { word: 'bạn', code: 'bkj' },
+      { word: 'chịu', code: 'CkJ' },
+      { word: 'trùm', code: 'Rk2' },
+      { word: 'tháng', code: 'TKs' },
+      { word: 'tin', code: 'tKZ' },
+      { word: 'bún', code: 'bK1' }
     ],
-    story: 'Vác cái <em>cán</em> đập quả <em>chín</em>, quần tụt giãn <em>chun</em>, <em>càng</em> khoe năng <em>khiếu</em> hì hục <em>khuân</em> đồ!'
+    story: 'Người <em>bạn</em> khó <em>chịu</em> trùm mền kín mít, mấy <em>tháng</em> trời ngóng <em>tin</em> mời đi ăn bát <em>bún</em>!'
   },
   {
     category: 'alpha',
     lower: 'h',
     upper: 'H',
     lowerIdx: 7,
-    upperIdx: 45,
-    lowerPhrase: 'hôn ➔ chiều ➔ xuân',
-    upperPhrase: 'hét ➔ hoem ➔ huynh',
-    lowerRhymes: ['ôn', 'iêu', 'uân'],
-    upperRhymes: ['et', 'oem', 'uynh'],
+    upperIdx: 21,
+    lowerPhrase: 'hôn ➔ nhiều ➔ xuân',
+    upperPhrase: 'tập ➔ ngọt ➔ lý',
+    lowerRhymes: ["ôn","iêu","uân"],
+    upperRhymes: ["âp","ot","y"],
     samples: [
       { word: 'hôn', code: 'hhz' },
-      { word: 'chiều', code: 'ChF' },
+      { word: 'nhiều', code: 'HhF' },
       { word: 'xuân', code: 'xh0' },
-      { word: 'hét', code: 'hPs' },
-      { word: 'hoem', code: 'hYZ' },
-      { word: 'huynh', code: 'hY0' }
+      { word: 'tập', code: 'tHj' },
+      { word: 'ngọt', code: 'NHJ' },
+      { word: 'lý', code: 'lH1' }
     ],
-    story: 'Sáng sớm ôm <em>hôn</em>, đến buổi <em>chiều</em> đón gió <em>xuân</em>, bất ngờ <em>hét</em> toang mồm, cười <em>hoem</em> hoét chọc tức <em>huynh</em> đài!'
+    story: 'Trao nụ <em>hôn</em> thật <em>nhiều</em> đón ngày <em>xuân</em>, chăm chỉ luyện <em>tập</em> hưởng vị <em>ngọt</em> ngào đầy hợp <em>lý</em>!'
   },
   {
     category: 'alpha',
@@ -128,19 +128,19 @@ export const MNEMONIC_DATA = [
     upper: 'V',
     lowerIdx: 8,
     upperIdx: 51,
-    lowerPhrase: 'vú ➔ viết ➔ vui',
-    upperPhrase: 'vếch ➔ giê ➔ buyn',
-    lowerRhymes: ['u', 'iêt', 'ui'],
-    upperRhymes: ['êch', 'iê', 'yn'],
+    lowerPhrase: 'chia ➔ kịp ➔ vùng',
+    upperPhrase: 'ếch ➔ hoắm ➔ quýt',
+    lowerRhymes: ["ia","ip","ung"],
+    upperRhymes: ["êch","oăm","yt"],
     samples: [
-      { word: 'vú', code: 'vus' },
-      { word: 'viết', code: 'vjS' },
-      { word: 'vui', code: 'vj0' },
-      { word: 'vếch', code: 'vVs' },
-      { word: 'giê', code: 'jyZ' },
-      { word: 'buyn', code: 'bF0' }
+      { word: 'chia', code: 'Cvz' },
+      { word: 'kịp', code: 'kvJ' },
+      { word: 'vùng', code: 'vv2' },
+      { word: 'ếch', code: 'zVs' },
+      { word: 'hoắm', code: 'hVS' },
+      { word: 'quýt', code: 'qV1' }
     ],
-    story: 'Sờ đôi <em>vú</em> vừa <em>viết</em> thư tình rất <em>vui</em>, mặt vênh <em>vếch</em> chạy máy <em>giê</em> thóc kêu ầm như xe <em>buyn</em>!'
+    story: 'Cùng san <em>chia</em> cho <em>kịp</em> tới <em>vùng</em> quê, bắt con <em>ếch</em> dưới hố sâu hoắm rồi hái chùm <em>quýt</em>!'
   },
   {
     category: 'alpha',
@@ -148,19 +148,19 @@ export const MNEMONIC_DATA = [
     upper: 'M',
     lowerIdx: 10,
     upperIdx: 48,
-    lowerPhrase: 'mút ➔ dịu ➔ trùm',
-    upperPhrase: 'mèo ➔ khoét ➔ huýt',
-    lowerRhymes: ['ut', 'iu', 'um'],
-    upperRhymes: ['eo', 'oet', 'uyt'],
+    lowerPhrase: 'hút ➔ chính ➔ tuổi',
+    upperPhrase: 'đẹp ➔ moóc ➔ khuỷu',
+    lowerRhymes: ["ut","inh","uôi"],
+    upperRhymes: ["ep","ooc","uyu"],
     samples: [
-      { word: 'mút', code: 'mms' },
-      { word: 'dịu', code: 'DkJ' },
-      { word: 'trùm', code: 'Rk2' },
-      { word: 'mèo', code: 'mJf' },
-      { word: 'khoét', code: 'KJS' },
-      { word: 'huýt', code: 'hJ1' }
+      { word: 'hút', code: 'hms' },
+      { word: 'chính', code: 'CmS' },
+      { word: 'tuổi', code: 'tm3' },
+      { word: 'đẹp', code: 'dMj' },
+      { word: 'moóc', code: 'mMS' },
+      { word: 'khuỷu', code: 'KM3' }
     ],
-    story: 'Nằng nặc đòi <em>mút</em> cho êm <em>dịu</em>, rồi <em>trùm</em> mền cuộn tròn như con <em>mèo</em>, cào <em>khoét</em> vách cửa rồi <em>huýt</em> sáo!'
+    story: 'Hơi <em>hút</em> chân <em>chính</em> thời trai <em>tuổi</em> trẻ, khoác áo <em>đẹp</em> móc xe kéo <em>moóc</em> va vào cùi <em>khuỷu</em> tay!'
   },
   {
     category: 'alpha',
@@ -168,19 +168,19 @@ export const MNEMONIC_DATA = [
     upper: 'R',
     lowerIdx: 12,
     upperIdx: 29,
-    lowerPhrase: 'rên ➔ kịp ➔ đuôi',
-    upperPhrase: 'răn ➔ toang ➔ rượu',
-    lowerRhymes: ['ên', 'ip', 'uôi'],
-    upperRhymes: ['ă', 'oang', 'ươu'],
+    lowerPhrase: 'rên ➔ ngoài ➔ xuống',
+    upperPhrase: 'một ➔ tốt ➔ cứu',
+    lowerRhymes: ["ên","oai","uông"],
+    upperRhymes: ["ă","ôt","ưu"],
     samples: [
       { word: 'rên', code: 'rrz' },
-      { word: 'kịp', code: 'kvJ' },
-      { word: 'đuôi', code: 'dm0' },
-      { word: 'răn', code: 'r1z' },
-      { word: 'toang', code: 't8Z' },
-      { word: 'rượu', code: 'r45' }
+      { word: 'ngoài', code: 'NrF' },
+      { word: 'xuống', code: 'xr1' },
+      { word: 'một', code: 'mRJ' },
+      { word: 'tốt', code: 'tRS' },
+      { word: 'cứu', code: 'cR1' }
     ],
-    story: 'Vừa <em>rên</em> không <em>kịp</em> thở, túm chặt lấy cái <em>đuôi</em>, mở miệng <em>răn</em> đe kẻo làm <em>toang</em> bình <em>rượu</em> quý!'
+    story: 'Tiếng <em>rên</em> vọng ra <em>ngoài</em> rồi lắng <em>xuống</em>, làm <em>một</em> việc <em>tốt</em> để kịp thời <em>cứu</em> nguy nan!'
   },
   {
     category: 'alpha',
@@ -188,19 +188,19 @@ export const MNEMONIC_DATA = [
     upper: 'S',
     lowerIdx: 13,
     upperIdx: 18,
-    lowerPhrase: 'sướng ➔ nước ➔ lướt',
-    upperPhrase: 'sờ ➔ bớt ➔ đứt',
-    lowerRhymes: ['ương', 'ươc', 'ươt'],
-    upperRhymes: ['ơ', 'ơt', 'ưt'],
+    lowerPhrase: 'đường ➔ toàn ➔ suốt',
+    upperPhrase: 'các ➔ con ➔ quỳnh',
+    lowerRhymes: ["ương","oan","uôt"],
+    upperRhymes: ["ac","on","ynh"],
     samples: [
-      { word: 'sướng', code: 'sss' },
-      { word: 'nước', code: 'nW1' },
-      { word: 'lướt', code: 'lt1' },
-      { word: 'sờ', code: 'sdf' },
-      { word: 'bớt', code: 'b3S' },
-      { word: 'đứt', code: 'dT1' }
+      { word: 'đường', code: 'dsf' },
+      { word: 'toàn', code: 'tsF' },
+      { word: 'suốt', code: 'ss1' },
+      { word: 'các', code: 'cSs' },
+      { word: 'con', code: 'cSZ' },
+      { word: 'quỳnh', code: 'qS2' }
     ],
-    story: 'Đang <em>sướng</em> rên rỉ thì ra <em>nước</em>, vội <em>lướt</em> tay thò vào <em>sờ</em>, nàng bảo <em>bớt</em> lại kẻo <em>đứt</em> gân!'
+    story: 'Trên con <em>đường</em> an <em>toàn</em> đi <em>suốt</em> đêm, <em>các</em> bạn nhỏ dẫn <em>con</em> ngắm hoa <em>quỳnh</em> nở!'
   },
   {
     category: 'alpha',
@@ -208,19 +208,19 @@ export const MNEMONIC_DATA = [
     upper: 'N',
     lowerIdx: 14,
     upperIdx: 20,
-    lowerPhrase: 'nứng ➔ tươi ➔ vượn',
-    upperPhrase: 'ngực ➔ cho ➔ ngửi',
-    lowerRhymes: ['ưng', 'ươi', 'ươn'],
-    upperRhymes: ['ưc', 'o', 'ưi'],
+    lowerPhrase: 'nhưng ➔ học ➔ giúp',
+    upperPhrase: 'thực ➔ góp ➔ ngửi',
+    lowerRhymes: ["ưng","oc","up"],
+    upperRhymes: ["ưc","op","ưi"],
     samples: [
-      { word: 'nứng', code: 'nns' },
-      { word: 'tươi', code: 'tp0' },
-      { word: 'vượn', code: 'vf5' },
-      { word: 'ngực', code: 'NNj' },
-      { word: 'cho', code: 'CoZ' },
+      { word: 'nhưng', code: 'Hnz' },
+      { word: 'học', code: 'hnJ' },
+      { word: 'giúp', code: 'jn1' },
+      { word: 'thực', code: 'TNj' },
+      { word: 'góp', code: 'gNS' },
       { word: 'ngửi', code: 'NN3' }
     ],
-    story: 'Nổi cơn <em>nứng</em> phơi phới <em>tươi</em> tỉnh như loài <em>vượn</em>, phanh bờ <em>ngực</em> ra <em>cho</em> người tình ghé vào <em>ngửi</em>!'
+    story: 'Khó khăn <em>nhưng</em> chăm <em>học</em> sẽ được <em>giúp</em>, biến ước mơ thành hiện <em>thực</em> đóng <em>góp</em> hương thơm cho đời <em>ngửi</em>!'
   },
   {
     category: 'alpha',
@@ -228,19 +228,19 @@ export const MNEMONIC_DATA = [
     upper: 'L',
     lowerIdx: 16,
     upperIdx: 22,
-    lowerPhrase: 'liếm ➔ đòi ➔ trúng',
-    upperPhrase: 'lồn ➔ hoẵng ➔ bự',
-    lowerRhymes: ['iêm', 'oi', 'ung'],
-    upperRhymes: ['ôn', 'oăng', 'ư'],
+    lowerPhrase: 'điểm ➔ nói ➔ nguyên',
+    upperPhrase: 'lộn ➔ khoăn ➔ nhưn',
+    lowerRhymes: ["iêm","oi","uyên"],
+    upperRhymes: ["ôn","oăn","ưn"],
     samples: [
-      { word: 'liếm', code: 'lls' },
-      { word: 'đòi', code: 'dlF' },
-      { word: 'trúng', code: 'Rv1' },
-      { word: 'lồn', code: 'LLf' },
-      { word: 'hoẵng', code: 'hWX' },
-      { word: 'bự', code: 'bU5' }
+      { word: 'điểm', code: 'dlr' },
+      { word: 'nói', code: 'nlS' },
+      { word: 'nguyên', code: 'Nl0' },
+      { word: 'lộn', code: 'LLj' },
+      { word: 'khoăn', code: 'KLZ' },
+      { word: 'nhưn', code: 'HL0' }
     ],
-    story: 'Cúi xuống <em>liếm</em> láp, nàng liền <em>đòi</em> phải đâm trúng cái <em>lồn</em> chạy nhảy như con <em>hoẵng</em> to <em>bự</em>!'
+    story: 'Từng luận <em>điểm</em> được <em>nói</em> giữ <em>nguyên</em> giá trị, chớ để lẫn <em>lộn</em> băn <em>khoăn</em> những chuyện <em>nhưn</em> nhượng!'
   },
   {
     category: 'alpha',
@@ -248,19 +248,19 @@ export const MNEMONIC_DATA = [
     upper: 'Q',
     lowerIdx: 26,
     upperIdx: 17,
-    lowerPhrase: 'cát ➔ côi ➔ cướp',
-    upperPhrase: 'chim ➔ còm ➔ tuyệt',
-    lowerRhymes: ['at', 'ôi', 'ươp'],
-    upperRhymes: ['im', 'om', 'uyêt'],
+    lowerPhrase: 'phát ➔ tôi ➔ cướp',
+    upperPhrase: 'phim ➔ nhóm ➔ tuyệt',
+    lowerRhymes: ["at","ôi","ươp"],
+    upperRhymes: ["im","om","uyêt"],
     samples: [
-      { word: 'cát', code: 'cqs' },
-      { word: 'côi', code: 'cqZ' },
+      { word: 'phát', code: 'fqs' },
+      { word: 'tôi', code: 'tqZ' },
       { word: 'cướp', code: 'cq1' },
-      { word: 'chim', code: 'QQz' },
-      { word: 'còm', code: 'cQF' },
+      { word: 'phim', code: 'fQz' },
+      { word: 'nhóm', code: 'HQS' },
       { word: 'tuyệt', code: 'tQ5' }
     ],
-    story: 'Bãi <em>cát</em> mồ <em>côi</em> bị bọn cướp giật, vỗ đầu con <em>chim</em> gầy <em>còm</em> khen đẹp <em>tuyệt</em>!'
+    story: 'Vừa bộc <em>phát</em> lời <em>tôi</em> bị kẻ gian <em>cướp</em> lời, xem bộ <em>phim</em> cùng cả <em>nhóm</em> thật là <em>tuyệt</em> vời!'
   },
   {
     category: 'alpha',
@@ -268,39 +268,39 @@ export const MNEMONIC_DATA = [
     upper: 'Z',
     lowerIdx: 19,
     upperIdx: 54,
-    lowerPhrase: 'ôm ➔ lo ➔ ừa',
-    upperPhrase: 'bếp ➔ xẻng ➔ cằn',
-    lowerRhymes: ['ôm', 'o', 'ưa'],
-    upperRhymes: ['êp', 'eng', 'n'],
+    lowerPhrase: 'hôm ➔ trong ➔ chưa',
+    upperPhrase: 'bếp ➔ xẻng ➔ qun',
+    lowerRhymes: ["ôm","ong","ưa"],
+    upperRhymes: ["êp","eng","n"],
     samples: [
-      { word: 'ôm', code: 'zzz' },
-      { word: 'lo', code: 'loZ' },
-      { word: 'ừa', code: 'zz2' },
+      { word: 'hôm', code: 'hzz' },
+      { word: 'trong', code: 'RzZ' },
+      { word: 'chưa', code: 'Cz0' },
       { word: 'bếp', code: 'bZs' },
       { word: 'xẻng', code: 'xZR' },
-      { word: 'cằn', code: 'c1f' }
+      { word: 'qun', code: 'qZ0' }
     ],
-    story: 'Siết chặt vòng <em>ôm</em> đừng <em>lo</em> hãy <em>ừa</em> một tiếng, vào <em>bếp</em> cầm cái <em>xẻng</em> xúc mảnh đất cằn cỗi!'
+    story: 'Mới <em>hôm</em> nào ở <em>trong</em> nhà mà <em>chưa</em> nấu nướng, nay đỏ lửa góc <em>bếp</em> cầm chiếc <em>xẻng</em> xúc đống than <em>qun</em>!'
   },
   {
     category: 'alpha',
     lower: 'y',
     upper: 'Y',
-    lowerIdx: 21,
-    upperIdx: 53,
-    lowerPhrase: 'nhấp ➔ xót ➔ chụm',
-    upperPhrase: 'lệnh ➔ giê ➔ giặc',
-    lowerRhymes: ['âp', 'ot', 'ưm'],
-    upperRhymes: ['ênh', 'iê', 'ăk'],
+    lowerIdx: 53,
+    upperIdx: 45,
+    lowerPhrase: 'lệnh ➔ giê ➔ đắk',
+    upperPhrase: 'em ➔ oem ➔ huynh',
+    lowerRhymes: ["ênh","iê","ăk"],
+    upperRhymes: ["em","oem","uynh"],
     samples: [
-      { word: 'nhấp', code: 'HHs' },
-      { word: 'xót', code: 'xHS' },
-      { word: 'chụm', code: 'Ck5' },
       { word: 'lệnh', code: 'lyj' },
       { word: 'giê', code: 'jyZ' },
-      { word: 'giặc', code: 'jxj' }
+      { word: 'đắk', code: 'dy1' },
+      { word: 'em', code: 'zYz' },
+      { word: 'oem', code: 'zYZ' },
+      { word: 'huynh', code: 'hY0' }
     ],
-    story: 'Liên tục dập <em>nhấp</em> đau <em>xót</em> tụm <em>chụm</em> vào nhau, ban bố khẩu <em>lệnh</em> máy <em>giê</em> quét sạch quân <em>giặc</em>!'
+    story: 'Nhận mệnh <em>lệnh</em> chạy máy <em>giê</em> thóc tại vùng <em>Đắk</em> Lắk, gửi <em>em</em> nụ cười hoem <em>oem</em> cùng người <em>huynh</em> đài!'
   },
   {
     category: 'alpha',
@@ -308,16 +308,19 @@ export const MNEMONIC_DATA = [
     upper: 'W',
     lowerIdx: 59,
     upperIdx: 23,
-    lowerPhrase: 'gốc ➔ trống ➔ rỗng',
-    upperPhrase: 'thành ➔ xoăng ➔ được',
-    lowerRhymes: ['', '', ''],
-    upperRhymes: ['anh', 'oăng', 'ươc'],
+    lowerPhrase: 'qu ➔ qu ➔ qu',
+    upperPhrase: 'thành ➔ hoằng ➔ nước',
+    lowerRhymes: ["","",""],
+    upperRhymes: ["anh","oăng","ươc"],
     samples: [
+      { word: 'qu', code: 'qwz' },
+      { word: 'qu', code: 'qwz' },
+      { word: 'qu', code: 'qwz' },
       { word: 'thành', code: 'TWf' },
-      { word: 'xoăng', code: 'xWZ' },
-      { word: 'được', code: 'dW5' }
+      { word: 'hoằng', code: 'hWF' },
+      { word: 'nước', code: 'nW1' }
     ],
-    story: 'Khởi đầu từ con số không <em>trống rỗng</em> (vần rỗng w), xây dựng công <em>thành</em> tóc quăn <em>xoăng</em> tít là <em>được</em>!'
+    story: 'Gõ chữ <em>qu</em> tốc ký liền tay, lập chiến công <em>thành</em> công vang dội sáng <em>hoằng</em> soi dòng sông <em>nước</em>!'
   },
   {
     category: 'alpha',
@@ -325,19 +328,19 @@ export const MNEMONIC_DATA = [
     upper: 'P',
     lowerIdx: 24,
     upperIdx: 49,
-    lowerPhrase: 'chao ➔ cô ➔ tươi',
-    upperPhrase: 'kẹt ➔ xoong ➔ lìn',
-    lowerRhymes: ['ao', 'ô', 'ươi'],
-    upperRhymes: ['et', 'oong', 'yn'],
+    lowerPhrase: 'báo ➔ cơm ➔ người',
+    upperPhrase: 'nét ➔ xoong ➔ quyn',
+    lowerRhymes: ["ao","ơm","ươi"],
+    upperRhymes: ["et","oong","yn"],
     samples: [
-      { word: 'chao', code: 'Cpz' },
-      { word: 'cô', code: 'c0Z' },
-      { word: 'tươi', code: 'tp0' },
-      { word: 'kẹt', code: 'kPj' },
+      { word: 'báo', code: 'bps' },
+      { word: 'cơm', code: 'cpZ' },
+      { word: 'người', code: 'Np2' },
+      { word: 'nét', code: 'nPs' },
       { word: 'xoong', code: 'xPZ' },
-      { word: 'lìn', code: 'lKF' }
+      { word: 'quyn', code: 'qP0' }
     ],
-    story: 'Thuyền chao <em>đảo</em> gặp <em>cô</em> gái mắt <em>tươi</em> cười, kẹt <em>vào</em> cái <em>xoong</em> rớt lọt <em>lìn</em> xìn!'
+    story: 'Xem tờ <em>báo</em> ăn bữa <em>cơm</em> cùng mọi <em>người</em>, từng đường <em>nét</em> trên chiếc <em>xoong</em> bóng loáng như thẻ <em>quyn</em> bài!'
   },
   {
     category: 'alpha',
@@ -345,19 +348,19 @@ export const MNEMONIC_DATA = [
     upper: 'F',
     lowerIdx: 25,
     upperIdx: 44,
-    lowerPhrase: 'tháp ➔ mốc ➔ lượn',
-    upperPhrase: 'héc ➔ nghoeo ➔ buyn',
-    lowerRhymes: ['ap', 'ôc', 'ươn'],
-    upperRhymes: ['ec', 'oeo', 'uyn'],
+    lowerPhrase: 'pháp ➔ quốc ➔ vườn',
+    upperPhrase: 'séc ➔ ngoèo ➔ buyn',
+    lowerRhymes: ["ap","ôc","ươn"],
+    upperRhymes: ["ec","oeo","uyn"],
     samples: [
-      { word: 'tháp', code: 'Tfs' },
-      { word: 'mốc', code: 'mfS' },
-      { word: 'lượn', code: 'lf5' },
-      { word: 'héc', code: 'hFs' },
-      { word: 'nghoeo', code: 'WFZ' },
+      { word: 'pháp', code: 'ffs' },
+      { word: 'quốc', code: 'qfS' },
+      { word: 'vườn', code: 'vf2' },
+      { word: 'séc', code: 'sFs' },
+      { word: 'ngoèo', code: 'NFF' },
       { word: 'buyn', code: 'bF0' }
     ],
-    story: 'Trèo lên đỉnh <em>tháp</em> phủ đầy rêu <em>mốc</em> rồi bay <em>lượn</em>, chạy <em>héc</em>-quyn quẹo <em>nghoeo</em> đón xe <em>buyn</em>!'
+    story: 'Hiến <em>pháp</em> của đất <em>quốc</em> gia giữ xanh mảnh <em>vườn</em>, ký tấm ngân <em>séc</em> đi đường ngoằn <em>ngoèo</em> đón xe <em>buyn</em>!'
   },
   {
     category: 'alpha',
@@ -365,19 +368,19 @@ export const MNEMONIC_DATA = [
     upper: 'T',
     lowerIdx: 27,
     upperIdx: 28,
-    lowerPhrase: 'sau ➔ chông ➔ lướt',
-    upperPhrase: 'chày ➔ xốp ➔ dứt',
-    lowerRhymes: ['au', 'ông', 'ươt'],
-    upperRhymes: ['ay', 'ôp', 'ưt'],
+    lowerPhrase: 'sau ➔ công ➔ vượt',
+    upperPhrase: 'ngày ➔ hộp ➔ dứt',
+    lowerRhymes: ["au","ông","ươt"],
+    upperRhymes: ["ay","ôp","ưt"],
     samples: [
       { word: 'sau', code: 'stz' },
-      { word: 'chông', code: 'CtZ' },
-      { word: 'lướt', code: 'lt1' },
-      { word: 'chày', code: 'CTf' },
-      { word: 'xốp', code: 'xTS' },
+      { word: 'công', code: 'ctZ' },
+      { word: 'vượt', code: 'vt5' },
+      { word: 'ngày', code: 'NTf' },
+      { word: 'hộp', code: 'hTJ' },
       { word: 'dứt', code: 'DT1' }
     ],
-    story: 'Đứng phía <em>sau</em> vượt bãi cọc <em>chông</em> nhẹ nhàng <em>lướt</em>, giã chiếc <em>chày</em> bánh <em>xốp</em> ăn không thể <em>dứt</em>!'
+    story: 'Đứng phía <em>sau</em> lập chiến <em>công</em> vượt <em>vượt</em> mọi thử thách, qua bao <em>ngày</em> mở chiếc <em>hộp</em> quà chấm <em>dứt</em> chuỗi ngày chờ!'
   },
   {
     category: 'alpha',
@@ -385,19 +388,19 @@ export const MNEMONIC_DATA = [
     upper: 'X',
     lowerIdx: 30,
     upperIdx: 52,
-    lowerPhrase: 'bắc ➔ xơi ➔ quỳ',
-    upperPhrase: 'đêm ➔ thoắt ➔ liềng',
-    lowerRhymes: ['ăc', 'ơi', 'y'],
-    upperRhymes: ['êm', 'oăt', 'yêng'],
+    lowerPhrase: 'bắc ➔ với ➔ ngừm',
+    upperPhrase: 'đêm ➔ thoắt ➔ yểng',
+    lowerRhymes: ["ăc","ơi","ưm"],
+    upperRhymes: ["êm","oăt","yêng"],
     samples: [
       { word: 'bắc', code: 'bxs' },
-      { word: 'xơi', code: 'xxZ' },
-      { word: 'quỳ', code: 'qH2' },
+      { word: 'với', code: 'vxS' },
+      { word: 'ngừm', code: 'Nx2' },
       { word: 'đêm', code: 'dXz' },
       { word: 'thoắt', code: 'TXS' },
-      { word: 'liềng', code: 'lgF' }
+      { word: 'yểng', code: 'zX3' }
     ],
-    story: 'Đi ra phương <em>Bắc</em> mời chàng <em>xơi</em> chén rượu rồi bắt <em>quỳ</em>, canh <em>đêm</em> thoăn <em>thoắt</em> cất tiếng chim <em>liềng</em>!'
+    story: 'Từ miền <em>bắc</em> vào chung sống <em>với</em> nhau đừng ngập <em>ngừm</em>, suốt <em>đêm</em> thoăn <em>thoắt</em> dạy chim <em>yểng</em> hót!'
   },
   {
     category: 'alpha',
@@ -405,19 +408,19 @@ export const MNEMONIC_DATA = [
     upper: 'J',
     lowerIdx: 4,
     upperIdx: 47,
-    lowerPhrase: 'làm ➔ miệt ➔ lùi',
-    upperPhrase: 'kẹo ➔ choẹt ➔ quýt',
-    lowerRhymes: ['am', 'iêt', 'ui'],
-    upperRhymes: ['eo', 'oet', 'uyt'],
+    lowerPhrase: 'làm ➔ việt ➔ vui',
+    upperPhrase: 'kẹo ➔ loét ➔ buýt',
+    lowerRhymes: ["am","iêt","ui"],
+    upperRhymes: ["eo","oet","uyt"],
     samples: [
       { word: 'làm', code: 'ljf' },
-      { word: 'miệt', code: 'mjJ' },
-      { word: 'lùi', code: 'lj2' },
+      { word: 'việt', code: 'vjJ' },
+      { word: 'vui', code: 'vj0' },
       { word: 'kẹo', code: 'kJj' },
-      { word: 'choẹt', code: 'CJJ' },
-      { word: 'quýt', code: 'qV1' }
+      { word: 'loét', code: 'lJS' },
+      { word: 'buýt', code: 'bJ1' }
     ],
-    story: 'Chăm chỉ <em>làm</em> việc <em>miệt</em> mài không bao giờ chịu <em>lùi</em>, ngậm viên <em>kẹo</em> đỏ <em>choẹt</em> thơm phức mùi <em>quýt</em>!'
+    story: 'Chăm chỉ <em>làm</em> việc người <em>Việt</em> luôn rạng rỡ <em>vui</em> tươi, chia nhau thanh <em>kẹo</em> cười toét <em>loét</em> đón chuyến xe <em>buýt</em>!'
   },
   {
     category: 'alpha',
@@ -425,17 +428,19 @@ export const MNEMONIC_DATA = [
     upper: 'A',
     lowerIdx: 55,
     upperIdx: 41,
-    lowerPhrase: 'hết ➔ rỗng ➔ rỗng',
-    upperPhrase: 'cầu ➔ ngoáp ➔ huểnh',
-    lowerRhymes: ['êt', '', ''],
-    upperRhymes: ['âu', 'oap', 'uênh'],
+    lowerPhrase: 'ba ➔ ca ➔ nhà',
+    upperPhrase: 'oạp ➔ tuềnh ➔ huênh',
+    lowerRhymes: ["a","",""],
+    upperRhymes: ["â","oap","uênh"],
     samples: [
-      { word: 'hết', code: 'hcs' },
-      { word: 'cầu', code: 'c5f' },
-      { word: 'ngoáp', code: 'NAS' },
-      { word: 'huểnh', code: 'hA3' }
+      { word: 'ba', code: 'baz' },
+      { word: 'ca', code: 'caz' },
+      { word: 'nhà', code: 'Haf' },
+      { word: 'oạp', code: 'zAJ' },
+      { word: 'tuềnh', code: 'tA2' },
+      { word: 'huênh', code: 'hA0' }
     ],
-    story: 'Chơi cho <em>hết</em> mình bước qua chiếc <em>cầu</em>, ngáp <em>ngoáp</em> cái mồm vểnh râu <em>huểnh</em> hoang!'
+    story: 'Người <em>ba</em> hát khúc tình <em>ca</em> trước mái <em>nhà</em>, tiếng sóng vỗ oam <em>oạp</em> giữa căn phòng <em>tuềnh</em> toàng không chút <em>huênh</em> hoang!'
   },
   {
     category: 'alpha',
@@ -443,17 +448,19 @@ export const MNEMONIC_DATA = [
     upper: 'E',
     lowerIdx: 56,
     upperIdx: 43,
-    lowerPhrase: 'kêu ➔ rỗng ➔ rỗng',
-    upperPhrase: 'mẹ ➔ ngoáy ➔ huých',
-    lowerRhymes: ['êu', '', ''],
-    upperRhymes: ['e', 'oay', 'uych'],
+    lowerPhrase: 'xe ➔ mẹ ➔ bé',
+    upperPhrase: 'mê ➔ ngoáy ➔ huých',
+    lowerRhymes: ["e","",""],
+    upperRhymes: ["ê","oay","uych"],
     samples: [
-      { word: 'kêu', code: 'kUz' },
+      { word: 'xe', code: 'xez' },
       { word: 'mẹ', code: 'mej' },
+      { word: 'bé', code: 'bes' },
+      { word: 'mê', code: 'mEz' },
       { word: 'ngoáy', code: 'NES' },
       { word: 'huých', code: 'hE1' }
     ],
-    story: 'Cún con cất tiếng <em>kêu</em> đòi <em>mẹ</em>, ngoắt <em>ngoáy</em> cái đuôi mừng rỡ rồi <em>huých</em> thân vào chân chủ!'
+    story: 'Lên chiếc <em>xe</em> cùng <em>mẹ</em> bế em <em>bé</em>, niềm say <em>mê</em> ngoắt <em>ngoáy</em> đuôi rồi tinh nghịch <em>huých</em> vai!'
   },
   {
     category: 'alpha',
@@ -461,17 +468,19 @@ export const MNEMONIC_DATA = [
     upper: 'U',
     lowerIdx: 58,
     upperIdx: 50,
-    lowerPhrase: 'chia ➔ rỗng ➔ rỗng',
-    upperPhrase: 'mê ➔ ngoặc ➔ huỳnh',
-    lowerRhymes: ['ia', '', ''],
-    upperRhymes: ['ê', 'oăc', 'ynh'],
+    lowerPhrase: 'thu ➔ ru ➔ đu',
+    upperPhrase: 'nêu ➔ ngoặc ➔ như',
+    lowerRhymes: ["u","",""],
+    upperRhymes: ["êu","oăc","ư"],
     samples: [
-      { word: 'chia', code: 'Cvz' },
-      { word: 'mê', code: 'mEz' },
+      { word: 'thu', code: 'Tuz' },
+      { word: 'ru', code: 'ruz' },
+      { word: 'đu', code: 'duz' },
+      { word: 'nêu', code: 'nUz' },
       { word: 'ngoặc', code: 'NUJ' },
-      { word: 'huỳnh', code: 'hY2' }
+      { word: 'như', code: 'HU0' }
     ],
-    story: 'Cùng nhau san <em>chia</em> niềm say <em>mê</em>, mở dấu <em>ngoặc</em> ghi tên Lưu <em>Huỳnh</em> rực rỡ!'
+    story: 'Gió mùa <em>thu</em> lời ru <em>ru</em> êm đềm võng <em>đu</em> đưa, tấm gương được <em>nêu</em> trong dấu <em>ngoặc</em> sáng trong <em>như</em> ngọc!'
   },
 
   // ==================== NGUYÊN ÂM ĐẶC BIỆT (1 CẶP) ====================
@@ -481,19 +490,19 @@ export const MNEMONIC_DATA = [
     upper: 'i',
     lowerIdx: 46,
     upperIdx: 57,
-    lowerPhrase: 'đen ➔ hoen ➔ buýp',
-    upperPhrase: 'đi ➔ rỗng ➔ rỗng',
-    lowerRhymes: ['en', 'oen', 'uyp'],
-    upperRhymes: ['i', '', ''],
+    lowerPhrase: 'đen ➔ cho ➔ tuýp',
+    upperPhrase: 'đi ➔ chì ➔ khi',
+    lowerRhymes: ["en","o","uyp"],
+    upperRhymes: ["i","",""],
     samples: [
       { word: 'đen', code: 'doz' },
-      { word: 'hoen', code: 'h4Z' },
-      { word: 'buýp', code: 'bo1' },
+      { word: 'cho', code: 'CoZ' },
+      { word: 'tuýp', code: 'to1' },
       { word: 'đi', code: 'diz' },
       { word: 'chì', code: 'Cif' },
       { word: 'khi', code: 'Kiz' }
     ],
-    story: 'Vệt mực <em>đen</em> làm <em>hoen</em> gỉ chiếc xe <em>buýp</em>, thôi hãy xách ba lô lên và <em>đi</em>!'
+    story: 'Vệt mực <em>đen</em> tặng <em>cho</em> em cả <em>tuýp</em> màu, cùng nhau bước <em>đi</em> cầm bút <em>chì</em> mỗi <em>khi</em> vẽ tranh!'
   },
 
   // ==================== KÝ TỰ SỐ (5 CẶP 0-9) ====================
@@ -503,19 +512,19 @@ export const MNEMONIC_DATA = [
     upper: '1',
     lowerIdx: 31,
     upperIdx: 32,
-    lowerPhrase: 'tắm ➔ bơm ➔ yếm',
-    upperPhrase: 'cắn ➔ hơn ➔ yên',
-    lowerRhymes: ['ăm', 'ơm', 'yêm'],
-    upperRhymes: ['ăn', 'ơn', 'yên'],
+    lowerPhrase: 'năm ➔ cô ➔ yếm',
+    upperPhrase: 'ăn ➔ hơn ➔ yên',
+    lowerRhymes: ["ăm","ô","yêm"],
+    upperRhymes: ["ăn","ơn","yên"],
     samples: [
-      { word: 'tắm', code: 't0s' },
-      { word: 'bơm', code: 'bpZ' },
+      { word: 'năm', code: 'n0z' },
+      { word: 'cô', code: 'c0Z' },
       { word: 'yếm', code: 'z01' },
-      { word: 'cắn', code: 'c1s' },
+      { word: 'ăn', code: 'z1z' },
       { word: 'hơn', code: 'h1Z' },
       { word: 'yên', code: 'z10' }
     ],
-    story: 'Ra suối <em>tắm</em> mát rồi <em>bơm</em> nước mặc áo <em>yếm</em>, không cho <em>cắn</em> nhau để sống <em>hơn</em> người trong bình <em>yên</em>!'
+    story: 'Trải qua bao <em>năm</em> tháng <em>cô</em> gái mặc áo <em>yếm</em>, chăm lo việc <em>ăn</em> uống sống <em>hơn</em> người trong bình <em>yên</em>!'
   },
   {
     category: 'number',
@@ -523,19 +532,19 @@ export const MNEMONIC_DATA = [
     upper: '3',
     lowerIdx: 33,
     upperIdx: 34,
-    lowerPhrase: 'trăng ➔ chớp ➔ yết',
-    upperPhrase: 'bắp ➔ bớt ➔ yêu',
-    lowerRhymes: ['ăng', 'ơp', 'yêt'],
-    upperRhymes: ['ăp', 'ơt', 'yêu'],
+    lowerPhrase: 'tăng ➔ hợp ➔ quyết',
+    upperPhrase: 'gặp ➔ bớt ➔ yêu',
+    lowerRhymes: ["ăng","ơp","yêt"],
+    upperRhymes: ["ăp","ơt","yêu"],
     samples: [
-      { word: 'trăng', code: 'R2z' },
-      { word: 'chớp', code: 'C2S' },
-      { word: 'yết', code: 'z21' },
-      { word: 'bắp', code: 'b3s' },
+      { word: 'tăng', code: 't2z' },
+      { word: 'hợp', code: 'h2J' },
+      { word: 'quyết', code: 'q21' },
+      { word: 'gặp', code: 'g3j' },
       { word: 'bớt', code: 'b3S' },
       { word: 'yêu', code: 'z30' }
     ],
-    story: 'Ánh <em>trăng</em> ló dạng <em>chớp</em> nhoáng bảng <em>yết</em> kiến, cầm bắp <em>ngô</em> ăn <em>bớt</em> một nửa trao người mình <em>yêu</em>!'
+    story: 'Năng suất gia <em>tăng</em> kết <em>hợp</em> lòng kiên <em>quyết</em>, lúc hội <em>gặp</em> hãy <em>bớt</em> lo âu để trọn vẹn tình <em>yêu</em>!'
   },
   {
     category: 'number',
@@ -543,19 +552,19 @@ export const MNEMONIC_DATA = [
     upper: '5',
     lowerIdx: 35,
     upperIdx: 36,
-    lowerPhrase: 'cắt ➔ cho ➔ hươu',
-    upperPhrase: 'bầm ➔ ngoác ➔ buồm',
-    lowerRhymes: ['ăt', 'o', 'ươu'],
-    upperRhymes: ['â', 'oac', 'uôm'],
+    lowerPhrase: 'mặt ➔ hoen ➔ rượu',
+    upperPhrase: 'cầu ➔ khoác ➔ buồm',
+    lowerRhymes: ["ăt","oen","ươu"],
+    upperRhymes: ["âu","oac","uôm"],
     samples: [
-      { word: 'cắt', code: 'c4s' },
-      { word: 'cho', code: 'CoZ' },
-      { word: 'hươu', code: 'h40' },
-      { word: 'bầm', code: 'bDf' },
-      { word: 'ngoác', code: 'N5S' },
+      { word: 'mặt', code: 'm4j' },
+      { word: 'hoen', code: 'h4Z' },
+      { word: 'rượu', code: 'r45' },
+      { word: 'cầu', code: 'c5f' },
+      { word: 'khoác', code: 'K5S' },
       { word: 'buồm', code: 'b52' }
     ],
-    story: 'Cầm kéo <em>cắt</em> cỏ <em>cho</em> đàn <em>hươu</em>, vết thương bầm <em>dập</em> mở toang <em>ngoác</em> cánh <em>buồm</em>!'
+    story: 'Nước mắt ướt <em>mặt</em> làm <em>hoen</em> chén ly <em>rượu</em>, bước qua chiếc <em>cầu</em> vai <em>khoác</em> túi giong cánh <em>buồm</em> ra khơi!'
   },
   {
     category: 'number',
@@ -563,19 +572,19 @@ export const MNEMONIC_DATA = [
     upper: '7',
     lowerIdx: 37,
     upperIdx: 38,
-    lowerPhrase: 'giấc ➔ hoạch ➔ quơ',
-    upperPhrase: 'chân ➔ ngoạm ➔ quẫng',
-    lowerRhymes: ['âc', 'oach', 'uơ'],
-    upperRhymes: ['ân', 'oam', 'uâng'],
+    lowerPhrase: 'giấc ➔ hoạch ➔ thuở',
+    upperPhrase: 'nhân ➔ ngoạm ➔ khuâng',
+    lowerRhymes: ["âc","oach","uơ"],
+    upperRhymes: ["ân","oam","uâng"],
     samples: [
       { word: 'giấc', code: 'j6s' },
       { word: 'hoạch', code: 'h6J' },
-      { word: 'quơ', code: 'qdz' },
-      { word: 'chân', code: 'C7z' },
+      { word: 'thuở', code: 'T63' },
+      { word: 'nhân', code: 'H7z' },
       { word: 'ngoạm', code: 'N7J' },
-      { word: 'quẫng', code: 'q8x' }
+      { word: 'khuâng', code: 'K70' }
     ],
-    story: 'Tỉnh <em>giấc</em> hoàn thành kế <em>hoạch</em> tay <em>quơ</em> vội, bước đôi <em>chân</em> há mồm <em>ngoạm</em> miếng thịt nhảy <em>quẫng</em> lên!'
+    story: 'Tỉnh cơn mê <em>giấc</em> hoàn thành kế <em>hoạch</em> nhớ <em>thuở</em> xưa, bao lớp tiền <em>nhân</em> há miệng <em>ngoạm</em> mồi lòng bâng <em>khuâng</em>!'
   },
   {
     category: 'number',
@@ -583,19 +592,19 @@ export const MNEMONIC_DATA = [
     upper: '9',
     lowerIdx: 39,
     upperIdx: 40,
-    lowerPhrase: 'tầng ➔ choang ➔ khuấy',
-    upperPhrase: 'đất ➔ doanh ➔ huếch',
-    lowerRhymes: ['âng', 'oang', 'uây'],
-    upperRhymes: ['ât', 'oanh', 'uêch'],
+    lowerPhrase: 'tầng ➔ khoảng ➔ khuấy',
+    upperPhrase: 'đất ➔ doanh ➔ khuếch',
+    lowerRhymes: ["âng","oang","uây"],
+    upperRhymes: ["ât","oanh","uêch"],
     samples: [
       { word: 'tầng', code: 't8f' },
-      { word: 'choang', code: 'C8Z' },
+      { word: 'khoảng', code: 'K8R' },
       { word: 'khuấy', code: 'K81' },
       { word: 'đất', code: 'd9s' },
       { word: 'doanh', code: 'D9Z' },
-      { word: 'huếch', code: 'h91' }
+      { word: 'khuếch', code: 'K91' }
     ],
-    story: 'Lên <em>tầng</em> cao chén vỡ kêu <em>choang</em> tay <em>khuấy</em> trà, rơi xuống mảnh <em>đất</em> kinh <em>doanh</em> nhà trống <em>huếch</em>!'
+    story: 'Lên trên các <em>tầng</em> đo <em>khoảng</em> cách tay <em>khuấy</em> trà, trên mảnh <em>đất</em> kinh <em>doanh</em> ngày càng <em>khuếch</em> trương phát đạt!'
   }
 ];
 

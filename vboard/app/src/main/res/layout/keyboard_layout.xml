@@ -40,13 +40,13 @@
             android:textColor="#8B949E"/>
 
         <TextView
-            android:id="@+id/btn_help"
+            android:id="@+id/btn_clipboard"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="❓"
+            android:text="📋"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="#3FB950"
+            android:textColor="#58A6FF"
             android:background="#1F242C"
             android:paddingHorizontal="10dp"
             android:paddingVertical="5dp"
@@ -84,6 +84,64 @@
             android:focusable="true"/>
     </LinearLayout>
 
+    <!-- Thanh Gợi Ý Từ (Suggestion Strip / Candidate Bar) -->
+    <HorizontalScrollView
+        android:id="@+id/suggestion_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="#161B22"
+        android:fillViewport="true"
+        android:scrollbars="none"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:id="@+id/suggestion_container"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="6dp"/>
+    </HorizontalScrollView>
+
+    <!-- Thanh Thần Chú HUD (Guide Layer Mnemonic HUD Strip) -->
+    <LinearLayout
+        android:id="@+id/guide_hud_strip"
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:background="#161B22"
+        android:orientation="vertical"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="10dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/tv_guide_hud_line1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📖 Chạm vào phím để học Thần chú 3 Vần &amp; Phụ âm"
+            android:textSize="11.5sp"
+            android:textColor="#C9D1D9"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"/>
+
+        <TextView
+            android:id="@+id/tv_guide_hud_line2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:text="💡 Nhấn giữ phím để mở Thẻ Thần Chú &amp; Câu chuyện liên tưởng"
+            android:textSize="11.5sp"
+            android:textColor="#C9D1D9"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"/>
+    </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="260dp">
@@ -95,9 +153,277 @@
             android:layout_height="match_parent"
             android:background="#1C2128" />
 
-        <!-- Bảng Trợ giúp Overlay ? HELP -->
+        <!-- Overlay Menu Chọn Chế Độ I/O (Chuẩn Gboard 2 thao tác) -->
         <LinearLayout
-            android:id="@+id/help_drawer"
+            android:id="@+id/iomode_menu_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="#161B22"
+            android:visibility="gone"
+            android:elevation="8dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#0D1117"
+                android:paddingHorizontal="12dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="CHỌN CHẾ ĐỘ NHẬP / XUẤT (I/O MODE)"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#58A6FF"/>
+
+                <TextView
+                    android:id="@+id/btn_close_iomode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✕ Đóng"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:textColor="#F85149"
+                    android:padding="6dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="6dp">
+
+                    <!-- Mode 1: VN -> VN -->
+                    <LinearLayout
+                        android:id="@+id/item_iomode_vn_vn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="#21262D"
+                        android:padding="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_title_vn_vn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🇻🇳 VN ➔ VN (Tiếng Việt Tiêu Chuẩn)"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:textColor="#58A6FF"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Bật La bàn 6 hướng chọn dấu thanh siêu tốc (0ms)"
+                                android:textSize="11sp"
+                                android:textColor="#8B949E"/>
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/check_iomode_vn_vn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#3FB950"
+                            android:visibility="gone"/>
+                    </LinearLayout>
+
+                    <!-- Mode 2: B60 -> VN -->
+                    <LinearLayout
+                        android:id="@+id/item_iomode_b60_vn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="#21262D"
+                        android:padding="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_title_b60_vn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="⚡ B60 ➔ VN (Base60 sang Tiếng Việt)"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:textColor="#79C0FF"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tắt la bàn dấu • Kích hoạt chế độ vuốt từ (Swipe)"
+                                android:textSize="11sp"
+                                android:textColor="#8B949E"/>
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/check_iomode_b60_vn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#3FB950"
+                            android:visibility="gone"/>
+                    </LinearLayout>
+
+                    <!-- Mode 3: VN -> B60 -->
+                    <LinearLayout
+                        android:id="@+id/item_iomode_vn_b60"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="#21262D"
+                        android:padding="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_title_vn_b60"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🔒 VN ➔ B60 (Tiếng Việt sang Base60)"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:textColor="#D29922"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Gõ chữ tự mã hóa ngược • Tắt la bàn, bật Swipe"
+                                android:textSize="11sp"
+                                android:textColor="#8B949E"/>
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/check_iomode_vn_b60"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#3FB950"
+                            android:visibility="gone"/>
+                    </LinearLayout>
+
+                    <!-- Mode 4: K.Dấu -> VN -->
+                    <LinearLayout
+                        android:id="@+id/item_iomode_kdau_vn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="#21262D"
+                        android:padding="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_title_kdau_vn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="✍️ K.Dấu ➔ VN (Không Dấu sang Tiếng Việt)"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:textColor="#FFA657"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Gõ không dấu tự gắn dấu chuẩn • Bật Swipe"
+                                android:textSize="11sp"
+                                android:textColor="#8B949E"/>
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/check_iomode_kdau_vn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#3FB950"
+                            android:visibility="gone"/>
+                    </LinearLayout>
+
+                    <!-- Mode 5: B60 -> B60 -->
+                    <LinearLayout
+                        android:id="@+id/item_iomode_b60_b60"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="#21262D"
+                        android:padding="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:clickable="true"
+                        android:focusable="true">
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+                            <TextView
+                                android:id="@+id/tv_title_b60_b60"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🛡️ B60 ➔ B60 (Mã Hóa Base60 Thuần)"
+                                android:textSize="13sp"
+                                android:textStyle="bold"
+                                android:textColor="#BC8CFF"/>
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Gõ và giữ nguyên ký tự Base60 • Bật Swipe"
+                                android:textSize="11sp"
+                                android:textColor="#8B949E"/>
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/check_iomode_b60_b60"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✓"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="#3FB950"
+                            android:visibility="gone"/>
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- Bảng Multi Clipboard Overlay 📋 (Giống Gboard) -->
+        <LinearLayout
+            android:id="@+id/clipboard_drawer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
@@ -105,29 +431,107 @@
             android:visibility="gone"
             android:elevation="6dp">
 
+            <!-- Toolbar của Clipboard Drawer -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="36dp"
+                android:layout_height="38dp"
                 android:orientation="horizontal"
                 android:gravity="center_vertical"
                 android:background="#161B22"
                 android:paddingHorizontal="10dp">
 
                 <TextView
+                    android:id="@+id/tv_clipboard_title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/help_drawer_title"
+                    android:text="📋 BỘ NHỚ TẠM"
                     android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="#58A6FF"/>
 
                 <TextView
-                    android:id="@+id/btn_close_help"
+                    android:id="@+id/btn_clear_clipboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🗑️ Xóa chưa ghim"
+                    android:textSize="11.5sp"
+                    android:textColor="#8B949E"
+                    android:paddingHorizontal="8dp"
+                    android:paddingVertical="4dp"
+                    android:background="#21262D"
+                    android:layout_marginEnd="8dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <TextView
+                    android:id="@+id/btn_close_clipboard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✕ Bàn phím"
+                    android:textSize="12.5sp"
+                    android:textStyle="bold"
+                    android:textColor="#3FB950"
+                    android:padding="6dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </LinearLayout>
+
+            <!-- Nội dung danh sách Clipboard (ScrollView) -->
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="8dp">
+
+                <LinearLayout
+                    android:id="@+id/container_clipboard_items"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- Dynamic clips rendered here -->
+
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+
+        <!-- Modal Card Thần Chú Toàn Diện 📖 (Mnemonic Cyber Card) -->
+        <LinearLayout
+            android:id="@+id/mnemonic_dialog_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="#0D1117"
+            android:visibility="gone"
+            android:elevation="10dp">
+
+            <!-- Toolbar của Mnemonic Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#161B22"
+                android:paddingHorizontal="10dp">
+
+                <TextView
+                    android:id="@+id/tv_mnemonic_title"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="📖 THẦN CHÚ BASE60"
+                    android:textSize="12.5sp"
+                    android:textStyle="bold"
+                    android:textColor="#58A6FF"
+                    android:singleLine="true"
+                    android:ellipsize="end"/>
+
+                <TextView
+                    android:id="@+id/btn_close_mnemonic"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="✕ Đóng"
-                    android:textSize="13sp"
+                    android:textSize="12.5sp"
                     android:textStyle="bold"
                     android:textColor="#F85149"
                     android:padding="6dp"
@@ -145,118 +549,136 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <!-- Mục 1: Vuốt 6 Hướng & La Bàn HUD -->
-                    <TextView
+                    <!-- Box Nhánh Thường -->
+                    <LinearLayout
+                        android:id="@+id/card_mnemonic_lower"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="🧭 QUỆT 6 HƯỚNG &amp; LA BÀN NỔI (0ms):"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="#58A6FF"
-                        android:layout_marginBottom="4dp"/>
+                        android:orientation="vertical"
+                        android:background="#161B22"
+                        android:padding="8dp"
+                        android:layout_marginBottom="6dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="⬆️ Sắc  •  ⬅️ Huyền  •  ➡️ Hỏi\n↙️ Ngã  •  ⬇️ Nặng  •  ↘️ Gốc TV (ă, â, đ, ê, ô, ơ, ư, uâ, iê...)\n💡 Khi vuốt, La bàn HUD sẽ nổi ngay phía trên ngón tay hiển thị 6 góc và ký tự thực tế!"
-                        android:textSize="11sp"
-                        android:lineSpacingExtra="2dp"
-                        android:textColor="#E6EDF3"
-                        android:layout_marginBottom="8dp"/>
+                        <TextView
+                            android:id="@+id/tv_mnemonic_lower_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nhánh Thường"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="#3FB950"/>
 
-                    <!-- Mục 2: 2 Siêu Phím Phụ Âm Kép -->
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="⚡ 2 SIÊU PHÍM PHỤ ÂM KÉP (D &amp; Z):"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="#3FB950"
-                        android:layout_marginBottom="4dp"/>
+                        <TextView
+                            android:id="@+id/tv_mnemonic_lower_phrase"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="thần chú..."
+                            android:textSize="12sp"
+                            android:textColor="#E6EDF3"
+                            android:layout_marginTop="2dp"/>
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="[d] Tap: d  •  Vuốt: ⬆️ tr, ⬅️ nh, ➡️ kh, ↙️ gh, ⬇️ th, ↘️ đ\n[z] Tap: z  •  Vuốt: ⬆️ qu, ⬅️ ph, ➡️ gi, ↙️ ch, ⬇️ ng, ↘️ ngh\n💡 Chạm giữ [d] hoặc [z] để Nở hoa 5 phụ âm xung quanh!"
-                        android:textSize="11sp"
-                        android:lineSpacingExtra="2dp"
-                        android:textColor="#E6EDF3"
-                        android:layout_marginBottom="8dp"/>
+                        <TextView
+                            android:id="@+id/tv_mnemonic_lower_rhymes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="vần: ..."
+                            android:textSize="11sp"
+                            android:textColor="#E3B341"
+                            android:layout_marginTop="2dp"/>
+                    </LinearLayout>
 
-                    <!-- Mục 3: Khóa Cố Định 3 Phím Góc -->
-                    <TextView
+                    <!-- Box Nhánh HOA -->
+                    <LinearLayout
+                        android:id="@+id/card_mnemonic_upper"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="🔒 BẤM ĐÚP 3 PHÍM GÓC ĐỂ GHIM CỐ ĐỊNH:"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="#D29922"
-                        android:layout_marginBottom="4dp"/>
+                        android:orientation="vertical"
+                        android:background="#161B22"
+                        android:padding="8dp"
+                        android:layout_marginBottom="6dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="[⇧ Shift] x2 = Caps Lock (⇪ HOA liên tục)\n[❖ Mode] x2 = Ghim chặt tầng Mode (❖ 🔒)\n[ớ] x2 = Ghim gõ tầng [ớ] (ớ 🔒 liên tục nhiều từ)"
-                        android:textSize="11sp"
-                        android:lineSpacingExtra="2dp"
-                        android:textColor="#E6EDF3"
-                        android:layout_marginBottom="8dp"/>
+                        <TextView
+                            android:id="@+id/tv_mnemonic_upper_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Nhánh HOA (Shift)"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="#58A6FF"/>
 
-                    <!-- Mục 4: Cử Chỉ Space & Backspace -->
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="👈 CỬ CHỈ TRƯỢT SPACE &amp; BACKSPACE:"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="#F0883E"
-                        android:layout_marginBottom="4dp"/>
+                        <TextView
+                            android:id="@+id/tv_mnemonic_upper_phrase"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="thần chú hoa..."
+                            android:textSize="12sp"
+                            android:textColor="#E6EDF3"
+                            android:layout_marginTop="2dp"/>
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="[Space]: Trượt trái/phải để di chuyển con trỏ mượt mà.\n[⌫]: Kéo sang trái: đến m = xóa 1 từ, n = xóa 2 từ, b = xóa 3 từ... Rung phản hồi mỗi từ!"
-                        android:textSize="11sp"
-                        android:lineSpacingExtra="2dp"
-                        android:textColor="#E6EDF3"
-                        android:layout_marginBottom="8dp"/>
+                        <TextView
+                            android:id="@+id/tv_mnemonic_upper_rhymes"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="vần hoa: ..."
+                            android:textSize="11sp"
+                            android:textColor="#BC8CFF"
+                            android:layout_marginTop="2dp"/>
+                    </LinearLayout>
 
-                    <!-- Mục 5: 15 Mode Cơ số 16 -->
-                    <TextView
+                    <!-- Box Câu chuyện liên tưởng (Story) -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="❖ 15 MODE CƠ SỐ 16 (0..e):"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="#BC8CFF"
-                        android:layout_marginBottom="4dp"/>
+                        android:orientation="vertical"
+                        android:background="#21262D"
+                        android:padding="8dp"
+                        android:layout_marginBottom="6dp">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="[0] 🟢 Gốc  •  [1] 🟣 Base60  •  [2] 🔤 Base60 liền\n[3] 🟡 Giờ 4 số  •  [4] ✨ Kỳ quan  •  [5] 🔠 Cyber Font\n[6] 🖊️ ViScript  •  [7] 🔶 Unicode Zero  •  [8] ⏱️ Giờ 6 số\n[9] 🔢 Giờ 5 số  •  [a] ⚡ CVNSS  •  [b] ✝️ Giả Việt\n[c] 🐫 camelCase  •  [d] 📝 Không dấu  •  [e] 🌟 Giả Việt ngắn"
-                        android:textSize="11sp"
-                        android:lineSpacingExtra="2dp"
-                        android:textColor="#E6EDF3"
-                        android:layout_marginBottom="8dp"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="✨ Câu Chuyện Liên Tưởng (Gợi Nhớ)"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="#FFA657"/>
 
-                    <!-- Mục 6: Tiện Ích Biên Tập & Bôi Đen -->
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="✂️ BIÊN TẬP &amp; BÔI ĐEN (BẬT MODE):"
-                        android:textSize="12sp"
-                        android:textStyle="bold"
-                        android:textColor="#58A6FF"
-                        android:layout_marginBottom="4dp"/>
+                        <TextView
+                            android:id="@+id/tv_mnemonic_story"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="câu chuyện..."
+                            android:textSize="12sp"
+                            android:textColor="#F0883E"
+                            android:layout_marginTop="3dp"
+                            android:lineSpacingExtra="2dp"/>
+                    </LinearLayout>
 
-                    <TextView
+                    <!-- Box Từ mẫu Base60 -->
+                    <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="[,] |🔤 Đầu câu  •  [s] 🔤. Cuối câu\n[x] ⏮| Đầu bài  •  [v] |⏭ Cuối bài  •  [p] ¶ Cả đoạn\n[Space] 📑 Chọn hết  •  [.] 📋 Dán  •  [h] 🔠 Hoa/thường\n[z] ↶ Undo  •  [r] ↷ Redo  •  [n] 🧹 Xóa hết\n[w] &quot;&quot;  •  [t] ()  •  [y] []  •  [q] {} Bọc ngoặc\n[i, j, k, l] ▲◀▼▶ Con trỏ  •  [u, o] ⇤ Đầu dòng ⇥ Cuối dòng"
-                        android:textSize="11sp"
-                        android:lineSpacingExtra="2dp"
-                        android:textColor="#E6EDF3"/>
+                        android:orientation="vertical"
+                        android:background="#161B22"
+                        android:padding="8dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🎯 Từ Mẫu &amp; Mã Base60"
+                            android:textSize="11.5sp"
+                            android:textStyle="bold"
+                            android:textColor="#79C0FF"/>
+
+                        <TextView
+                            android:id="@+id/tv_mnemonic_samples"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="samples..."
+                            android:textSize="11sp"
+                            android:textColor="#8B949E"
+                            android:layout_marginTop="2dp"/>
+                    </LinearLayout>
+
                 </LinearLayout>
             </ScrollView>
         </LinearLayout>

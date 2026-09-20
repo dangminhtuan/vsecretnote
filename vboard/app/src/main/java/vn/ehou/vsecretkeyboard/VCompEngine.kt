@@ -8,24 +8,30 @@ object VCompEngine {
     private val shortcutDecodeMap: Map<String, String>
 
     val BASE60_HH = arrayOf(
-        "c", "đ", "g", "G", "j", "k", "K", "h", "v", "D", "m", "C", "r", "s", "n", "b", "l", "Q", "S", "z", "N", "H", "L", "W"
+        "c", "d", "g", "G", "j", "k", "K", "h", "v", "D", "m", "C", "r", "s", "n", "b", "l", "Q", "S", "z", "N", "H", "L", "W"
     )
     val BASE60_HH_EXTRA = arrayOf(
         "p", "f", "q", "t", "T", "R", "x"
     )
+
+    // 3 Bảng Dấu Chuẩn (18 ký tự)
+    val TONE_TABLE_B1 = arrayOf("z", "s", "f", "r", "x", "j") // Bảng 1: Telex thường
+    val TONE_TABLE_B2 = arrayOf("Z", "S", "F", "R", "X", "J") // Bảng 2: Telex HOA
+    val TONE_TABLE_B3 = arrayOf("0", "1", "2", "3", "4", "5") // Bảng 3: VNI số
+
     val BASE60_SS = arrayOf(
-        // s2=0 (Base Rhyme + Base PA): Telex thường
+        // s2=0 (Bảng 1 + PA Cơ bản): Telex thường
         "z", "s", "f", "r", "x", "j",
-        // s2=1 (Extra 1 Rhyme + Base PA): Telex hoa
+        // s2=1 (Bảng 2 + PA Cơ bản): Telex HOA
         "Z", "S", "F", "R", "X", "J",
-        // s2=2 (Extra 2 Rhyme + Base PA): Nguyên âm thường
-        "a", "e", "i", "u", "w", "y",
-        // s2=3 (Base Rhyme + Extra PA): VNI 0-5
+        // s2=2 (Bảng 3 + PA Cơ bản): VNI số
         "0", "1", "2", "3", "4", "5",
-        // s2=4 (Extra 1 Rhyme + Extra PA): VNI cao 6-9+BC
-        "6", "7", "8", "9", "B", "C",
-        // s2=5 (Extra 2 Rhyme + Extra PA): Nguyên âm HOA (+ o)
-        "A", "E", "o", "U", "W", "Y",
+        // s2=3 (Bảng 1 + PA Phụ): Telex thường
+        "z", "s", "f", "r", "x", "j",
+        // s2=4 (Bảng 2 + PA Phụ): Telex HOA
+        "Z", "S", "F", "R", "X", "J",
+        // s2=5 (Bảng 3 + PA Phụ): VNI số
+        "0", "1", "2", "3", "4", "5",
         // 36..59: English dictionary slots (24 chars)
         "c", "d", "g", "G", "k", "K", "h", "v", "D", "m", "n", "b", "l", "Q", "N", "L", "p", "q", "t", "T", "H", "M", "P", "V"
     )
@@ -298,6 +304,50 @@ object VCompEngine {
             val i2 = DataDictionary.BASE60_MAPPING.indexOf(base60Str[1])
             if (i1 != -1 && i2 != -1) return "${i1.toString().padStart(2, '0')}${i2.toString().padStart(2, '0')}"
         } else if (base60Str.length == 3) {
+            val c1 = base60Str[0].toString()
+            val c2 = base60Str[1]
+            val c3 = base60Str[2].toString()
+
+            // 1. Kiểm tra từ điển tiếng Anh (ss >= 36)
+            val engSlice = BASE60_SS.sliceArray(36 until BASE60_SS.size)
+            val engSsIdx = engSlice.indexOf(c3)
+            if (engSsIdx != -1 && !TONE_TABLE_B1.contains(c3) && !TONE_TABLE_B2.contains(c3) && !TONE_TABLE_B3.contains(c3)) {
+                val ss = 36 + engSsIdx
+                val hh = DataDictionary.BASE60_MAPPING.indexOf(base60Str[0])
+                val mm = DataDictionary.BASE60_MAPPING.indexOf(base60Str[1])
+                if (hh != -1 && mm != -1) {
+                    return "${hh.toString().padStart(2, '0')}${mm.toString().padStart(2, '0')}${ss.toString().padStart(2, '0')}"
+                }
+            }
+
+            // 2. Giải mã tiếng Việt theo 3 Bảng Dấu (18 ký tự)
+            var rhymeTable = -1
+            var s1 = -1
+
+            if (TONE_TABLE_B1.contains(c3)) {
+                rhymeTable = 0
+                s1 = TONE_TABLE_B1.indexOf(c3)
+            } else if (TONE_TABLE_B2.contains(c3)) {
+                rhymeTable = 1
+                s1 = TONE_TABLE_B2.indexOf(c3)
+            } else if (TONE_TABLE_B3.contains(c3)) {
+                rhymeTable = 2
+                s1 = TONE_TABLE_B3.indexOf(c3)
+            }
+
+            if (rhymeTable != -1 && s1 != -1) {
+                val isExtra = BASE60_HH_EXTRA.contains(c1)
+                val hh = if (isExtra) BASE60_HH_EXTRA.indexOf(c1) else BASE60_HH.indexOf(c1)
+                val mm = DataDictionary.BASE60_MAPPING.indexOf(c2)
+
+                if (hh != -1 && mm != -1) {
+                    val s2 = (if (isExtra) 3 else 0) + rhymeTable
+                    val ss = s2 * 6 + s1
+                    return "${hh.toString().padStart(2, '0')}${mm.toString().padStart(2, '0')}${ss.toString().padStart(2, '0')}"
+                }
+            }
+
+            // Fallback: raw mapping
             val i1 = DataDictionary.BASE60_MAPPING.indexOf(base60Str[0])
             val i2 = DataDictionary.BASE60_MAPPING.indexOf(base60Str[1])
             val i3 = DataDictionary.BASE60_MAPPING.indexOf(base60Str[2])
