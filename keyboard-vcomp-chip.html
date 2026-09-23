@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>VCOMP Chip Keyboard - Bàn Phím Vi Mạch & Tốc Ký</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-main: #0b0f14;
+      --bg-card: #121820;
+      --bg-key: #182230;
+      --bg-key-hover: #223246;
+      --bg-key-active: #2a3f5a;
+      
+      --neon-green: #00ff88;
+      --neon-cyan: #00e5ff;
+      --neon-amber: #ffb800;
+      --neon-orange: #ff6b35;
+      --neon-pink: #ff2a85;
+      --neon-purple: #9d4edd;
+      
+      --text-white: #f0f6fc;
+      --text-muted: #8b949e;
+      --border-dark: #30363d;
+      --border-glow: rgba(0, 255, 136, 0.4);
+      
+      --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: var(--bg-main);
+      color: var(--text-white);
+      font-family: var(--font-ui);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 6px;
+      overflow-x: hidden;
+    }
+
+    /* Container */
+    .app-container {
+      width: 100%;
+      max-width: 920px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-logo {
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      color: #000;
+      font-size: 13px;
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+    }
+
+    .brand-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      background: linear-gradient(90deg, #fff, #b4c6ef);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .brand-desc {
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-toggle {
+      background: var(--bg-key);
+      border: 1px solid var(--border-dark);
+      color: var(--text-white);
+      padding: 4px 9px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .btn-toggle:hover {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+    }
+
+    .btn-toggle.active {
+      background: rgba(0, 255, 136, 0.15);
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+    }
+
+    /* Sandbox / Input Area */
+    .sandbox-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-box-wrapper {
+      position: relative;
+    }
+
+    #targetInput {
+      width: 100%;
+      height: 46px;
+      background: #080c10;
+      border: 1px solid #2d3748;
+      border-radius: 6px;
+      color: #fff;
+      font-family: var(--font-ui);
+      font-size: 15px;
+      padding: 6px 10px;
+      resize: none;
+      outline: none;
+      transition: border-color 0.2s;
+      line-height: 1.3;
+    }
+
+    #targetInput:focus {
+      border-color: var(--neon-green);
+      box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+    }
+
+    /* Search Finder Bar */
+    .search-finder-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid #2d3e54;
+      border-radius: 8px;
+      padding: 4px 10px;
+      gap: 10px;
+      transition: all 0.2s ease;
+    }
+
+    .search-finder-bar:focus-within {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+    }
+
+    .search-input-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .search-icon {
+      font-size: 12px;
+      color: var(--neon-cyan);
+    }
+
+    #chipSearchInput {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: var(--font-ui);
+      font-size: 12.5px;
+      outline: none;
+      width: 100%;
+    }
+
+    #chipSearchInput::placeholder {
+      color: #64748b;
+    }
+
+    .btn-clear-search {
+      background: #1f2937;
+      border: 1px solid #374151;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: all 0.15s;
+      display: none;
+    }
+
+    .btn-clear-search:hover {
+      color: #fff;
+      background: #374151;
+    }
+
+    .search-stats {
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    /* Keyboard Layout */
+    .keyboard-wrapper {
+      background: #0d131a;
+      border: 1px solid #1f293d;
+      border-radius: 10px;
+      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      user-select: none;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    }
+
+    .kb-row {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+    }
+
+    /* CHIP KEY STYLING (Chiều cao 40px siêu gọn) */
+    .chip-key {
+      position: relative;
+      flex: 1;
+      height: 40px;
+      background: var(--bg-key);
+      border: 1px solid #2d3e54;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
+      overflow: hidden;
+    }
+
+    .chip-key:hover {
+      background: var(--bg-key-hover);
+      border-color: #4a6385;
+      transform: translateY(-1px);
+    }
+
+    .chip-key:active {
+      background: var(--bg-key-active);
+      transform: translateY(1px);
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    }
+
+    /* Key Corners */
+    .chip-main {
+      font-family: var(--font-mono);
+      font-size: 14.5px;
+      font-weight: 700;
+      color: #fff;
+      z-index: 2;
+    }
+
+    /* Top-Left: Macro (Neon Green) */
+    .chip-tl {
+      position: absolute;
+      top: 1.5px;
+      left: 2.5px;
+      font-size: 8.5px;
+      font-weight: 700;
+      color: var(--neon-green);
+      font-family: var(--font-ui);
+      letter-spacing: -0.2px;
+      line-height: 1;
+    }
+
+    /* Top-Right: VCOMP Upper / Code (Neon Amber) */
+    .chip-tr {
+      position: absolute;
+      top: 1.5px;
+      right: 2.5px;
+      font-size: 8px;
+      font-weight: 800;
+      color: var(--neon-amber);
+      font-family: var(--font-mono);
+      line-height: 1;
+    }
+
+    /* Bottom-Left: Sub-Macro / 3-vowel (Cyan) */
+    .chip-bl {
+      position: absolute;
+      bottom: 1.5px;
+      left: 2.5px;
+      font-size: 7.5px;
+      font-weight: 600;
+      color: var(--neon-cyan);
+      font-family: var(--font-ui);
+      letter-spacing: -0.2px;
+      line-height: 1;
+    }
+
+    /* Bottom-Right: Anchor Mnemonic (Orange) - Ẩn mặc định, hover mới hiện */
+    .chip-br {
+      position: absolute;
+      bottom: 1.5px;
+      right: 2.5px;
+      font-size: 7px;
+      font-weight: 600;
+      color: var(--neon-orange);
+      font-family: var(--font-ui);
+      opacity: 0;
+      transform: translateY(2px);
+      transition: all 0.15s ease-in-out;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .chip-key:hover .chip-br {
+      opacity: 0.95;
+      transform: translateY(0);
+    }
+
+    /* Special Key Widths */
+    .key-wide-12 { flex: 1.2; }
+    .key-wide-15 { flex: 1.5; }
+    .key-wide-20 { flex: 2.0; }
+    .key-space { flex: 4.8; }
+
+    .key-special {
+      background: #1e2838;
+      border-color: #3b4d68;
+    }
+
+    .key-special .chip-main {
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    .key-accent {
+      background: #193528;
+      border-color: #00ff88;
+    }
+
+    .key-accent .chip-main {
+      color: #00ff88;
+    }
+
+    /* Highlight Key Glow Effect */
+    .chip-key.key-highlight {
+      border-color: var(--neon-cyan) !important;
+      background: rgba(0, 229, 255, 0.22) !important;
+      box-shadow: 0 0 14px rgba(0, 229, 255, 0.8), inset 0 0 8px rgba(0, 229, 255, 0.4) !important;
+      transform: scale(1.06) !important;
+      z-index: 10;
+      animation: neonPulse 1.2s infinite alternate;
+    }
+
+    .chip-key.key-highlight .chip-main {
+      color: #fff !important;
+      text-shadow: 0 0 8px rgba(0, 229, 255, 0.9);
+    }
+
+    .chip-key.key-highlight .chip-tl {
+      color: #fff !important;
+      font-size: 9.5px !important;
+      filter: drop-shadow(0 0 4px var(--neon-green));
+    }
+
+    .chip-key.key-highlight .chip-tr {
+      color: var(--neon-amber) !important;
+      font-size: 9px !important;
+      filter: drop-shadow(0 0 4px var(--neon-amber));
+    }
+
+    .chip-key.key-highlight .chip-br {
+      opacity: 1 !important;
+      transform: translateY(0) !important;
+    }
+
+    @keyframes neonPulse {
+      0% {
+        box-shadow: 0 0 10px rgba(0, 229, 255, 0.6), inset 0 0 6px rgba(0, 229, 255, 0.3);
+        border-color: var(--neon-cyan);
+      }
+      100% {
+        box-shadow: 0 0 20px rgba(0, 255, 136, 0.9), inset 0 0 12px rgba(0, 255, 136, 0.5);
+        border-color: var(--neon-green);
+      }
+    }
+
+    .keyboard-wrapper.searching .chip-key:not(.key-highlight) {
+      opacity: 0.25;
+      filter: grayscale(0.5);
+      transform: scale(0.97);
+      transition: all 0.2s ease;
+    }
+
+    /* Quick Lookup Panel (Khoảng trống thừa dưới bàn phím) */
+    .quick-lookup-panel {
+      background: var(--bg-card);
+      border: 1px solid #1f293d;
+      border-radius: 10px;
+      padding: 7px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    }
+
+    .lookup-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .lookup-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+
+    .lookup-title span.badge {
+      background: rgba(0, 229, 255, 0.15);
+      color: var(--neon-cyan);
+      font-size: 9.5px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      border: 1px solid rgba(0, 229, 255, 0.3);
+    }
+
+    .lookup-filters {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .lookup-filter-btn {
+      background: #182230;
+      border: 1px solid #2d3e54;
+      color: #94a3b8;
+      padding: 2.5px 7px;
+      border-radius: 4px;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .lookup-filter-btn:hover {
+      color: #fff;
+      border-color: var(--neon-cyan);
+    }
+
+    .lookup-filter-btn.active {
+      background: rgba(0, 229, 255, 0.18);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      font-weight: 700;
+    }
+
+    .lookup-tags-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4.5px;
+      max-height: 250px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .lookup-tags-container::-webkit-scrollbar {
+      width: 4px;
+    }
+    .lookup-tags-container::-webkit-scrollbar-thumb {
+      background: #2d3e54;
+      border-radius: 2px;
+    }
+
+    .lookup-tag {
+      background: #141c27;
+      border: 1px solid #223247;
+      border-radius: 5px;
+      padding: 3px 7px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      color: #cbd5e1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.12s ease;
+      user-select: none;
+    }
+
+    .lookup-tag:hover {
+      background: #1e2c3e;
+      border-color: #3b5373;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .lookup-tag.active {
+      background: rgba(0, 229, 255, 0.25) !important;
+      border-color: var(--neon-cyan) !important;
+      color: #fff !important;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.6) !important;
+      transform: scale(1.05) !important;
+    }
+
+    .lookup-tag .tag-desc {
+      font-size: 8px;
+      opacity: 0.55;
+      font-family: var(--font-ui);
+    }
+
+    /* Responsive Mobile */
+    @media (max-width: 600px) {
+      body { padding: 4px; }
+      .chip-key { height: 36px; border-radius: 5px; }
+      .chip-main { font-size: 13px; }
+      .chip-tl { font-size: 7.5px; left: 1.5px; top: 1px; }
+      .chip-tr { font-size: 7px; right: 1.5px; top: 1px; }
+      .chip-bl { font-size: 6.5px; left: 1.5px; bottom: 1px; }
+      .chip-br { font-size: 6px; right: 1.5px; bottom: 1px; }
+      .brand-desc { display: none; }
+      .lookup-tag { font-size: 10px; padding: 2.5px 5.5px; }
+      .lookup-filters { overflow-x: auto; max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header>
+      <div class="brand">
+        <div class="brand-logo">V</div>
+        <div>
+          <div class="brand-title">VCOMP CHIP KEYBOARD</div>
+          <div class="brand-desc">Bàn Phím Vi Mạch Tốc Ký & Giải Mã Base60</div>
+        </div>
+      </div>
+      <div class="toolbar">
+        <button class="btn-toggle active" id="btnModeMacro" title="Chạm phím ưu tiên gõ Macro Tiếng Việt">🚀 Macro</button>
+        <button class="btn-toggle" id="btnModeVcomp" title="Chạm phím ưu tiên xem & gõ mã VCOMP">⚡ VCOMP</button>
+        <button class="btn-toggle" id="btnModeQwerty" title="Gõ phím ký tự gốc thông thường">⌨️ QWERTY</button>
+      </div>
+    </header>
+
+    <!-- Sandbox / Input Area -->
+    <div class="sandbox-panel">
+      <div class="input-box-wrapper">
+        <textarea id="targetInput" placeholder="Chạm hoặc gõ phím để trải nghiệm tốc ký..."></textarea>
+      </div>
+    </div>
+
+    <!-- Search Finder Bar -->
+    <div class="search-finder-bar">
+      <div class="search-input-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="chipSearchInput" placeholder="Tìm phím, âm, vần, mã (ví dụ: e ê ch, uo, d, đơ)..." autocomplete="off">
+        <button id="btnSearchClear" class="btn-clear-search" title="Xóa tìm kiếm">✖</button>
+      </div>
+      <div class="search-stats" id="searchStats">Gõ từ khóa để làm sáng các phím khớp</div>
+    </div>
+
+    <!-- KEYBOARD CHIP WRAPPER -->
+    <div class="keyboard-wrapper" id="keyboardWrapper">
+      <!-- Row 0: Ký hiệu (10 phím gióng hàng chữ HOA VCOMP) -->
+      <div class="kb-row" id="rowSymbols"></div>
+
+      <!-- Row 1: Hàng Số (10 phím số 1-0: Nguyên âm đôi & ba thực chiến) -->
+      <div class="kb-row" id="rowNumbers"></div>
+
+      <!-- Row 2: Hàng QWERTY (10 phím q-p) -->
+      <div class="kb-row" id="rowQWERTY"></div>
+
+      <!-- Row 3: Hàng ASDF (9 phím a-l) -->
+      <div class="kb-row" id="rowASDF"></div>
+
+      <!-- Row 4: Hàng ZXCV (7 phím z-m + Shift & Backspace) -->
+      <div class="kb-row" id="rowZXCV"></div>
+
+      <!-- Row 5: Hàng Dấu Cách & Chức năng chuẩn Gboard -->
+      <div class="kb-row" id="rowControls">
+        <div class="chip-key key-special key-wide-15" data-action="toggle_symbols" title="Ẩn/Hiện hàng ký hiệu (?123)"><span class="chip-main">?123</span></div>
+        <div class="chip-key key-special key-wide-12" data-action="comma" title="Dấu phẩy (,)"><span class="chip-main">,</span><span class="chip-tr">q</span></div>
+        <div class="chip-key key-space" data-action="space" title="Phím cách (Spacebar)"><span class="chip-main" style="font-weight: 500; font-size: 13px; color: #94a3b8;">space</span><span class="chip-tl">Triệt cách VCOMP</span></div>
+        <div class="chip-key key-special key-wide-12" data-action="dot" title="Dấu chấm (.)"><span class="chip-main">.</span><span class="chip-tr">j</span></div>
+        <div class="chip-key key-accent key-wide-15" data-action="enter" title="Xuống dòng (Enter)"><span class="chip-main" style="font-size: 18px;">↵</span></div>
+      </div>
+    </div>
+
+    <!-- Quick Lookup Panel (Khoảng trống thừa dưới bàn phím) -->
+    <div class="quick-lookup-panel" id="quickLookupPanel">
+      <div class="lookup-header">
+        <div class="lookup-title">
+          <span>⚡ Tra cứu vị trí phím theo A - Z</span>
+          <span class="badge" id="lookupCountBadge">45 âm</span>
+        </div>
+        <div class="lookup-filters">
+          <button class="lookup-filter-btn active" data-filter="all">Tất cả (A-Z)</button>
+          <button class="lookup-filter-btn" data-filter="vowel2">Nguyên âm đôi</button>
+          <button class="lookup-filter-btn" data-filter="vowel3">Nguyên âm 3</button>
+          <button class="lookup-filter-btn" data-filter="consonant">Phụ âm kép</button>
+        </div>
+      </div>
+      <div class="lookup-tags-container" id="lookupTagsContainer"></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { encodeWord, decodeWord, timeToBase60, removeVietnameseTones } from './vcomp.js';
+
+    // === CẤU HÌNH DỮ LIỆU VI MẠCH 46 PHÍM (CHIP KEY CONFIG) ===
+    const KEY_CONFIG = {
+      // --- HÀNG 0: 10 KÝ HIỆU & NGUYÊN ÂM 3 ĐỘC LẬP (: ? " + - = / < > ;) ---
+      rowSymbols: [
+        { key: ':', shiftKey: '~', tl: 'ưi', shiftTl: 'ƯI', tr: 'C', bl: '', br: 'C hoa', note: 'ưi (gửi 72 lần) / C = ch' },
+        { key: '?', shiftKey: "'", tl: 'uơ', shiftTl: 'UƠ', tr: 'T', bl: '', br: 'T hoa', note: 'uơ (thuở, quơ) / T = th' },
+        { key: '"', shiftKey: '|', tl: 'ui', shiftTl: 'UI', tr: 'R', bl: '', br: 'R hoa', note: 'ui (vui 128 lần) / R = tr' },
+        { key: '+', shiftKey: '×', tl: 'ươi', shiftTl: 'ƯƠI', tr: 'N', bl: '', br: 'N hoa', note: 'ươi (nguyên âm 3 top 5) / N = ng' },
+        { key: '-', shiftKey: '_', tl: 'oe', shiftTl: 'OE', tr: 'y', bl: '', br: 'y/nh', note: 'oe (144 lần) / y = nh' },
+        { key: '=', shiftKey: '\\', tl: 'uôi', shiftTl: 'UÔI', tr: 'f', bl: '', br: 'f/ph', note: 'uôi (nguyên âm 3) / f = ph' },
+        { key: '/', shiftKey: '[', tl: 'uây', shiftTl: 'UÂY', tr: 'K', bl: '', br: 'K hoa', note: 'uây (nguyên âm 3) / K = kh' },
+        { key: '<', shiftKey: ']', tl: 'oay', shiftTl: 'OAY', tr: 'G', bl: '', br: 'G hoa', note: 'oay (nguyên âm 3) / G = gh' },
+        { key: '>', shiftKey: '{', tl: 'ya',  shiftTl: 'YA',  tr: 'j', bl: '', br: 'gi/j', note: 'ya (khuya) / j = gi' },
+        { key: ';', shiftKey: '}', tl: 'ươu', shiftTl: 'ƯƠU', tr: 'q', bl: '', br: 'qu/q', note: 'ươu (rượu) / q = qu' }
+      ],
+
+      // --- HÀNG 1: HÀNG SỐ 1 - 0 (100% NGUYÊN ÂM ĐÔI THUẦN TÚY, ĐỘC LẬP) ---
+      rowNumbers: [
+        { key: '1', shiftKey: '!', tl: 'ươ', shiftTl: 'ƯƠ', tr: 'uo', bl: '', br: 'được (2074)', note: 'ươ (người 234 lần)' },
+        { key: '2', shiftKey: '@', tl: 'ưa', shiftTl: 'ƯA', tr: 'ua', bl: '', br: 'chưa (1106)', note: 'ưa (1106 lần)' },
+        { key: '3', shiftKey: '#', tl: 'uâ', shiftTl: 'UÂ', tr: 'ua', bl: '', br: 'xuất (394)', note: 'uâ (chuẩn 394 lần)' },
+        { key: '4', shiftKey: '$', tl: 'iê', shiftTl: 'IÊ', tr: 'ie', bl: '', br: 'hiện (4495)', note: 'iê (nhiều, hiện)' },
+        { key: '5', shiftKey: '%', tl: 'ia', shiftTl: 'IA', tr: 'ia', bl: '', br: 'nghĩa (220)', note: 'ia (nghĩa 220 lần)' },
+        { key: '6', shiftKey: '^', tl: 'uô', shiftTl: 'UÔ', tr: 'uo', bl: '', br: 'luôn (943)', note: 'uô (luôn 943 lần)' },
+        { key: '7', shiftKey: '&', tl: 'oa', shiftTl: 'OA', tr: 'oa', bl: '', br: 'toàn (1490)', note: 'oa (toàn, thoại)' },
+        { key: '8', shiftKey: '*', tl: 'oă', shiftTl: 'OĂ', tr: 'oa', bl: '', br: 'hoặc (378)', note: 'oă (hoặc 378 lần)' },
+        { key: '9', shiftKey: '(', tl: 'uy', shiftTl: 'UY', tr: 'uy', bl: '', br: 'quy (543)', note: 'uy (quy 543 lần)' },
+        { key: '0', shiftKey: ')', tl: 'yê', shiftTl: 'YÊ', tr: '0', bl: '', br: 'yêu (520)', note: 'yê (yêu, yếu)' }
+      ],
+
+      // --- HÀNG 2: QWERTY (10 phím q - p) ---
+      rowQWERTY: [
+        { key: 'q', tl: 'qu', tr: 'q', bl: '', br: '', note: 'Phụ âm qu' },
+        { key: 'w', tl: 'ư', tr: 'U', bl: '', br: 'cứu (216)', note: 'ư = U hoa (nguyên âm đơn)' },
+        { key: 'e', tl: 'e', tr: 'E', bl: '', br: 'nếu (1442)', note: 'e / E = ê hoa (nguyên âm đơn)' },
+        { key: 'r', tl: 'êu', tr: 'R', bl: '', br: 'rên (rrz)', note: 'êu (nguyên âm đôi) / R hoa = ă' },
+        { key: 't', tl: 'th', tr: 'T', bl: '', br: '', note: 'th = T hoa VCOMP' },
+        { key: 'y', tl: 'iêu', tr: 'H', bl: '', br: 'thiếu (990)', note: 'iêu (top 1 nguyên âm 3 - 990 lần) / H hoa' },
+        { key: 'u', tl: 'u', tr: 'u', bl: '', br: 'vú (vvs)', note: 'u (nguyên âm đơn)' },
+        { key: 'i', tl: 'i', tr: 'i', bl: '', br: 'chim (QQz)', note: 'i (nguyên âm đơn)' },
+        { key: 'o', tl: 'o', tr: 'o', bl: '', br: 'ôm (zzz)', note: 'o (nguyên âm đơn)' },
+        { key: 'p', tl: 'ph', tr: '0', bl: '', br: '', note: 'ô = 0 VCOMP / ph phụ âm' }
+      ],
+
+      // --- HÀNG 3: ASDF (9 phím a - l) ---
+      rowASDF: [
+        { key: 'a', tl: 'ai', tr: 'a', bl: '', br: 'lại (3352)', note: 'ai (3352 lần)' },
+        { key: 's', tl: 'ao', tr: 's', bl: '', br: 'sướng (sss)', note: 'ao (2393 lần)' },
+        { key: 'd', tl: 'ơ', tr: 'ơ', bl: '', br: 'đơ (ddz)', note: 'VCOMP ĐẶC TRƯNG: d = ơ' },
+        { key: 'f', tl: 'au', tr: 'f', bl: '', br: 'huyền', note: 'au (544 lần)' },
+        { key: 'g', tl: 'âu', tr: 'G', bl: '', br: 'gh hoa', note: 'âu (937 lần)' },
+        { key: 'h', tl: 'ay', tr: 'h', bl: '', br: 'hôn (hhz)', note: 'ay (2280 lần)' },
+        { key: 'j', tl: 'ây', tr: 'j', bl: '', br: 'nặng', note: 'ây (1072 lần)' },
+        { key: 'k', tl: 'oi', tr: 'K', bl: '', br: 'kh hoa', note: 'oi (495 lần)' },
+        { key: 'l', tl: 'ôi', tr: 'l', bl: '', br: 'liếm (lls)', note: 'ôi (3906 lần)' }
+      ],
+
+      // --- HÀNG 4: ZXCV (7 phím z - m) ---
+      rowZXCV: [
+        { key: 'z', tl: 'ơi', tr: 'z', bl: '', br: 'với (1387)', note: 'ơi (với, lời 1387 lần - độc lập)' },
+        { key: 'x', tl: 'eo', tr: 'x', bl: '', br: 'ngã', note: 'eo (265 lần theo)' },
+        { key: 'c', tl: 'ưu', tr: 'C', bl: '', br: 'cứu (216)', note: 'ưu (cứu, lưu 216 lần - độc lập)' },
+        { key: 'v', tl: 'oai', tr: 'v', bl: '', br: 'ngoài (253)', note: 'oai (ngoài 253 lần - top 4 nguyên âm 3)' },
+        { key: 'b', tl: 'yêu', tr: 'b', bl: '', br: 'yêu (520)', note: 'yêu (liều, tiều 520 lần - top 2 nguyên âm 3)' },
+        { key: 'n', tl: 'iu', tr: 'N', bl: '', br: 'chịu (iu)', note: 'iu (chịu, dịu - độc lập)' },
+        { key: 'm', tl: 'uyê', tr: 'm', bl: '', br: 'khuyên (451)', note: 'uyê (khuyên 451 lần - top 3 nguyên âm 3)' }
+      ]
+    };
+
+    // State
+    let currentMode = 'macro'; // 'macro' | 'vcomp' | 'qwerty'
+    let isShifted = false;
+    const targetInput = document.getElementById('targetInput');
+
+    // Toggle Shift: Cập nhật động toàn bộ Hàng ký hiệu, Hàng số và Hàng chữ
+    function toggleShift() {
+      isShifted = !isShifted;
+
+      // 1. Cập nhật Hàng Ký hiệu (Row 0)
+      KEY_CONFIG.rowSymbols.forEach(cfg => {
+        const el = document.querySelector(`#rowSymbols .chip-key[data-key="${CSS.escape(cfg.key)}"]`);
+        if (el) {
+          const mainEl = el.querySelector('.chip-main');
+          if (mainEl) mainEl.textContent = isShifted ? cfg.shiftKey : cfg.key;
+        }
+      });
+
+      // 2. Cập nhật Hàng Số & Macro Nguyên âm (Row 1)
+      KEY_CONFIG.rowNumbers.forEach(cfg => {
+        const el = document.querySelector(`#rowNumbers .chip-key[data-key="${CSS.escape(cfg.key)}"]`);
+        if (el) {
+          const mainEl = el.querySelector('.chip-main');
+          const tlEl = el.querySelector('.chip-tl');
+          const blEl = el.querySelector('.chip-bl');
+          if (mainEl) mainEl.textContent = isShifted ? cfg.shiftKey : cfg.key;
+          if (tlEl) tlEl.textContent = isShifted ? (cfg.shiftTl || cfg.tl.toUpperCase()) : cfg.tl;
+          if (blEl) blEl.textContent = isShifted ? (cfg.shiftBl || (cfg.bl ? cfg.bl.toUpperCase() : '')) : (cfg.bl || '');
+        }
+      });
+
+      // 3. Cập nhật Các Hàng Chữ Cái (Row 2, 3, 4)
+      ['rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rowId => {
+        KEY_CONFIG[rowId].forEach(cfg => {
+          const el = document.querySelector(`#${rowId} .chip-key[data-key="${CSS.escape(cfg.key)}"]`);
+          if (el) {
+            const mainEl = el.querySelector('.chip-main');
+            const tlEl = el.querySelector('.chip-tl');
+            const blEl = el.querySelector('.chip-bl');
+            if (mainEl) mainEl.textContent = isShifted ? cfg.key.toUpperCase() : cfg.key.toLowerCase();
+            if (tlEl && cfg.tl) tlEl.textContent = isShifted ? cfg.tl.toUpperCase() : cfg.tl;
+            if (blEl && cfg.bl) blEl.textContent = isShifted ? cfg.bl.toUpperCase() : cfg.bl;
+          }
+        });
+      });
+
+      // Highlight nút Shift
+      const shiftBtn = document.querySelector('#rowZXCV .key-special');
+      if (shiftBtn) shiftBtn.classList.toggle('key-accent', isShifted);
+    }
+
+    // Render Keyboard Rows
+    function renderRow(containerId, items) {
+      const container = document.getElementById(containerId);
+      container.innerHTML = '';
+
+      if (containerId === 'rowZXCV') {
+        // Add Shift Left
+        const shiftKey = document.createElement('div');
+        shiftKey.className = 'chip-key key-special key-wide-15';
+        shiftKey.innerHTML = '<span class="chip-main">⇧ shift</span>';
+        shiftKey.onclick = () => toggleShift();
+        container.appendChild(shiftKey);
+      }
+
+      items.forEach(cfg => {
+        const keyEl = document.createElement('div');
+        keyEl.className = 'chip-key';
+        keyEl.dataset.key = cfg.key;
+        keyEl.dataset.shiftKey = cfg.shiftKey || '';
+        keyEl.dataset.tl = cfg.tl || '';
+        keyEl.dataset.tr = cfg.tr || '';
+        keyEl.dataset.bl = cfg.bl || '';
+        keyEl.dataset.br = cfg.br || '';
+        keyEl.dataset.note = cfg.note || '';
+
+        keyEl.innerHTML = `
+          <span class="chip-tl">${cfg.tl || ''}</span>
+          <span class="chip-tr">${cfg.tr || ''}</span>
+          <span class="chip-main">${cfg.key}</span>
+          <span class="chip-bl">${cfg.bl || ''}</span>
+          <span class="chip-br">${cfg.br || ''}</span>
+        `;
+
+        // Click handler
+        keyEl.addEventListener('click', (e) => handleKeyClick(cfg, e));
+
+        container.appendChild(keyEl);
+      });
+
+      if (containerId === 'rowZXCV') {
+        // Add Backspace Right
+        const bkspKey = document.createElement('div');
+        bkspKey.className = 'chip-key key-special key-wide-15';
+        bkspKey.innerHTML = '<span class="chip-main">⌫</span>';
+        bkspKey.onclick = () => handleBackspace();
+        container.appendChild(bkspKey);
+      }
+    }
+
+    // Handle Key Click
+    function handleKeyClick(cfg, event) {
+      let textToInsert = '';
+      if (currentMode === 'macro') {
+        if (isShifted) {
+          textToInsert = cfg.shiftTl || (cfg.tl ? cfg.tl.toUpperCase() : (cfg.shiftKey || cfg.key.toUpperCase()));
+        } else {
+          textToInsert = cfg.tl || cfg.key;
+        }
+      } else if (currentMode === 'vcomp') {
+        textToInsert = cfg.tr || (isShifted ? (cfg.shiftKey || cfg.key.toUpperCase()) : cfg.key);
+      } else {
+        // QWERTY
+        textToInsert = isShifted ? (cfg.shiftKey || cfg.key.toUpperCase()) : cfg.key;
+      }
+
+      insertText(textToInsert);
+    }
+
+    // Insert text at cursor
+    function insertText(str) {
+      const start = targetInput.selectionStart;
+      const end = targetInput.selectionEnd;
+      const val = targetInput.value;
+      targetInput.value = val.substring(0, start) + str + val.substring(end);
+      targetInput.selectionStart = targetInput.selectionEnd = start + str.length;
+      targetInput.focus();
+    }
+
+    // Handle Backspace
+    function handleBackspace() {
+      const start = targetInput.selectionStart;
+      const end = targetInput.selectionEnd;
+      const val = targetInput.value;
+      if (start === end && start > 0) {
+        targetInput.value = val.substring(0, start - 1) + val.substring(end);
+        targetInput.selectionStart = targetInput.selectionEnd = start - 1;
+      } else if (start !== end) {
+        targetInput.value = val.substring(0, start) + val.substring(end);
+        targetInput.selectionStart = targetInput.selectionEnd = start;
+      }
+      targetInput.focus();
+    }
+
+    // Gboard Controls Event Handlers
+    document.querySelectorAll('[data-action]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const act = btn.dataset.action;
+        if (act === 'space') {
+          insertText(' ');
+        } else if (act === 'comma') {
+          insertText(',');
+        } else if (act === 'dot') {
+          insertText('.');
+        } else if (act === 'enter') {
+          insertText('\n');
+        } else if (act === 'toggle_symbols') {
+          const rowSym = document.getElementById('rowSymbols');
+          rowSym.style.display = (rowSym.style.display === 'none') ? 'flex' : 'none';
+        }
+      });
+    });
+
+    // Mode Switchers
+    const btnModeMacro = document.getElementById('btnModeMacro');
+    const btnModeVcomp = document.getElementById('btnModeVcomp');
+    const btnModeQwerty = document.getElementById('btnModeQwerty');
+
+    function setMode(mode) {
+      currentMode = mode;
+      document.body.className = `mode-${mode}`;
+      [btnModeMacro, btnModeVcomp, btnModeQwerty].forEach(b => b.classList.remove('active'));
+      if (mode === 'macro') btnModeMacro.classList.add('active');
+      else if (mode === 'vcomp') btnModeVcomp.classList.add('active');
+      else btnModeQwerty.classList.add('active');
+    }
+
+    btnModeMacro.onclick = () => setMode('macro');
+    btnModeVcomp.onclick = () => setMode('vcomp');
+    btnModeQwerty.onclick = () => setMode('qwerty');
+
+    // Initial render
+    renderRow('rowSymbols', KEY_CONFIG.rowSymbols);
+    renderRow('rowNumbers', KEY_CONFIG.rowNumbers);
+    renderRow('rowQWERTY', KEY_CONFIG.rowQWERTY);
+    renderRow('rowASDF', KEY_CONFIG.rowASDF);
+    renderRow('rowZXCV', KEY_CONFIG.rowZXCV);
+
+    // === CHIP SEARCH & NEON GLOW HIGHLIGHT LOGIC ===
+    const chipSearchInput = document.getElementById('chipSearchInput');
+    const btnSearchClear = document.getElementById('btnSearchClear');
+    const searchStats = document.getElementById('searchStats');
+    const keyboardWrapper = document.getElementById('keyboardWrapper');
+
+    function performSearch() {
+      const rawQuery = chipSearchInput.value.trim().toLowerCase();
+      if (!rawQuery) {
+        keyboardWrapper.classList.remove('searching');
+        document.querySelectorAll('.chip-key').forEach(el => el.classList.remove('key-highlight'));
+        btnSearchClear.style.display = 'none';
+        searchStats.innerHTML = 'Gõ từ khóa để làm sáng các phím khớp';
+        return;
+      }
+
+      btnSearchClear.style.display = 'inline-block';
+      keyboardWrapper.classList.add('searching');
+
+      const tokens = rawQuery.split(/[\s,]+/).filter(t => t.length > 0);
+      const allKeys = document.querySelectorAll('.chip-key[data-key]');
+      let matchCount = 0;
+      const matchedKeysList = [];
+
+      allKeys.forEach(el => {
+        const key = (el.dataset.key || '').toLowerCase();
+        const shiftKey = (el.dataset.shiftKey || '').toLowerCase();
+        const tl = (el.dataset.tl || '').toLowerCase();
+        const tr = (el.dataset.tr || '').toLowerCase();
+        const bl = (el.dataset.bl || '').toLowerCase();
+        const br = (el.dataset.br || '').toLowerCase();
+        const note = (el.dataset.note || '').toLowerCase();
+
+        // Check if ANY token matches
+        let isMatched = false;
+        for (const token of tokens) {
+          if (
+            key === token ||
+            shiftKey === token ||
+            tl === token ||
+            tl.includes(token) ||
+            tr === token ||
+            tr.includes(token) ||
+            bl === token ||
+            bl.includes(token) ||
+            br.includes(token) ||
+            note.includes(token)
+          ) {
+            isMatched = true;
+            break;
+          }
+
+          // Smart phonetic & VCOMP aliases
+          if (token === 'ê' && (tr === 'e' || note.includes('ê') || tl === 'ê' || tl === 'e')) { isMatched = true; break; }
+          if (token === 'ư' && (tr === 'u' || note.includes('ư') || tl === 'ư')) { isMatched = true; break; }
+          if (token === 'ơ' && (key === 'd' || tr === 'ơ' || tr === 'd' || tl === 'ơ' || note.includes('ơ'))) { isMatched = true; break; }
+          if (token === 'ô' && (tr === '0' || note.includes('ô') || tl === 'ô')) { isMatched = true; break; }
+          if (token === 'ă' && (tr === 'r' || note.includes('ă'))) { isMatched = true; break; }
+          if (token === 'â' && (tr === 'a' || note.includes('â'))) { isMatched = true; break; }
+          if (token === 'ch' && (key === 'c' || key === ':' || note.includes('ch'))) { isMatched = true; break; }
+          if (token === 'th' && (key === 't' || key === '?' || note.includes('th'))) { isMatched = true; break; }
+          if (token === 'tr' && (key === 'r' || key === '"' || note.includes('tr'))) { isMatched = true; break; }
+          if (token === 'ng' && (key === 'n' || key === '+' || note.includes('ng'))) { isMatched = true; break; }
+          if (token === 'nh' && (key === 'y' || key === '-' || note.includes('nh'))) { isMatched = true; break; }
+          if (token === 'ph' && (key === 'p' || key === '=' || note.includes('ph'))) { isMatched = true; break; }
+          if (token === 'kh' && (key === 'k' || key === '/' || note.includes('kh'))) { isMatched = true; break; }
+          if (token === 'gh' && (key === 'g' || key === '<' || note.includes('gh'))) { isMatched = true; break; }
+          if (token === 'gi' && (key === 'j' || key === '>' || note.includes('gi'))) { isMatched = true; break; }
+          if (token === 'qu' && (key === 'q' || key === ';' || note.includes('qu'))) { isMatched = true; break; }
+        }
+
+        if (isMatched) {
+          el.classList.add('key-highlight');
+          matchCount++;
+          matchedKeysList.push(el.dataset.key);
+        } else {
+          el.classList.remove('key-highlight');
+        }
+      });
+
+      // Đồng bộ trạng thái active của các thẻ tra cứu bên dưới
+      document.querySelectorAll('.lookup-tag').forEach(tag => {
+        if (tokens.includes(tag.dataset.sound.toLowerCase())) {
+          tag.classList.add('active');
+        } else {
+          tag.classList.remove('active');
+        }
+      });
+
+      if (matchCount > 0) {
+        searchStats.innerHTML = `<span style="color: var(--neon-cyan);">Tìm thấy <b>${matchCount}</b> phím:</span> <b style="color: #fff;">[${matchedKeysList.join('], [')}]</b>`;
+      } else {
+        searchStats.innerHTML = `<span style="color: #ef4444;">Không tìm thấy phím khớp</span>`;
+      }
+    }
+
+    chipSearchInput.addEventListener('input', performSearch);
+
+    btnSearchClear.onclick = () => {
+      chipSearchInput.value = '';
+      performSearch();
+      chipSearchInput.focus();
+    };
+
+    // Shortcut ESC to clear search
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.activeElement === chipSearchInput) {
+        chipSearchInput.value = '';
+        performSearch();
+        targetInput.focus();
+      }
+    });
+
+    // === BẢNG TRA CỨU NHANH THEO THỨ TỰ A - Z (QUICK LOOKUP TAGS) ===
+    const LOOKUP_ITEMS = [
+      // Nguyên âm đôi (26 âm thực chiến - đều có phím riêng độc lập)
+      { text: 'ai', type: 'vowel2', desc: 'phím a' },
+      { text: 'ao', type: 'vowel2', desc: 'phím s' },
+      { text: 'au', type: 'vowel2', desc: 'phím f' },
+      { text: 'ay', type: 'vowel2', desc: 'phím h' },
+      { text: 'âu', type: 'vowel2', desc: 'phím g' },
+      { text: 'ây', type: 'vowel2', desc: 'phím j' },
+      { text: 'eo', type: 'vowel2', desc: 'phím x' },
+      { text: 'êu', type: 'vowel2', desc: 'phím r' },
+      { text: 'ia', type: 'vowel2', desc: 'phím 5' },
+      { text: 'iê', type: 'vowel2', desc: 'phím 4' },
+      { text: 'iu', type: 'vowel2', desc: 'phím n' },
+      { text: 'oa', type: 'vowel2', desc: 'phím 7' },
+      { text: 'oă', type: 'vowel2', desc: 'phím 8' },
+      { text: 'oe', type: 'vowel2', desc: 'phím -' },
+      { text: 'oi', type: 'vowel2', desc: 'phím k' },
+      { text: 'ôi', type: 'vowel2', desc: 'phím l' },
+      { text: 'ơi', type: 'vowel2', desc: 'phím z' },
+      { text: 'uâ', type: 'vowel2', desc: 'phím 3' },
+      { text: 'ui', type: 'vowel2', desc: 'phím "' },
+      { text: 'uô', type: 'vowel2', desc: 'phím 6' },
+      { text: 'uơ', type: 'vowel2', desc: 'phím ?' },
+      { text: 'uy', type: 'vowel2', desc: 'phím 9' },
+      { text: 'ưa', type: 'vowel2', desc: 'phím 2' },
+      { text: 'ươ', type: 'vowel2', desc: 'phím 1' },
+      { text: 'ưi', type: 'vowel2', desc: 'phím :' },
+      { text: 'ưu', type: 'vowel2', desc: 'phím c' },
+      { text: 'yê', type: 'vowel2', desc: 'phím 0' },
+
+      // Nguyên âm 3 (top 4 giờ ở khu vực giữa dễ thao tác)
+      { text: 'iêu', type: 'vowel3', desc: 'phím y ⭐' },
+      { text: 'yêu', type: 'vowel3', desc: 'phím b ⭐' },
+      { text: 'uyê', type: 'vowel3', desc: 'phím m ⭐' },
+      { text: 'oai', type: 'vowel3', desc: 'phím v ⭐' },
+      { text: 'ươi', type: 'vowel3', desc: 'phím +' },
+      { text: 'uôi', type: 'vowel3', desc: 'phím =' },
+      { text: 'uây', type: 'vowel3', desc: 'phím /' },
+      { text: 'oay', type: 'vowel3', desc: 'phím <' },
+      { text: 'ya',  type: 'vowel3', desc: 'phím >' },
+      { text: 'ươu', type: 'vowel3', desc: 'phím ;' },
+
+      // Phụ âm kép
+      { text: 'ch', type: 'consonant', desc: 'phím c / :' },
+      { text: 'gh', type: 'consonant', desc: 'phím < / g' },
+      { text: 'gi', type: 'consonant', desc: 'phím > / j' },
+      { text: 'kh', type: 'consonant', desc: 'phím / / k' },
+      { text: 'ng', type: 'consonant', desc: 'phím + / n' },
+      { text: 'ngh', type: 'consonant', desc: 'phím z' },
+      { text: 'nh', type: 'consonant', desc: 'phím - / y' },
+      { text: 'ph', type: 'consonant', desc: 'phím = / p' },
+      { text: 'qu', type: 'consonant', desc: 'phím ; / q' },
+      { text: 'th', type: 'consonant', desc: 'phím ? / t' },
+      { text: 'tr', type: 'consonant', desc: 'phím " / r' },
+
+      // Âm đặc trưng VCOMP
+      { text: 'đơ', type: 'vowel2', desc: 'phím d (ơ)' }
+    ];
+
+    // Sắp xếp toàn bộ mảng theo thứ tự chữ cái Tiếng Việt A - Z
+    LOOKUP_ITEMS.sort((a, b) => a.text.localeCompare(b.text, 'vi'));
+
+    const lookupTagsContainer = document.getElementById('lookupTagsContainer');
+    const lookupCountBadge = document.getElementById('lookupCountBadge');
+
+    let currentLookupFilter = 'all';
+
+    // Phát sáng toàn bộ các phím thuộc nhóm được chọn
+    function highlightSoundGroup(groupType) {
+      // Xóa các tag active riêng lẻ
+      document.querySelectorAll('.lookup-tag').forEach(t => t.classList.remove('active'));
+
+      if (groupType === 'all') {
+        keyboardWrapper.classList.remove('searching');
+        document.querySelectorAll('.chip-key').forEach(el => el.classList.remove('key-highlight'));
+        btnSearchClear.style.display = 'none';
+        searchStats.innerHTML = 'Gõ từ khóa hoặc chọn âm để làm sáng phím';
+        return;
+      }
+
+      btnSearchClear.style.display = 'inline-block';
+      keyboardWrapper.classList.add('searching');
+
+      const allKeys = document.querySelectorAll('.chip-key[data-key]');
+      let matchCount = 0;
+      const matchedKeysList = [];
+
+      allKeys.forEach(el => {
+        const key = (el.dataset.key || '').toLowerCase();
+        const tl = (el.dataset.tl || '').toLowerCase();
+        const tr = (el.dataset.tr || '').toLowerCase();
+        const note = (el.dataset.note || '').toLowerCase();
+
+        let isMatched = false;
+
+        if (groupType === 'vowel2') {
+          // Nguyên âm đôi: Hàng số 1-0 và các phím chữ cái nguyên âm đôi
+          const vowel2NumberKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
+          const vowel2LetterKeys = ['r', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'n'];
+          if (vowel2NumberKeys.includes(key) || vowel2LetterKeys.includes(key)) {
+            isMatched = true;
+          }
+        } else if (groupType === 'vowel3') {
+          // Nguyên âm 3: toàn bộ Hàng 0 (: ? " + - = / < > ;)
+          const vowel3Row0 = [':', '?', '"', '+', '-', '=', '/', '<', '>', ';'];
+          if (vowel3Row0.includes(key) || ['iêu', 'uyê', 'oai', 'ươi', 'yêu', 'uôi', 'uây', 'oay', 'ya', 'ươu'].some(s => tl === s)) {
+            isMatched = true;
+          }
+        } else if (groupType === 'consonant') {
+          // Phụ âm kép: Row 0 (: ? " + - = / < > ;) và các phím chữ phụ âm (q, t, p, c, z, g, j, k, n, r)
+          const consonantRow0 = [':', '?', '"', '+', '-', '=', '/', '<', '>', ';'];
+          const consonantLetters = ['q', 't', 'p', 'c', 'z', 'g', 'j', 'k', 'n', 'r', 'y'];
+          if (consonantRow0.includes(key) || consonantLetters.includes(key) || ['ch', 'gh', 'gi', 'kh', 'ng', 'ngh', 'nh', 'ph', 'qu', 'th', 'tr'].some(s => note.includes(s))) {
+            isMatched = true;
+          }
+        }
+
+        if (isMatched) {
+          el.classList.add('key-highlight');
+          matchCount++;
+          matchedKeysList.push(el.dataset.key);
+        } else {
+          el.classList.remove('key-highlight');
+        }
+      });
+
+      const groupNames = {
+        vowel2: 'Nguyên âm đôi',
+        vowel3: 'Nguyên âm 3',
+        consonant: 'Phụ âm kép'
+      };
+
+      searchStats.innerHTML = `<span style="color: var(--neon-cyan);">Đang làm sáng <b>${matchCount}</b> phím [${groupNames[groupType] || groupType}]</span>`;
+    }
+
+    function renderLookupTags(filterType = 'all') {
+      currentLookupFilter = filterType;
+      lookupTagsContainer.innerHTML = '';
+
+      const filtered = (filterType === 'all')
+        ? LOOKUP_ITEMS
+        : LOOKUP_ITEMS.filter(item => item.type === filterType);
+
+      lookupCountBadge.textContent = `${filtered.length} âm`;
+
+      filtered.forEach(item => {
+        const tag = document.createElement('div');
+        tag.className = 'lookup-tag';
+        tag.dataset.sound = item.text;
+        tag.title = `${item.text} (${item.desc})`;
+
+        if (chipSearchInput.value.trim().toLowerCase() === item.text.toLowerCase()) {
+          tag.classList.add('active');
+        }
+
+        tag.innerHTML = `
+          <span>${item.text}</span>
+          <span class="tag-desc">${item.desc}</span>
+        `;
+
+        tag.addEventListener('click', () => {
+          if (tag.classList.contains('active')) {
+            chipSearchInput.value = '';
+            performSearch();
+          } else {
+            chipSearchInput.value = item.text;
+            performSearch();
+          }
+        });
+
+        lookupTagsContainer.appendChild(tag);
+      });
+    }
+
+    // Filter Buttons Handlers
+    document.querySelectorAll('.lookup-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const filterType = btn.dataset.filter;
+
+        if (btn.classList.contains('active') && filterType !== 'all') {
+          // Bấm lại nút nhóm đang chọn -> tắt highlight nhóm, quay về 'all'
+          document.querySelectorAll('.lookup-filter-btn').forEach(b => b.classList.remove('active'));
+          const allBtn = document.querySelector('.lookup-filter-btn[data-filter="all"]');
+          if (allBtn) allBtn.classList.add('active');
+          renderLookupTags('all');
+          highlightSoundGroup('all');
+          return;
+        }
+
+        document.querySelectorAll('.lookup-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderLookupTags(filterType);
+        highlightSoundGroup(filterType);
+      });
+    });
+
+    // Khởi tạo render bảng tra cứu A-Z
+    renderLookupTags('all');
+  </script>
+</body>
+</html>

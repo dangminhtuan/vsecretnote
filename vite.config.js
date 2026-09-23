@@ -45,7 +45,8 @@ export default defineConfig({
         glyph_studio: resolve(import.meta.dirname, 'glyph-studio.html'),
         v2b_demo: resolve(import.meta.dirname, 'v2b-demo.html'),
         viscript_encoder: resolve(import.meta.dirname, 'viscript-encoder.html'),
-        subtitle: resolve(import.meta.dirname, 'subtitle.html')
+        subtitle: resolve(import.meta.dirname, 'subtitle.html'),
+        keyboard_vcomp_chip: resolve(import.meta.dirname, 'keyboard-vcomp-chip.html')
       }
     }
   }

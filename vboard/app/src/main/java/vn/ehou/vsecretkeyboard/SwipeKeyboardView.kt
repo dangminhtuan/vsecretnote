@@ -1986,11 +1986,13 @@ class SwipeKeyboardView @JvmOverloads constructor(
         }
 
         // 5. Nếu đang ở Tầng Học Tập (GUIDE), phát tín hiệu tap phím để cập nhật HUD thần chú
+        // KHÔNG gọi onAction để tránh commit ký tự vào ô nhập liệu
         if (currentLayer == KeyboardLayer.GUIDE) {
             val gChar = model.guideInfo?.char
             if (gChar != null) {
                 onGuideKeyTapped?.invoke(gChar)
             }
+            return  // <-- Chặn commitText: Guide mode chỉ tra cứu, không xuất ký tự
         }
 
         // 6. Kích hoạt hành động chính
