@@ -1192,9 +1192,530 @@
       background: rgba(255, 59, 48, 0.15) !important;
       animation: pulse-conflict 1.5s infinite;
     }
+    .studio-key-card.selected.is-duplicate {
+      border: 1.5px solid var(--compass-red) !important;
+      box-shadow: 0 0 12px rgba(255, 59, 48, 0.7), inset 0 0 6px var(--neon-cyan);
+    }
     @keyframes pulse-conflict {
       0%, 100% { box-shadow: 0 0 4px rgba(255, 59, 48, 0.4); }
       50% { box-shadow: 0 0 12px rgba(255, 59, 48, 0.8); }
+    }
+
+    /* === VCOMP COMPLIANCE & CONFLICT STYLES === */
+    .studio-key-card.is-vcomp-conflict {
+      border: 1.5px solid #ff4444 !important;
+      background: rgba(255, 68, 68, 0.12) !important;
+      box-shadow: 0 0 6px rgba(255, 68, 68, 0.35);
+    }
+    .studio-key-card.is-vcomp-conflict::before {
+      content: '⚠️';
+      position: absolute;
+      top: 1px;
+      right: 2px;
+      font-size: 8px;
+      line-height: 1;
+      pointer-events: none;
+      z-index: 2;
+    }
+    .studio-key-card.is-vcomp-conflict .card-rhyme-val {
+      color: #ff6b6b !important;
+      text-decoration: underline wavy rgba(255, 68, 68, 0.7);
+    }
+    .studio-key-card.is-vcomp-match {
+      border-color: rgba(0, 255, 136, 0.45) !important;
+    }
+    .studio-key-card.is-vcomp-match::before {
+      content: '✓';
+      position: absolute;
+      top: 2px;
+      right: 3px;
+      font-size: 7.5px;
+      font-weight: 800;
+      color: var(--neon-green);
+      line-height: 1;
+      pointer-events: none;
+      opacity: 0.75;
+    }
+    .studio-key-card.is-symbol-row-key {
+      border: 1px solid rgba(168, 85, 247, 0.45) !important;
+      background: rgba(168, 85, 247, 0.07) !important;
+      box-shadow: none !important;
+    }
+    .studio-key-card.is-symbol-row-key::before {
+      display: none !important;
+    }
+    .studio-key-card.is-symbol-row-key .card-rhyme-val {
+      color: #e9d5ff !important;
+      text-decoration: none !important;
+    }
+    .studio-key-card.is-symbol-row-key .card-key-name {
+      color: #c084fc !important;
+    }
+    .vcomp-symbol-box {
+      background: rgba(168, 85, 247, 0.12);
+      border: 1px solid rgba(168, 85, 247, 0.4);
+      color: #e9d5ff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .vsb-badge {
+      background: #7e22ce;
+      color: #fff;
+      font-size: 9.5px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .studio-key-card.dimmed {
+      opacity: 0.65 !important;
+      border-color: #243244 !important;
+    }
+
+    /* Health Filter Buttons */
+    .health-filter-btn {
+      background: #141c28;
+      border: 1px solid #2d3e54;
+      color: var(--text-white);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+      user-select: none;
+    }
+    .health-filter-btn:hover {
+      background: #1c2738;
+      border-color: #3f587a;
+    }
+    .health-filter-btn.active {
+      background: rgba(0, 229, 255, 0.2);
+      border-color: var(--neon-cyan);
+      color: #fff;
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+    }
+    .health-filter-btn.btn-conflict {
+      border-color: rgba(255, 68, 68, 0.6);
+      color: #ff8585;
+    }
+    .health-filter-btn.btn-conflict.active {
+      background: rgba(255, 68, 68, 0.25);
+      border-color: #ff4444;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+    }
+    .health-filter-btn.btn-match {
+      border-color: rgba(0, 255, 136, 0.5);
+      color: #5effb1;
+    }
+    .health-filter-btn.btn-match.active {
+      background: rgba(0, 255, 136, 0.2);
+      border-color: var(--neon-green);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+    }
+
+    /* Inspector Conflict Panel */
+    .vcomp-conflict-box {
+      background: rgba(255, 68, 68, 0.12);
+      border: 1px solid #ff4444;
+      border-radius: 6px;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      animation: pulse-conflict 2.5s infinite;
+    }
+    .vcb-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #ff6b6b;
+    }
+    .vcb-badge {
+      background: #ff4444;
+      color: #fff;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 9.5px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .vcb-info {
+      font-size: 11px;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+    .vcb-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4.5px;
+      margin-top: 3px;
+    }
+    .vcb-btn-pick {
+      background: #182230;
+      border: 1px solid #3b5373;
+      color: var(--neon-cyan);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      transition: all 0.12s;
+    }
+    .vcb-btn-pick:hover {
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+      transform: translateY(-1px);
+    }
+    .vcomp-match-box {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.4);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11.5px;
+      color: #a7f3d0;
+    }
+    .vmb-badge {
+      background: var(--neon-green);
+      color: #000;
+      padding: 1px 6px;
+      border-radius: 3px;
+      font-size: 9.5px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    /* Quick Swap & Adopt Core Rhymes */
+    .vcb-swap-action {
+      margin: 4px 0;
+    }
+    .vcb-swap-btn {
+      width: 100%;
+      background: rgba(0, 229, 255, 0.12);
+      border: 1px solid var(--neon-cyan);
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .vcb-swap-btn:hover {
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+      transform: translateY(-1px);
+    }
+    .vcb-swap-btn.vcb-swap-gain {
+      background: rgba(0, 255, 136, 0.16);
+      border: 1.5px solid #00ff88;
+      color: #ffffff;
+      box-shadow: 0 0 8px rgba(0, 255, 136, 0.25);
+    }
+    .vcb-swap-btn.vcb-swap-gain:hover {
+      background: #00ff88;
+      color: #000;
+      box-shadow: 0 0 14px rgba(0, 255, 136, 0.7);
+    }
+    .vcb-swap-btn.vcb-swap-neutral {
+      background: rgba(148, 163, 184, 0.1);
+      border: 1px solid #475569;
+      color: #cbd5e1;
+    }
+    .vcb-swap-btn.vcb-swap-neutral:hover {
+      background: #334155;
+      color: #fff;
+    }
+    .vcb-swap-btn.vcb-swap-loss {
+      background: rgba(239, 68, 68, 0.14);
+      border: 1.5px solid #ef4444;
+      color: #fca5a5;
+    }
+    .vcb-swap-btn.vcb-swap-loss:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+    .vcb-gain-badge {
+      background: #059669;
+      color: #fff;
+      font-size: 9.5px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-weight: 800;
+      margin-left: 4px;
+    }
+    .vcb-neutral-badge {
+      background: #475569;
+      color: #e2e8f0;
+      font-size: 9.5px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-weight: 700;
+      margin-left: 4px;
+    }
+    .vcb-loss-badge {
+      background: #b91c1c;
+      color: #fff;
+      font-size: 9.5px;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-weight: 800;
+      margin-left: 4px;
+    }
+    .vcb-swap-preview-note {
+      font-size: 10px;
+      line-height: 1.4;
+      margin-top: 4px;
+      padding: 4px 7px;
+      border-radius: 4px;
+    }
+    .vcb-note-gain {
+      background: rgba(0, 255, 136, 0.08);
+      color: #a7f3d0;
+      border-left: 2.5px solid #00ff88;
+    }
+    .vcb-note-neutral {
+      background: rgba(255, 184, 0, 0.08);
+      color: #fde68a;
+      border-left: 2.5px solid #eab308;
+    }
+    .vcb-note-loss {
+      background: rgba(239, 68, 68, 0.1);
+      color: #fca5a5;
+      border-left: 2.5px solid #ef4444;
+    }
+    .vcb-clear-origin-btn {
+      width: 100%;
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px dashed rgba(239, 68, 68, 0.6);
+      color: #fca5a5;
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+    .vcb-clear-origin-btn:hover {
+      background: rgba(239, 68, 68, 0.3);
+      color: #fff;
+      border-style: solid;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
+      transform: translateY(-1px);
+    }
+    .mrm-btn-edit {
+      font-size: 9.5px;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid #334155;
+      color: #cbd5e1;
+      border-radius: 3px;
+      padding: 1.5px 6px;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .mrm-btn-edit:hover {
+      background: rgba(0, 229, 255, 0.25);
+      border-color: var(--neon-cyan);
+      color: #fff;
+    }
+    .mrm-btn-edit.mrm-btn-del {
+      background: rgba(239, 68, 68, 0.16);
+      border-color: rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+    }
+    .mrm-btn-edit.mrm-btn-del:hover {
+      background: #ef4444 !important;
+      border-color: #ef4444 !important;
+      color: #fff !important;
+      box-shadow: 0 0 6px rgba(239, 68, 68, 0.5);
+    }
+    .vcomp-toast-notification {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
+      animation: slideDownFadeIn 0.25s ease-out;
+      max-width: 90vw;
+    }
+    .vcomp-toast-notification.gain {
+      background: #064e3b;
+      border: 1.5px solid #00ff88;
+      color: #ecfdf5;
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+    }
+    .vcomp-toast-notification.neutral {
+      background: #292524;
+      border: 1.5px solid #f59e0b;
+      color: #fef3c7;
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.25);
+    }
+    .vcomp-toast-notification.loss {
+      background: #450a0a;
+      border: 1.5px solid #ef4444;
+      color: #fee2e2;
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+    }
+    .vcb-toast-undo-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .vcb-toast-undo-btn:hover {
+      background: #fff;
+      color: #000;
+    }
+    .vcb-toast-close-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+      cursor: pointer;
+      padding: 0 4px;
+      line-height: 1;
+    }
+    .card-gain-badge {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background: #059669;
+      border: 1px solid #10b981;
+      color: #fff;
+      font-size: 7.5px;
+      font-weight: 800;
+      padding: 1px 3px;
+      border-radius: 3px;
+      line-height: 1;
+      pointer-events: none;
+      box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+      z-index: 3;
+    }
+    .studio-key-card.has-swap-gain {
+      box-shadow: 0 0 8px rgba(0, 255, 136, 0.45) !important;
+    }
+    .health-filter-btn.btn-swap-suggest {
+      border-color: #00ff88;
+      color: #a7f3d0;
+    }
+    .health-filter-btn.btn-swap-suggest.active {
+      background: #00ff88;
+      color: #000;
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+    }
+    @keyframes slideDownFadeIn {
+      from { opacity: 0; transform: translate(-50%, -15px); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+    .vcb-replace-core-box {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px dashed rgba(255, 184, 0, 0.4);
+      border-radius: 5px;
+      padding: 6px 8px;
+      margin: 4px 0;
+    }
+    .vcb-replace-core-title {
+      font-size: 10.5px;
+      color: #facc15;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+    .vcb-replace-core-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+    }
+    .vcb-replace-slot-btn {
+      background: #182230;
+      border: 1px solid #3f587a;
+      color: #cbd5e1;
+      padding: 4px 5px;
+      border-radius: 4px;
+      font-size: 9.5px;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      transition: all 0.12s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .vcb-replace-slot-btn:hover {
+      background: #b91c1c;
+      border-color: #ef4444;
+      color: #fff;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+      transform: translateY(-1px);
+    }
+    .mrm-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+    .mrm-row-main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+    .mrm-btn-edit {
+      background: transparent;
+      border: 1px solid transparent;
+      color: #94a3b8;
+      font-size: 10px;
+      cursor: pointer;
+      padding: 1px 4px;
+      border-radius: 3px;
+      line-height: 1;
+      transition: all 0.12s;
+    }
+    .mrm-btn-edit:hover {
+      background: rgba(0, 229, 255, 0.15);
+      border-color: var(--neon-cyan);
+      color: #fff;
     }
     @media (min-width: 920px) {
       .studio-key-card {
@@ -1239,6 +1760,22 @@
       display: flex;
       justify-content: space-between;
       line-height: 1;
+    }
+    .dup-badge {
+      display: inline-block;
+      font-weight: 800;
+      border-radius: 3px;
+      line-height: 1.15;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+      transition: all 0.15s ease;
+    }
+    .dup-badge-rhyme {
+      padding: 1px 5px;
+      font-size: 11px;
+    }
+    .dup-badge-sub {
+      padding: 0 3px;
+      font-size: 8.5px;
     }
 
     /* Key Inspector Section */
@@ -1394,11 +1931,17 @@
       flex-direction: column;
       gap: 4px;
       transition: all 0.15s;
+      cursor: pointer;
     }
-    .perm-corner:focus-within {
+    .perm-corner:focus-within,
+    .perm-corner.active-target {
       border-color: var(--neon-cyan);
       background: #19273a;
-      box-shadow: 0 0 8px rgba(0, 229, 255, 0.25);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.35);
+    }
+    .perm-corner.active-target {
+      border-color: #00e5ff;
+      box-shadow: 0 0 12px rgba(0, 229, 255, 0.5);
     }
     .perm-corner .field-label-row label {
       font-size: 10px;
@@ -1509,20 +2052,20 @@
     }
     .perm-action-triggers {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 8px;
     }
     .btn-perm-trigger {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 7px 12px;
+      gap: 8px;
+      padding: 8px 14px;
       background: #141d2a;
       border: 1px solid #233346;
       border-radius: 6px;
       color: #e2e8f0;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.15s;
@@ -2214,12 +2757,22 @@
       <div class="health-stats">
         <span>⭐ Neo: <b id="statActiveAnchors">0</b>/16</span>
         <span>✨ Vần: <b id="statUniqueRhymes">0</b></span>
-        <span>🟢 Hoàn hảo: <b id="statPerfectCount">0</b></span>
-        <span>🟡 Đang nghĩ: <b id="statThinkingCount">0</b></span>
-        <span>🔴 Băn khoăn: <b id="statWonderingCount">0</b></span>
+        <button class="health-filter-btn btn-match" id="btnFilterVcompMatch" title="Xem các phím có vần khớp chuẩn với Lõi VCOMP">
+          🟢 Khớp VCOMP: <b id="statVcompMatchCount">0</b>/<span id="statVcompTotalCount">36</span>
+        </button>
+        <button class="health-filter-btn btn-conflict" id="btnFilterVcompConflict" title="Nhấn để chỉ làm sáng các phím bị mâu thuẫn (khung đỏ) để sửa">
+          🔴 Lệch VCOMP: <b id="statVcompConflictCount">0</b> phím
+        </button>
+        <button class="health-filter-btn btn-swap-suggest" id="btnFilterSwapSuggest" title="Xem các phím hoán đổi giúp tăng phím xanh (+1)">
+          🎯 Gợi ý đổi: <b id="statSwapSuggestCount">0</b> (+1 🟢)
+        </button>
+        <button class="health-filter-btn active" id="btnFilterAllKeys" title="Hiển thị rõ ràng tất cả các phím">
+          🔄 Tất cả
+        </button>
       </div>
       <div id="conflictList" class="health-conflicts-list" style="display: none;"></div>
     </div>
+    <div id="vcompToastNotification" class="vcomp-toast-notification" style="display: none;"></div>
 
     <!-- Two-column Body Layout -->
     <div class="studio-body-layout">
@@ -2245,6 +2798,9 @@
           <span id="swapPromptText">Vần này đang thuộc về phím khác</span>
           <button class="btn-swap" id="btnDoSwap">🔄 Đổi Chỗ (Swap)</button>
         </div>
+
+        <!-- Khung Cảnh Báo Mâu Thuẫn VCOMP (VCOMP Conflict Alert Box) -->
+        <div id="vcompConflictPanel" style="display: none;"></div>
 
         <!-- Ma Trận Đa Vần VCOMP (B1, B2, B3) -->
         <div class="multi-rhyme-matrix" id="multiRhymeMatrix">
@@ -2339,15 +2895,11 @@
             </div>
           </div>
 
-          <!-- CÁC NÚT ĐIỀN NHANH BÊN NGOÀI SƠ ĐỒ (2 CỘT RỘNG RÃI) -->
+          <!-- NÚT ĐIỀN NHANH VÀO Ô ĐANG CHỌN (ACTIVE TARGET) -->
           <div class="perm-action-triggers">
-            <button class="btn-perm-trigger trigger-fill" id="btnFillUnaccentedSc1" title="Lấy Vần chính bỏ dấu điền vào 4h30">
+            <button class="btn-perm-trigger trigger-fill" id="btnFillUnaccented" title="Điền vần không dấu vào ô đang chọn trong sơ đồ">
               <span class="trigger-badge">⚡</span>
-              <span>Điền <b id="txtFillUnaccented">"ieu"</b> vào 4h30</span>
-            </button>
-            <button class="btn-perm-trigger trigger-key" id="btnFillKeySc1" title="Điền ký tự phím vào 4h30">
-              <span class="trigger-badge">⚡</span>
-              <span>Điền phím <b id="txtFillKey">[h]</b> vào 4h30</span>
+              <span id="lblFillUnaccented">Điền <b id="txtFillUnaccented" style="color: var(--neon-green);">"ieu"</b> vào <b id="txtActiveTargetName" style="color: var(--neon-cyan);">4h30 (sc1)</b></span>
             </button>
           </div>
         </div>
@@ -2499,16 +3051,16 @@
     const KEY_CONFIG = {
       // --- HÀNG 0: 10 KÝ HIỆU & NGUYÊN ÂM 3 ĐỘC LẬP (: ? " + - = / < > ;) ---
       rowSymbols: [
-        { key: ':', rhyme: 'ưi', sc1: ':', sc2: 'ch', tr: 'C', note: 'ưi (gửi) | sc2: ch (C hoa)' },
-        { key: '?', rhyme: 'uơ', sc1: '?', sc2: 'th', tr: 'T', note: 'uơ (thuở, quơ) | sc2: th (T hoa)' },
-        { key: '"', rhyme: 'ui', sc1: '"', sc2: 'tr', tr: 'R', note: 'ui (vui) | sc2: tr (R hoa)' },
-        { key: '+', rhyme: 'ươi', sc1: '+', sc2: 'ng', tr: 'N', note: 'ươi (người) | sc2: ng (N hoa)' },
-        { key: '-', rhyme: 'oe', sc1: '-', sc2: 'nh', tr: 'y', note: 'oe (khoe) | sc2: nh (y/H hoa)' },
-        { key: '=', rhyme: 'uôi', sc1: '=', sc2: 'ph', tr: 'f', note: 'uôi (nuôi, tuổi) | sc2: ph (f)' },
-        { key: '/', rhyme: 'uây', sc1: '/', sc2: 'kh', tr: 'K', note: 'uây (khuấy) | sc2: kh (K hoa)' },
-        { key: '<', rhyme: 'oay', sc1: '<', sc2: 'gh', tr: 'G', note: 'oay (loay hoay) | sc2: gh (G hoa)' },
-        { key: '>', rhyme: 'ya',  sc1: '>', sc2: 'gi', tr: 'j', note: 'ya (khuya) | sc2: gi (j)' },
-        { key: ';', rhyme: 'ươu', sc1: ';', sc2: 'qu', tr: 'q', note: 'ươu (rượu, hươu) | sc2: qu (q)' }
+        { key: ':', rhyme: 'ưi', sc1: ':', sc2: '', tr: '', note: 'ưi (gửi)' },
+        { key: '?', rhyme: 'uơ', sc1: '?', sc2: '', tr: '', note: 'uơ (thuở, quơ)' },
+        { key: '"', rhyme: 'ui', sc1: '"', sc2: '', tr: '', note: 'ui (vui)' },
+        { key: '+', rhyme: 'ươi', sc1: '+', sc2: '', tr: '', note: 'ươi (người)' },
+        { key: '-', rhyme: 'oe', sc1: '-', sc2: '', tr: '', note: 'oe (khoe)' },
+        { key: '=', rhyme: 'uôi', sc1: '=', sc2: '', tr: '', note: 'uôi (nuôi, tuổi)' },
+        { key: '/', rhyme: 'uây', sc1: '/', sc2: '', tr: '', note: 'uây (khuấy)' },
+        { key: '<', rhyme: 'oay', sc1: '<', sc2: '', tr: '', note: 'oay (loay hoay)' },
+        { key: '>', rhyme: 'ya',  sc1: '>', sc2: '', tr: '', note: 'ya (khuya)' },
+        { key: ';', rhyme: 'ươu', sc1: ';', sc2: '', tr: '', note: 'ươu (rượu, hươu)' }
       ],
 
       // --- HÀNG 1: HÀNG SỐ 1 - 0 (10 NGUYÊN ÂM ĐÔI KINH ĐIỂN NHẤT) ---
@@ -2633,7 +3185,7 @@
       ],
       'l': [
         { rhyme: 'iêm', note: 'll = liếm (Anchor B1 - 16:16)' },
-        { rhyme: 'ôi', note: 'll = lôi' }
+        { rhyme: 'oi', note: 'll = lòi/lỏi (Anchor B2 - 16:16)' }
       ],
       'q': [
         { rhyme: 'im', note: 'QQ = chim (Anchor B1 - 17:17)' },
@@ -2684,6 +3236,32 @@
       }
     }
 
+    // Dọn sạch phụ âm ghép cũ (sc2, tr) ở Hàng 0 nếu còn tồn đọng trong cấu hình đã lưu
+    const SYMBOL_KEYS = [':', '?', '"', '+', '-', '=', '/', '<', '>', ';'];
+    const LEGACY_DUP_SC2 = ['ch', 'th', 'tr', 'ng', 'nh', 'ph', 'kh', 'gh', 'gi', 'qu'];
+    let needResaveRowSymbols = false;
+    if (KEY_CONFIG.rowSymbols && Array.isArray(KEY_CONFIG.rowSymbols)) {
+      KEY_CONFIG.rowSymbols.forEach(cfg => {
+        if (SYMBOL_KEYS.includes(cfg.key)) {
+          if (cfg.tr) {
+            cfg.tr = '';
+            needResaveRowSymbols = true;
+          }
+          if (LEGACY_DUP_SC2.includes((cfg.sc2 || '').toLowerCase().trim())) {
+            cfg.sc2 = '';
+            needResaveRowSymbols = true;
+          }
+        }
+      });
+    }
+    if (needResaveRowSymbols) {
+      try {
+        localStorage.setItem('vcomp_chip_custom_config', JSON.stringify(KEY_CONFIG));
+      } catch (e) {
+        console.warn('Lỗi cập nhật sau khi dọn Hàng 0:', e);
+      }
+    }
+
     // State
     let currentMode = 'flick'; // 'flick' | 'vcomp' | 'qwerty'
     let isShifted = false;
@@ -2706,8 +3284,11 @@
       return dirMap[sector];
     }
 
-    // Lấy ký tự xuất ra theo hướng
+    // Lấy ký tự xuất ra theo hướng (Hỗ trợ cấu hình đa vần directions)
     function getValueForDirection(cfg, dir) {
+      if (cfg && cfg.directions && cfg.directions[dir] !== undefined && cfg.directions[dir] !== '') {
+        return cfg.directions[dir];
+      }
       const rhyme = (cfg.rhyme || '').trim();
       switch (dir) {
         case 'sac':       return rhyme ? getTonedRhyme(rhyme, 1) : '';
@@ -3643,26 +4224,196 @@
     let currentInspectorRowId = 'rowASDF';
     let currentInspectorKeyIdx = 5;
 
-    // Phân tích trạng thái sức khỏe cấu hình vần & từ neo
+    // Bảng màu phân biệt cho các nhóm vần trùng lặp (Độ tương phản cao trên nền tối)
+    const DUPLICATE_PALETTE = [
+      { bg: '#991b1b', border: '#f87171', text: '#ffffff' }, // 1: Đỏ mận thắm
+      { bg: '#9a3412', border: '#fb923c', text: '#ffffff' }, // 2: Cam gạch đậm
+      { bg: '#6b21a8', border: '#c084fc', text: '#ffffff' }, // 3: Tím hoàng gia
+      { bg: '#075985', border: '#38bdf8', text: '#ffffff' }, // 4: Xanh đại dương
+      { bg: '#831843', border: '#f472b6', text: '#ffffff' }, // 5: Hồng sẫm
+      { bg: '#065f46', border: '#34d399', text: '#ffffff' }, // 6: Xanh ngọc lục bảo
+      { bg: '#854d0e', border: '#facc15', text: '#ffffff' }, // 7: Vàng hổ phách
+      { bg: '#3730a3', border: '#818cf8', text: '#ffffff' }, // 8: Lam đậm Indigo
+      { bg: '#134e4a', border: '#2dd4bf', text: '#ffffff' }, // 9: Xanh mòng két Teal
+      { bg: '#3f6212', border: '#a3e635', text: '#ffffff' }  // 10: Xanh ô liu Lime
+    ];
+
+    // Trạng thái lọc hiển thị trên Lưới phím Studio ('all' | 'conflict' | 'match')
+    let currentGridFilter = 'all'; // Mặc định hiển thị rõ ràng 100% tất cả các phím, không mờ phím nào cả!
+
+    // === CÔNG CỤ ĐỐI CHIẾU VỚI LÕI VCOMP BASE60 CHUẨN ===
+    function getVcompRhymesForKey(key, cfg = {}) {
+      const rhymes = new Set();
+      const addFromIndex = (idx) => {
+        if (idx !== -1 && idx < BASE60_MAPPING.length) {
+          const b1 = CUSTOM_RHYMES_BASE[idx];
+          const b2 = CUSTOM_RHYMES_EXTRA_1[idx];
+          const b3 = CUSTOM_RHYMES_EXTRA_2[idx];
+          if (b1 && b1 !== '-' && b1 !== 'null') rhymes.add(b1.toLowerCase());
+          if (b2 && b2 !== '-' && b2 !== 'null') rhymes.add(b2.toLowerCase());
+          if (b3 && b3 !== '-' && b3 !== 'null') rhymes.add(b3.toLowerCase());
+        }
+      };
+
+      const k = String(key || '').trim();
+      // 1. Chữ cái thường & hoa Shift (a-z, A-Z)
+      if (/^[a-zA-Z]$/.test(k)) {
+        addFromIndex(BASE60_MAPPING.indexOf(k.toLowerCase()));
+        addFromIndex(BASE60_MAPPING.indexOf(k.toUpperCase()));
+      }
+      // 2. Phím số (0-9)
+      if (/^[0-9]$/.test(k)) {
+        addFromIndex(BASE60_MAPPING.indexOf(k));
+      }
+      // 3. Phím có mã VCOMP phụ ở góc tr (ví dụ Row 0: C, T, R, N, y, f, K, G, j, q)
+      if (cfg && cfg.tr && cfg.tr !== k) {
+        addFromIndex(BASE60_MAPPING.indexOf(cfg.tr));
+      }
+
+      return Array.from(rhymes);
+    }
+
+    function findVcompOriginKeyForRhyme(r) {
+      if (!r || r === '-' || r === 'null') return null;
+      const target = r.toLowerCase().trim();
+      for (let i = 0; i < BASE60_MAPPING.length; i++) {
+        const char = BASE60_MAPPING[i];
+        if (CUSTOM_RHYMES_BASE[i] && CUSTOM_RHYMES_BASE[i].toLowerCase() === target) {
+          return { key: char, layer: 'B1 (Base)', tableType: 'b1', index: i };
+        }
+        if (CUSTOM_RHYMES_EXTRA_1[i] && CUSTOM_RHYMES_EXTRA_1[i].toLowerCase() === target) {
+          return { key: char, layer: 'B2 (Extra 1)', tableType: 'b2', index: i };
+        }
+        if (CUSTOM_RHYMES_EXTRA_2[i] && CUSTOM_RHYMES_EXTRA_2[i].toLowerCase() === target) {
+          return { key: char, layer: 'B3 (Extra 2)', tableType: 'b3', index: i };
+        }
+      }
+      return null;
+    }
+
+    function findKeyboardKeyForBase60Char(b60Char) {
+      if (!b60Char) return null;
+      const low = b60Char.toLowerCase();
+      for (const rowId of ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV']) {
+        if (!KEY_CONFIG[rowId]) continue;
+        for (const cfg of KEY_CONFIG[rowId]) {
+          if (cfg.key.toLowerCase() === low || (cfg.tr && cfg.tr === b60Char)) {
+            return cfg.key;
+          }
+        }
+      }
+      return low;
+    }
+
+    // Mô phỏng hiệu ứng hoán đổi giữa keyA và keyB lên tổng số phím xanh (VCOMP match)
+    function simulateSwapEffect(keyA, keyB) {
+      if (!keyA || !keyB || keyA.toLowerCase() === keyB.toLowerCase()) return null;
+      let cfgA = null, cfgB = null;
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+        if (!KEY_CONFIG[rId]) return;
+        KEY_CONFIG[rId].forEach(it => {
+          if (it.key === keyA) cfgA = it;
+          if (it.key === keyB) cfgB = it;
+        });
+      });
+      if (!cfgA || !cfgB) return null;
+
+      const rhymeA = (cfgA.rhyme || '').toLowerCase().trim();
+      const rhymeB = (cfgB.rhyme || '').toLowerCase().trim();
+
+      const vcompA = getVcompRhymesForKey(keyA, cfgA);
+      const vcompB = getVcompRhymesForKey(keyB, cfgB);
+
+      const wasMatchA = vcompA.includes(rhymeA) && rhymeA && rhymeA !== '-';
+      const wasMatchB = vcompB.includes(rhymeB) && rhymeB && rhymeB !== '-';
+
+      const willMatchA = vcompA.includes(rhymeB) && rhymeB && rhymeB !== '-';
+      const willMatchB = vcompB.includes(rhymeA) && rhymeA && rhymeA !== '-';
+
+      const beforeMatches = (wasMatchA ? 1 : 0) + (wasMatchB ? 1 : 0);
+      const afterMatches = (willMatchA ? 1 : 0) + (willMatchB ? 1 : 0);
+      const delta = afterMatches - beforeMatches;
+
+      return {
+        keyA,
+        keyB,
+        cfgA,
+        cfgB,
+        rhymeA,
+        rhymeB,
+        wasMatchA,
+        wasMatchB,
+        willMatchA,
+        willMatchB,
+        beforeMatches,
+        afterMatches,
+        delta
+      };
+    }
+
+    // Phân tích trạng thái sức khỏe cấu hình vần & từ neo & phát hiện trùng lặp đa vị trí & đối chiếu mâu thuẫn VCOMP
     function analyzeStudioHealth() {
-      const rhymeMap = new Map();
+      const tokenOccurrences = new Map();
       let activeAnchorsCount = 0;
       let totalKeys = 0;
       let perfectCount = 0;
       let thinkingCount = 0;
       let wonderingCount = 0;
+      const uniqueRhymesSet = new Set();
+
+      // Phân tích mâu thuẫn VCOMP (Chỉ áp dụng cho các hàng phím chuẩn 1-4, bỏ qua Hàng 0 rowSymbols)
+      let vcompMatchCount = 0;
+      let vcompConflictCount = 0;
+      let totalVcompRuleKeys = 0;
+      const vcompConflictKeysSet = new Set();
+      const vcompMatchesSet = new Set();
+      const vcompConflictMap = new Map();
 
       ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rowId => {
-        KEY_CONFIG[rowId].forEach(cfg => {
+        KEY_CONFIG[rowId].forEach((cfg, idx) => {
           totalKeys++;
+          if (rowId !== 'rowSymbols') totalVcompRuleKeys++;
           if (cfg.status === 'perfect') perfectCount++;
           else if (cfg.status === 'thinking') thinkingCount++;
           else if (cfg.status === 'wondering') wonderingCount++;
 
+          // 1) Vần chính (3h)
           const r = (cfg.rhyme || '').toLowerCase().trim();
-          if (r) {
-            if (!rhymeMap.has(r)) rhymeMap.set(r, []);
-            rhymeMap.get(r).push(cfg.key);
+          if (r && r !== '-') {
+            uniqueRhymesSet.add(r);
+            if (!tokenOccurrences.has(r)) tokenOccurrences.set(r, []);
+            tokenOccurrences.get(r).push({ key: cfg.key, rowId, idx, slot: 'rhyme', val: r });
+
+            // Kiểm tra khớp / mâu thuẫn VCOMP (Bỏ qua Hàng 0 rowSymbols vì là phím mở rộng gõ nhanh)
+            if (rowId !== 'rowSymbols') {
+              const vcompRhymes = getVcompRhymesForKey(cfg.key, cfg);
+              if (vcompRhymes.includes(r)) {
+                vcompMatchCount++;
+                vcompMatchesSet.add(cfg.key);
+              } else {
+                vcompConflictCount++;
+                vcompConflictKeysSet.add(cfg.key);
+                vcompConflictMap.set(cfg.key, {
+                  curRhyme: r,
+                  vcompRhymes,
+                  origin: findVcompOriginKeyForRhyme(r)
+                });
+              }
+            }
+          }
+
+          // 2) Shortcut 2 (7h30)
+          const sc2 = (cfg.sc2 !== undefined ? String(cfg.sc2) : '').toLowerCase().trim();
+          if (sc2 && sc2 !== '-' && sc2 !== cfg.key.toLowerCase()) {
+            if (!tokenOccurrences.has(sc2)) tokenOccurrences.set(sc2, []);
+            tokenOccurrences.get(sc2).push({ key: cfg.key, rowId, idx, slot: 'sc2', val: sc2 });
+          }
+
+          // 3) Shortcut 1 (4h30)
+          const sc1 = (cfg.sc1 !== undefined ? String(cfg.sc1) : '').toLowerCase().trim();
+          if (sc1 && sc1 !== '-' && sc1 !== cfg.key.toLowerCase()) {
+            if (!tokenOccurrences.has(sc1)) tokenOccurrences.set(sc1, []);
+            tokenOccurrences.get(sc1).push({ key: cfg.key, rowId, idx, slot: 'sc1', val: sc1 });
           }
 
           if (SACRED_ANCHORS[cfg.key]) {
@@ -3672,58 +4423,139 @@
         });
       });
 
+      // Lọc các giá trị vần/từ xuất hiện từ 2 lần trở lên
       const duplicates = [];
-      rhymeMap.forEach((keys, rhyme) => {
-        if (keys.length > 1) {
-          duplicates.push({ rhyme, keys });
+      const duplicateColorMap = new Map();
+      const duplicateKeySlots = new Map();
+      const dupKeysSet = new Set();
+      let colorIdx = 0;
+
+      tokenOccurrences.forEach((occs, token) => {
+        if (occs.length > 1) {
+          duplicates.push({ token, occurrences: occs });
+          const color = DUPLICATE_PALETTE[colorIdx % DUPLICATE_PALETTE.length];
+          colorIdx++;
+          duplicateColorMap.set(token, color);
+
+          occs.forEach(occ => {
+            dupKeysSet.add(occ.key);
+            if (!duplicateKeySlots.has(occ.key)) {
+              duplicateKeySlots.set(occ.key, new Map());
+            }
+            duplicateKeySlots.get(occ.key).set(occ.slot, color);
+          });
+        }
+      });
+
+      // Quét các phím có thể hoán đổi sinh lời (+1 phím xanh)
+      const profitableSwapKeys = new Set();
+      const profitableSwapDetails = [];
+
+      vcompConflictKeysSet.forEach(cKey => {
+        const originInfo = vcompConflictMap.get(cKey)?.origin;
+        if (originInfo) {
+          const tKey = findKeyboardKeyForBase60Char(originInfo.key);
+          if (tKey && tKey.toLowerCase() !== cKey.toLowerCase()) {
+            const sim = simulateSwapEffect(cKey, tKey);
+            if (sim && sim.delta > 0) {
+              profitableSwapKeys.add(cKey);
+              profitableSwapDetails.push({ keyA: cKey, keyB: tKey, delta: sim.delta, targetRhyme: sim.rhymeA });
+            }
+          }
         }
       });
 
       return {
         totalKeys,
-        uniqueRhymesCount: rhymeMap.size,
+        uniqueRhymesCount: uniqueRhymesSet.size,
         activeAnchorsCount,
         duplicates,
+        duplicateColorMap,
+        duplicateKeySlots,
+        dupKeysSet,
         perfectCount,
         thinkingCount,
-        wonderingCount
+        wonderingCount,
+        totalVcompRuleKeys,
+        vcompMatchCount,
+        vcompConflictCount,
+        vcompConflictKeysSet,
+        vcompMatchesSet,
+        vcompConflictMap,
+        profitableSwapKeys,
+        profitableSwapDetails
       };
     }
 
     function updateStudioHealthUI(health) {
       const statAnchors = document.getElementById('statActiveAnchors');
       const statRhymes = document.getElementById('statUniqueRhymes');
-      const statPerfect = document.getElementById('statPerfectCount');
-      const statThinking = document.getElementById('statThinkingCount');
-      const statWondering = document.getElementById('statWonderingCount');
+      const statVcompMatch = document.getElementById('statVcompMatchCount');
+      const statVcompTotal = document.getElementById('statVcompTotalCount');
+      const statVcompConflict = document.getElementById('statVcompConflictCount');
+      const statSwapSuggest = document.getElementById('statSwapSuggestCount');
 
       if (statAnchors) statAnchors.textContent = health.activeAnchorsCount;
       if (statRhymes) statRhymes.textContent = health.uniqueRhymesCount;
-      if (statPerfect) statPerfect.textContent = health.perfectCount || 0;
-      if (statThinking) statThinking.textContent = health.thinkingCount || 0;
-      if (statWondering) statWondering.textContent = health.wonderingCount || 0;
+      if (statVcompMatch) statVcompMatch.textContent = health.vcompMatchCount;
+      if (statVcompTotal) statVcompTotal.textContent = health.totalVcompRuleKeys || 36;
+      if (statVcompConflict) statVcompConflict.textContent = health.vcompConflictCount;
+      if (statSwapSuggest) {
+        const count = health.profitableSwapKeys ? health.profitableSwapKeys.size : 0;
+        statSwapSuggest.textContent = count;
+        const btnFilterSuggest = document.getElementById('btnFilterSwapSuggest');
+        if (btnFilterSuggest) {
+          if (count === 0) {
+            btnFilterSuggest.innerHTML = '🏁 Hết đổi sinh lời (0)';
+            btnFilterSuggest.title = 'Hiện không còn cặp phím nào hoán đổi làm tăng phím xanh. Hãy chuyển sang bước Đổi Lõi VCOMP ⚡';
+          } else {
+            btnFilterSuggest.innerHTML = `🎯 Gợi ý đổi: <b>${count}</b> (+1 🟢)`;
+            btnFilterSuggest.title = `Có ${count} phím có thể hoán đổi để tăng thêm phím xanh (+1)`;
+          }
+        }
+      }
+
+      updateFilterButtonsUI();
 
       const banner = document.getElementById('studioHealthBanner');
       const conflictList = document.getElementById('conflictList');
-      if (!banner || !conflictList) return;
-
-      if (health.duplicates.length > 0) {
-        banner.className = 'studio-health-banner has-conflict';
-        conflictList.style.display = 'flex';
-        conflictList.innerHTML = `
-          <div><b>⚠️ Phát hiện ${health.duplicates.length} trường hợp trùng lặp vần:</b></div>
-          ${health.duplicates.map(d => {
-            const swapBtn = d.keys.length === 2 ? 
-              `<button class="btn-swap" style="display:inline-flex; margin-left:8px; padding:1px 7px; font-size:10px;" onclick="window.quickSwapKeys('${d.keys[0]}', '${d.keys[1]}')">🔄 Hoán đổi [${d.keys[0]}] ↔ [${d.keys[1]}]</button>
-               <button class="btn-swap" style="display:inline-flex; margin-left:4px; padding:1px 7px; font-size:10px; background: rgba(0, 229, 255, 0.2); border-color: var(--neon-cyan);" onclick="window.autoFixDuplicateKey('${d.keys[0]}', '${d.keys[1]}')">⚡ Khôi phục [${d.keys[1]}]</button>` : '';
-            return `<div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">• Vần <b>"${d.rhyme}"</b> đang gán cho các phím: <b>[${d.keys.join(', ')}]</b> ${swapBtn}</div>`;
-          }).join('')}
-        `;
-      } else {
-        banner.className = 'studio-health-banner clean';
+      if (conflictList) {
         conflictList.style.display = 'none';
         conflictList.innerHTML = '';
       }
+      if (banner) {
+        if (health.duplicates.length > 0 || health.vcompConflictCount > 0) {
+          banner.className = 'studio-health-banner has-conflict';
+        } else {
+          banner.className = 'studio-health-banner clean';
+        }
+      }
+    }
+
+    function updateFilterButtonsUI() {
+      const btnFilterConflict = document.getElementById('btnFilterVcompConflict');
+      const btnFilterMatch = document.getElementById('btnFilterVcompMatch');
+      const btnFilterAll = document.getElementById('btnFilterAllKeys');
+      const btnFilterSuggest = document.getElementById('btnFilterSwapSuggest');
+
+      if (btnFilterConflict) {
+        btnFilterConflict.onclick = () => { currentGridFilter = 'conflict'; renderStudioGrid(); };
+      }
+      if (btnFilterMatch) {
+        btnFilterMatch.onclick = () => { currentGridFilter = 'match'; renderStudioGrid(); };
+      }
+      if (btnFilterAll) {
+        btnFilterAll.onclick = () => { currentGridFilter = 'all'; renderStudioGrid(); };
+      }
+      if (btnFilterSuggest) {
+        btnFilterSuggest.onclick = () => { currentGridFilter = 'suggest'; renderStudioGrid(); };
+      }
+
+      [btnFilterConflict, btnFilterMatch, btnFilterAll, btnFilterSuggest].forEach(b => b?.classList.remove('active'));
+      if (currentGridFilter === 'conflict' && btnFilterConflict) btnFilterConflict.classList.add('active');
+      else if (currentGridFilter === 'match' && btnFilterMatch) btnFilterMatch.classList.add('active');
+      else if (currentGridFilter === 'suggest' && btnFilterSuggest) btnFilterSuggest.classList.add('active');
+      else if (btnFilterAll) btnFilterAll.classList.add('active');
     }
 
     // Hiển thị lưới phím trong Studio
@@ -3741,11 +4573,6 @@
         rowASDF: 'Hàng 3: ASDF (a - l)',
         rowZXCV: 'Hàng 4: ZXCV (z - m)'
       };
-
-      const dupKeysSet = new Set();
-      health.duplicates.forEach(d => {
-        d.keys.forEach(k => dupKeysSet.add(k));
-      });
 
       ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rowId => {
         const labelEl = document.createElement('div');
@@ -3773,9 +4600,67 @@
             card.classList.add('has-anchor');
           }
 
-          // Kiểm tra Duplicate
-          if (dupKeysSet.has(cfg.key)) {
+          // Kiểm tra Mâu thuẫn / Khớp Lõi VCOMP (Bỏ qua Hàng 0 rowSymbols vì là phím mở rộng gõ nhanh)
+          const isConflict = rowId !== 'rowSymbols' && health.vcompConflictKeysSet && health.vcompConflictKeysSet.has(cfg.key);
+          const isMatch = rowId !== 'rowSymbols' && health.vcompMatchesSet && health.vcompMatchesSet.has(cfg.key);
+
+          if (rowId === 'rowSymbols') {
+            card.classList.add('is-symbol-row-key');
+            card.title = `⚡ Phím ký hiệu gõ nhanh: ${cfg.key}=${cfg.rhyme || ''}`;
+          } else if (isConflict) {
+            card.classList.add('is-vcomp-conflict');
+            const originInfo = health.vcompConflictMap?.get(cfg.key)?.origin || findVcompOriginKeyForRhyme(cfg.rhyme);
+            card.title = originInfo ? `⚠️ ${originInfo.key}=${cfg.rhyme}` : `⚠️ ${cfg.key}≠${cfg.rhyme}`;
+          } else if (isMatch) {
+            card.classList.add('is-vcomp-match');
+            card.title = `🟢 ${cfg.key}=${cfg.rhyme}`;
+          }
+
+          // Kiểm tra khả năng hoán đổi sinh lời (+1 phím xanh)
+          const isProfitableSwap = health.profitableSwapKeys && health.profitableSwapKeys.has(cfg.key);
+
+          // Bộ lọc hiển thị Lưới
+          if (currentGridFilter === 'conflict' && !isConflict) {
+            card.classList.add('dimmed');
+          } else if (currentGridFilter === 'match' && !isMatch) {
+            card.classList.add('dimmed');
+          } else if (currentGridFilter === 'suggest' && !isProfitableSwap) {
+            card.classList.add('dimmed');
+          }
+
+          if (isProfitableSwap) {
+            card.classList.add('has-swap-gain');
+          }
+
+          // Kiểm tra Duplicate trên toàn thẻ phím
+          if (health.dupKeysSet && health.dupKeysSet.has(cfg.key)) {
             card.classList.add('is-duplicate');
+          }
+
+          const keySlots = health.duplicateKeySlots?.get(cfg.key);
+
+          // 1) Slot Rhyme (3h - vần chính)
+          let rhymeHtml = cfg.rhyme || '-';
+          const rhymeColor = keySlots?.get('rhyme');
+          if (rhymeColor) {
+            const rhymeStyle = `background:${rhymeColor.bg}!important; color:${rhymeColor.text}!important; border:1px solid ${rhymeColor.border}!important; box-shadow:0 0 6px ${rhymeColor.bg};`;
+            rhymeHtml = `<span class="dup-badge dup-badge-rhyme" style="${rhymeStyle}">${cfg.rhyme || '-'}</span>`;
+          }
+
+          // 2) Slot sc2 (7h30)
+          let sc2Html = cfg.sc2 || '';
+          const sc2Color = keySlots?.get('sc2');
+          if (sc2Color) {
+            const sc2Style = `background:${sc2Color.bg}!important; color:${sc2Color.text}!important; border:1px solid ${sc2Color.border}!important; box-shadow:0 0 5px ${sc2Color.bg};`;
+            sc2Html = `<span class="dup-badge dup-badge-sub" style="${sc2Style}">${cfg.sc2}</span>`;
+          }
+
+          // 3) Slot sc1 (4h30)
+          let sc1Html = cfg.sc1 || '';
+          const sc1Color = keySlots?.get('sc1');
+          if (sc1Color) {
+            const sc1Style = `background:${sc1Color.bg}!important; color:${sc1Color.text}!important; border:1px solid ${sc1Color.border}!important; box-shadow:0 0 5px ${sc1Color.bg};`;
+            sc1Html = `<span class="dup-badge dup-badge-sub" style="${sc1Style}">${cfg.sc1}</span>`;
           }
 
           let statusDotHtml = '';
@@ -3787,16 +4672,22 @@
             statusDotHtml = '<div class="card-status-dot dot-wondering" title="Băn khoăn nút đó"></div>';
           }
 
+          let gainBadgeHtml = '';
+          if (isProfitableSwap) {
+            gainBadgeHtml = '<span class="card-gain-badge" title="Hoán đổi phím này giúp tăng +1 phím xanh!">🔄+1</span>';
+          }
+
           card.innerHTML = `
             ${statusDotHtml}
+            ${gainBadgeHtml}
             <div class="card-top">
               <span class="card-key-name">${cfg.key}</span>
-              <span class="card-tr-code">${cfg.tap !== undefined && cfg.tap !== cfg.key ? cfg.tap : (cfg.tr || '')}</span>
+              <span class="card-tr-code">${cfg.tap !== undefined && cfg.tap !== cfg.key ? cfg.tap : ''}</span>
             </div>
-            <div class="card-rhyme-val">${cfg.rhyme || '-'}</div>
+            <div class="card-rhyme-val">${rhymeHtml}</div>
             <div class="card-sub-info">
-              <span>${cfg.sc2 || ''}</span>
-              <span>${cfg.sc1 || ''}</span>
+              <span>${sc2Html}</span>
+              <span>${sc1Html}</span>
             </div>
           `;
 
@@ -3833,7 +4724,7 @@
 
       const curRhyme = (cfg.rhyme || '').toLowerCase().trim();
 
-      const makeRow = (tableLabel, rhymeVal, isAnchor) => {
+      const makeRow = (tableLabel, rhymeVal, isAnchor, charKey, tableType) => {
         const isEmpty = !rhymeVal || rhymeVal === '-' || rhymeVal === 'null';
         const displayVal = isEmpty ? '-' : rhymeVal;
         const isCurrentMain = !isEmpty && rhymeVal.toLowerCase() === curRhyme;
@@ -3841,9 +4732,17 @@
         const anchorIcon = isAnchor ? '⭐ ' : '';
         const mainBadge = isCurrentMain ? '<span class="mrm-active-tag">🟢 Vần chính</span>' : '';
         return `
-          <div class="mrm-row" onclick="window.quickPickRhyme('${!isEmpty ? rhymeVal : ''}')" title="${!isEmpty ? `Bấm để chọn vần '${rhymeVal}' làm vần chính` : ''}">
-            <span class="mrm-table-badge">${tableLabel}</span>
-            <span class="mrm-rhyme-val ${activeClass}">${anchorIcon}${displayVal} ${mainBadge}</span>
+          <div class="mrm-row ${activeClass}">
+            <div class="mrm-row-main" onclick="window.quickPickRhyme('${!isEmpty ? rhymeVal : ''}')" title="${!isEmpty ? `Bấm để gán '${rhymeVal}' làm vần chính cho [${cfg.key}]` : ''}">
+              <span class="mrm-table-badge">${tableLabel}</span>
+              <span class="mrm-rhyme-val">${anchorIcon}${displayVal} ${mainBadge}</span>
+            </div>
+            ${charKey && tableType ? `
+              <div style="display:flex; align-items:center; gap:3px;">
+                <button class="mrm-btn-edit" onclick="window.editVcompCoreRhyme('${charKey}', '${tableType}', '${displayVal}')" title="Sửa vần này trong Lõi VCOMP Base60">✏️ Sửa</button>
+                ${!isEmpty ? `<button class="mrm-btn-edit mrm-btn-del" onclick="window.clearVcompCoreRhyme('${charKey}', '${tableType}', '${displayVal}')" title="Xóa vần '${displayVal}' khỏi Lõi Base60 [${charKey}]">✕ Xóa</button>` : ''}
+              </div>
+            ` : ''}
           </div>
         `;
       };
@@ -3873,9 +4772,9 @@
                   <span style="font-size: 9px; opacity: 0.8;">B60: ${lowIdx}</span>
                 </div>
               </div>
-              ${makeRow('B1 (Base)', lowB1, checkAnchor(lowB1))}
-              ${makeRow('B2 (Extra 1)', lowB2, checkAnchor(lowB2))}
-              ${makeRow('B3 (Extra 2)', lowB3, checkAnchor(lowB3))}
+              ${makeRow('B1 (Base)', lowB1, checkAnchor(lowB1), lowChar, 'b1')}
+              ${makeRow('B2 (Extra 1)', lowB2, checkAnchor(lowB2), lowChar, 'b2')}
+              ${makeRow('B3 (Extra 2)', lowB3, checkAnchor(lowB3), lowChar, 'b3')}
             </div>
             <div class="mrm-col">
               <div class="mrm-col-head">
@@ -3885,9 +4784,9 @@
                   <span style="font-size: 9px; opacity: 0.8;">B60: ${upIdx !== -1 ? upIdx : '-'}</span>
                 </div>
               </div>
-              ${makeRow('B1 (Base)', upB1, checkAnchor(upB1))}
-              ${makeRow('B2 (Extra 1)', upB2, checkAnchor(upB2))}
-              ${makeRow('B3 (Extra 2)', upB3, checkAnchor(upB3))}
+              ${makeRow('B1 (Base)', upB1, checkAnchor(upB1), upChar, 'b1')}
+              ${makeRow('B2 (Extra 1)', upB2, checkAnchor(upB2), upChar, 'b2')}
+              ${makeRow('B3 (Extra 2)', upB3, checkAnchor(upB3), upChar, 'b3')}
             </div>
           </div>
         `;
@@ -3905,9 +4804,9 @@
                 <span>Phím Số [${key}]</span>
                 <span style="font-size: 9px; opacity: 0.8;">B60: ${digIdx} | Shift: ${cfg.shiftKey || ''}</span>
               </div>
-              ${makeRow('B1 (Base)', digB1, false)}
-              ${makeRow('B2 (Extra 1)', digB2, false)}
-              ${makeRow('B3 (Extra 2)', digB3, false)}
+              ${makeRow('B1 (Base)', digB1, false, key, 'b1')}
+              ${makeRow('B2 (Extra 1)', digB2, false, key, 'b2')}
+              ${makeRow('B3 (Extra 2)', digB3, false, key, 'b3')}
             </div>
           </div>
         `;
@@ -4053,8 +4952,7 @@
       const newStatus = (cfg.status === status) ? '' : status;
       cfg.status = newStatus;
       updateReviewButtonsUI(newStatus);
-      renderStudioGrid();
-      saveCustomConfig(false);
+      saveCurrentKeyChanges();
     }
 
     function updateKeyCompassPreview(cfg) {
@@ -4075,13 +4973,20 @@
         }
       };
 
+      const getDirVal = (dir, defVal) => {
+        if (cfg && cfg.directions && cfg.directions[dir] !== undefined && cfg.directions[dir] !== '') {
+          return cfg.directions[dir];
+        }
+        return defVal;
+      };
+
       setCell('kcpValTap', tapVal);
-      setCell('kcpValBang', rhyme ? (getTonedRhyme(rhyme, 0) || rhyme) : '');
-      setCell('kcpValSac', rhyme ? getTonedRhyme(rhyme, 1) : '');
-      setCell('kcpValHuyen', rhyme ? getTonedRhyme(rhyme, 2) : '');
-      setCell('kcpValHoi', rhyme ? getTonedRhyme(rhyme, 3) : '');
-      setCell('kcpValNga', rhyme ? getTonedRhyme(rhyme, 4) : '');
-      setCell('kcpValNang', rhyme ? getTonedRhyme(rhyme, 5) : '');
+      setCell('kcpValBang', getDirVal('bang', rhyme ? (getTonedRhyme(rhyme, 0) || rhyme) : ''));
+      setCell('kcpValSac', getDirVal('sac', rhyme ? getTonedRhyme(rhyme, 1) : ''));
+      setCell('kcpValHuyen', getDirVal('huyen', rhyme ? getTonedRhyme(rhyme, 2) : ''));
+      setCell('kcpValHoi', getDirVal('hoi', rhyme ? getTonedRhyme(rhyme, 3) : ''));
+      setCell('kcpValNga', getDirVal('nga', rhyme ? getTonedRhyme(rhyme, 4) : ''));
+      setCell('kcpValNang', getDirVal('nang', rhyme ? getTonedRhyme(rhyme, 5) : ''));
       setCell('kcpValSc1', sc1Val);
       setCell('kcpValSc2', sc2Val);
     }
@@ -4103,6 +5008,26 @@
       };
     }
 
+    const CORNER_TARGETS = {
+      cornerClick: { inputId: 'inspTap', name: 'Click (Gốc)' },
+      cornerRhyme: { inputId: 'inspRhyme', name: '3h (Vần chính)' },
+      cornerSc2:   { inputId: 'inspSc2', name: '7h30 (sc2)' },
+      cornerSc1:   { inputId: 'inspSc1', name: '4h30 (sc1)' }
+    };
+    let currentActiveCorner = 'cornerSc1'; // Mặc định là 4h30 (sc1)
+
+    function setActiveCorner(cornerId) {
+      if (!CORNER_TARGETS[cornerId]) return;
+      currentActiveCorner = cornerId;
+      Object.keys(CORNER_TARGETS).forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.toggle('active-target', id === cornerId);
+        }
+      });
+      updateQuickActionButtonLabels();
+    }
+
     function updateQuickActionButtonLabels() {
       const rhymeVal = document.getElementById('inspRhyme')?.value?.trim() || '';
       const unaccented = rhymeVal ? stripAllVietnameseAccents(rhymeVal) : '';
@@ -4110,10 +5035,166 @@
       if (txtFillUnaccented) {
         txtFillUnaccented.textContent = unaccented ? `"${unaccented}"` : `"vần"`;
       }
-      const tapVal = document.getElementById('inspTap')?.value?.trim() || currentlySelectedKey;
-      const txtFillKey = document.getElementById('txtFillKey');
-      if (txtFillKey) {
-        txtFillKey.textContent = `[${tapVal || currentlySelectedKey}]`;
+      const targetInfo = CORNER_TARGETS[currentActiveCorner];
+      const txtActiveTargetName = document.getElementById('txtActiveTargetName');
+      if (txtActiveTargetName && targetInfo) {
+        txtActiveTargetName.textContent = targetInfo.name;
+      }
+    }
+
+    // Hiển thị hộp cảnh báo mâu thuẫn / khớp Lõi VCOMP trong khung Inspector
+    function renderVcompConflictPanel(cfg, health) {
+      const panel = document.getElementById('vcompConflictPanel');
+      if (!panel || !cfg) return;
+
+      const key = cfg.key;
+      const curRhyme = (cfg.rhyme || '').toLowerCase().trim();
+      const isSymbolRow = currentInspectorRowId === 'rowSymbols' || KEY_CONFIG.rowSymbols?.some(it => it.key === key);
+
+      if (isSymbolRow) {
+        panel.style.display = 'block';
+        panel.innerHTML = `
+          <div class="vcomp-symbol-box">
+            <span class="vsb-badge">⚡ KÝ HIỆU GÕ NHANH</span>
+            <span>Phím ký hiệu <b>[${key}]</b> ở Hàng 0 dùng để gõ nhanh nguyên âm 3 mở rộng, hoàn toàn tự do và không bị ràng buộc bởi các quy tắc VCOMP chuẩn.</span>
+          </div>
+        `;
+        return;
+      }
+
+      const vcompRhymes = getVcompRhymesForKey(key, cfg);
+      const isConflict = health?.vcompConflictKeysSet 
+        ? health.vcompConflictKeysSet.has(key) 
+        : (!vcompRhymes.includes(curRhyme) && curRhyme && curRhyme !== '-');
+
+      if (isConflict) {
+        const originInfo = findVcompOriginKeyForRhyme(curRhyme);
+
+        // Nút 1: Hoán đổi nhanh với phím gốc VCOMP (vd: n đang giữ ai -> hoán đổi n ⇄ g)
+        let swapActionHtml = '';
+        if (originInfo) {
+          const targetKey = findKeyboardKeyForBase60Char(originInfo.key);
+          if (targetKey && targetKey.toLowerCase() !== key.toLowerCase()) {
+            const sim = simulateSwapEffect(cfg.key, targetKey);
+            let btnClass = 'vcb-swap-neutral';
+            let badgeHtml = '<span class="vcb-neutral-badge">⚪ Không tăng (+0)</span>';
+            let noteHtml = `<div class="vcb-swap-preview-note vcb-note-neutral">⚠️ Phím [<b>${targetKey}</b>] vốn đã xanh ('<b>${sim ? sim.rhymeB : ''}</b>'). Đổi xong tổng phím xanh <b>không đổi (+0)</b>. Nên thử phím khác!</div>`;
+
+            if (sim && sim.delta > 0) {
+              btnClass = 'vcb-swap-gain';
+              badgeHtml = `<span class="vcb-gain-badge">🟢 +${sim.delta} Phím Xanh</span>`;
+              noteHtml = `<div class="vcb-swap-preview-note vcb-note-gain">🎉 Tăng ngay <b>+${sim.delta} phím xanh</b>! Phím [<b>${targetKey}</b>] nhận '<b>${cfg.rhyme}</b>' hóa xanh chuẩn VCOMP!</div>`;
+            } else if (sim && sim.delta < 0) {
+              btnClass = 'vcb-swap-loss';
+              badgeHtml = `<span class="vcb-loss-badge">🔴 Giảm ${Math.abs(sim.delta)} Phím Xanh</span>`;
+              noteHtml = `<div class="vcb-swap-preview-note vcb-note-loss">❌ Cảnh báo: Đổi phím này sẽ làm GIẢM phím xanh (${sim.beforeMatches} ➔ ${sim.afterMatches})!</div>`;
+            }
+
+            swapActionHtml = `
+              <div class="vcb-swap-action">
+                <button class="vcb-swap-btn ${btnClass}" onclick="window.quickSwapKeys('${cfg.key}', '${targetKey}')" title="Hoán đổi phím [${cfg.key}] với phím [${targetKey}]">
+                  🔄 Hoán đổi [${cfg.key}] ⇄ [${targetKey}]: Gán '${cfg.rhyme}' cho [${targetKey}] ${badgeHtml}
+                </button>
+                ${noteHtml}
+              </div>
+            `;
+          }
+        }
+
+        // Nút xóa vần khỏi phím cũ (vd: đang ở phím 3 thấy E=ê -> bấm 1 phát xóa ê khỏi E)
+        let clearOriginHtml = '';
+        if (originInfo && originInfo.key && originInfo.tableType) {
+          clearOriginHtml = `
+            <div style="margin: 4px 0;">
+              <button class="vcb-clear-origin-btn" onclick="window.clearOriginVcompRhyme('${originInfo.key}', '${originInfo.tableType}', '${cfg.rhyme}')" title="Xóa vần '${cfg.rhyme}' khỏi Lõi VCOMP của phím cũ [${originInfo.key}] (${originInfo.layer})">
+                🗑️ Xóa vần '<b>${cfg.rhyme}</b>' khỏi phím cũ [<b>${originInfo.key}</b>] (${originInfo.layer})
+              </button>
+            </div>
+          `;
+        }
+
+        // Nút 2: Hiện các vần VCOMP của phím này để người dùng bấm thay thế vần không ưng (vd: thay uyu bằng uyê, hoặc đưa oat vào phím 2)
+        let replaceCoreSlotsHtml = '';
+        const isAlpha = /^[a-zA-Z]$/.test(key);
+        const isDigit = /^[0-9]$/.test(key);
+        const hasTr = cfg.tr && cfg.tr !== key;
+
+        let slots = [];
+        if (isAlpha) {
+          const lowIdx = BASE60_MAPPING.indexOf(key.toLowerCase());
+          const upIdx = BASE60_MAPPING.indexOf(key.toUpperCase());
+          slots = [
+            { label: 'B1 thường', char: key.toLowerCase(), type: 'b1', val: (lowIdx !== -1 ? CUSTOM_RHYMES_BASE[lowIdx] : '-') || '-' },
+            { label: 'B2 thường', char: key.toLowerCase(), type: 'b2', val: (lowIdx !== -1 ? CUSTOM_RHYMES_EXTRA_1[lowIdx] : '-') || '-' },
+            { label: 'B3 thường', char: key.toLowerCase(), type: 'b3', val: (lowIdx !== -1 ? CUSTOM_RHYMES_EXTRA_2[lowIdx] : '-') || '-' },
+            { label: 'Shift B1', char: key.toUpperCase(), type: 'b1', val: (upIdx !== -1 ? CUSTOM_RHYMES_BASE[upIdx] : '-') || '-' },
+            { label: 'Shift B2', char: key.toUpperCase(), type: 'b2', val: (upIdx !== -1 ? CUSTOM_RHYMES_EXTRA_1[upIdx] : '-') || '-' },
+            { label: 'Shift B3', char: key.toUpperCase(), type: 'b3', val: (upIdx !== -1 ? CUSTOM_RHYMES_EXTRA_2[upIdx] : '-') || '-' }
+          ];
+        } else if (isDigit) {
+          const digIdx = BASE60_MAPPING.indexOf(key);
+          slots = [
+            { label: 'B1 (Base)', char: key, type: 'b1', val: (digIdx !== -1 ? CUSTOM_RHYMES_BASE[digIdx] : '-') || '-' },
+            { label: 'B2 (Extra 1)', char: key, type: 'b2', val: (digIdx !== -1 ? CUSTOM_RHYMES_EXTRA_1[digIdx] : '-') || '-' },
+            { label: 'B3 (Extra 2)', char: key, type: 'b3', val: (digIdx !== -1 ? CUSTOM_RHYMES_EXTRA_2[digIdx] : '-') || '-' }
+          ];
+        } else if (hasTr) {
+          const trChar = cfg.tr;
+          const trIdx = BASE60_MAPPING.indexOf(trChar);
+          slots = [
+            { label: `B1 [${trChar}]`, char: trChar, type: 'b1', val: (trIdx !== -1 ? CUSTOM_RHYMES_BASE[trIdx] : '-') || '-' },
+            { label: `B2 [${trChar}]`, char: trChar, type: 'b2', val: (trIdx !== -1 ? CUSTOM_RHYMES_EXTRA_1[trIdx] : '-') || '-' },
+            { label: `B3 [${trChar}]`, char: trChar, type: 'b3', val: (trIdx !== -1 ? CUSTOM_RHYMES_EXTRA_2[trIdx] : '-') || '-' }
+          ];
+        }
+
+        if (slots.length > 0) {
+          replaceCoreSlotsHtml = `
+            <div class="vcb-replace-core-box">
+              <div class="vcb-replace-core-title">⚡ Đổi Lõi VCOMP: Đưa '<b>${cfg.rhyme}</b>' vào [<b>${key}</b>] (Bấm 1 vần để thay thế):</div>
+              <div class="vcb-replace-core-grid" style="grid-template-columns: repeat(${slots.length <= 3 ? slots.length : 3}, 1fr);">
+                ${slots.map(s => `
+                  <button class="vcb-replace-slot-btn" onclick="window.replaceCoreRhymeWithCurrent('${s.char}', '${s.type}', '${cfg.rhyme}')" title="Thay thế vần '${s.val}' trong Lõi VCOMP bằng '${cfg.rhyme}'">
+                    ${s.label}: <b>${s.val}</b>
+                  </button>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+
+        panel.style.display = 'block';
+        panel.innerHTML = `
+          <div class="vcomp-conflict-box">
+            <div class="vcb-header">
+              <span class="vcb-badge">🔴 LỆCH</span>
+              <span class="vcb-title">${originInfo ? `VCOMP: <b>${originInfo.key}=${cfg.rhyme}</b> (${originInfo.layer})` : `Vần <b>${cfg.rhyme}</b> không thuộc [<b>${key}</b>]`}</span>
+            </div>
+            ${swapActionHtml}
+            ${clearOriginHtml}
+            ${replaceCoreSlotsHtml}
+            <div class="vcb-info">
+              Gợi ý các vần VCOMP sẵn có của [<b>${key}</b>] (bấm để đổi):
+            </div>
+            <div class="vcb-suggestions">
+              ${vcompRhymes.length > 0 ? vcompRhymes.map(r => {
+                const isAnchor = SACRED_ANCHORS[key]?.some(a => a.rhyme.toLowerCase() === r);
+                return `<button class="vcb-btn-pick" onclick="window.quickPickRhyme('${r}')" title="Gán ${r}">${isAnchor ? '⭐ ' : ''}${r}</button>`;
+              }).join('') : '<span style="font-size:10.5px; color:var(--text-muted);">Chưa có vần VCOMP</span>'}
+            </div>
+          </div>
+        `;
+      } else if (curRhyme && curRhyme !== '-') {
+        panel.style.display = 'block';
+        panel.innerHTML = `
+          <div class="vcomp-match-box">
+            <span class="vmb-badge">🟢 KHỚP VCOMP</span>
+            <span>Vần <b>"${cfg.rhyme}"</b> khớp chuẩn 100% với Lõi Base60 của phím [<b>${key}</b>]!</span>
+          </div>
+        `;
+      } else {
+        panel.style.display = 'none';
+        panel.innerHTML = '';
       }
     }
 
@@ -4143,10 +5224,44 @@
 
       updateReviewButtonsUI(cfg.status || '');
       updateKeyCompassPreview(cfg);
-      updateQuickActionButtonLabels();
+      setActiveCorner(currentActiveCorner || 'cornerSc1');
+
+      // Cập nhật viền duplicate trên 4 góc sơ đồ hoán vị Inspector
+      const currentHealth = analyzeStudioHealth();
+      const currentKeySlots = currentHealth.duplicateKeySlots?.get(key);
+      const cornerRhyme = document.getElementById('cornerRhyme');
+      const cornerSc2 = document.getElementById('cornerSc2');
+      const cornerSc1 = document.getElementById('cornerSc1');
+
+      ['cornerClick', 'cornerRhyme', 'cornerSc2', 'cornerSc1'].forEach(cId => {
+        const el = document.getElementById(cId);
+        if (el) {
+          el.style.borderColor = '';
+          el.style.boxShadow = '';
+        }
+      });
+
+      if (cornerRhyme && currentKeySlots?.get('rhyme')) {
+        const c = currentKeySlots.get('rhyme');
+        cornerRhyme.style.borderColor = c.border;
+        cornerRhyme.style.boxShadow = `0 0 10px ${c.border}`;
+      }
+      if (cornerSc2 && currentKeySlots?.get('sc2')) {
+        const c = currentKeySlots.get('sc2');
+        cornerSc2.style.borderColor = c.border;
+        cornerSc2.style.boxShadow = `0 0 10px ${c.border}`;
+      }
+      if (cornerSc1 && currentKeySlots?.get('sc1')) {
+        const c = currentKeySlots.get('sc1');
+        cornerSc1.style.borderColor = c.border;
+        cornerSc1.style.boxShadow = `0 0 10px ${c.border}`;
+      }
 
       // Hiển thị ma trận đa vần VCOMP
       renderMultiRhymeMatrix(cfg.key, cfg);
+
+      // Hiển thị cảnh báo mâu thuẫn / khớp VCOMP
+      renderVcompConflictPanel(cfg, currentHealth);
 
       // Kiểm tra xung đột vần với phím khác
       checkAndShowSwapPrompt(cfg.rhyme, cfg.key);
@@ -4196,8 +5311,10 @@
       cfg.status = currentSelectedKeyStatus || '';
       cfg.note = `${r} | tap: ${tap} | sc1: ${s1} | sc2: ${s2}`;
 
+      const newHealth = analyzeStudioHealth();
       renderStudioGrid();
       renderMultiRhymeMatrix(cfg.key, cfg);
+      renderVcompConflictPanel(cfg, newHealth);
       checkAndShowSwapPrompt(cfg.rhyme, cfg.key);
       updateKeyCompassPreview(cfg);
       updateQuickActionButtonLabels();
@@ -4208,7 +5325,7 @@
       btnApplyKeyChanges.onclick = () => saveCurrentKeyChanges();
     }
 
-    // Live preview khi gõ trong các ô inspector
+    // Live preview & tự động lưu thời gian thực khi gõ trong các ô inspector
     ['inspTap', 'inspRhyme', 'inspSc1', 'inspSc2'].forEach(id => {
       const el = document.getElementById(id);
       if (el) {
@@ -4216,8 +5333,7 @@
           if (id === 'inspRhyme') {
             checkAndShowSwapPrompt(el.value, currentlySelectedKey);
           }
-          updateKeyCompassPreview(getPreviewConfigFromInputs());
-          updateQuickActionButtonLabels();
+          saveCurrentKeyChanges();
         });
       }
     });
@@ -4352,39 +5468,49 @@
     bindSwapHover('btnSwapBottom', ['cornerSc2', 'cornerSc1']);
     bindSwapHover('btnSwapLeft', ['cornerClick', 'cornerSc2']);
     bindSwapHover('btnSwapRight', ['cornerRhyme', 'cornerSc1']);
-    const btnFillUnaccentedSc1 = document.getElementById('btnFillUnaccentedSc1');
-    if (btnFillUnaccentedSc1) {
-      btnFillUnaccentedSc1.onclick = () => {
+    // Thiết lập chọn góc active khi click vào ô hoặc container góc trong Sơ đồ hoán vị
+    Object.keys(CORNER_TARGETS).forEach(cornerId => {
+      const cornerEl = document.getElementById(cornerId);
+      const inputEl = document.getElementById(CORNER_TARGETS[cornerId].inputId);
+      if (cornerEl) {
+        cornerEl.addEventListener('click', () => {
+          setActiveCorner(cornerId);
+        });
+      }
+      if (inputEl) {
+        inputEl.addEventListener('focus', () => {
+          setActiveCorner(cornerId);
+        });
+      }
+    });
+
+    // Nút Điền vần không dấu vào ô đang chọn (Active Target)
+    const btnFillUnaccented = document.getElementById('btnFillUnaccented');
+    if (btnFillUnaccented) {
+      btnFillUnaccented.onclick = () => {
         const rhymeInp = document.getElementById('inspRhyme');
-        const sc1Inp = document.getElementById('inspSc1');
-        if (rhymeInp && sc1Inp) {
+        const targetInfo = CORNER_TARGETS[currentActiveCorner] || CORNER_TARGETS.cornerSc1;
+        const targetInp = document.getElementById(targetInfo.inputId);
+        if (targetInp && rhymeInp) {
           const r = rhymeInp.value.trim();
-          sc1Inp.value = r ? stripAllVietnameseAccents(r) : '';
-          const c = document.getElementById('cornerSc1');
-          if (c) {
-            c.classList.remove('flash-swapped');
-            void c.offsetWidth;
-            c.classList.add('flash-swapped');
+          const unaccented = r ? stripAllVietnameseAccents(r) : '';
+          targetInp.value = unaccented;
+
+          // Nếu ô được điền là 3h (inspRhyme), kiểm tra xung đột vần
+          if (targetInfo.inputId === 'inspRhyme') {
+            checkAndShowSwapPrompt(unaccented, currentlySelectedKey);
           }
-          updateKeyCompassPreview(getPreviewConfigFromInputs());
-          saveCurrentKeyChanges();
-        }
-      };
-    }
-    const btnFillKeySc1 = document.getElementById('btnFillKeySc1');
-    if (btnFillKeySc1) {
-      btnFillKeySc1.onclick = () => {
-        const sc1Inp = document.getElementById('inspSc1');
-        if (sc1Inp) {
-          const tapVal = document.getElementById('inspTap')?.value?.trim();
-          sc1Inp.value = tapVal || currentlySelectedKey;
-          const c = document.getElementById('cornerSc1');
-          if (c) {
-            c.classList.remove('flash-swapped');
-            void c.offsetWidth;
-            c.classList.add('flash-swapped');
+
+          // Hiệu ứng chớp nháy góc vừa được điền
+          const cornerEl = document.getElementById(currentActiveCorner);
+          if (cornerEl) {
+            cornerEl.classList.remove('flash-swapped');
+            void cornerEl.offsetWidth;
+            cornerEl.classList.add('flash-swapped');
           }
+
           updateKeyCompassPreview(getPreviewConfigFromInputs());
+          updateQuickActionButtonLabels();
           saveCurrentKeyChanges();
         }
       };
@@ -4406,6 +5532,79 @@
         checkAndShowSwapPrompt(r, currentlySelectedKey);
         updateKeyCompassPreview(getPreviewConfigFromInputs());
         updateQuickActionButtonLabels();
+        saveCurrentKeyChanges();
+      }
+    };
+
+    window.lastSwapUndoState = null;
+
+    function showSwapToastNotification(delta, keyA, keyB, currentMatchCount, totalKeys, isUndo = false) {
+      let toastEl = document.getElementById('vcompToastNotification');
+      if (!toastEl) return;
+
+      if (isUndo) {
+        toastEl.className = 'vcomp-toast-notification neutral';
+        toastEl.innerHTML = `
+          <span style="font-size: 16px;">↩️</span>
+          <div style="flex:1;"><b>ĐÃ HOÀN TÁC:</b> Đã trả lại vần ban đầu cho [<b>${keyA}</b>] và [<b>${keyB}</b>]! (Tổng: <b>${currentMatchCount}/46</b> phím xanh)</div>
+          <button class="vcb-toast-close-btn" onclick="document.getElementById('vcompToastNotification').style.display='none'">✕</button>
+        `;
+        toastEl.style.display = 'flex';
+        clearTimeout(window.__vcompToastTimeout);
+        window.__vcompToastTimeout = setTimeout(() => {
+          if (toastEl) toastEl.style.display = 'none';
+        }, 5000);
+        return;
+      }
+
+      toastEl.className = 'vcomp-toast-notification ' + (delta > 0 ? 'gain' : delta === 0 ? 'neutral' : 'loss');
+      let icon = delta > 0 ? '🎉' : delta === 0 ? '⚪' : '⚠️';
+      let title = '';
+      if (delta > 0) {
+        title = `<b>HOÁN ĐỔI THÀNH CÔNG: TĂNG +${delta} PHÍM XANH!</b> (Tổng: <b>${currentMatchCount}/46</b> phím chuẩn VCOMP)`;
+      } else if (delta === 0) {
+        title = `<b>SỐ PHÍM XANH KHÔNG ĐỔI (+0):</b> Phím [<b>${keyB}</b>] vốn đã xanh. (Tổng: <b>${currentMatchCount}/46</b>) — Hãy chọn phím khác!`;
+      } else {
+        title = `<b>CẢNH BÁO: BỊ GIẢM ${Math.abs(delta)} PHÍM XANH!</b> (Còn: <b>${currentMatchCount}/46</b>)`;
+      }
+
+      toastEl.innerHTML = `
+        <span style="font-size: 16px;">${icon}</span>
+        <div style="flex:1;">${title}</div>
+        <button class="vcb-toast-undo-btn" onclick="window.undoLastSwap()" title="Quay lại trạng thái trước khi hoán đổi">↩️ Hoàn tác</button>
+        <button class="vcb-toast-close-btn" onclick="document.getElementById('vcompToastNotification').style.display='none'">✕</button>
+      `;
+      toastEl.style.display = 'flex';
+
+      clearTimeout(window.__vcompToastTimeout);
+      window.__vcompToastTimeout = setTimeout(() => {
+        if (toastEl) toastEl.style.display = 'none';
+      }, 7000);
+    }
+
+    window.undoLastSwap = function() {
+      if (!window.lastSwapUndoState) return;
+      const { keyA, keyB, rhymeA, rhymeB, noteA, noteB, rowA, idxA } = window.lastSwapUndoState;
+      let cfgA = null, cfgB = null;
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+        KEY_CONFIG[rId].forEach(it => {
+          if (it.key === keyA) cfgA = it;
+          if (it.key === keyB) cfgB = it;
+        });
+      });
+      if (cfgA && cfgB) {
+        cfgA.rhyme = rhymeA;
+        cfgB.rhyme = rhymeB;
+        if (noteA) cfgA.note = noteA;
+        if (noteB) cfgB.note = noteB;
+        window.lastSwapUndoState = null;
+        renderStudioGrid();
+        if (rowA && idxA !== undefined) {
+          selectKeyForInspection(keyA, rowA, idxA);
+        }
+        saveCustomConfig(false);
+        const health = analyzeStudioHealth();
+        showSwapToastNotification(0, keyA, keyB, health.vcompMatchCount, health.totalKeys, true);
       }
     };
 
@@ -4419,6 +5618,22 @@
         });
       });
       if (cfgA && cfgB) {
+        const healthBefore = analyzeStudioHealth();
+
+        // Lưu trạng thái hoàn tác
+        window.lastSwapUndoState = {
+          keyA,
+          keyB,
+          rowA,
+          rowB,
+          idxA,
+          idxB,
+          rhymeA: cfgA.rhyme,
+          rhymeB: cfgB.rhyme,
+          noteA: cfgA.note,
+          noteB: cfgB.note
+        };
+
         const tempRhyme = cfgA.rhyme;
         cfgA.rhyme = cfgB.rhyme;
         cfgB.rhyme = tempRhyme;
@@ -4430,7 +5645,11 @@
         } else if (currentlySelectedKey === keyB) {
           selectKeyForInspection(keyB, rowB, idxB);
         }
-        saveCustomConfig(true);
+        saveCustomConfig(false);
+
+        const healthAfter = analyzeStudioHealth();
+        const delta = healthAfter.vcompMatchCount - healthBefore.vcompMatchCount;
+        showSwapToastNotification(delta, keyA, keyB, healthAfter.vcompMatchCount, healthAfter.totalKeys);
       }
     };
 
@@ -4475,13 +5694,80 @@
         console.error('Lỗi lưu custom rhymes:', err);
       }
 
+      renderStudioGrid();
+      const newHealth = analyzeStudioHealth();
       ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
         KEY_CONFIG[rId].forEach(cfg => {
           if (cfg.key.toLowerCase() === charKey.toLowerCase()) {
             renderMultiRhymeMatrix(cfg.key, cfg);
+            renderVcompConflictPanel(cfg, newHealth);
           }
         });
       });
+    };
+
+    // Xóa vần khỏi phím cũ VCOMP (vd: đang ở phím 3 muốn xóa 'ê' khỏi phím cũ 'E')
+    window.clearOriginVcompRhyme = function(charKey, tableType, rhymeVal) {
+      if (!confirm(`Bạn có chắc muốn xóa vần "${rhymeVal}" khỏi phím cũ [${charKey}] (${tableType.toUpperCase()})?`)) return;
+      window.replaceCoreRhymeWithCurrent(charKey, tableType, '-');
+    };
+
+    // Xóa một vần khỏi Ma trận Lõi Base60
+    window.clearVcompCoreRhyme = function(charKey, tableType, currentVal) {
+      if (!confirm(`Bạn có chắc muốn xóa vần "${currentVal}" khỏi Lõi Base60 của phím [${charKey}] (${tableType.toUpperCase()})?`)) return;
+      window.replaceCoreRhymeWithCurrent(charKey, tableType, '-');
+    };
+
+    // Thay thế một vần trong Lõi VCOMP Base60 bằng vần mới (hoặc '-' nếu xóa)
+    window.replaceCoreRhymeWithCurrent = function(charKey, tableType, newRhyme) {
+      if (!charKey || !tableType) return;
+      const idx = BASE60_MAPPING.indexOf(charKey);
+      if (idx === -1) return;
+
+      const cleanRhyme = (newRhyme && typeof newRhyme === 'string' && newRhyme.trim() && newRhyme.trim() !== '-')
+        ? newRhyme.trim().toLowerCase()
+        : '-';
+
+      if (tableType === 'b1') CUSTOM_RHYMES_BASE[idx] = cleanRhyme;
+      else if (tableType === 'b2') CUSTOM_RHYMES_EXTRA_1[idx] = cleanRhyme;
+      else if (tableType === 'b3') CUSTOM_RHYMES_EXTRA_2[idx] = cleanRhyme;
+
+      try {
+        localStorage.setItem('vcomp_custom_rhymes_base', JSON.stringify(CUSTOM_RHYMES_BASE));
+        localStorage.setItem('vcomp_custom_rhymes_extra_1', JSON.stringify(CUSTOM_RHYMES_EXTRA_1));
+        localStorage.setItem('vcomp_custom_rhymes_extra_2', JSON.stringify(CUSTOM_RHYMES_EXTRA_2));
+      } catch (e) {
+        console.error('Lỗi lưu custom rhymes:', e);
+      }
+
+      renderStudioGrid();
+      const health = analyzeStudioHealth();
+      updateStudioHealthUI(health);
+
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+        KEY_CONFIG[rId].forEach(cfg => {
+          if (cfg.key.toLowerCase() === currentlySelectedKey.toLowerCase()) {
+            renderMultiRhymeMatrix(cfg.key, cfg);
+            renderVcompConflictPanel(cfg, health);
+          }
+        });
+      });
+    };
+
+    // Mở hộp thoại sửa trực tiếp một vần trong Ma trận Lõi Base60
+    window.editVcompCoreRhyme = function(charKey, tableType, currentVal) {
+      const oldVal = (currentVal === '-' || currentVal === 'null') ? '' : currentVal;
+      const newVal = prompt(`Sửa vần trong Lõi VCOMP Base60 (${charKey} - ${tableType.toUpperCase()}):\nNhập vần mới (để trắng hoặc gõ '-' để XÓA vần):`, oldVal);
+      if (newVal === null) return;
+      const cleanVal = newVal.trim().toLowerCase();
+      
+      // Nếu xóa trắng hoặc gõ '-' -> Xóa vần
+      if (!cleanVal || cleanVal === '-') {
+        window.replaceCoreRhymeWithCurrent(charKey, tableType, '-');
+        return;
+      }
+
+      window.replaceCoreRhymeWithCurrent(charKey, tableType, cleanVal);
     };
 
     // Lưu cấu hình vào localStorage
