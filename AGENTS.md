@@ -29,3 +29,16 @@
   3. **Tự chịu trách nhiệm điều tra, không để người dùng phân tích hộ**:
      - Phải tự dùng công cụ đọc code, grep, kiểm tra trạng thái thực tế để truy vết nguyên nhân đến tận cùng trước khi phát biểu. Tuyệt đối không suy đoán ẩu, lười biếng để người dùng phải chỉ ra lỗi logic sơ đẳng.
 
+## Trực Quan Hóa Tối Đa - Liếc Qua Là Hiểu (Visual Over Text Explanation)
+- **Context**: Khi thiết kế các thành phần giao diện (UI), công cụ tinh chỉnh cấu hình, bộ hoán vị hoặc thao tác đa chiều.
+- **Constraint**:
+  1. **Ưu tiên Sơ Đồ Hình Học hơn Nhãn Chữ (Visual Over Text)**:
+     - Tuyệt đối không phụ thuộc vào các chuỗi chữ hướng dẫn dài dòng hoặc nút bấm thuần chữ để giải thích luồng xử lý.
+     - Phải mô hình hóa các thành phần tương tác thành sơ đồ hình học trực quan (ví dụ: hình vuông 4 góc, mạng liên kết, các mũi tên hoán vị 2 chiều `⇄`, `⇅`).
+  2. **Liếc Qua Là Hiểu (Glanceable UI)**:
+     - Bố cục phải tự giải thích (self-explanatory): Người dùng nhìn vào sơ đồ trong vòng 1 giây là biết ngay thành phần nào liên kết với thành phần nào, hoán đổi theo chiều nào mà không cần đọc tài liệu.
+  3. **Đánh Số Đồng Bộ (Numbered Trigger Mechanism)**:
+     - Trên các mũi tên hoán vị hoặc luồng xử lý, đánh dấu số định danh nổi bật (ví dụ: `①`, `②`, `③`).
+     - Các nút bấm hành động tương ứng ở bên ngoài cũng mang cùng mã số định danh (ví dụ: `[ 🔄 1 ]`, `[ 🔄 2 ]`) để tạo sự liên kết phản xạ tức thì giữa mắt nhìn và ngón tay bấm.
+
+

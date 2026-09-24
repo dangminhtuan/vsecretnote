@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VCOMP Chip Keyboard - Bàn Phím Vi Mạch & Tốc Ký</title>
+  <title>VCOMP Chip Keyboard - Bàn Phím Vi Mạch & Tốc Ký 8 Hướng</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -21,6 +21,7 @@
       --neon-orange: #ff6b35;
       --neon-pink: #ff2a85;
       --neon-purple: #9d4edd;
+      --compass-red: #ff3b30;
       
       --text-white: #f0f6fc;
       --text-muted: #8b949e;
@@ -48,15 +49,39 @@
       align-items: center;
       padding: 6px;
       overflow-x: hidden;
+      touch-action: pan-y;
     }
 
     /* Container */
     .app-container {
       width: 100%;
-      max-width: 920px;
+      max-width: 960px;
       display: flex;
       flex-direction: column;
       gap: 5px;
+    }
+    @media (min-width: 1200px) {
+      .app-container {
+        max-width: 1240px;
+      }
+      .chip-key {
+        height: 48px;
+      }
+      .chip-main {
+        font-size: 15px;
+      }
+      .chip-tl {
+        font-size: 9px;
+      }
+      .chip-tr {
+        font-size: 8.5px;
+      }
+      .chip-bl {
+        font-size: 8px;
+      }
+      .chip-br {
+        font-size: 7.5px;
+      }
     }
 
     /* Header */
@@ -69,6 +94,8 @@
       border: 1px solid var(--border-dark);
       border-radius: 8px;
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     .brand {
@@ -78,8 +105,8 @@
     }
 
     .brand-logo {
-      width: 24px;
-      height: 24px;
+      width: 26px;
+      height: 26px;
       background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
       border-radius: 6px;
       display: flex;
@@ -88,7 +115,7 @@
       font-family: var(--font-mono);
       font-weight: 800;
       color: #000;
-      font-size: 13px;
+      font-size: 13.5px;
       box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
     }
 
@@ -109,14 +136,15 @@
     .toolbar {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
+      flex-wrap: wrap;
     }
 
     .btn-toggle {
       background: var(--bg-key);
       border: 1px solid var(--border-dark);
       color: var(--text-white);
-      padding: 4px 9px;
+      padding: 4px 8px;
       border-radius: 6px;
       font-size: 11px;
       font-weight: 600;
@@ -146,6 +174,7 @@
       padding: 6px;
       display: flex;
       flex-direction: column;
+      gap: 4px;
     }
 
     .input-box-wrapper {
@@ -154,7 +183,7 @@
 
     #targetInput {
       width: 100%;
-      height: 46px;
+      height: 48px;
       background: #080c10;
       border: 1px solid #2d3748;
       border-radius: 6px;
@@ -165,12 +194,46 @@
       resize: none;
       outline: none;
       transition: border-color 0.2s;
-      line-height: 1.3;
+      line-height: 1.35;
     }
 
     #targetInput:focus {
       border-color: var(--neon-green);
       box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+    }
+
+    /* Practice Bar / Quick Test Chips */
+    .practice-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      padding: 2px 0;
+    }
+
+    .practice-label {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      font-weight: 600;
+    }
+
+    .practice-chip {
+      background: #192330;
+      border: 1px solid #33445b;
+      color: #e2e8f0;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+
+    .practice-chip:hover {
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      background: rgba(0, 229, 255, 0.1);
     }
 
     /* Search Finder Bar */
@@ -229,11 +292,6 @@
       display: none;
     }
 
-    .btn-clear-search:hover {
-      color: #fff;
-      background: #374151;
-    }
-
     .search-stats {
       font-size: 11px;
       color: var(--text-muted);
@@ -250,7 +308,9 @@
       flex-direction: column;
       gap: 4px;
       user-select: none;
+      -webkit-user-select: none;
       box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      position: relative;
     }
 
     .kb-row {
@@ -260,11 +320,11 @@
       width: 100%;
     }
 
-    /* CHIP KEY STYLING (Chiều cao 40px siêu gọn) */
+    /* CHIP KEY STYLING */
     .chip-key {
       position: relative;
       flex: 1;
-      height: 40px;
+      height: 42px;
       background: var(--bg-key);
       border: 1px solid #2d3e54;
       border-radius: 6px;
@@ -274,6 +334,9 @@
       cursor: pointer;
       transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
       overflow: hidden;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .chip-key:hover {
@@ -282,13 +345,13 @@
       transform: translateY(-1px);
     }
 
-    .chip-key:active {
+    .chip-key:active, .chip-key.swiping {
       background: var(--bg-key-active);
-      transform: translateY(1px);
-      box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
     }
 
-    /* Key Corners */
+    /* Key Center (Tap) */
     .chip-main {
       font-family: var(--font-mono);
       font-size: 14.5px;
@@ -297,7 +360,7 @@
       z-index: 2;
     }
 
-    /* Top-Left: Macro (Neon Green) */
+    /* Top-Left: Vần chính (Neon Green - 6 hướng dấu thanh) */
     .chip-tl {
       position: absolute;
       top: 1.5px;
@@ -310,7 +373,7 @@
       line-height: 1;
     }
 
-    /* Top-Right: VCOMP Upper / Code (Neon Amber) */
+    /* Top-Right: VCOMP Base60 code (Neon Amber) */
     .chip-tr {
       position: absolute;
       top: 1.5px;
@@ -322,38 +385,29 @@
       line-height: 1;
     }
 
-    /* Bottom-Left: Sub-Macro / 3-vowel (Cyan) */
+    /* Bottom-Left: Shortcut 2 (7h - Phụ âm Shift/Kép VCOMP - Neon Cyan) */
     .chip-bl {
       position: absolute;
       bottom: 1.5px;
       left: 2.5px;
       font-size: 7.5px;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--neon-cyan);
       font-family: var(--font-ui);
       letter-spacing: -0.2px;
       line-height: 1;
     }
 
-    /* Bottom-Right: Anchor Mnemonic (Orange) - Ẩn mặc định, hover mới hiện */
+    /* Bottom-Right: Shortcut 1 (5h - Phụ âm thường / Ký tự gốc - Neon Orange) */
     .chip-br {
       position: absolute;
       bottom: 1.5px;
       right: 2.5px;
-      font-size: 7px;
-      font-weight: 600;
+      font-size: 7.5px;
+      font-weight: 700;
       color: var(--neon-orange);
       font-family: var(--font-ui);
-      opacity: 0;
-      transform: translateY(2px);
-      transition: all 0.15s ease-in-out;
       line-height: 1;
-      pointer-events: none;
-    }
-
-    .chip-key:hover .chip-br {
-      opacity: 0.95;
-      transform: translateY(0);
     }
 
     /* Special Key Widths */
@@ -381,47 +435,67 @@
       color: #00ff88;
     }
 
-    /* Highlight Key Glow Effect */
-    .chip-key.key-highlight {
+    /* Highlight Key Glow Effects (Multi-Token Colors) */
+    .chip-key.key-highlight-0 {
       border-color: var(--neon-cyan) !important;
-      background: rgba(0, 229, 255, 0.22) !important;
-      box-shadow: 0 0 14px rgba(0, 229, 255, 0.8), inset 0 0 8px rgba(0, 229, 255, 0.4) !important;
+      background: rgba(0, 229, 255, 0.28) !important;
+      box-shadow: 0 0 16px rgba(0, 229, 255, 0.95), inset 0 0 8px rgba(0, 229, 255, 0.5) !important;
       transform: scale(1.06) !important;
       z-index: 10;
-      animation: neonPulse 1.2s infinite alternate;
+    }
+    .chip-key.key-highlight-0 .chip-main {
+      color: #fff !important;
+      text-shadow: 0 0 8px var(--neon-cyan);
+    }
+    .chip-key.key-highlight-0 .chip-bl, .chip-key.key-highlight-0 .chip-tl {
+      filter: drop-shadow(0 0 4px var(--neon-cyan));
     }
 
-    .chip-key.key-highlight .chip-main {
-      color: #fff !important;
-      text-shadow: 0 0 8px rgba(0, 229, 255, 0.9);
+    .chip-key.key-highlight-1 {
+      border-color: var(--neon-green) !important;
+      background: rgba(0, 255, 136, 0.28) !important;
+      box-shadow: 0 0 16px rgba(0, 255, 136, 0.95), inset 0 0 8px rgba(0, 255, 136, 0.5) !important;
+      transform: scale(1.06) !important;
+      z-index: 10;
     }
-
-    .chip-key.key-highlight .chip-tl {
+    .chip-key.key-highlight-1 .chip-main {
       color: #fff !important;
-      font-size: 9.5px !important;
+      text-shadow: 0 0 8px var(--neon-green);
+    }
+    .chip-key.key-highlight-1 .chip-tl, .chip-key.key-highlight-1 .chip-bl {
       filter: drop-shadow(0 0 4px var(--neon-green));
     }
 
-    .chip-key.key-highlight .chip-tr {
-      color: var(--neon-amber) !important;
-      font-size: 9px !important;
-      filter: drop-shadow(0 0 4px var(--neon-amber));
+    .chip-key.key-highlight-2 {
+      border-color: var(--neon-amber) !important;
+      background: rgba(255, 184, 0, 0.28) !important;
+      box-shadow: 0 0 16px rgba(255, 184, 0, 0.95), inset 0 0 8px rgba(255, 184, 0, 0.5) !important;
+      transform: scale(1.06) !important;
+      z-index: 10;
+    }
+    .chip-key.key-highlight-2 .chip-main {
+      color: #fff !important;
+      text-shadow: 0 0 8px var(--neon-amber);
     }
 
-    .chip-key.key-highlight .chip-br {
-      opacity: 1 !important;
-      transform: translateY(0) !important;
+    .chip-key.key-highlight-3 {
+      border-color: var(--neon-pink) !important;
+      background: rgba(255, 42, 133, 0.28) !important;
+      box-shadow: 0 0 16px rgba(255, 42, 133, 0.95), inset 0 0 8px rgba(255, 42, 133, 0.5) !important;
+      transform: scale(1.06) !important;
+      z-index: 10;
+    }
+    .chip-key.key-highlight-3 .chip-main {
+      color: #fff !important;
+      text-shadow: 0 0 8px var(--neon-pink);
     }
 
-    @keyframes neonPulse {
-      0% {
-        box-shadow: 0 0 10px rgba(0, 229, 255, 0.6), inset 0 0 6px rgba(0, 229, 255, 0.3);
-        border-color: var(--neon-cyan);
-      }
-      100% {
-        box-shadow: 0 0 20px rgba(0, 255, 136, 0.9), inset 0 0 12px rgba(0, 255, 136, 0.5);
-        border-color: var(--neon-green);
-      }
+    .chip-key.key-highlight-multi {
+      border-color: #fff !important;
+      background: linear-gradient(135deg, rgba(0, 229, 255, 0.35), rgba(0, 255, 136, 0.35)) !important;
+      box-shadow: 0 0 18px rgba(0, 229, 255, 0.9), inset 0 0 10px rgba(0, 255, 136, 0.6) !important;
+      transform: scale(1.07) !important;
+      z-index: 12;
     }
 
     .keyboard-wrapper.searching .chip-key:not(.key-highlight) {
@@ -431,7 +505,233 @@
       transition: all 0.2s ease;
     }
 
-    /* Quick Lookup Panel (Khoảng trống thừa dưới bàn phím) */
+    /* Search Badge cho Vần Phụ Ẩn (B2, B3, Shift) */
+    .chip-extra-badge {
+      position: absolute;
+      bottom: 1.5px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 8px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      background: var(--neon-amber);
+      color: #0b0f14;
+      padding: 0.5px 3.5px;
+      border-radius: 3px;
+      white-space: nowrap;
+      line-height: 1.25;
+      box-shadow: 0 0 10px rgba(255, 184, 0, 0.95);
+      border: 1px solid #fff;
+      z-index: 8;
+      pointer-events: none;
+      animation: badge-pop 0.18s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .chip-extra-badge.badge-shift {
+      background: var(--neon-pink);
+      box-shadow: 0 0 10px rgba(255, 42, 133, 0.95);
+      color: #fff;
+    }
+    .chip-key.key-has-extra .chip-main {
+      transform: translateY(-2px);
+      transition: transform 0.15s ease;
+    }
+    @keyframes badge-pop {
+      from {
+        transform: translateX(-50%) scale(0.4);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(-50%) scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* FLOATING COMPASS HUD (HUD LA BÀN 8 HƯỚNG TƯƠNG TÁC) */
+    #compassHud {
+      position: fixed;
+      width: 176px;
+      height: 176px;
+      pointer-events: none;
+      z-index: 99999;
+      display: none;
+      transform: translate(-50%, -50%);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* Backdrop khi HUD ở chế độ ghim */
+    .compass-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 99998;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(1.5px);
+      -webkit-backdrop-filter: blur(1.5px);
+    }
+
+    /* Chế độ 2: Vòng tròn điều khiển dạng Bàn di chuột 360° (Trackpad Mode) */
+    #compassHud.hud-trackpad .compass-ring {
+      border-color: var(--neon-green);
+      box-shadow: 0 0 28px rgba(0, 255, 136, 0.7), inset 0 0 20px rgba(0, 255, 136, 0.35);
+      animation: pulse-ring-trackpad 1.2s infinite alternate ease-in-out;
+    }
+    @keyframes pulse-ring-trackpad {
+      0% { box-shadow: 0 0 18px rgba(0, 255, 136, 0.5), inset 0 0 12px rgba(0, 255, 136, 0.25); }
+      100% { box-shadow: 0 0 32px rgba(0, 255, 136, 0.9), inset 0 0 25px rgba(0, 255, 136, 0.45); }
+    }
+    #compassHud.hud-trackpad .compass-center {
+      border-color: var(--neon-green);
+      box-shadow: 0 0 16px rgba(0, 255, 136, 0.7);
+    }
+    #compassHud.hud-trackpad .preview-dir {
+      color: var(--neon-green);
+    }
+
+    #compassHud.hud-pinned {
+      pointer-events: auto !important;
+      z-index: 99999 !important;
+      cursor: default;
+    }
+    #compassHud.hud-pinned .compass-ring {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 30px rgba(0, 229, 255, 0.6), inset 0 0 25px rgba(0, 229, 255, 0.3);
+      animation: pulse-ring 1.8s infinite alternate ease-in-out;
+    }
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 20px rgba(0, 229, 255, 0.5), inset 0 0 15px rgba(0, 229, 255, 0.25); }
+      100% { box-shadow: 0 0 35px rgba(0, 229, 255, 0.85), inset 0 0 30px rgba(0, 229, 255, 0.45); }
+    }
+    #compassHud.hud-pinned .compass-petal {
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    #compassHud.hud-pinned .compass-petal:hover,
+    #compassHud.hud-pinned .compass-petal:active {
+      background: rgba(0, 229, 255, 0.35) !important;
+      border: 1.5px solid var(--neon-cyan) !important;
+      box-shadow: 0 0 16px rgba(0, 229, 255, 0.95) !important;
+      transform: translate(-50%, -50%) scale(1.18) !important;
+      z-index: 15;
+    }
+    #compassHud.hud-pinned .compass-petal:hover .petal-val,
+    #compassHud.hud-pinned .compass-petal:active .petal-val {
+      color: #fff !important;
+      text-shadow: 0 0 10px var(--neon-cyan);
+    }
+    #compassHud.hud-pinned .compass-center {
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    #compassHud.hud-pinned .compass-center:hover,
+    #compassHud.hud-pinned .compass-center:active {
+      border-color: var(--neon-cyan) !important;
+      box-shadow: 0 0 18px rgba(0, 229, 255, 0.8) !important;
+      transform: translate(-50%, -50%) scale(1.1) !important;
+    }
+
+    .compass-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3.5px solid var(--compass-red);
+      box-shadow: 0 0 24px rgba(255, 59, 48, 0.5), inset 0 0 20px rgba(255, 59, 48, 0.25);
+      background: rgba(11, 15, 20, 0.92);
+      backdrop-filter: blur(8px);
+    }
+
+    .compass-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 48px;
+      height: 48px;
+      transform: translate(-50%, -50%);
+      background: #182230;
+      border: 2px solid var(--border-dark);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      box-shadow: 0 0 12px rgba(0,0,0,0.8);
+    }
+
+    .compass-center .preview-val {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--neon-cyan);
+    }
+
+    .compass-center .preview-dir {
+      font-size: 7.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .compass-petal {
+      position: absolute;
+      width: 46px;
+      height: 38px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transform: translate(-50%, -50%);
+      border-radius: 6px;
+      transition: all 0.08s ease;
+      background: rgba(24, 34, 48, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .compass-petal .petal-label {
+      font-size: 7.5px;
+      color: #94a3b8;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .compass-petal .petal-val {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      margin-top: 1px;
+    }
+
+    .compass-petal.active {
+      background: rgba(0, 229, 255, 0.3) !important;
+      border: 1.5px solid var(--neon-cyan) !important;
+      box-shadow: 0 0 14px rgba(0, 229, 255, 0.9) !important;
+      transform: translate(-50%, -50%) scale(1.18);
+      z-index: 5;
+    }
+
+    .compass-petal.active .petal-label {
+      color: var(--neon-green) !important;
+    }
+
+    .compass-petal.active .petal-val {
+      color: #fff !important;
+      text-shadow: 0 0 8px var(--neon-cyan);
+    }
+
+    /* Petal Positions on the 176px circle (Center = 88, 88) */
+    .petal-sac       { top: 22px;  left: 88px; }  /* 12h: Sắc */
+    .petal-hoi       { top: 41px;  left: 135px; } /* 1h30: Hỏi */
+    .petal-bang      { top: 88px;  left: 154px; } /* 3h: Bằng */
+    .petal-shortcut1 { top: 135px; left: 135px; } /* 5h: Shortcut 1 */
+    .petal-nang      { top: 154px; left: 88px; }  /* 6h: Nặng */
+    .petal-shortcut2 { top: 135px; left: 41px; }  /* 7h30: Shortcut 2 */
+    .petal-nga       { top: 88px;  left: 22px; }  /* 9h: Ngã */
+    .petal-huyen     { top: 41px;  left: 41px; }  /* 10h30: Huyền */
+
+    /* Quick Lookup Panel */
     .quick-lookup-panel {
       background: var(--bg-card);
       border: 1px solid #1f293d;
@@ -452,91 +752,78 @@
     }
 
     .lookup-title {
-      font-size: 11px;
+      font-size: 12.5px;
       font-weight: 700;
-      color: #94a3b8;
+      color: #e2e8f0;
       display: flex;
       align-items: center;
-      gap: 5px;
-      text-transform: uppercase;
-      letter-spacing: 0.3px;
+      gap: 6px;
     }
 
-    .lookup-title span.badge {
+    .lookup-title .badge {
       background: rgba(0, 229, 255, 0.15);
+      border: 1px solid var(--neon-cyan);
       color: var(--neon-cyan);
       font-size: 9.5px;
-      padding: 1px 5px;
+      padding: 1px 6px;
       border-radius: 4px;
-      border: 1px solid rgba(0, 229, 255, 0.3);
+      font-family: var(--font-mono);
     }
 
     .lookup-filters {
       display: flex;
-      align-items: center;
       gap: 4px;
+      flex-wrap: wrap;
     }
 
     .lookup-filter-btn {
       background: #182230;
       border: 1px solid #2d3e54;
-      color: #94a3b8;
+      color: var(--text-muted);
+      font-size: 10px;
       padding: 2.5px 7px;
       border-radius: 4px;
-      font-size: 10px;
-      font-weight: 600;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.15s;
     }
 
     .lookup-filter-btn:hover {
       color: #fff;
-      border-color: var(--neon-cyan);
+      border-color: #4a6385;
     }
 
     .lookup-filter-btn.active {
-      background: rgba(0, 229, 255, 0.18);
-      border-color: var(--neon-cyan);
-      color: var(--neon-cyan);
-      font-weight: 700;
+      background: rgba(0, 255, 136, 0.15);
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+      font-weight: 600;
     }
 
     .lookup-tags-container {
       display: flex;
       flex-wrap: wrap;
-      gap: 4.5px;
-      max-height: 250px;
+      gap: 4px;
+      max-height: 120px;
       overflow-y: auto;
-      padding-right: 2px;
-    }
-
-    .lookup-tags-container::-webkit-scrollbar {
-      width: 4px;
-    }
-    .lookup-tags-container::-webkit-scrollbar-thumb {
-      background: #2d3e54;
-      border-radius: 2px;
+      padding-right: 4px;
     }
 
     .lookup-tag {
-      background: #141c27;
-      border: 1px solid #223247;
+      background: #182230;
+      border: 1px solid #2d3e54;
       border-radius: 5px;
-      padding: 3px 7px;
+      padding: 2.5px 7px;
       font-size: 11px;
-      font-family: var(--font-mono);
       font-weight: 600;
-      color: #cbd5e1;
       cursor: pointer;
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 3px;
-      transition: all 0.12s ease;
-      user-select: none;
+      gap: 4px;
+      color: #cbd5e1;
+      transition: all 0.15s;
     }
 
     .lookup-tag:hover {
-      background: #1e2c3e;
       border-color: #3b5373;
       color: #fff;
       transform: translateY(-1px);
@@ -552,22 +839,1182 @@
 
     .lookup-tag .tag-desc {
       font-size: 8px;
-      opacity: 0.55;
+      opacity: 0.65;
       font-family: var(--font-ui);
+    }
+
+    /* Modal Legend 8 Directions */
+    .legend-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #101620;
+      border: 2px solid var(--neon-cyan);
+      border-radius: 12px;
+      padding: 16px;
+      max-width: 420px;
+      width: 90%;
+      z-index: 100000;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px rgba(0, 229, 255, 0.4);
+      display: none;
+    }
+
+    .legend-modal.open {
+      display: block;
+    }
+
+    .legend-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 99998;
+      display: none;
+    }
+
+    .legend-overlay.open {
+      display: block;
+    }
+
+    .legend-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      border-bottom: 1px solid #233144;
+      padding-bottom: 8px;
+    }
+
+    .legend-header h3 {
+      font-size: 15px;
+      color: var(--neon-cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-close-modal {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .legend-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      font-size: 11.5px;
+    }
+
+    .legend-item {
+      background: #16202c;
+      border: 1px solid #2a3a50;
+      border-radius: 6px;
+      padding: 6px 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .legend-item .arrow {
+      font-size: 14px;
+      color: var(--neon-green);
+      font-weight: 700;
+      width: 18px;
+      text-align: center;
     }
 
     /* Responsive Mobile */
     @media (max-width: 600px) {
       body { padding: 4px; }
-      .chip-key { height: 36px; border-radius: 5px; }
+      .chip-key { height: 38px; border-radius: 5px; }
       .chip-main { font-size: 13px; }
       .chip-tl { font-size: 7.5px; left: 1.5px; top: 1px; }
       .chip-tr { font-size: 7px; right: 1.5px; top: 1px; }
       .chip-bl { font-size: 6.5px; left: 1.5px; bottom: 1px; }
       .chip-br { font-size: 6px; right: 1.5px; bottom: 1px; }
       .brand-desc { display: none; }
-      .lookup-tag { font-size: 10px; padding: 2.5px 5.5px; }
-      .lookup-filters { overflow-x: auto; max-width: 100%; }
+      .lookup-tag { font-size: 10px; padding: 2px 5px; }
+    }
+
+    /* ==================================================== */
+    /* STUDIO TINH CHỈNH VẦN & TỪ NEO VCOMP CSS */
+    /* ==================================================== */
+    .btn-studio {
+      background: linear-gradient(135deg, rgba(157, 78, 221, 0.25), rgba(0, 229, 255, 0.25)) !important;
+      border-color: var(--neon-purple) !important;
+      color: #fff !important;
+      font-weight: 700 !important;
+      box-shadow: 0 0 10px rgba(157, 78, 221, 0.35) !important;
+    }
+    .btn-studio:hover {
+      background: linear-gradient(135deg, rgba(157, 78, 221, 0.45), rgba(0, 229, 255, 0.45)) !important;
+      border-color: var(--neon-cyan) !important;
+      box-shadow: 0 0 15px rgba(0, 229, 255, 0.5) !important;
+    }
+
+    .studio-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #0d131d;
+      border: 2px solid var(--neon-purple);
+      border-radius: 12px;
+      padding: 16px;
+      max-width: 1320px;
+      width: 96%;
+      max-height: 94vh;
+      overflow-y: auto;
+      z-index: 100000;
+      box-shadow: 0 10px 45px rgba(0,0,0,0.95), 0 0 35px rgba(157, 78, 221, 0.45);
+      display: none;
+      font-family: var(--font-ui);
+    }
+    .studio-modal.open {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Studio 2-Column Body Layout */
+    .studio-body-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    @media (min-width: 920px) {
+      .studio-body-layout {
+        display: grid;
+        grid-template-columns: 1.55fr 1fr;
+        gap: 16px;
+        align-items: start;
+      }
+    }
+
+    .studio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      border-bottom: 1px solid #233144;
+      padding-bottom: 10px;
+      gap: 10px;
+    }
+    .studio-title-box {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .studio-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .studio-badge {
+      background: rgba(157, 78, 221, 0.2);
+      border: 1px solid var(--neon-purple);
+      color: #d8b4fe;
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+    }
+    .studio-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Top Action Bar in Studio */
+    .studio-actions-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: #141c28;
+      border: 1px solid #253346;
+      border-radius: 8px;
+      padding: 8px 12px;
+    }
+    .studio-btn-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .btn-act {
+      background: #1d2736;
+      border: 1px solid #364860;
+      color: #e2e8f0;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.15s;
+    }
+    .btn-act:hover {
+      background: #25344a;
+      border-color: #4b6385;
+      color: #fff;
+      transform: translateY(-1px);
+    }
+    .btn-act-primary {
+      background: rgba(0, 255, 136, 0.15);
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+    }
+    .btn-act-primary:hover {
+      background: rgba(0, 255, 136, 0.25);
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+    }
+    .btn-act-anchor {
+      background: rgba(255, 184, 0, 0.15);
+      border-color: var(--neon-amber);
+      color: var(--neon-amber);
+    }
+    .btn-act-anchor:hover {
+      background: rgba(255, 184, 0, 0.25);
+      box-shadow: 0 0 10px rgba(255, 184, 0, 0.4);
+    }
+
+    /* Health & Conflict Alert Banner */
+    .studio-health-banner {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      transition: all 0.2s;
+    }
+    .studio-health-banner.clean {
+      background: rgba(0, 255, 136, 0.08);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      color: #4ade80;
+    }
+    .studio-health-banner.has-conflict {
+      background: rgba(255, 59, 48, 0.12);
+      border: 1px solid var(--compass-red);
+      color: #fca5a5;
+    }
+    .health-stats {
+      display: flex;
+      gap: 15px;
+      font-weight: 700;
+      flex-wrap: wrap;
+    }
+    .health-conflicts-list {
+      font-size: 11px;
+      color: #f87171;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    /* Key Grid in Studio */
+    .studio-grid-section {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 380px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    @media (min-width: 920px) {
+      .studio-grid-section {
+        max-height: none;
+        overflow-y: visible;
+        padding-right: 0;
+      }
+    }
+    .studio-row-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+    .studio-row {
+      display: flex;
+      gap: 4px;
+      width: 100%;
+    }
+    .studio-key-card {
+      flex: 1 1 0;
+      background: #182230;
+      border: 1px solid #2d3e54;
+      border-radius: 6px;
+      min-width: 0;
+      height: 48px;
+      padding: 3px 4px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.15s;
+    }
+    .studio-key-card:hover {
+      background: #223246;
+      border-color: #4a6488;
+      transform: translateY(-1px);
+    }
+    .studio-key-card.selected {
+      background: rgba(0, 229, 255, 0.15);
+      border: 1.5px solid var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+    }
+    .studio-key-card.has-anchor {
+      border-color: rgba(255, 184, 0, 0.6);
+    }
+    .studio-key-card.has-anchor::after {
+      content: '⭐';
+      position: absolute;
+      top: 1px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 8px;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .studio-key-card.is-duplicate {
+      border: 1.5px solid var(--compass-red) !important;
+      background: rgba(255, 59, 48, 0.15) !important;
+      animation: pulse-conflict 1.5s infinite;
+    }
+    @keyframes pulse-conflict {
+      0%, 100% { box-shadow: 0 0 4px rgba(255, 59, 48, 0.4); }
+      50% { box-shadow: 0 0 12px rgba(255, 59, 48, 0.8); }
+    }
+    @media (min-width: 920px) {
+      .studio-key-card {
+        height: 54px;
+        padding: 4px 6px;
+      }
+      .card-key-name {
+        font-size: 14.5px !important;
+      }
+      .card-rhyme-val {
+        font-size: 12px !important;
+      }
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      line-height: 1;
+    }
+    .card-key-name {
+      font-weight: 800;
+      font-size: 13px;
+      color: #fff;
+      font-family: var(--font-mono);
+    }
+    .card-tr-code {
+      font-size: 8.5px;
+      color: var(--neon-cyan);
+      font-family: var(--font-mono);
+    }
+    .card-rhyme-val {
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--neon-green);
+      text-align: center;
+      line-height: 1;
+      font-family: var(--font-mono);
+    }
+    .card-sub-info {
+      font-size: 8px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      line-height: 1;
+    }
+
+    /* Key Inspector Section */
+    .studio-inspector-section {
+      background: #141c28;
+      border: 1px solid #2a3a50;
+      border-radius: 8px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    @media (min-width: 920px) {
+      .studio-inspector-section {
+        position: sticky;
+        top: 0;
+      }
+    }
+    .inspector-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .inspector-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .anchor-suggestions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .anchor-tag-btn {
+      background: rgba(255, 184, 0, 0.15);
+      border: 1px solid var(--neon-amber);
+      color: var(--neon-amber);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .anchor-tag-btn:hover {
+      background: rgba(255, 184, 0, 0.3);
+      box-shadow: 0 0 10px rgba(255, 184, 0, 0.5);
+      transform: translateY(-1px);
+    }
+
+    .inspector-fields-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 8px;
+    }
+    .field-item {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .field-item label {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .field-item input, .field-item select {
+      background: #0d131d;
+      border: 1px solid #304156;
+      border-radius: 5px;
+      padding: 6px 8px;
+      color: #fff;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .field-item input:focus, .field-item select:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+    }
+    .field-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .btn-clear-field {
+      background: transparent;
+      border: none;
+      color: #64748b;
+      font-size: 10px;
+      cursor: pointer;
+      padding: 0 4px;
+      border-radius: 3px;
+      transition: all 0.12s;
+    }
+    .btn-clear-field:hover {
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.15);
+    }
+
+    /* Permutation Square 2x2 Visual Layout */
+    .permutation-square-container {
+      background: #0d141e;
+      border: 1px solid #1e2c3f;
+      border-radius: 8px;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+    .perm-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+    .perm-hint {
+      font-size: 9.5px;
+      color: var(--neon-cyan);
+      font-weight: 500;
+    }
+    .perm-square-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      grid-template-rows: auto auto auto;
+      gap: 6px 8px;
+      align-items: center;
+      background: rgba(6, 10, 16, 0.7);
+      border: 1px solid rgba(0, 229, 255, 0.15);
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .perm-corner {
+      background: #141e2c;
+      border: 1px solid #24354a;
+      border-radius: 6px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .perm-corner:focus-within {
+      border-color: var(--neon-cyan);
+      background: #19273a;
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.25);
+    }
+    .perm-corner .field-label-row label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #cbd5e1;
+      line-height: 1;
+    }
+    .perm-corner input {
+      background: #090e15;
+      border: 1px solid #1f2e42;
+      border-radius: 4px;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 4px 6px;
+      outline: none;
+      width: 100%;
+      box-sizing: border-box;
+      transition: all 0.15s;
+    }
+    .perm-corner input:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 6px rgba(0, 229, 255, 0.35);
+    }
+    .perm-arrow-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .perm-arrow-btn {
+      background: #131c28;
+      border: 1px solid #2b3d54;
+      color: #94a3b8;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      white-space: nowrap;
+      user-select: none;
+    }
+    .perm-arrow-btn:hover {
+      background: rgba(0, 229, 255, 0.2);
+      border-color: var(--neon-cyan);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+      transform: scale(1.1);
+    }
+    .cell-hub-center {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .perm-hub-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #090e16;
+      border: 1px solid #223449;
+      border-radius: 20px;
+      padding: 3px 6px;
+      box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.5);
+    }
+    .perm-hub-btn {
+      background: #131d2a;
+      border: 1.5px solid #2c3f56;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .perm-hub-btn .hub-icon {
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .btn-hub-diag1 {
+      color: var(--neon-amber);
+      border-color: rgba(255, 184, 0, 0.5);
+    }
+    .btn-hub-diag1:hover {
+      background: rgba(255, 184, 0, 0.25);
+      border-color: var(--neon-amber);
+      box-shadow: 0 0 12px rgba(255, 184, 0, 0.6);
+      transform: scale(1.15);
+    }
+    .btn-hub-diag2 {
+      color: var(--neon-cyan);
+      border-color: rgba(0, 229, 255, 0.5);
+    }
+    .btn-hub-diag2:hover {
+      background: rgba(0, 229, 255, 0.25);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 12px rgba(0, 229, 255, 0.6);
+      transform: scale(1.15);
+    }
+    .perm-action-triggers {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .btn-perm-trigger {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 7px 12px;
+      background: #141d2a;
+      border: 1px solid #233346;
+      border-radius: 6px;
+      color: #e2e8f0;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-perm-trigger:hover {
+      background: #1b283a;
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.25);
+      color: #fff;
+    }
+    .trigger-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      flex-shrink: 0;
+    }
+    .trigger-fill .trigger-badge, .trigger-key .trigger-badge {
+      background: rgba(0, 229, 255, 0.2);
+      color: var(--neon-cyan);
+      border: 1px solid var(--neon-cyan);
+    }
+    .perm-corner.hover-highlight {
+      border-color: var(--neon-cyan) !important;
+      background: #19273a !important;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.4) !important;
+    }
+    @keyframes flash-swap {
+      0% { box-shadow: 0 0 0 2px var(--neon-cyan), 0 0 14px var(--neon-cyan); }
+      100% { box-shadow: none; }
+    }
+    .flash-swapped {
+      animation: flash-swap 0.45s ease-out;
+    }
+    .key-review-section {
+      background: #090e15;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 7px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .review-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: #94a3b8;
+    }
+    .review-options {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .btn-review-opt {
+      flex: 1;
+      min-width: 90px;
+      background: #111827;
+      border: 1px solid #1f2937;
+      color: #9ca3af;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 5px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+      white-space: nowrap;
+    }
+    .btn-review-opt:hover {
+      color: #fff;
+      border-color: #4b5563;
+    }
+    .btn-review-opt.active-perfect {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+      color: #34d399;
+      box-shadow: 0 0 8px rgba(16, 185, 129, 0.35);
+    }
+    .btn-review-opt.active-thinking {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: #f59e0b;
+      color: #fbbf24;
+      box-shadow: 0 0 8px rgba(245, 158, 11, 0.35);
+    }
+    .btn-review-opt.active-wondering {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #ef4444;
+      color: #f87171;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.35);
+    }
+
+    /* Status dot on studio key cards */
+    .card-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      position: absolute;
+      bottom: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 0 5px currentColor;
+      pointer-events: none;
+    }
+    .card-status-dot.dot-perfect {
+      background-color: #10b981;
+      color: #10b981;
+    }
+    .card-status-dot.dot-thinking {
+      background-color: #f59e0b;
+      color: #f59e0b;
+    }
+    .card-status-dot.dot-wondering {
+      background-color: #ef4444;
+      color: #ef4444;
+    }
+
+    /* 3x3 Compass Preview in Studio */
+    .key-compass-preview {
+      background: #090e15;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      padding: 6px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .kcp-header {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--neon-cyan);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .kcp-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+    }
+    .kcp-cell {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 4px;
+      padding: 3px 4px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 36px;
+    }
+    .kcp-cell.kcp-center {
+      background: rgba(0, 229, 255, 0.08);
+      border-color: rgba(0, 229, 255, 0.4);
+    }
+    .kcp-cell.kcp-sc {
+      background: rgba(255, 184, 0, 0.08);
+      border-color: rgba(255, 184, 0, 0.4);
+    }
+    .kcp-cell.kcp-main-rhyme {
+      background: rgba(0, 255, 136, 0.08);
+      border-color: rgba(0, 255, 136, 0.4);
+    }
+    .kcp-label {
+      font-size: 7.5px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .kcp-val {
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #fff;
+    }
+
+    /* Export Modal */
+    .export-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #0d131d;
+      border: 2px solid var(--neon-green);
+      border-radius: 12px;
+      padding: 16px;
+      max-width: 720px;
+      width: 92%;
+      max-height: 85vh;
+      overflow-y: auto;
+      z-index: 100002;
+      box-shadow: 0 10px 45px rgba(0,0,0,0.95), 0 0 30px rgba(0, 255, 136, 0.4);
+      display: none;
+      font-family: var(--font-ui);
+    }
+    .export-modal.open {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .export-tabs {
+      display: flex;
+      gap: 6px;
+    }
+    .export-tab-btn {
+      background: #182230;
+      border: 1px solid #2d3e54;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .export-tab-btn.active {
+      background: rgba(0, 255, 136, 0.15);
+      border-color: var(--neon-green);
+      color: var(--neon-green);
+    }
+    .export-textarea {
+      width: 100%;
+      height: 260px;
+      background: #080c12;
+      border: 1px solid #233144;
+      border-radius: 6px;
+      padding: 8px;
+      color: #38bdf8;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      line-height: 1.4;
+      resize: vertical;
+      outline: none;
+    }
+
+    /* Sync Modal (JSON Import / Export) */
+    .sync-modal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--bg-card);
+      border: 1.5px solid var(--neon-cyan);
+      border-radius: 12px;
+      padding: 16px;
+      max-width: 680px;
+      width: 92%;
+      max-height: 85vh;
+      overflow-y: auto;
+      z-index: 100002;
+      box-shadow: 0 10px 45px rgba(0,0,0,0.95), 0 0 30px rgba(0, 229, 255, 0.35);
+      display: none;
+      font-family: var(--font-ui);
+    }
+    .sync-modal.open {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .sync-tabs {
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid #1f2e42;
+      padding-bottom: 6px;
+    }
+    .sync-tab-btn {
+      background: #141f2d;
+      border: 1px solid #283a4f;
+      color: var(--text-muted);
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .sync-tab-btn:hover {
+      background: #1c2b3d;
+      color: #fff;
+    }
+    .sync-tab-btn.active {
+      background: rgba(0, 229, 255, 0.18);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+    }
+    .sync-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sync-hint {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.4;
+    }
+    .sync-textarea {
+      width: 100%;
+      height: 240px;
+      background: #080c12;
+      border: 1px solid #233144;
+      border-radius: 6px;
+      padding: 8px 10px;
+      color: #38bdf8;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.45;
+      resize: vertical;
+      outline: none;
+      box-sizing: border-box;
+      transition: border-color 0.15s;
+    }
+    .sync-textarea:focus {
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+    }
+    .sync-actions-row {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .sync-status-msg {
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.4;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sync-status-msg.success {
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid #10b981;
+      color: #34d399;
+    }
+    .sync-status-msg.error {
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #f87171;
+    }
+    .btn-act-sync {
+      background: rgba(0, 229, 255, 0.15);
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+    }
+    .btn-act-sync:hover {
+      background: rgba(0, 229, 255, 0.3);
+      color: #fff;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+    }
+
+    /* Multi-Rhyme Matrix in Studio Inspector */
+    .multi-rhyme-matrix {
+      background: #0d131d;
+      border: 1px solid #28374a;
+      border-radius: 6px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .mrm-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: #94a3b8;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mrm-tables-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .mrm-col {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      background: #121924;
+      border: 1px solid #1e293b;
+      border-radius: 5px;
+      padding: 5px 7px;
+    }
+    .mrm-col-head {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--neon-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid #233144;
+      padding-bottom: 3px;
+      margin-bottom: 2px;
+    }
+    .mrm-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      padding: 2.5px 5px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.12s;
+    }
+    .mrm-row:hover {
+      background: rgba(0, 229, 255, 0.18);
+      color: #fff;
+    }
+    .mrm-table-badge {
+      font-size: 9px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .mrm-rhyme-val {
+      font-weight: 700;
+      font-family: var(--font-mono);
+      color: #cbd5e1;
+    }
+    .mrm-rhyme-val.is-active {
+      color: var(--neon-green);
+    }
+    .mrm-rhyme-val.is-anchor {
+      color: var(--neon-amber);
+    }
+    .mrm-active-tag {
+      font-size: 8.5px;
+      font-weight: 700;
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.2);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      border-radius: 3px;
+      padding: 1px 4px;
+      margin-left: 4px;
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+    }
+    .btn-swap-layer {
+      font-size: 8.5px;
+      background: rgba(0, 229, 255, 0.12);
+      border: 1px solid rgba(0, 229, 255, 0.35);
+      color: var(--neon-cyan);
+      border-radius: 3px;
+      padding: 1px 5px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-swap-layer:hover {
+      background: rgba(0, 229, 255, 0.3);
+      color: #fff;
+      box-shadow: 0 0 6px rgba(0, 229, 255, 0.4);
+    }
+
+    /* Auto-Swap Notification and Button */
+    .swap-prompt-box {
+      background: rgba(255, 184, 0, 0.12);
+      border: 1px solid var(--neon-amber);
+      border-radius: 6px;
+      padding: 7px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #fed7aa;
+    }
+    .btn-swap {
+      background: rgba(255, 184, 0, 0.25);
+      border: 1px solid var(--neon-amber);
+      color: #fff;
+      font-weight: 700;
+      font-size: 10.5px;
+      padding: 3px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .btn-swap:hover {
+      background: rgba(255, 184, 0, 0.45);
+      box-shadow: 0 0 10px rgba(255, 184, 0, 0.6);
+      transform: translateY(-1px);
     }
   </style>
 </head>
@@ -577,23 +2024,25 @@
     <!-- Header -->
     <header>
       <div class="brand">
-        <div class="brand-logo">V</div>
+        <div class="brand-logo">8⚡</div>
         <div>
-          <div class="brand-title">VCOMP CHIP KEYBOARD</div>
-          <div class="brand-desc">Bàn Phím Vi Mạch Tốc Ký & Giải Mã Base60</div>
+          <div class="brand-title">VCOMP CHIP KEYBOARD 8-DIRECT</div>
+          <div class="brand-desc">Bàn Phím Tốc Ký 8 Hướng & Đồng Bộ Lõi VCOMP Base60</div>
         </div>
       </div>
       <div class="toolbar">
-        <button class="btn-toggle active" id="btnModeMacro" title="Chạm phím ưu tiên gõ Macro Tiếng Việt">🚀 Macro</button>
-        <button class="btn-toggle" id="btnModeVcomp" title="Chạm phím ưu tiên xem & gõ mã VCOMP">⚡ VCOMP</button>
+        <button class="btn-toggle active" id="btnModeFlick" title="Chế độ Tốc Ký 8 Hướng (Vuốt ra 6 dấu thanh + 2 phím tắt)">🧭 Tốc Ký 8 Hướng</button>
+        <button class="btn-toggle" id="btnModeVcomp" title="Ưu tiên xuất mã Base60 VCOMP">⚡ VCOMP Base60</button>
         <button class="btn-toggle" id="btnModeQwerty" title="Gõ phím ký tự gốc thông thường">⌨️ QWERTY</button>
+        <button class="btn-toggle" id="btnShowLegend" title="Xem sơ đồ 8 hướng">❓ La Bàn</button>
+        <button class="btn-toggle btn-studio" id="btnOpenStudio" title="Studio Tinh Chỉnh Vần & Quản Lý Từ Neo VCOMP">🎛️ Studio Vần & Từ Neo</button>
       </div>
     </header>
 
     <!-- Sandbox / Input Area -->
     <div class="sandbox-panel">
       <div class="input-box-wrapper">
-        <textarea id="targetInput" placeholder="Chạm hoặc gõ phím để trải nghiệm tốc ký..."></textarea>
+        <textarea id="targetInput" placeholder="Nhấn giữ và vuốt nhẹ theo 8 hướng để tốc ký (Lên: Sắc, Phải: Bằng, Xuống: Nặng, 5h: Sc1, 7h: Sc2)..."></textarea>
       </div>
     </div>
 
@@ -601,18 +2050,18 @@
     <div class="search-finder-bar">
       <div class="search-input-box">
         <span class="search-icon">🔍</span>
-        <input type="text" id="chipSearchInput" placeholder="Tìm phím, âm, vần, mã (ví dụ: e ê ch, uo, d, đơ)..." autocomplete="off">
+        <input type="text" id="chipSearchInput" placeholder="Tìm phím, âm, vần, mã (ví dụ: ô, tr, ươ, ao, th, ch, uo)..." autocomplete="off">
         <button id="btnSearchClear" class="btn-clear-search" title="Xóa tìm kiếm">✖</button>
       </div>
-      <div class="search-stats" id="searchStats">Gõ từ khóa để làm sáng các phím khớp</div>
+      <div class="search-stats" id="chipSearchStats" style="display: none;"></div>
     </div>
 
     <!-- KEYBOARD CHIP WRAPPER -->
     <div class="keyboard-wrapper" id="keyboardWrapper">
-      <!-- Row 0: Ký hiệu (10 phím gióng hàng chữ HOA VCOMP) -->
+      <!-- Row 0: Ký hiệu & Nguyên âm 3 (10 phím: : ? " + - = / < > ;) -->
       <div class="kb-row" id="rowSymbols"></div>
 
-      <!-- Row 1: Hàng Số (10 phím số 1-0: Nguyên âm đôi & ba thực chiến) -->
+      <!-- Row 1: Hàng Số (10 phím số 1-0: 10 Nguyên âm đôi kinh điển) -->
       <div class="kb-row" id="rowNumbers"></div>
 
       <!-- Row 2: Hàng QWERTY (10 phím q-p) -->
@@ -634,143 +2083,675 @@
       </div>
     </div>
 
-    <!-- Quick Lookup Panel (Khoảng trống thừa dưới bàn phím) -->
+    <!-- Quick Lookup Panel (Khoảng trống tra cứu VCOMP) -->
     <div class="quick-lookup-panel" id="quickLookupPanel">
       <div class="lookup-header">
         <div class="lookup-title">
-          <span>⚡ Tra cứu vị trí phím theo A - Z</span>
-          <span class="badge" id="lookupCountBadge">45 âm</span>
+          <span>⚡ Tra cứu vị trí phím & Quy tắc VCOMP Base60</span>
+          <span class="badge" id="lookupCountBadge">46 phím</span>
         </div>
         <div class="lookup-filters">
           <button class="lookup-filter-btn active" data-filter="all">Tất cả (A-Z)</button>
           <button class="lookup-filter-btn" data-filter="vowel2">Nguyên âm đôi</button>
           <button class="lookup-filter-btn" data-filter="vowel3">Nguyên âm 3</button>
-          <button class="lookup-filter-btn" data-filter="consonant">Phụ âm kép</button>
+          <button class="lookup-filter-btn" data-filter="consonant">Phụ âm kép (VCOMP)</button>
+          <button class="lookup-filter-btn" data-filter="extra">Vần phụ (B2/B3)</button>
         </div>
       </div>
       <div class="lookup-tags-container" id="lookupTagsContainer"></div>
     </div>
   </div>
 
-  <script type="module">
-    import { encodeWord, decodeWord, timeToBase60, removeVietnameseTones } from './vcomp.js';
+  <!-- BACKDROP KHI LA BÀN Ở CHẾ ĐỘ GHIM (CLICK RA NGOÀI ĐỂ ĐÓNG) -->
+  <div id="compassBackdrop" class="compass-backdrop" style="display: none;"></div>
 
-    // === CẤU HÌNH DỮ LIỆU VI MẠCH 46 PHÍM (CHIP KEY CONFIG) ===
+  <!-- FLOATING COMPASS HUD (HUD LA BÀN 8 HƯỚNG TƯƠNG TÁC) -->
+  <div id="compassHud">
+    <div class="compass-ring"></div>
+    
+    <!-- 8 Direction Petals matching user's image -->
+    <div class="compass-petal petal-sac" data-dir="sac">
+      <span class="petal-label">sắc (12h)</span>
+      <span class="petal-val">-</span>
+    </div>
+    <div class="compass-petal petal-hoi" data-dir="hoi">
+      <span class="petal-label">hỏi (1h30)</span>
+      <span class="petal-val">-</span>
+    </div>
+    <div class="compass-petal petal-bang" data-dir="bang">
+      <span class="petal-label">bằng (3h)</span>
+      <span class="petal-val">-</span>
+    </div>
+    <div class="compass-petal petal-shortcut1" data-dir="shortcut1">
+      <span class="petal-label">sc 1 (5h)</span>
+      <span class="petal-val">-</span>
+    </div>
+    <div class="compass-petal petal-nang" data-dir="nang">
+      <span class="petal-label">nặng (6h)</span>
+      <span class="petal-val">-</span>
+    </div>
+    <div class="compass-petal petal-shortcut2" data-dir="shortcut2">
+      <span class="petal-label">sc 2 (7h30)</span>
+      <span class="petal-val">-</span>
+    </div>
+    <div class="compass-petal petal-nga" data-dir="nga">
+      <span class="petal-label">ngã (9h)</span>
+      <span class="petal-val">-</span>
+    </div>
+    <div class="compass-petal petal-huyen" data-dir="huyen">
+      <span class="petal-label">huyền (10h30)</span>
+      <span class="petal-val">-</span>
+    </div>
+
+    <!-- Center preview -->
+    <div class="compass-center">
+      <span class="preview-val" id="hudCenterVal">-</span>
+      <span class="preview-dir" id="hudCenterDir">TAP</span>
+    </div>
+  </div>
+
+  <!-- MODAL LA BÀN 8 HƯỚNG -->
+  <div class="legend-overlay" id="legendOverlay"></div>
+  <div class="legend-modal" id="legendModal">
+    <div class="legend-header">
+      <h3>🧭 Sơ Đồ La Bàn 8 Hướng Lướt Phím</h3>
+      <button class="btn-close-modal" id="btnCloseLegend">✖</button>
+    </div>
+    <div class="legend-grid">
+      <div class="legend-item"><span class="arrow">↑</span><span><b>12h:</b> Dấu Sắc (áo, người)</span></div>
+      <div class="legend-item"><span class="arrow">↗</span><span><b>1h30:</b> Dấu Hỏi (ảo, người)</span></div>
+      <div class="legend-item"><span class="arrow">→</span><span><b>3h:</b> Dấu Bằng (ao, người)</span></div>
+      <div class="legend-item"><span class="arrow">↘</span><span><b>5h:</b> Shortcut 1 (Ký tự gốc)</span></div>
+      <div class="legend-item"><span class="arrow">↓</span><span><b>6h:</b> Dấu Nặng (ạo, người)</span></div>
+      <div class="legend-item"><span class="arrow">↙</span><span><b>7h30:</b> Shortcut 2 (Phụ âm VCOMP)</span></div>
+      <div class="legend-item"><span class="arrow">←</span><span><b>9h:</b> Dấu Ngã (ão, người)</span></div>
+      <div class="legend-item"><span class="arrow">↖</span><span><b>10h30:</b> Dấu Huyền (ào, người)</span></div>
+    </div>
+    <div style="margin-top: 12px; font-size: 11px; color: #94a3b8; line-height: 1.4;">
+      ⭐ <b>Nguyên tắc ghi nhớ:</b> Mỗi phím đại diện cho 1 Vần chính + Phụ âm gốc (5h) + Phụ âm kép VCOMP (7h). Giúp vừa gõ tiếng Việt siêu tốc, vừa tự động nhớ 100% quy tắc mã hóa Base60!
+    </div>
+  </div>
+
+  <!-- STUDIO MODAL: TINH CHỈNH VẦN & TỪ NEO VCOMP -->
+  <div class="legend-overlay" id="studioOverlay"></div>
+  <div class="studio-modal" id="studioModal">
+    <div class="studio-header">
+      <div class="studio-title-box">
+        <div class="studio-title">
+          <span>🎛️ STUDIO TINH CHỈNH VẦN & TỪ NEO VCOMP</span>
+          <span class="studio-badge">46 Phím Chip</span>
+        </div>
+        <div class="studio-sub">Chủ động quyết định giữ lại các vần từ neo kinh điển (như hh = hiêu, ss = sương...) hoặc gán vần mới để tối ưu tốc độ gõ. Tự động kiểm tra xung đột và xuất code Android.</div>
+      </div>
+      <button class="btn-close-modal" id="btnCloseStudio">✖</button>
+    </div>
+
+    <!-- Quick Action Bar -->
+    <div class="studio-actions-bar">
+      <div class="studio-btn-group">
+        <button class="btn-act btn-act-anchor" id="btnApplyAllAnchors" title="Khôi phục toàn bộ các từ neo lặp đôi kinh điển (h=iêu, s=ương, d=ơ, c=ich, r=ên, m=ut...)">
+          ⭐ Bật Tất Cả Từ Neo Thiêng
+        </button>
+        <button class="btn-act btn-act-primary" id="btnSaveStudioConfig" title="Lưu cấu hình và cập nhật bàn phím ngay lập tức">
+          💾 Lưu & Áp Dụng Ngay
+        </button>
+        <button class="btn-act" id="btnResetStudioConfig" title="Khôi phục cấu hình mặc định">
+          🔄 Mặc Định
+        </button>
+      </div>
+      <div class="studio-btn-group">
+        <button class="btn-act btn-act-sync" id="btnOpenSyncModal" title="Nhập và xuất file JSON để đồng bộ tiến trình giữa các thiết bị">
+          📦 Đồng Bộ JSON
+        </button>
+        <button class="btn-act" id="btnOpenExport" title="Xuất mã nguồn JavaScript và Kotlin DataDictionary.kt">
+          📋 Xuất Mã Nguồn
+        </button>
+      </div>
+    </div>
+
+    <!-- Live Health & Conflict Banner -->
+    <div class="studio-health-banner clean" id="studioHealthBanner">
+      <div class="health-stats">
+        <span>⭐ Neo: <b id="statActiveAnchors">0</b>/16</span>
+        <span>✨ Vần: <b id="statUniqueRhymes">0</b></span>
+        <span>🟢 Hoàn hảo: <b id="statPerfectCount">0</b></span>
+        <span>🟡 Đang nghĩ: <b id="statThinkingCount">0</b></span>
+        <span>🔴 Băn khoăn: <b id="statWonderingCount">0</b></span>
+      </div>
+      <div id="conflictList" class="health-conflicts-list" style="display: none;"></div>
+    </div>
+
+    <!-- Two-column Body Layout -->
+    <div class="studio-body-layout">
+      <!-- Left Column: Key Grid View (Rows) -->
+      <div class="studio-grid-section" id="studioGridContainer">
+        <!-- Sẽ được render động bởi JavaScript -->
+      </div>
+
+      <!-- Right Column: Selected Key Inspector -->
+      <div class="studio-inspector-section" id="studioInspector">
+        <div class="inspector-header">
+          <div class="inspector-title" id="inspectorTitle">
+            <span>Đang chỉnh sửa: </span>
+            <span class="studio-badge" id="inspKeyBadge" style="font-size: 13px; padding: 2px 8px;">h</span>
+          </div>
+          <div class="anchor-suggestions" id="anchorSuggestions">
+            <!-- Quick buttons for sacred anchors -->
+          </div>
+        </div>
+
+        <!-- Khung Tự Động Hoán Đổi (Auto-Swap) -->
+        <div class="swap-prompt-box" id="swapPromptBox" style="display: none;">
+          <span id="swapPromptText">Vần này đang thuộc về phím khác</span>
+          <button class="btn-swap" id="btnDoSwap">🔄 Đổi Chỗ (Swap)</button>
+        </div>
+
+        <!-- Ma Trận Đa Vần VCOMP (B1, B2, B3) -->
+        <div class="multi-rhyme-matrix" id="multiRhymeMatrix">
+          <!-- Rendered dynamically by JS -->
+        </div>
+
+        <!-- KHỐI MA TRẬN HOÁN VỊ HÌNH VUÔNG 4 GÓC (PERMUTATION SQUARE DIAGRAM V2) -->
+        <div class="permutation-square-container">
+          <div class="perm-title-row">
+            <span class="perm-title-badge">🔲 SƠ ĐỒ HOÁN VỊ 4 VỊ TRÍ CỦA PHÍM</span>
+            <span class="perm-hint">Rê chuột xem trước, bấm mũi tên hoặc nút chéo để hoán vị</span>
+          </div>
+
+          <div class="perm-square-grid">
+            <!-- HÀNG 1 -->
+            <!-- Góc Tây Bắc: Click (Ký tự gốc) -->
+            <div class="perm-corner corner-click" id="cornerClick">
+              <div class="field-label-row">
+                <label>🎯 Click (Gốc)</label>
+                <button class="btn-clear-field" id="btnClearTap" title="Để trống (không xuất ký tự khi click)">✖</button>
+              </div>
+              <input type="text" id="inspTap" placeholder="Ký tự gốc (vd: h)...">
+            </div>
+
+            <!-- Mũi tên Ngang Trên: Click ⇄ 3h -->
+            <div class="perm-arrow-cell cell-arrow-top">
+              <button class="perm-arrow-btn" id="btnSwapTop" title="Hoán vị: Click ⇄ 3h">
+                <span class="swap-icon">⇄</span>
+              </button>
+            </div>
+
+            <!-- Góc Đông Bắc: 3h (Vần chính) -->
+            <div class="perm-corner corner-rhyme" id="cornerRhyme">
+              <div class="field-label-row">
+                <label>→ 3h (Vần chính)</label>
+                <button class="btn-clear-field" id="btnClearRhyme" title="Để trống vần chính">✖</button>
+              </div>
+              <input type="text" id="inspRhyme" list="rhymeDatalist" placeholder="Vần chính (vd: iêu)...">
+            </div>
+
+            <!-- HÀNG 2 -->
+            <!-- Mũi tên Dọc Trái: Click ⇅ 7h30 -->
+            <div class="perm-arrow-cell cell-arrow-left">
+              <button class="perm-arrow-btn" id="btnSwapLeft" title="Hoán vị: Click ⇅ 7h30">
+                <span class="swap-icon">⇅</span>
+              </button>
+            </div>
+
+            <!-- Nút Trung Tâm (HUB): 2 Đường Chéo Đối Xứng -->
+            <div class="perm-arrow-cell cell-hub-center">
+              <div class="perm-hub-group">
+                <button class="perm-hub-btn btn-hub-diag1" id="btnSwapDiag1" title="Hoán vị chéo: Click ⤡ 4h30">
+                  <span class="hub-icon">⤡</span>
+                </button>
+                <button class="perm-hub-btn btn-hub-diag2" id="btnSwapDiag2" title="Hoán vị chéo: 7h30 ⤢ 3h">
+                  <span class="hub-icon">⤢</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Mũi tên Dọc Phải: 3h ⇅ 4h30 -->
+            <div class="perm-arrow-cell cell-arrow-right">
+              <button class="perm-arrow-btn" id="btnSwapRight" title="Hoán vị: 3h ⇅ 4h30">
+                <span class="swap-icon">⇅</span>
+              </button>
+            </div>
+
+            <!-- HÀNG 3 -->
+            <!-- Góc Tây Nam: 7h30 (Shortcut 2) -->
+            <div class="perm-corner corner-sc2" id="cornerSc2">
+              <div class="field-label-row">
+                <label>↙ 7h30 (sc2)</label>
+                <button class="btn-clear-field" id="btnClearSc2" title="Để trống shortcut 2">✖</button>
+              </div>
+              <input type="text" id="inspSc2" placeholder="sc2 (vd: nh)...">
+            </div>
+
+            <!-- Mũi tên Ngang Dưới: 7h30 ⇄ 4h30 -->
+            <div class="perm-arrow-cell cell-arrow-bottom">
+              <button class="perm-arrow-btn" id="btnSwapBottom" title="Hoán vị: 7h30 ⇄ 4h30">
+                <span class="swap-icon">⇄</span>
+              </button>
+            </div>
+
+            <!-- Góc Đông Nam: 4h30 (Shortcut 1) -->
+            <div class="perm-corner corner-sc1" id="cornerSc1">
+              <div class="field-label-row">
+                <label>↘ 4h30 (sc1)</label>
+                <button class="btn-clear-field" id="btnClearSc1" title="Để trống shortcut 1">✖</button>
+              </div>
+              <input type="text" id="inspSc1" placeholder="sc1 (vd: ieu)...">
+            </div>
+          </div>
+
+          <!-- CÁC NÚT ĐIỀN NHANH BÊN NGOÀI SƠ ĐỒ (2 CỘT RỘNG RÃI) -->
+          <div class="perm-action-triggers">
+            <button class="btn-perm-trigger trigger-fill" id="btnFillUnaccentedSc1" title="Lấy Vần chính bỏ dấu điền vào 4h30">
+              <span class="trigger-badge">⚡</span>
+              <span>Điền <b id="txtFillUnaccented">"ieu"</b> vào 4h30</span>
+            </button>
+            <button class="btn-perm-trigger trigger-key" id="btnFillKeySc1" title="Điền ký tự phím vào 4h30">
+              <span class="trigger-badge">⚡</span>
+              <span>Điền phím <b id="txtFillKey">[h]</b> vào 4h30</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3X3 LIVE DIRECTION COMPASS MAP -->
+        <div class="key-compass-preview" id="keyCompassPreview">
+          <div class="kcp-header">
+            <span>🧭 BẢN ĐỒ CỬ CHỈ 9 HƯỚNG CỦA PHÍM:</span>
+            <span id="kcpKeyName" style="color: #fff; font-family: var(--font-mono); font-weight: 800;">[h]</span>
+          </div>
+          <div class="kcp-grid">
+            <div class="kcp-cell" id="kcpCellHuyen"><span class="kcp-label">↖ 10h30 (Huyền)</span><span class="kcp-val" id="kcpValHuyen">-</span></div>
+            <div class="kcp-cell" id="kcpCellSac"><span class="kcp-label">↑ 12h (Sắc)</span><span class="kcp-val" id="kcpValSac">-</span></div>
+            <div class="kcp-cell" id="kcpCellHoi"><span class="kcp-label">↗ 1h30 (Hỏi)</span><span class="kcp-val" id="kcpValHoi">-</span></div>
+            <div class="kcp-cell" id="kcpCellNga"><span class="kcp-label">← 9h (Ngã)</span><span class="kcp-val" id="kcpValNga">-</span></div>
+            <div class="kcp-cell kcp-center" id="kcpCellTap"><span class="kcp-label">🎯 Click (Tap)</span><span class="kcp-val" id="kcpValTap" style="color: var(--neon-cyan);">-</span></div>
+            <div class="kcp-cell kcp-main-rhyme" id="kcpCellBang"><span class="kcp-label">→ 3h (Bằng)</span><span class="kcp-val" id="kcpValBang" style="color: var(--neon-green);">-</span></div>
+            <div class="kcp-cell kcp-sc" id="kcpCellSc2"><span class="kcp-label">↙ 7h30 (sc2)</span><span class="kcp-val" id="kcpValSc2" style="color: var(--neon-amber);">-</span></div>
+            <div class="kcp-cell" id="kcpCellNang"><span class="kcp-label">↓ 6h (Nặng)</span><span class="kcp-val" id="kcpValNang">-</span></div>
+            <div class="kcp-cell kcp-sc" id="kcpCellSc1"><span class="kcp-label">↘ 4h30 (sc1)</span><span class="kcp-val" id="kcpValSc1" style="color: var(--neon-amber);">-</span></div>
+          </div>
+        </div>
+
+        <!-- BỘ ĐÁNH GIÁ TRẠNG THÁI PHÍM -->
+        <div class="key-review-section">
+          <div class="review-label">🏷️ Đánh giá trạng thái phím này:</div>
+          <div class="review-options">
+            <button class="btn-review-opt" id="btnReviewPerfect" data-status="perfect">
+              🟢 Hoàn hảo
+            </button>
+            <button class="btn-review-opt" id="btnReviewThinking" data-status="thinking">
+              🟡 Ưng, đang nghĩ bổ sung
+            </button>
+            <button class="btn-review-opt" id="btnReviewWondering" data-status="wondering">
+              🔴 Băn khoăn nút đó
+            </button>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px;">
+          <button class="btn-act btn-act-primary" id="btnApplyKeyChanges">
+            ✓ Cập Nhật & Lưu Phím Này
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SYNC MODAL (IMPORT / EXPORT JSON ĐỒNG BỘ ĐA THIẾT BỊ) -->
+  <div class="legend-overlay" id="syncOverlay"></div>
+  <div class="sync-modal" id="syncModal">
+    <div class="studio-header">
+      <div class="studio-title">
+        <span>📦 ĐỒNG BỘ CẤU HÌNH ĐA THIẾT BỊ (JSON)</span>
+      </div>
+      <button class="btn-close-modal" id="btnCloseSync">✖</button>
+    </div>
+    <div class="sync-tabs">
+      <button class="sync-tab-btn active" id="tabSyncExport">📤 Xuất JSON (Export)</button>
+      <button class="sync-tab-btn" id="tabSyncImport">📥 Nhập JSON (Import)</button>
+    </div>
+
+    <!-- Tab 1: Export Panel -->
+    <div class="sync-panel" id="panelSyncExport">
+      <div class="sync-hint">Sao chép chuỗi JSON dưới đây hoặc tải file .json về máy để chuyển sang thiết bị khác (hoặc lưu dự phòng):</div>
+      <textarea class="sync-textarea" id="syncExportTextarea" readonly></textarea>
+      <div class="sync-actions-row">
+        <button class="btn-act btn-act-primary" id="btnCopySyncJson">📋 Sao Chép JSON</button>
+        <button class="btn-act" id="btnDownloadSyncJson">💾 Tải Tệp .json</button>
+      </div>
+    </div>
+
+    <!-- Tab 2: Import Panel -->
+    <div class="sync-panel" id="panelSyncImport" style="display: none;">
+      <div class="sync-hint">Dán chuỗi JSON đã xuất từ thiết bị khác vào đây hoặc chọn tệp .json từ thiết bị của bạn:</div>
+      <textarea class="sync-textarea" id="syncImportTextarea" placeholder="Dán chuỗi JSON cấu hình vào đây..."></textarea>
+      <div class="sync-actions-row">
+        <label class="btn-act" for="syncFileInput" style="cursor: pointer; display: inline-flex; align-items: center; gap: 4px;">
+          📂 Chọn Tệp .json...
+          <input type="file" id="syncFileInput" accept=".json,application/json" style="display: none;">
+        </label>
+        <button class="btn-act btn-act-primary" id="btnApplyImportJson">⚡ Áp Dụng Cấu Hình (Import)</button>
+      </div>
+      <div class="sync-status-msg" id="syncStatusMsg" style="display: none;"></div>
+    </div>
+  </div>
+
+  <!-- EXPORT MODAL -->
+  <div class="legend-overlay" id="exportOverlay"></div>
+  <div class="export-modal" id="exportModal">
+    <div class="studio-header">
+      <div class="studio-title">
+        <span>📋 XUẤT CẤU HÌNH VCOMP & ANDROID VBOARD</span>
+      </div>
+      <button class="btn-close-modal" id="btnCloseExport">✖</button>
+    </div>
+    <div class="export-tabs">
+      <button class="export-tab-btn active" id="tabExportJs">JavaScript (Web KEY_CONFIG)</button>
+      <button class="export-tab-btn" id="tabExportKotlin">Kotlin (Android DataDictionary.kt)</button>
+    </div>
+    <textarea class="export-textarea" id="exportTextarea" readonly></textarea>
+    <div style="display: flex; justify-content: flex-end; gap: 8px;">
+      <button class="btn-act btn-act-primary" id="btnCopyExport">📋 Sao Chép Vào Clipboard</button>
+    </div>
+  </div>
+
+  <!-- Datalist chứa toàn bộ 169 vần tiếng Việt để gợi ý -->
+  <datalist id="rhymeDatalist"></datalist>
+
+  <script type="module">
+    import { encodeWord, decodeWord, timeToBase60, removeVietnameseTones, applyTone } from './vcomp.js';
+    import { RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2, BASE60_MAPPING } from './data.js';
+ 
+    // === BẢNG VẦN LÕI BASE60 (HỖ TRỢ TÙY BIẾN HOÁN ĐỔI TẦNG B1/B2/B3) ===
+    let CUSTOM_RHYMES_BASE = [...RHYMES_BASE];
+    let CUSTOM_RHYMES_EXTRA_1 = [...RHYMES_EXTRA_1];
+    let CUSTOM_RHYMES_EXTRA_2 = [...RHYMES_EXTRA_2];
+
+    try {
+      const sBase = localStorage.getItem('vcomp_custom_rhymes_base');
+      const sEx1 = localStorage.getItem('vcomp_custom_rhymes_extra_1');
+      const sEx2 = localStorage.getItem('vcomp_custom_rhymes_extra_2');
+      if (sBase) CUSTOM_RHYMES_BASE = JSON.parse(sBase);
+      if (sEx1) CUSTOM_RHYMES_EXTRA_1 = JSON.parse(sEx1);
+      if (sEx2) CUSTOM_RHYMES_EXTRA_2 = JSON.parse(sEx2);
+    } catch (e) {
+      console.warn('Lỗi đọc custom rhymes từ localStorage:', e);
+    }
+
+    // === HÀM HỖ TRỢ DẤU THANH TIẾNG VIỆT CHUẨN XÁC ===
+    function getTonedRhyme(rhyme, tone) {
+      if (!rhyme) return '';
+      return applyTone(rhyme, tone);
+    }
+
+    // Loại bỏ toàn bộ dấu thanh điệu và mũ tiếng Việt (vd: iêu -> ieu, ương -> uong)
+    function stripAllVietnameseAccents(str) {
+      if (!str) return '';
+      return str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D')
+        .normalize('NFC')
+        .toLowerCase();
+    }
+
+    // === CẤU HÌNH DỮ LIỆU VI MẠCH 46 PHÍM (CHIP KEY CONFIG 8-DIRECTION) ===
     const KEY_CONFIG = {
       // --- HÀNG 0: 10 KÝ HIỆU & NGUYÊN ÂM 3 ĐỘC LẬP (: ? " + - = / < > ;) ---
       rowSymbols: [
-        { key: ':', shiftKey: '~', tl: 'ưi', shiftTl: 'ƯI', tr: 'C', bl: '', br: 'C hoa', note: 'ưi (gửi 72 lần) / C = ch' },
-        { key: '?', shiftKey: "'", tl: 'uơ', shiftTl: 'UƠ', tr: 'T', bl: '', br: 'T hoa', note: 'uơ (thuở, quơ) / T = th' },
-        { key: '"', shiftKey: '|', tl: 'ui', shiftTl: 'UI', tr: 'R', bl: '', br: 'R hoa', note: 'ui (vui 128 lần) / R = tr' },
-        { key: '+', shiftKey: '×', tl: 'ươi', shiftTl: 'ƯƠI', tr: 'N', bl: '', br: 'N hoa', note: 'ươi (nguyên âm 3 top 5) / N = ng' },
-        { key: '-', shiftKey: '_', tl: 'oe', shiftTl: 'OE', tr: 'y', bl: '', br: 'y/nh', note: 'oe (144 lần) / y = nh' },
-        { key: '=', shiftKey: '\\', tl: 'uôi', shiftTl: 'UÔI', tr: 'f', bl: '', br: 'f/ph', note: 'uôi (nguyên âm 3) / f = ph' },
-        { key: '/', shiftKey: '[', tl: 'uây', shiftTl: 'UÂY', tr: 'K', bl: '', br: 'K hoa', note: 'uây (nguyên âm 3) / K = kh' },
-        { key: '<', shiftKey: ']', tl: 'oay', shiftTl: 'OAY', tr: 'G', bl: '', br: 'G hoa', note: 'oay (nguyên âm 3) / G = gh' },
-        { key: '>', shiftKey: '{', tl: 'ya',  shiftTl: 'YA',  tr: 'j', bl: '', br: 'gi/j', note: 'ya (khuya) / j = gi' },
-        { key: ';', shiftKey: '}', tl: 'ươu', shiftTl: 'ƯƠU', tr: 'q', bl: '', br: 'qu/q', note: 'ươu (rượu) / q = qu' }
+        { key: ':', rhyme: 'ưi', sc1: ':', sc2: 'ch', tr: 'C', note: 'ưi (gửi) | sc2: ch (C hoa)' },
+        { key: '?', rhyme: 'uơ', sc1: '?', sc2: 'th', tr: 'T', note: 'uơ (thuở, quơ) | sc2: th (T hoa)' },
+        { key: '"', rhyme: 'ui', sc1: '"', sc2: 'tr', tr: 'R', note: 'ui (vui) | sc2: tr (R hoa)' },
+        { key: '+', rhyme: 'ươi', sc1: '+', sc2: 'ng', tr: 'N', note: 'ươi (người) | sc2: ng (N hoa)' },
+        { key: '-', rhyme: 'oe', sc1: '-', sc2: 'nh', tr: 'y', note: 'oe (khoe) | sc2: nh (y/H hoa)' },
+        { key: '=', rhyme: 'uôi', sc1: '=', sc2: 'ph', tr: 'f', note: 'uôi (nuôi, tuổi) | sc2: ph (f)' },
+        { key: '/', rhyme: 'uây', sc1: '/', sc2: 'kh', tr: 'K', note: 'uây (khuấy) | sc2: kh (K hoa)' },
+        { key: '<', rhyme: 'oay', sc1: '<', sc2: 'gh', tr: 'G', note: 'oay (loay hoay) | sc2: gh (G hoa)' },
+        { key: '>', rhyme: 'ya',  sc1: '>', sc2: 'gi', tr: 'j', note: 'ya (khuya) | sc2: gi (j)' },
+        { key: ';', rhyme: 'ươu', sc1: ';', sc2: 'qu', tr: 'q', note: 'ươu (rượu, hươu) | sc2: qu (q)' }
       ],
 
-      // --- HÀNG 1: HÀNG SỐ 1 - 0 (100% NGUYÊN ÂM ĐÔI THUẦN TÚY, ĐỘC LẬP) ---
+      // --- HÀNG 1: HÀNG SỐ 1 - 0 (10 NGUYÊN ÂM ĐÔI KINH ĐIỂN NHẤT) ---
       rowNumbers: [
-        { key: '1', shiftKey: '!', tl: 'ươ', shiftTl: 'ƯƠ', tr: 'uo', bl: '', br: 'được (2074)', note: 'ươ (người 234 lần)' },
-        { key: '2', shiftKey: '@', tl: 'ưa', shiftTl: 'ƯA', tr: 'ua', bl: '', br: 'chưa (1106)', note: 'ưa (1106 lần)' },
-        { key: '3', shiftKey: '#', tl: 'uâ', shiftTl: 'UÂ', tr: 'ua', bl: '', br: 'xuất (394)', note: 'uâ (chuẩn 394 lần)' },
-        { key: '4', shiftKey: '$', tl: 'iê', shiftTl: 'IÊ', tr: 'ie', bl: '', br: 'hiện (4495)', note: 'iê (nhiều, hiện)' },
-        { key: '5', shiftKey: '%', tl: 'ia', shiftTl: 'IA', tr: 'ia', bl: '', br: 'nghĩa (220)', note: 'ia (nghĩa 220 lần)' },
-        { key: '6', shiftKey: '^', tl: 'uô', shiftTl: 'UÔ', tr: 'uo', bl: '', br: 'luôn (943)', note: 'uô (luôn 943 lần)' },
-        { key: '7', shiftKey: '&', tl: 'oa', shiftTl: 'OA', tr: 'oa', bl: '', br: 'toàn (1490)', note: 'oa (toàn, thoại)' },
-        { key: '8', shiftKey: '*', tl: 'oă', shiftTl: 'OĂ', tr: 'oa', bl: '', br: 'hoặc (378)', note: 'oă (hoặc 378 lần)' },
-        { key: '9', shiftKey: '(', tl: 'uy', shiftTl: 'UY', tr: 'uy', bl: '', br: 'quy (543)', note: 'uy (quy 543 lần)' },
-        { key: '0', shiftKey: ')', tl: 'yê', shiftTl: 'YÊ', tr: '0', bl: '', br: 'yêu (520)', note: 'yê (yêu, yếu)' }
+        { key: '1', shiftKey: '!', rhyme: 'ươ', sc1: '1', sc2: 'uo', tr: 'uo', note: 'ươ (trước, được) | sc2: uo' },
+        { key: '2', shiftKey: '@', rhyme: 'ưa', sc1: '2', sc2: 'ua', tr: 'ua', note: 'ưa (chưa, mưa) | sc2: ua' },
+        { key: '3', shiftKey: '#', rhyme: 'uâ', sc1: '3', sc2: 'ua', tr: 'ua', note: 'uâ (chuẩn, xuất) | sc2: ua' },
+        { key: '4', shiftKey: '$', rhyme: 'iê', sc1: '4', sc2: 'ie', tr: 'ie', note: 'iê (tiến, hiện) | sc2: ie' },
+        { key: '5', shiftKey: '%', rhyme: 'ia', sc1: '5', sc2: 'ia', tr: 'ia', note: 'ia (chia, nghĩa) | sc2: ia' },
+        { key: '6', shiftKey: '^', rhyme: 'uô', sc1: '6', sc2: 'uo', tr: 'uo', note: 'uô (luôn, cuộc) | sc2: uo' },
+        { key: '7', shiftKey: '&', rhyme: 'oa', sc1: '7', sc2: 'oa', tr: 'oa', note: 'oa (toàn, hoa) | sc2: oa' },
+        { key: '8', shiftKey: '*', rhyme: 'oă', sc1: '8', sc2: 'oa', tr: 'oa', note: 'oă (hoặc, khoăn) | sc2: oa' },
+        { key: '9', shiftKey: '(', rhyme: 'uy', sc1: '9', sc2: 'uy', tr: 'uy', note: 'uy (quy, tuy) | sc2: uy' },
+        { key: '0', shiftKey: ')', rhyme: 'yê', sc1: '0', sc2: 'ye', tr: '0',  note: 'yê (yêu, chuyện) | sc2: ye' }
       ],
 
       // --- HÀNG 2: QWERTY (10 phím q - p) ---
       rowQWERTY: [
-        { key: 'q', tl: 'qu', tr: 'q', bl: '', br: '', note: 'Phụ âm qu' },
-        { key: 'w', tl: 'ư', tr: 'U', bl: '', br: 'cứu (216)', note: 'ư = U hoa (nguyên âm đơn)' },
-        { key: 'e', tl: 'e', tr: 'E', bl: '', br: 'nếu (1442)', note: 'e / E = ê hoa (nguyên âm đơn)' },
-        { key: 'r', tl: 'êu', tr: 'R', bl: '', br: 'rên (rrz)', note: 'êu (nguyên âm đôi) / R hoa = ă' },
-        { key: 't', tl: 'th', tr: 'T', bl: '', br: '', note: 'th = T hoa VCOMP' },
-        { key: 'y', tl: 'iêu', tr: 'H', bl: '', br: 'thiếu (990)', note: 'iêu (top 1 nguyên âm 3 - 990 lần) / H hoa' },
-        { key: 'u', tl: 'u', tr: 'u', bl: '', br: 'vú (vvs)', note: 'u (nguyên âm đơn)' },
-        { key: 'i', tl: 'i', tr: 'i', bl: '', br: 'chim (QQz)', note: 'i (nguyên âm đơn)' },
-        { key: 'o', tl: 'o', tr: 'o', bl: '', br: 'ôm (zzz)', note: 'o (nguyên âm đơn)' },
-        { key: 'p', tl: 'ph', tr: '0', bl: '', br: '', note: 'ô = 0 VCOMP / ph phụ âm' }
+        { key: 'q', rhyme: 'oan', sc1: 'q', sc2: 'qu',  tr: 'q', note: 'oan | sc1: q | sc2: qu (q)' },
+        { key: 'w', rhyme: 'ư',   sc1: 'w', sc2: 'ngh', tr: 'W', note: 'ư | sc1: w | sc2: ngh (Base60: W)' },
+        { key: 'e', rhyme: 'e',   sc1: 'e', sc2: 'ê',   tr: 'E', note: 'e | sc1: e | sc2: ê (E hoa)' },
+        { key: 'r', rhyme: 'êu',  sc1: 'r', sc2: 'tr',  tr: 'R', note: 'êu | sc1: r | sc2: tr (R hoa)' },
+        { key: 't', rhyme: 'oat', sc1: 't', sc2: 'th',  tr: 'T', note: 'oat | sc1: t | sc2: th (T hoa)' },
+        { key: 'y', rhyme: 'iêu', sc1: 'y', sc2: 'iêu', tr: 'y', note: 'iêu (top 1 nguyên âm 3) | Base60: y' },
+        { key: 'u', rhyme: 'u',   sc1: 'u', sc2: 'U',   tr: 'u', note: 'u | sc1: u | sc2: U' },
+        { key: 'i', rhyme: 'i',   sc1: 'i', sc2: 'I',   tr: 'i', note: 'i | sc1: i | sc2: I' },
+        { key: 'o', rhyme: 'o',   sc1: 'o', sc2: 'ô',   tr: 'o', note: 'o | sc1: o | sc2: ô (0)' },
+        { key: 'p', rhyme: 'ươn', sc1: 'p', sc2: 'p',   tr: 'p', note: 'ươn | sc1: p | sc2: p (Base60: p)' }
       ],
 
       // --- HÀNG 3: ASDF (9 phím a - l) ---
       rowASDF: [
-        { key: 'a', tl: 'ai', tr: 'a', bl: '', br: 'lại (3352)', note: 'ai (3352 lần)' },
-        { key: 's', tl: 'ao', tr: 's', bl: '', br: 'sướng (sss)', note: 'ao (2393 lần)' },
-        { key: 'd', tl: 'ơ', tr: 'ơ', bl: '', br: 'đơ (ddz)', note: 'VCOMP ĐẶC TRƯNG: d = ơ' },
-        { key: 'f', tl: 'au', tr: 'f', bl: '', br: 'huyền', note: 'au (544 lần)' },
-        { key: 'g', tl: 'âu', tr: 'G', bl: '', br: 'gh hoa', note: 'âu (937 lần)' },
-        { key: 'h', tl: 'ay', tr: 'h', bl: '', br: 'hôn (hhz)', note: 'ay (2280 lần)' },
-        { key: 'j', tl: 'ây', tr: 'j', bl: '', br: 'nặng', note: 'ây (1072 lần)' },
-        { key: 'k', tl: 'oi', tr: 'K', bl: '', br: 'kh hoa', note: 'oi (495 lần)' },
-        { key: 'l', tl: 'ôi', tr: 'l', bl: '', br: 'liếm (lls)', note: 'ôi (3906 lần)' }
+        { key: 'a', rhyme: 'ai', sc1: 'a', sc2: 'ă',  tr: 'a', note: 'ai | sc1: a | sc2: ă' },
+        { key: 's', rhyme: 'ao', sc1: 's', sc2: 'x',  tr: 's', note: 'ao | sc1: s | sc2: x' },
+        { key: 'd', rhyme: 'ơ',  sc1: 'd', sc2: 'đ',  tr: 'D', note: 'ơ | sc1: d | sc2: đ (D hoa)' },
+        { key: 'f', rhyme: 'au', sc1: 'f', sc2: 'ph', tr: 'f', note: 'au | sc1: f | sc2: ph (Base60: f)' },
+        { key: 'g', rhyme: 'âu', sc1: 'g', sc2: 'gh', tr: 'G', note: 'âu | sc1: g | sc2: gh (G hoa)' },
+        { key: 'h', rhyme: 'ay', sc1: 'h', sc2: 'nh', tr: 'H', note: 'ay | sc1: h | sc2: nh (Base60: H)' },
+        { key: 'j', rhyme: 'ây', sc1: 'j', sc2: 'gi', tr: 'j', note: 'ây | sc1: j | sc2: gi (j)' },
+        { key: 'k', rhyme: 'oi', sc1: 'k', sc2: 'kh', tr: 'K', note: 'oi | sc1: k | sc2: kh (K hoa)' },
+        { key: 'l', rhyme: 'ôi', sc1: 'l', sc2: 'L',  tr: 'l', note: 'ôi | sc1: l | sc2: L' }
       ],
 
       // --- HÀNG 4: ZXCV (7 phím z - m) ---
       rowZXCV: [
-        { key: 'z', tl: 'ơi', tr: 'z', bl: '', br: 'với (1387)', note: 'ơi (với, lời 1387 lần - độc lập)' },
-        { key: 'x', tl: 'eo', tr: 'x', bl: '', br: 'ngã', note: 'eo (265 lần theo)' },
-        { key: 'c', tl: 'ưu', tr: 'C', bl: '', br: 'cứu (216)', note: 'ưu (cứu, lưu 216 lần - độc lập)' },
-        { key: 'v', tl: 'oai', tr: 'v', bl: '', br: 'ngoài (253)', note: 'oai (ngoài 253 lần - top 4 nguyên âm 3)' },
-        { key: 'b', tl: 'yêu', tr: 'b', bl: '', br: 'yêu (520)', note: 'yêu (liều, tiều 520 lần - top 2 nguyên âm 3)' },
-        { key: 'n', tl: 'iu', tr: 'N', bl: '', br: 'chịu (iu)', note: 'iu (chịu, dịu - độc lập)' },
-        { key: 'm', tl: 'uyê', tr: 'm', bl: '', br: 'khuyên (451)', note: 'uyê (khuyên 451 lần - top 3 nguyên âm 3)' }
+        { key: 'z', rhyme: 'ơi',  sc1: 'z', sc2: 'd',  tr: 'z', note: 'ơi | sc1: z | sc2: d' },
+        { key: 'x', rhyme: 'eo',  sc1: 'x', sc2: 's',  tr: 'x', note: 'eo | sc1: x | sc2: s' },
+        { key: 'c', rhyme: 'ưu',  sc1: 'c', sc2: 'ch', tr: 'C', note: 'ưu | sc1: c | sc2: ch (C hoa)' },
+        { key: 'v', rhyme: 'oai', sc1: 'v', sc2: 'V',  tr: 'v', note: 'oai | sc1: v | sc2: V' },
+        { key: 'b', rhyme: 'yêu', sc1: 'b', sc2: 'B',  tr: 'b', note: 'yêu | sc1: b | sc2: B' },
+        { key: 'n', rhyme: 'iu',  sc1: 'n', sc2: 'ng', tr: 'N', note: 'iu | sc1: n | sc2: ng (N hoa)' },
+        { key: 'm', rhyme: 'uyê', sc1: 'm', sc2: 'M',  tr: 'm', note: 'uyê | sc1: m | sc2: M' }
       ]
     };
 
+    // Bản sao cấu hình mặc định (phục vụ chức năng Reset)
+    const DEFAULT_KEY_CONFIG = JSON.parse(JSON.stringify(KEY_CONFIG));
+
+    // === TOÀN BỘ 169 VẦN TIẾNG VIỆT ĐẦY ĐỦ CHO TÙY BIẾN ===
+    const ALL_VIETNAMESE_RHYMES = [
+      'a', 'ă', 'â', 'e', 'ê', 'i', 'o', 'ô', 'ơ', 'u', 'ư', 'y',
+      'ai', 'ao', 'au', 'ay', 'âu', 'ây', 'eo', 'êu', 'ia', 'iê', 'iu', 'oa', 'oă', 'oe', 'oi', 'ôi', 'ơi', 'ua', 'uâ', 'uê', 'ui', 'uô', 'uơ', 'uy', 'ưa', 'ươ', 'ưi', 'ưu', 'yê', 'ya', 'yn',
+      'ach', 'ac', 'am', 'an', 'ang', 'anh', 'ap', 'at',
+      'ăc', 'ăm', 'ăn', 'ăng', 'ăp', 'ăt',
+      'âc', 'âm', 'ân', 'âng', 'âp', 'ât',
+      'ec', 'em', 'en', 'eng', 'ep', 'et',
+      'êch', 'êm', 'ên', 'ênh', 'êp', 'êt',
+      'ic', 'ich', 'iêm', 'iên', 'iêng', 'iêp', 'iêt', 'im', 'in', 'inh', 'ip', 'it', 'iêu',
+      'oc', 'om', 'on', 'ong', 'op', 'ot',
+      'ôc', 'ôm', 'ôn', 'ông', 'ôp', 'ôt',
+      'ơc', 'ơm', 'ơn', 'ơp', 'ơt',
+      'uc', 'um', 'un', 'ung', 'up', 'ut', 'uôn', 'uông', 'uôt', 'uôi', 'uôm',
+      'ưc', 'ưm', 'ưn', 'ưng', 'ưt', 'ươc', 'ươm', 'ươn', 'ương', 'ươp', 'ươt', 'ươi', 'ươu',
+      'oac', 'oach', 'oam', 'oan', 'oang', 'oanh', 'oap', 'oat', 'oay', 'oen', 'oet', 'ooc', 'oong', 'oăc', 'oăm', 'oăt', 'oai',
+      'uac', 'uan', 'uang', 'uanh', 'uat', 'uay', 'uâng', 'uây', 'uêch', 'uênh', 'uya', 'uych', 'uyn', 'uynh', 'uyp', 'uyt', 'uyu', 'uyên', 'uyêt', 'uât', 'uân',
+      'yêm', 'yên', 'yêng', 'yêt', 'yêu', 'ynh', 'yt'
+    ];
+
+    // === DANH MỤC TỪ NEO VCOMP KINH ĐIỂN (SACRED ANCHORS) ===
+    const SACRED_ANCHORS = {
+      'h': [
+        { rhyme: 'iêu', note: 'hh = hiêu (Anchor B2 - Yêu thích nhất)' },
+        { rhyme: 'ôn', note: 'hh = hôn (Anchor B1 - 07:07)' }
+      ],
+      's': [
+        { rhyme: 'ương', note: 'ss = sương (Anchor B1 - 13:13)' },
+        { rhyme: 'ươn', note: 'ươn (Vần phím p - Hoán đổi linh hoạt)' },
+        { rhyme: 'ươ', note: 'ươ (Vần phím 1 - Tối ưu tổ hợp)' },
+        { rhyme: 'ac', note: 'SS = sạc (Anchor B1 Shift S - 18:18)' }
+      ],
+      'p': [
+        { rhyme: 'ươn', note: 'p = ươn (Mặc định Base60: p)' },
+        { rhyme: 'ương', note: 'p = ương (Nếu hoán đổi với s)' }
+      ],
+      'd': [
+        { rhyme: 'ơ', note: 'dd = đơ (Anchor B1)' },
+        { rhyme: 'âm', note: 'DD = dâm (Anchor B1 - 09:09)' }
+      ],
+      'c': [
+        { rhyme: 'ich', note: 'CC = chịch (Anchor B1 - 11:11)' },
+        { rhyme: 'ưu', note: 'cc = cứu' }
+      ],
+      'r': [
+        { rhyme: 'ên', note: 'rr = rên (Anchor B1 - 12:12)' },
+        { rhyme: 'êu', note: 'rr = rêu' }
+      ],
+      'm': [
+        { rhyme: 'ut', note: 'mm = mút (Anchor B1 - 10:10)' },
+        { rhyme: 'uyê', note: 'mm = khuyên' }
+      ],
+      'v': [
+        { rhyme: 'u', note: 'vv = vú (Anchor B1 - 08:08)' },
+        { rhyme: 'oai', note: 'vv = oai' }
+      ],
+      'n': [
+        { rhyme: 'ưng', note: 'nn = nứng (Anchor B1 - 14:14)' },
+        { rhyme: 'iu', note: 'nn = níu' }
+      ],
+      'b': [
+        { rhyme: 'ươm', note: 'bb = bướm (Anchor B1 - 15:15)' },
+        { rhyme: 'yêu', note: 'bb = yêu' }
+      ],
+      'l': [
+        { rhyme: 'iêm', note: 'll = liếm (Anchor B1 - 16:16)' },
+        { rhyme: 'ôi', note: 'll = lôi' }
+      ],
+      'q': [
+        { rhyme: 'im', note: 'QQ = chim (Anchor B1 - 17:17)' },
+        { rhyme: 'oan', note: 'qq = quan' }
+      ],
+      'z': [
+        { rhyme: 'ôm', note: 'zz = ôm (Anchor B1 - 19:19)' }
+      ],
+      'w': [
+        { rhyme: 'ưc', note: 'NN = ngực (Anchor B1 - 20:20)' },
+        { rhyme: 'ư', note: 'ww = ư' }
+      ],
+      'y': [
+        { rhyme: 'âp', note: 'yy = nhấp (Anchor B1 - 21:21)' },
+        { rhyme: 'yên', note: 'yy = yên' }
+      ],
+      'a': [
+        { rhyme: 'ai', note: 'aa = ai (Anchor tự nhiên)' }
+      ],
+      'x': [
+        { rhyme: 'eo', note: 'xx = xèo' },
+        { rhyme: 'ac', note: 'SS = sạc (Anchor B1 - 18:18)' }
+      ]
+    };
+
+    // Đổ danh sách 169 vần vào datalist gợi ý
+    const rhymeDatalistEl = document.getElementById('rhymeDatalist');
+    if (rhymeDatalistEl) {
+      ALL_VIETNAMESE_RHYMES.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r;
+        rhymeDatalistEl.appendChild(opt);
+      });
+    }
+
+    // Tải cấu hình tùy biến từ localStorage nếu đã lưu trước đó
+    const savedCustomCfg = localStorage.getItem('vcomp_chip_custom_config');
+    if (savedCustomCfg) {
+      try {
+        const parsed = JSON.parse(savedCustomCfg);
+        ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rowId => {
+          if (parsed[rowId] && Array.isArray(parsed[rowId])) {
+            KEY_CONFIG[rowId] = parsed[rowId];
+          }
+        });
+      } catch (err) {
+        console.warn('Lỗi đọc cấu hình vcomp_chip_custom_config', err);
+      }
+    }
+
     // State
-    let currentMode = 'macro'; // 'macro' | 'vcomp' | 'qwerty'
+    let currentMode = 'flick'; // 'flick' | 'vcomp' | 'qwerty'
     let isShifted = false;
     const targetInput = document.getElementById('targetInput');
 
-    // Toggle Shift: Cập nhật động toàn bộ Hàng ký hiệu, Hàng số và Hàng chữ
+    // === TÍNH TOÁN 8 HƯỚNG THEO ĐỘ GÓC CHUẨN XÁC ===
+    function getDirectionFromAngle(deg) {
+      let norm = (deg + 360) % 360;
+      let sector = Math.floor(((norm + 22.5) % 360) / 45);
+      const dirMap = [
+        'bang',      // 0: 3h (Bằng)
+        'shortcut1', // 1: 5h (Shortcut 1)
+        'nang',      // 2: 6h (Nặng)
+        'shortcut2', // 3: 7h30 (Shortcut 2)
+        'nga',       // 4: 9h (Ngã)
+        'huyen',     // 5: 10h30 (Huyền)
+        'sac',       // 6: 12h (Sắc)
+        'hoi'        // 7: 1h30 (Hỏi)
+      ];
+      return dirMap[sector];
+    }
+
+    // Lấy ký tự xuất ra theo hướng
+    function getValueForDirection(cfg, dir) {
+      const rhyme = (cfg.rhyme || '').trim();
+      switch (dir) {
+        case 'sac':       return rhyme ? getTonedRhyme(rhyme, 1) : '';
+        case 'hoi':       return rhyme ? getTonedRhyme(rhyme, 3) : '';
+        case 'bang':      return rhyme ? (getTonedRhyme(rhyme, 0) || rhyme) : '';
+        case 'shortcut1': return cfg.sc1 !== undefined ? cfg.sc1 : cfg.key;
+        case 'nang':      return rhyme ? getTonedRhyme(rhyme, 5) : '';
+        case 'shortcut2': return cfg.sc2 !== undefined ? cfg.sc2 : '';
+        case 'nga':       return rhyme ? getTonedRhyme(rhyme, 4) : '';
+        case 'huyen':     return rhyme ? getTonedRhyme(rhyme, 2) : '';
+        default:          return (cfg.tap !== undefined && cfg.tap !== '') ? cfg.tap : cfg.key;
+      }
+    }
+
+    // Toggle Shift
     function toggleShift() {
       isShifted = !isShifted;
 
-      // 1. Cập nhật Hàng Ký hiệu (Row 0)
       KEY_CONFIG.rowSymbols.forEach(cfg => {
         const el = document.querySelector(`#rowSymbols .chip-key[data-key="${CSS.escape(cfg.key)}"]`);
         if (el) {
           const mainEl = el.querySelector('.chip-main');
-          if (mainEl) mainEl.textContent = isShifted ? cfg.shiftKey : cfg.key;
+          if (mainEl) mainEl.textContent = isShifted ? (cfg.shiftKey || cfg.key) : cfg.key;
         }
       });
 
-      // 2. Cập nhật Hàng Số & Macro Nguyên âm (Row 1)
       KEY_CONFIG.rowNumbers.forEach(cfg => {
         const el = document.querySelector(`#rowNumbers .chip-key[data-key="${CSS.escape(cfg.key)}"]`);
         if (el) {
           const mainEl = el.querySelector('.chip-main');
-          const tlEl = el.querySelector('.chip-tl');
-          const blEl = el.querySelector('.chip-bl');
           if (mainEl) mainEl.textContent = isShifted ? cfg.shiftKey : cfg.key;
-          if (tlEl) tlEl.textContent = isShifted ? (cfg.shiftTl || cfg.tl.toUpperCase()) : cfg.tl;
-          if (blEl) blEl.textContent = isShifted ? (cfg.shiftBl || (cfg.bl ? cfg.bl.toUpperCase() : '')) : (cfg.bl || '');
         }
       });
 
-      // 3. Cập nhật Các Hàng Chữ Cái (Row 2, 3, 4)
       ['rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rowId => {
         KEY_CONFIG[rowId].forEach(cfg => {
           const el = document.querySelector(`#${rowId} .chip-key[data-key="${CSS.escape(cfg.key)}"]`);
           if (el) {
             const mainEl = el.querySelector('.chip-main');
-            const tlEl = el.querySelector('.chip-tl');
-            const blEl = el.querySelector('.chip-bl');
             if (mainEl) mainEl.textContent = isShifted ? cfg.key.toUpperCase() : cfg.key.toLowerCase();
-            if (tlEl && cfg.tl) tlEl.textContent = isShifted ? cfg.tl.toUpperCase() : cfg.tl;
-            if (blEl && cfg.bl) blEl.textContent = isShifted ? cfg.bl.toUpperCase() : cfg.bl;
           }
         });
       });
 
-      // Highlight nút Shift
       const shiftBtn = document.querySelector('#rowZXCV .key-special');
       if (shiftBtn) shiftBtn.classList.toggle('key-accent', isShifted);
     }
@@ -781,7 +2762,6 @@
       container.innerHTML = '';
 
       if (containerId === 'rowZXCV') {
-        // Add Shift Left
         const shiftKey = document.createElement('div');
         shiftKey.className = 'chip-key key-special key-wide-15';
         shiftKey.innerHTML = '<span class="chip-main">⇧ shift</span>';
@@ -793,29 +2773,27 @@
         const keyEl = document.createElement('div');
         keyEl.className = 'chip-key';
         keyEl.dataset.key = cfg.key;
-        keyEl.dataset.shiftKey = cfg.shiftKey || '';
-        keyEl.dataset.tl = cfg.tl || '';
+        keyEl.dataset.rhyme = cfg.rhyme || '';
+        keyEl.dataset.sc1 = cfg.sc1 || '';
+        keyEl.dataset.sc2 = cfg.sc2 || '';
         keyEl.dataset.tr = cfg.tr || '';
-        keyEl.dataset.bl = cfg.bl || '';
-        keyEl.dataset.br = cfg.br || '';
         keyEl.dataset.note = cfg.note || '';
 
         keyEl.innerHTML = `
-          <span class="chip-tl">${cfg.tl || ''}</span>
+          <span class="chip-tl">${cfg.rhyme || ''}</span>
           <span class="chip-tr">${cfg.tr || ''}</span>
           <span class="chip-main">${cfg.key}</span>
-          <span class="chip-bl">${cfg.bl || ''}</span>
-          <span class="chip-br">${cfg.br || ''}</span>
+          <span class="chip-bl">${cfg.sc2 || ''}</span>
+          <span class="chip-br">${cfg.sc1 || ''}</span>
         `;
 
-        // Click handler
-        keyEl.addEventListener('click', (e) => handleKeyClick(cfg, e));
+        // Gán bộ xử lý cử chỉ 8 hướng (Pointer Events: chuột + cảm ứng)
+        attachCompassGestures(keyEl, cfg);
 
         container.appendChild(keyEl);
       });
 
       if (containerId === 'rowZXCV') {
-        // Add Backspace Right
         const bkspKey = document.createElement('div');
         bkspKey.className = 'chip-key key-special key-wide-15';
         bkspKey.innerHTML = '<span class="chip-main">⌫</span>';
@@ -824,23 +2802,315 @@
       }
     }
 
-    // Handle Key Click
-    function handleKeyClick(cfg, event) {
-      let textToInsert = '';
-      if (currentMode === 'macro') {
-        if (isShifted) {
-          textToInsert = cfg.shiftTl || (cfg.tl ? cfg.tl.toUpperCase() : (cfg.shiftKey || cfg.key.toUpperCase()));
-        } else {
-          textToInsert = cfg.tl || cfg.key;
-        }
-      } else if (currentMode === 'vcomp') {
-        textToInsert = cfg.tr || (isShifted ? (cfg.shiftKey || cfg.key.toUpperCase()) : cfg.key);
-      } else {
-        // QWERTY
-        textToInsert = isShifted ? (cfg.shiftKey || cfg.key.toUpperCase()) : cfg.key;
-      }
+    // === HỆ THỐNG GESTURE HUD 8 HƯỚNG (HỖ TRỢ VUỐT NHANH + CHẠM GIỮ BẤM TRỰC TIẾP) ===
+    const compassHud = document.getElementById('compassHud');
+    const compassBackdrop = document.getElementById('compassBackdrop');
+    const hudCenterVal = document.getElementById('hudCenterVal');
+    const hudCenterDir = document.getElementById('hudCenterDir');
+    const hudCenter = compassHud.querySelector('.compass-center');
+    const petals = compassHud.querySelectorAll('.compass-petal');
 
-      insertText(textToInsert);
+    let activeDrag = null;
+    let isHudPinned = false;
+    let pinnedCfg = null;
+    let holdTimer = null;
+
+    function closePinnedHud() {
+      if (holdTimer) {
+        clearTimeout(holdTimer);
+        holdTimer = null;
+      }
+      isHudPinned = false;
+      pinnedCfg = null;
+      compassHud.classList.remove('hud-pinned', 'hud-trackpad');
+      compassHud.style.display = 'none';
+      if (compassBackdrop) compassBackdrop.style.display = 'none';
+      document.querySelectorAll('.chip-key.swiping').forEach(k => k.classList.remove('swiping'));
+    }
+
+    // Gán sự kiện click/chạm trực tiếp vào từng cánh hoa khi ở chế độ ghim
+    petals.forEach(petal => {
+      petal.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+      });
+      petal.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!isHudPinned || !pinnedCfg) return;
+        const dir = petal.dataset.dir;
+        const val = getValueForDirection(pinnedCfg, dir);
+        if (val) {
+          insertText(val);
+        }
+        if (navigator.vibrate) navigator.vibrate(12);
+        closePinnedHud();
+      });
+    });
+
+    // Gán sự kiện click vào tâm vòng tròn khi ghim (Tap)
+    if (hudCenter) {
+      hudCenter.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+      });
+      hudCenter.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!isHudPinned || !pinnedCfg) return;
+        const tapVal = (pinnedCfg.tap !== undefined) ? pinnedCfg.tap : pinnedCfg.key;
+        const text = isShifted ? (pinnedCfg.shiftKey || (tapVal ? tapVal.toUpperCase() : '')) : tapVal;
+        if (text) {
+          insertText(text);
+        }
+        if (navigator.vibrate) navigator.vibrate(10);
+        closePinnedHud();
+      });
+    }
+
+    // Click vào backdrop nền mờ để đóng vòng tròn
+    if (compassBackdrop) {
+      compassBackdrop.addEventListener('pointerdown', (e) => {
+        e.stopPropagation();
+      });
+      compassBackdrop.addEventListener('click', () => {
+        closePinnedHud();
+      });
+    }
+
+    function attachCompassGestures(el, cfg) {
+      el.addEventListener('pointerdown', (e) => {
+        // Chỉ kích hoạt chế độ vuốt nếu đang ở chế độ 8 Hướng
+        if (currentMode !== 'flick') {
+          return;
+        }
+
+        // Nếu đang mở vòng tròn ghim từ phím khác, đóng trước
+        if (isHudPinned) {
+          closePinnedHud();
+        }
+
+        e.preventDefault();
+        try {
+          el.setPointerCapture(e.pointerId);
+        } catch(err) {}
+
+        const rect = el.getBoundingClientRect();
+        const startX = e.clientX;
+        const startY = e.clientY;
+
+        activeDrag = {
+          pointerId: e.pointerId,
+          el: el,
+          cfg: cfg,
+          startX: startX,
+          startY: startY,
+          lastX: startX,
+          lastY: startY,
+          totalPath: 0,
+          lastAngle: null,
+          cumulativeAngle: 0,
+          gestureMode: 'straight', // 'straight' (Chế độ 1) | 'trackpad' (Chế độ 2) | 'pinned' (Chế độ 3)
+          currentDir: null,
+          hasMoved: false
+        };
+
+        el.classList.add('swiping');
+
+        // Cập nhật giá trị hiển thị cho 8 cánh của HUD
+        petals.forEach(petal => {
+          const dir = petal.dataset.dir;
+          const val = getValueForDirection(cfg, dir);
+          petal.querySelector('.petal-val').textContent = val;
+          petal.classList.remove('active');
+        });
+
+        compassHud.classList.remove('hud-pinned', 'hud-trackpad');
+
+        // Đặt vị trí HUD (tự động ép biên an toàn, dịch vào giữa nếu phím ở sát 2 mép màn hình)
+        const HUD_SAFE_HALF = 98; // Bán kính an toàn bao gồm cả độ phóng to scale(1.18) của cánh hoa khi active
+        const screenW = window.innerWidth || document.documentElement.clientWidth;
+        const screenH = window.innerHeight || document.documentElement.clientHeight;
+
+        let hudX = rect.left + rect.width / 2;
+        let hudY = rect.top - 55; // Dịch lên trên 55px để ngón tay không che
+
+        // Tự động ép biên an toàn trục X (khi bấm phím sát mép trái/phải sẽ tự dịch vào trong)
+        hudX = Math.max(HUD_SAFE_HALF, Math.min(screenW - HUD_SAFE_HALF, hudX));
+
+        // Tự động ép biên an toàn trục Y (không để tràn lên đỉnh màn hình)
+        hudY = Math.max(HUD_SAFE_HALF, Math.min(screenH - HUD_SAFE_HALF, hudY));
+
+        compassHud.style.left = `${hudX}px`;
+        compassHud.style.top = `${hudY}px`;
+        compassHud.style.display = 'block';
+
+        const tapVal = (cfg.tap !== undefined) ? cfg.tap : cfg.key;
+        hudCenterVal.textContent = isShifted ? (cfg.shiftKey || (tapVal ? tapVal.toUpperCase() : '')) : tapVal;
+        hudCenterDir.textContent = 'TAP';
+
+        // ĐẶT BỘ ĐẾM THỜI GIAN CHẠM GIỮ (CHẾ ĐỘ 3: GIỮ IM 350MS ĐỂ MỞ VÒNG TRÒN TĨNH)
+        if (holdTimer) clearTimeout(holdTimer);
+        holdTimer = setTimeout(() => {
+          if (!activeDrag || activeDrag.pointerId !== e.pointerId) return;
+          // Chỉ kích hoạt khi ngón tay thực sự giữ im tại chỗ (chưa di chuyển xa < 12px)
+          if (!activeDrag.hasMoved) {
+            activeDrag.gestureMode = 'pinned';
+            isHudPinned = true;
+            pinnedCfg = cfg;
+            compassHud.classList.remove('hud-trackpad');
+            compassHud.classList.add('hud-pinned');
+            if (compassBackdrop) compassBackdrop.style.display = 'block';
+            if (navigator.vibrate) navigator.vibrate(15);
+            try {
+              el.releasePointerCapture(e.pointerId);
+            } catch(err) {}
+          }
+        }, 350);
+      });
+
+      el.addEventListener('pointermove', (e) => {
+        if (!activeDrag || activeDrag.pointerId !== e.pointerId) return;
+
+        const currentX = e.clientX;
+        const currentY = e.clientY;
+        const dx = currentX - activeDrag.startX;
+        const dy = currentY - activeDrag.startY;
+        const dist = Math.hypot(dx, dy);
+
+        // Tính quãng đường từng bước để đo độ cong
+        const stepDist = Math.hypot(currentX - activeDrag.lastX, currentY - activeDrag.lastY);
+        activeDrag.totalPath += stepDist;
+        activeDrag.lastX = currentX;
+        activeDrag.lastY = currentY;
+
+        // Nếu ngón tay bắt đầu di chuyển quá 12px -> Chắc chắn KHÔNG phải Giữ Im (Hủy Hold Timer ngay)
+        if (dist >= 12) {
+          if (holdTimer) {
+            clearTimeout(holdTimer);
+            holdTimer = null;
+          }
+          activeDrag.hasMoved = true;
+        }
+
+        // Tính góc so với tâm xuất phát
+        const deg = Math.atan2(dy, dx) * 180 / Math.PI;
+
+        // Theo dõi độ biến thiên góc để nhận diện vẽ cung tròn / nửa vòng tròn
+        if (dist >= 14) {
+          if (activeDrag.lastAngle !== null) {
+            let angleDiff = Math.abs(deg - activeDrag.lastAngle);
+            if (angleDiff > 180) angleDiff = 360 - angleDiff;
+            activeDrag.cumulativeAngle += angleDiff;
+          }
+          activeDrag.lastAngle = deg;
+
+          // THUẬT TOÁN NHẬN DIỆN CHẾ ĐỘ 2: CUNG TRÒN / BÀN DI CHUỘT TRACKPAD
+          // Nếu góc xoay tích lũy >= 55 độ HOẶC tỉ lệ quãng đường / khoảng cách thẳng >= 1.35
+          if (activeDrag.cumulativeAngle >= 55 || (activeDrag.totalPath / dist >= 1.35 && dist >= 18)) {
+            if (activeDrag.gestureMode !== 'trackpad') {
+              activeDrag.gestureMode = 'trackpad';
+              compassHud.classList.add('hud-trackpad');
+              if (navigator.vibrate) navigator.vibrate(12);
+            }
+          }
+
+          const dir = getDirectionFromAngle(deg);
+
+          if (activeDrag.currentDir !== dir) {
+            activeDrag.currentDir = dir;
+            petals.forEach(p => {
+              if (p.dataset.dir === dir) {
+                p.classList.add('active');
+                const val = getValueForDirection(activeDrag.cfg, dir);
+                hudCenterVal.textContent = val;
+                hudCenterDir.textContent = (activeDrag.gestureMode === 'trackpad' ? '🔄 ' : '') + dir.toUpperCase();
+              } else {
+                p.classList.remove('active');
+              }
+            });
+
+            // Rung haptic nhẹ khi chuyển góc
+            if (navigator.vibrate) navigator.vibrate(8);
+          }
+        } else {
+          // Vùng trung tâm (Tap)
+          activeDrag.currentDir = null;
+          petals.forEach(p => p.classList.remove('active'));
+          const tapVal = (activeDrag.cfg.tap !== undefined) ? activeDrag.cfg.tap : activeDrag.cfg.key;
+          hudCenterVal.textContent = isShifted ? (activeDrag.cfg.shiftKey || (tapVal ? tapVal.toUpperCase() : '')) : tapVal;
+          hudCenterDir.textContent = 'TAP';
+        }
+      });
+
+      const onPointerEnd = (e) => {
+        if (!activeDrag || activeDrag.pointerId !== e.pointerId) return;
+
+        if (holdTimer) {
+          clearTimeout(holdTimer);
+          holdTimer = null;
+        }
+
+        try {
+          el.releasePointerCapture(e.pointerId);
+        } catch (err) {}
+
+        // NẾU LÀ CHẾ ĐỘ 3 (GIỮ IM GHIM TĨNH) VÀ NGƯỜI DÙNG KHÔNG QUẸT:
+        // -> Giữ nguyên vòng tròn mở sẵn để người dùng thoải mái click vào cánh hoa!
+        if (isHudPinned && activeDrag.gestureMode === 'pinned' && !activeDrag.hasMoved) {
+          activeDrag = null;
+          return;
+        }
+
+        // CẢ CHẾ ĐỘ 1 (VUỐT THẲNG) VÀ CHẾ ĐỘ 2 (BÀN DI CUNG TRÒN):
+        // -> Đều đóng HUD ngay khi nhấc tay, tuyệt đối không bao giờ để lại vòng tròn tĩnh!
+        el.classList.remove('swiping');
+        compassHud.style.display = 'none';
+        if (compassBackdrop) compassBackdrop.style.display = 'none';
+        compassHud.classList.remove('hud-pinned', 'hud-trackpad');
+        isHudPinned = false;
+        pinnedCfg = null;
+
+        let textToInsert = '';
+        if (!activeDrag.hasMoved || !activeDrag.currentDir) {
+          // Hành vi chạm Tap nhẹ
+          if (currentMode === 'vcomp') {
+            textToInsert = activeDrag.cfg.tr || activeDrag.cfg.key;
+          } else {
+            if (activeDrag.cfg.tap !== undefined) {
+              textToInsert = isShifted ? (activeDrag.cfg.shiftKey || (activeDrag.cfg.tap ? activeDrag.cfg.tap.toUpperCase() : '')) : activeDrag.cfg.tap;
+            } else {
+              textToInsert = isShifted ? (activeDrag.cfg.shiftKey || activeDrag.cfg.key.toUpperCase()) : activeDrag.cfg.key;
+            }
+          }
+        } else {
+          // Hành vi vuốt 8 hướng (cả Vuốt Thẳng Chế độ 1 và Bàn Di Cung Tròn Chế độ 2)
+          textToInsert = getValueForDirection(activeDrag.cfg, activeDrag.currentDir);
+        }
+
+        if (textToInsert) {
+          insertText(textToInsert);
+        }
+
+        activeDrag = null;
+      };
+
+      el.addEventListener('pointerup', onPointerEnd);
+      el.addEventListener('pointercancel', onPointerEnd);
+
+      // Click fallback cho chế độ QWERTY / VCOMP
+      el.addEventListener('click', (e) => {
+        if (currentMode === 'flick') return; // đã xử lý bởi pointer events
+        let textToInsert = '';
+        if (currentMode === 'vcomp') {
+          textToInsert = cfg.tr || cfg.key;
+        } else {
+          if (cfg.tap !== undefined) {
+            textToInsert = isShifted ? (cfg.shiftKey || (cfg.tap ? cfg.tap.toUpperCase() : '')) : cfg.tap;
+          } else {
+            textToInsert = isShifted ? (cfg.shiftKey || cfg.key.toUpperCase()) : cfg.key;
+          }
+        }
+        if (textToInsert) {
+          insertText(textToInsert);
+        }
+      });
     }
 
     // Insert text at cursor
@@ -868,19 +3138,15 @@
       targetInput.focus();
     }
 
-    // Gboard Controls Event Handlers
+    // Gboard Controls
     document.querySelectorAll('[data-action]').forEach(btn => {
       btn.addEventListener('click', () => {
         const act = btn.dataset.action;
-        if (act === 'space') {
-          insertText(' ');
-        } else if (act === 'comma') {
-          insertText(',');
-        } else if (act === 'dot') {
-          insertText('.');
-        } else if (act === 'enter') {
-          insertText('\n');
-        } else if (act === 'toggle_symbols') {
+        if (act === 'space') insertText(' ');
+        else if (act === 'comma') insertText(',');
+        else if (act === 'dot') insertText('.');
+        else if (act === 'enter') insertText('\n');
+        else if (act === 'toggle_symbols') {
           const rowSym = document.getElementById('rowSymbols');
           rowSym.style.display = (rowSym.style.display === 'none') ? 'flex' : 'none';
         }
@@ -888,22 +3154,36 @@
     });
 
     // Mode Switchers
-    const btnModeMacro = document.getElementById('btnModeMacro');
+    const btnModeFlick = document.getElementById('btnModeFlick');
     const btnModeVcomp = document.getElementById('btnModeVcomp');
     const btnModeQwerty = document.getElementById('btnModeQwerty');
 
     function setMode(mode) {
       currentMode = mode;
-      document.body.className = `mode-${mode}`;
-      [btnModeMacro, btnModeVcomp, btnModeQwerty].forEach(b => b.classList.remove('active'));
-      if (mode === 'macro') btnModeMacro.classList.add('active');
+      [btnModeFlick, btnModeVcomp, btnModeQwerty].forEach(b => b.classList.remove('active'));
+      if (mode === 'flick') btnModeFlick.classList.add('active');
       else if (mode === 'vcomp') btnModeVcomp.classList.add('active');
       else btnModeQwerty.classList.add('active');
     }
 
-    btnModeMacro.onclick = () => setMode('macro');
+    btnModeFlick.onclick = () => setMode('flick');
     btnModeVcomp.onclick = () => setMode('vcomp');
     btnModeQwerty.onclick = () => setMode('qwerty');
+
+    // Modal Legend 8 Directions
+    const btnShowLegend = document.getElementById('btnShowLegend');
+    const btnCloseLegend = document.getElementById('btnCloseLegend');
+    const legendModal = document.getElementById('legendModal');
+    const legendOverlay = document.getElementById('legendOverlay');
+
+    function toggleLegend(show) {
+      legendModal.classList.toggle('open', show);
+      legendOverlay.classList.toggle('open', show);
+    }
+
+    btnShowLegend.onclick = () => toggleLegend(true);
+    btnCloseLegend.onclick = () => toggleLegend(false);
+    legendOverlay.onclick = () => toggleLegend(false);
 
     // Initial render
     renderRow('rowSymbols', KEY_CONFIG.rowSymbols);
@@ -912,262 +3192,397 @@
     renderRow('rowASDF', KEY_CONFIG.rowASDF);
     renderRow('rowZXCV', KEY_CONFIG.rowZXCV);
 
-    // === CHIP SEARCH & NEON GLOW HIGHLIGHT LOGIC ===
+    // === CHIP SEARCH & MULTI-TOKEN HIGHLIGHT LOGIC ===
     const chipSearchInput = document.getElementById('chipSearchInput');
     const btnSearchClear = document.getElementById('btnSearchClear');
-    const searchStats = document.getElementById('searchStats');
     const keyboardWrapper = document.getElementById('keyboardWrapper');
+    // === BỘ PHÂN TÍCH NGỮ ÂM THÔNG MINH CHO TÌM KIẾM ===
+    const ONSETS_MULTI = ['ngh', 'ng', 'nh', 'ch', 'th', 'tr', 'kh', 'gh', 'ph', 'qu', 'gi'];
+    const ONSETS_SINGLE = ['b', 'c', 'd', 'đ', 'g', 'h', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'x'];
+    const NUCLEI_MULTI = [
+      'iêu', 'yêu', 'uyê', 'oai', 'ươi', 'uôi', 'uây', 'oay', 'ươu', 'oeo', 'uya',
+      'ia', 'iê', 'yê', 'ua', 'uô', 'ưa', 'ươ', 'ai', 'ao', 'au', 'ay', 'âu', 'ây',
+      'eo', 'êu', 'oa', 'oă', 'oe', 'oi', 'ôi', 'ơi', 'ui', 'ưi', 'ưu', 'uy', 'uơ', 'uâ'
+    ];
+    const CODAS_MULTI = ['ng', 'nh', 'ch'];
+    const CODAS_SINGLE = ['c', 'm', 'n', 'p', 't'];
+
+    function decomposeWord(word) {
+      let lower = word.toLowerCase().trim();
+      const [cleanWord, tone] = removeVietnameseTones(lower);
+
+      // 1. Phụ âm đầu c1
+      let c1 = '';
+      for (const o of ONSETS_MULTI) {
+        if (lower.startsWith(o) || cleanWord.startsWith(o)) {
+          c1 = o;
+          break;
+        }
+      }
+      if (!c1) {
+        for (const o of ONSETS_SINGLE) {
+          if (lower.startsWith(o) || cleanWord.startsWith(o)) {
+            c1 = o;
+            break;
+          }
+        }
+      }
+
+      const remainderClean = cleanWord.substring(c1.length);
+      const remainderOrig = lower.substring(c1.length);
+
+      // 2. Phụ âm cuối c3
+      let c3 = '';
+      for (const c of CODAS_MULTI) {
+        if (remainderClean.endsWith(c)) {
+          c3 = c;
+          break;
+        }
+      }
+      if (!c3) {
+        for (const c of CODAS_SINGLE) {
+          if (remainderClean.endsWith(c)) {
+            c3 = c;
+            break;
+          }
+        }
+      }
+
+      // 3. Nguyên âm giữa
+      let nucClean = remainderClean.substring(0, remainderClean.length - c3.length);
+      let nucOrig = remainderOrig.substring(0, remainderOrig.length - c3.length);
+
+      let matchedNucleus = '';
+      const sortedNuclei = [...NUCLEI_MULTI].sort((a, b) => b.length - a.length);
+      for (const vm of sortedNuclei) {
+        if (nucOrig === vm || (nucOrig.length >= vm.length && nucOrig.includes(vm))) {
+          matchedNucleus = vm;
+          break;
+        }
+      }
+      if (!matchedNucleus) {
+        // Fallback cho từ gõ không dấu (ví dụ truong -> ươ/uô, nguoi -> ươi)
+        if (nucClean === 'uo') matchedNucleus = 'ươ';
+        else if (nucClean === 'ua') matchedNucleus = 'ưa';
+        else if (nucClean === 'ie') matchedNucleus = 'iê';
+        else matchedNucleus = nucOrig || nucClean;
+      }
+
+      const isCompoundOnset = ONSETS_MULTI.includes(c1);
+      const isCompoundNucleus = NUCLEI_MULTI.includes(matchedNucleus) || NUCLEI_MULTI.includes(nucOrig);
+
+      return { c1, nucleus: matchedNucleus, c3, isCompoundOnset, isCompoundNucleus };
+    }
+
+    function getSearchTokens(rawQuery) {
+      if (!rawQuery) return [];
+      const cleanQ = rawQuery.trim().toLowerCase();
+      
+      // Nếu có khoảng trắng: người dùng cố tình tìm các âm rời (ví dụ "a e", "tr uong")
+      if (cleanQ.includes(' ')) {
+        return cleanQ.split(/[\s,]+/).filter(Boolean);
+      }
+
+      // Luôn đưa chính chuỗi tìm kiếm vào danh sách tokens ưu tiên cao nhất
+      const tokens = [cleanQ];
+
+      // Nếu là 1 từ liền (ví dụ "trường", "truong", "con", "cháo", "người", "hôm")
+      const decomp = decomposeWord(cleanQ);
+      if (decomp.c1 && !tokens.includes(decomp.c1)) tokens.push(decomp.c1);
+      if (decomp.nucleus && !tokens.includes(decomp.nucleus)) tokens.push(decomp.nucleus);
+      if (decomp.c3 && !tokens.includes(decomp.c3)) tokens.push(decomp.c3);
+      
+      // Nếu có tổ hợp vần nucleus + c3 (ví dụ "ông", "ươc", "uât")
+      const fullRhyme = (decomp.nucleus || '') + (decomp.c3 || '');
+      if (fullRhyme && fullRhyme !== cleanQ && !tokens.includes(fullRhyme)) {
+        tokens.push(fullRhyme);
+      }
+
+      return tokens;
+    }
+
+    // Thu thập toàn bộ vần phụ ẩn từ lõi Base60 (B1, B2, B3 & Shift) cho 1 phím
+    function getKeyExtraRhymes(key, tr) {
+      const list = [];
+      if (!key) return list;
+      const lowChar = key.toLowerCase();
+      const upChar = key.toUpperCase();
+      const isAlpha = /^[a-zA-Z]$/.test(key);
+      const isDigit = /^[0-9]$/.test(key);
+
+      const addRhyme = (rhyme, label) => {
+        if (rhyme && rhyme !== '-' && rhyme !== 'null') {
+          list.push({
+            rhyme: rhyme.toLowerCase().trim(),
+            origRhyme: rhyme.trim(),
+            label
+          });
+        }
+      };
+
+      if (isAlpha) {
+        // 1. Chữ thường (a-z)
+        const lowIdx = BASE60_MAPPING.indexOf(lowChar);
+        if (lowIdx !== -1) {
+          addRhyme(CUSTOM_RHYMES_BASE[lowIdx], 'B1');
+          addRhyme(CUSTOM_RHYMES_EXTRA_1[lowIdx], 'B2');
+          addRhyme(CUSTOM_RHYMES_EXTRA_2[lowIdx], 'B3');
+        }
+        // 2. Chữ hoa / Shift (A-Z)
+        const upIdx = BASE60_MAPPING.indexOf(upChar);
+        if (upIdx !== -1) {
+          addRhyme(CUSTOM_RHYMES_BASE[upIdx], '⇧B1');
+          addRhyme(CUSTOM_RHYMES_EXTRA_1[upIdx], '⇧B2');
+          addRhyme(CUSTOM_RHYMES_EXTRA_2[upIdx], '⇧B3');
+        }
+      } else if (isDigit) {
+        // Phím số (0-9)
+        const digIdx = BASE60_MAPPING.indexOf(key);
+        if (digIdx !== -1) {
+          addRhyme(CUSTOM_RHYMES_BASE[digIdx], 'B1');
+          addRhyme(CUSTOM_RHYMES_EXTRA_1[digIdx], 'B2');
+          addRhyme(CUSTOM_RHYMES_EXTRA_2[digIdx], 'B3');
+        }
+      }
+
+      // 3. Phím ký hiệu có mã Base60 tr (ví dụ tr: 'C', 'T', 'R'...)
+      if (tr) {
+        const trIdx = BASE60_MAPPING.indexOf(tr);
+        if (trIdx !== -1) {
+          addRhyme(CUSTOM_RHYMES_BASE[trIdx], 'B1');
+          addRhyme(CUSTOM_RHYMES_EXTRA_1[trIdx], 'B2');
+          addRhyme(CUSTOM_RHYMES_EXTRA_2[trIdx], 'B3');
+        }
+      }
+
+      return list;
+    }
+
+    function scoreKeyMatch(cfg, token) {
+      if (!token) return { score: 0, isExtra: false };
+      const tok = token.toLowerCase();
+      const key = (cfg.key || '').toLowerCase();
+      const rhyme = (cfg.rhyme || '').toLowerCase();
+      const sc1 = (cfg.sc1 || '').toLowerCase();
+      const sc2 = (cfg.sc2 || '').toLowerCase();
+      const tr = (cfg.tr || '').toLowerCase();
+      const note = (cfg.note || '').toLowerCase();
+
+      // 1. Khớp tuyệt đối với thuộc tính in trực tiếp trên phím
+      if (key === tok) return { score: 3.5, isExtra: false };
+      if (rhyme === tok) return { score: 3.2, isExtra: false };
+      if (sc1 === tok || sc2 === tok) return { score: 3.0, isExtra: false };
+
+      // 2. Khớp tuyệt đối với vần phụ ẩn trong lõi Base60 (B2, B3, Shift B1/B2/B3)
+      const extraList = getKeyExtraRhymes(cfg.key, cfg.tr);
+      for (const item of extraList) {
+        if (item.rhyme === tok) {
+          const isAlreadyPrinted = (item.rhyme === rhyme || item.rhyme === sc1 || item.rhyme === sc2);
+          return {
+            score: isAlreadyPrinted ? 3.0 : 2.9,
+            isExtra: !isAlreadyPrinted,
+            extraRhyme: item.origRhyme,
+            extraLabel: item.label
+          };
+        }
+      }
+
+      // 3. Khớp chứa (Containment) trên vần chính
+      if (rhyme && tok.length >= 2 && rhyme.length >= 2) {
+        if (tok.includes(rhyme) || rhyme.includes(tok)) {
+          return { score: 2.5, isExtra: false };
+        }
+      }
+
+      // 4. Khớp chứa (Containment) trên vần phụ B2/B3
+      for (const item of extraList) {
+        if (item.rhyme && tok.length >= 2 && item.rhyme.length >= 2) {
+          if (tok.includes(item.rhyme) || item.rhyme.includes(tok)) {
+            const isAlreadyPrinted = (item.rhyme === rhyme || item.rhyme === sc1 || item.rhyme === sc2);
+            return {
+              score: 2.2,
+              isExtra: !isAlreadyPrinted,
+              extraRhyme: item.origRhyme,
+              extraLabel: item.label
+            };
+          }
+        }
+      }
+
+      if (tr === tok) return { score: 2.0, isExtra: false };
+      if (tok.length >= 2 && note.includes(tok)) return { score: 1.0, isExtra: false };
+
+      return { score: 0, isExtra: false };
+    }
 
     function performSearch() {
       const rawQuery = chipSearchInput.value.trim().toLowerCase();
+      const allKeys = document.querySelectorAll('.chip-key[data-key]');
+      const searchStats = document.getElementById('chipSearchStats');
+
+      // Reset previous highlights and remove extra badges
+      allKeys.forEach(el => {
+        el.classList.remove(
+          'key-highlight',
+          'key-highlight-0',
+          'key-highlight-1',
+          'key-highlight-2',
+          'key-highlight-3',
+          'key-highlight-multi',
+          'key-has-extra'
+        );
+        const existingBadge = el.querySelector('.chip-extra-badge');
+        if (existingBadge) existingBadge.remove();
+      });
+
       if (!rawQuery) {
         keyboardWrapper.classList.remove('searching');
-        document.querySelectorAll('.chip-key').forEach(el => el.classList.remove('key-highlight'));
         btnSearchClear.style.display = 'none';
-        searchStats.innerHTML = 'Gõ từ khóa để làm sáng các phím khớp';
+        if (searchStats) {
+          searchStats.style.display = 'none';
+          searchStats.textContent = '';
+        }
         return;
       }
 
       btnSearchClear.style.display = 'inline-block';
       keyboardWrapper.classList.add('searching');
 
-      const tokens = rawQuery.split(/[\s,]+/).filter(t => t.length > 0);
-      const allKeys = document.querySelectorAll('.chip-key[data-key]');
-      let matchCount = 0;
-      const matchedKeysList = [];
+      const tokens = getSearchTokens(rawQuery);
+      let totalMatchCount = 0;
+      let extraMatchCount = 0;
 
       allKeys.forEach(el => {
-        const key = (el.dataset.key || '').toLowerCase();
-        const shiftKey = (el.dataset.shiftKey || '').toLowerCase();
-        const tl = (el.dataset.tl || '').toLowerCase();
-        const tr = (el.dataset.tr || '').toLowerCase();
-        const bl = (el.dataset.bl || '').toLowerCase();
-        const br = (el.dataset.br || '').toLowerCase();
-        const note = (el.dataset.note || '').toLowerCase();
+        const keyCfg = {
+          key: el.dataset.key || '',
+          rhyme: el.dataset.rhyme || '',
+          sc1: el.dataset.sc1 || '',
+          sc2: el.dataset.sc2 || '',
+          tr: el.dataset.tr || '',
+          note: el.dataset.note || ''
+        };
 
-        // Check if ANY token matches
-        let isMatched = false;
-        for (const token of tokens) {
-          if (
-            key === token ||
-            shiftKey === token ||
-            tl === token ||
-            tl.includes(token) ||
-            tr === token ||
-            tr.includes(token) ||
-            bl === token ||
-            bl.includes(token) ||
-            br.includes(token) ||
-            note.includes(token)
-          ) {
-            isMatched = true;
-            break;
+        let bestTokenIdx = -1;
+        let bestScore = 0;
+        let bestExtra = null;
+        let matchedTokenIndices = [];
+
+        for (let i = 0; i < tokens.length; i++) {
+          const res = scoreKeyMatch(keyCfg, tokens[i]);
+          if (res.score > 0) {
+            matchedTokenIndices.push(i);
+            if (res.score > bestScore) {
+              bestScore = res.score;
+              bestTokenIdx = i;
+              bestExtra = res.isExtra ? { extraRhyme: res.extraRhyme, extraLabel: res.extraLabel } : null;
+            } else if (res.score === bestScore && res.isExtra && !bestExtra) {
+              bestExtra = { extraRhyme: res.extraRhyme, extraLabel: res.extraLabel };
+            }
+          }
+        }
+
+        if (bestScore > 0) {
+          totalMatchCount++;
+          if (matchedTokenIndices.length > 1 && tokens.length > 1) {
+            el.classList.add('key-highlight', 'key-highlight-multi');
+          } else {
+            const colorClass = `key-highlight-${bestTokenIdx % 4}`;
+            el.classList.add('key-highlight', colorClass);
           }
 
-          // Smart phonetic & VCOMP aliases
-          if (token === 'ê' && (tr === 'e' || note.includes('ê') || tl === 'ê' || tl === 'e')) { isMatched = true; break; }
-          if (token === 'ư' && (tr === 'u' || note.includes('ư') || tl === 'ư')) { isMatched = true; break; }
-          if (token === 'ơ' && (key === 'd' || tr === 'ơ' || tr === 'd' || tl === 'ơ' || note.includes('ơ'))) { isMatched = true; break; }
-          if (token === 'ô' && (tr === '0' || note.includes('ô') || tl === 'ô')) { isMatched = true; break; }
-          if (token === 'ă' && (tr === 'r' || note.includes('ă'))) { isMatched = true; break; }
-          if (token === 'â' && (tr === 'a' || note.includes('â'))) { isMatched = true; break; }
-          if (token === 'ch' && (key === 'c' || key === ':' || note.includes('ch'))) { isMatched = true; break; }
-          if (token === 'th' && (key === 't' || key === '?' || note.includes('th'))) { isMatched = true; break; }
-          if (token === 'tr' && (key === 'r' || key === '"' || note.includes('tr'))) { isMatched = true; break; }
-          if (token === 'ng' && (key === 'n' || key === '+' || note.includes('ng'))) { isMatched = true; break; }
-          if (token === 'nh' && (key === 'y' || key === '-' || note.includes('nh'))) { isMatched = true; break; }
-          if (token === 'ph' && (key === 'p' || key === '=' || note.includes('ph'))) { isMatched = true; break; }
-          if (token === 'kh' && (key === 'k' || key === '/' || note.includes('kh'))) { isMatched = true; break; }
-          if (token === 'gh' && (key === 'g' || key === '<' || note.includes('gh'))) { isMatched = true; break; }
-          if (token === 'gi' && (key === 'j' || key === '>' || note.includes('gi'))) { isMatched = true; break; }
-          if (token === 'qu' && (key === 'q' || key === ';' || note.includes('qu'))) { isMatched = true; break; }
-        }
-
-        if (isMatched) {
-          el.classList.add('key-highlight');
-          matchCount++;
-          matchedKeysList.push(el.dataset.key);
-        } else {
-          el.classList.remove('key-highlight');
+          // Nếu khớp qua vần phụ ẩn, gắn badge động vào khu vực trống của phím
+          if (bestExtra) {
+            extraMatchCount++;
+            el.classList.add('key-has-extra');
+            const badge = document.createElement('span');
+            badge.className = 'chip-extra-badge' + (bestExtra.extraLabel.includes('⇧') ? ' badge-shift' : '');
+            badge.textContent = `★ ${bestExtra.extraRhyme} (${bestExtra.extraLabel})`;
+            badge.title = `Vần phụ: "${bestExtra.extraRhyme}" thuộc tầng ${bestExtra.extraLabel}`;
+            el.appendChild(badge);
+          }
         }
       });
 
-      // Đồng bộ trạng thái active của các thẻ tra cứu bên dưới
-      document.querySelectorAll('.lookup-tag').forEach(tag => {
-        if (tokens.includes(tag.dataset.sound.toLowerCase())) {
-          tag.classList.add('active');
+      if (searchStats) {
+        searchStats.style.display = 'inline-block';
+        if (totalMatchCount === 0) {
+          searchStats.textContent = 'Không tìm thấy phím';
+          searchStats.style.color = '#ef4444';
         } else {
-          tag.classList.remove('active');
+          searchStats.style.color = 'var(--neon-green)';
+          let text = `${totalMatchCount} phím khớp`;
+          if (extraMatchCount > 0) {
+            text += ` (${extraMatchCount} vần phụ ẩn)`;
+          }
+          searchStats.textContent = text;
         }
-      });
-
-      if (matchCount > 0) {
-        searchStats.innerHTML = `<span style="color: var(--neon-cyan);">Tìm thấy <b>${matchCount}</b> phím:</span> <b style="color: #fff;">[${matchedKeysList.join('], [')}]</b>`;
-      } else {
-        searchStats.innerHTML = `<span style="color: #ef4444;">Không tìm thấy phím khớp</span>`;
       }
     }
 
     chipSearchInput.addEventListener('input', performSearch);
-
     btnSearchClear.onclick = () => {
       chipSearchInput.value = '';
       performSearch();
       chipSearchInput.focus();
     };
 
-    // Shortcut ESC to clear search
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && document.activeElement === chipSearchInput) {
-        chipSearchInput.value = '';
-        performSearch();
-        targetInput.focus();
-      }
-    });
+    // === TRA CỨU ÂM VẦN TỰ ĐỘNG CẬP NHẬT THEO CẤU HÌNH PHÍM ===
+    function getDynamicLookupItems() {
+      const items = [];
+      const seen = new Set();
 
-    // === BẢNG TRA CỨU NHANH THEO THỨ TỰ A - Z (QUICK LOOKUP TAGS) ===
-    const LOOKUP_ITEMS = [
-      // Nguyên âm đôi (26 âm thực chiến - đều có phím riêng độc lập)
-      { text: 'ai', type: 'vowel2', desc: 'phím a' },
-      { text: 'ao', type: 'vowel2', desc: 'phím s' },
-      { text: 'au', type: 'vowel2', desc: 'phím f' },
-      { text: 'ay', type: 'vowel2', desc: 'phím h' },
-      { text: 'âu', type: 'vowel2', desc: 'phím g' },
-      { text: 'ây', type: 'vowel2', desc: 'phím j' },
-      { text: 'eo', type: 'vowel2', desc: 'phím x' },
-      { text: 'êu', type: 'vowel2', desc: 'phím r' },
-      { text: 'ia', type: 'vowel2', desc: 'phím 5' },
-      { text: 'iê', type: 'vowel2', desc: 'phím 4' },
-      { text: 'iu', type: 'vowel2', desc: 'phím n' },
-      { text: 'oa', type: 'vowel2', desc: 'phím 7' },
-      { text: 'oă', type: 'vowel2', desc: 'phím 8' },
-      { text: 'oe', type: 'vowel2', desc: 'phím -' },
-      { text: 'oi', type: 'vowel2', desc: 'phím k' },
-      { text: 'ôi', type: 'vowel2', desc: 'phím l' },
-      { text: 'ơi', type: 'vowel2', desc: 'phím z' },
-      { text: 'uâ', type: 'vowel2', desc: 'phím 3' },
-      { text: 'ui', type: 'vowel2', desc: 'phím "' },
-      { text: 'uô', type: 'vowel2', desc: 'phím 6' },
-      { text: 'uơ', type: 'vowel2', desc: 'phím ?' },
-      { text: 'uy', type: 'vowel2', desc: 'phím 9' },
-      { text: 'ưa', type: 'vowel2', desc: 'phím 2' },
-      { text: 'ươ', type: 'vowel2', desc: 'phím 1' },
-      { text: 'ưi', type: 'vowel2', desc: 'phím :' },
-      { text: 'ưu', type: 'vowel2', desc: 'phím c' },
-      { text: 'yê', type: 'vowel2', desc: 'phím 0' },
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+        KEY_CONFIG[rId].forEach(cfg => {
+          if (cfg.rhyme && !seen.has('rhyme:' + cfg.rhyme)) {
+            seen.add('rhyme:' + cfg.rhyme);
+            const isVowel3 = cfg.rhyme.length >= 3;
+            const isAnchor = SACRED_ANCHORS[cfg.key] && SACRED_ANCHORS[cfg.key].some(a => a.rhyme.toLowerCase() === cfg.rhyme.toLowerCase());
+            items.push({
+              text: cfg.rhyme,
+              type: isVowel3 ? 'vowel3' : 'vowel2',
+              desc: `phím ${cfg.key}${isAnchor ? ' ⭐' : ''}`
+            });
+          }
 
-      // Nguyên âm 3 (top 4 giờ ở khu vực giữa dễ thao tác)
-      { text: 'iêu', type: 'vowel3', desc: 'phím y ⭐' },
-      { text: 'yêu', type: 'vowel3', desc: 'phím b ⭐' },
-      { text: 'uyê', type: 'vowel3', desc: 'phím m ⭐' },
-      { text: 'oai', type: 'vowel3', desc: 'phím v ⭐' },
-      { text: 'ươi', type: 'vowel3', desc: 'phím +' },
-      { text: 'uôi', type: 'vowel3', desc: 'phím =' },
-      { text: 'uây', type: 'vowel3', desc: 'phím /' },
-      { text: 'oay', type: 'vowel3', desc: 'phím <' },
-      { text: 'ya',  type: 'vowel3', desc: 'phím >' },
-      { text: 'ươu', type: 'vowel3', desc: 'phím ;' },
+          if (cfg.sc2 && cfg.sc2.length >= 2 && !seen.has('sc2:' + cfg.sc2)) {
+            seen.add('sc2:' + cfg.sc2);
+            items.push({
+              text: cfg.sc2,
+              type: 'consonant',
+              desc: `sc2: ${cfg.key} (${cfg.tr || ''})`
+            });
+          }
 
-      // Phụ âm kép
-      { text: 'ch', type: 'consonant', desc: 'phím c / :' },
-      { text: 'gh', type: 'consonant', desc: 'phím < / g' },
-      { text: 'gi', type: 'consonant', desc: 'phím > / j' },
-      { text: 'kh', type: 'consonant', desc: 'phím / / k' },
-      { text: 'ng', type: 'consonant', desc: 'phím + / n' },
-      { text: 'ngh', type: 'consonant', desc: 'phím z' },
-      { text: 'nh', type: 'consonant', desc: 'phím - / y' },
-      { text: 'ph', type: 'consonant', desc: 'phím = / p' },
-      { text: 'qu', type: 'consonant', desc: 'phím ; / q' },
-      { text: 'th', type: 'consonant', desc: 'phím ? / t' },
-      { text: 'tr', type: 'consonant', desc: 'phím " / r' },
+          // Thu thập thêm các vần phụ B2, B3 từ lõi Base60
+          const extraList = getKeyExtraRhymes(cfg.key, cfg.tr);
+          extraList.forEach(ex => {
+            if (ex.rhyme && !seen.has('rhyme:' + ex.rhyme)) {
+              seen.add('rhyme:' + ex.rhyme);
+              items.push({
+                text: ex.origRhyme,
+                type: 'extra',
+                desc: `phím ${cfg.key} (${ex.label})`
+              });
+            }
+          });
+        });
+      });
 
-      // Âm đặc trưng VCOMP
-      { text: 'đơ', type: 'vowel2', desc: 'phím d (ơ)' }
-    ];
-
-    // Sắp xếp toàn bộ mảng theo thứ tự chữ cái Tiếng Việt A - Z
-    LOOKUP_ITEMS.sort((a, b) => a.text.localeCompare(b.text, 'vi'));
+      items.sort((a, b) => a.text.localeCompare(b.text, 'vi'));
+      return items;
+    }
 
     const lookupTagsContainer = document.getElementById('lookupTagsContainer');
     const lookupCountBadge = document.getElementById('lookupCountBadge');
+    let currentFilterType = 'all';
 
-    let currentLookupFilter = 'all';
-
-    // Phát sáng toàn bộ các phím thuộc nhóm được chọn
-    function highlightSoundGroup(groupType) {
-      // Xóa các tag active riêng lẻ
-      document.querySelectorAll('.lookup-tag').forEach(t => t.classList.remove('active'));
-
-      if (groupType === 'all') {
-        keyboardWrapper.classList.remove('searching');
-        document.querySelectorAll('.chip-key').forEach(el => el.classList.remove('key-highlight'));
-        btnSearchClear.style.display = 'none';
-        searchStats.innerHTML = 'Gõ từ khóa hoặc chọn âm để làm sáng phím';
-        return;
-      }
-
-      btnSearchClear.style.display = 'inline-block';
-      keyboardWrapper.classList.add('searching');
-
-      const allKeys = document.querySelectorAll('.chip-key[data-key]');
-      let matchCount = 0;
-      const matchedKeysList = [];
-
-      allKeys.forEach(el => {
-        const key = (el.dataset.key || '').toLowerCase();
-        const tl = (el.dataset.tl || '').toLowerCase();
-        const tr = (el.dataset.tr || '').toLowerCase();
-        const note = (el.dataset.note || '').toLowerCase();
-
-        let isMatched = false;
-
-        if (groupType === 'vowel2') {
-          // Nguyên âm đôi: Hàng số 1-0 và các phím chữ cái nguyên âm đôi
-          const vowel2NumberKeys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
-          const vowel2LetterKeys = ['r', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'n'];
-          if (vowel2NumberKeys.includes(key) || vowel2LetterKeys.includes(key)) {
-            isMatched = true;
-          }
-        } else if (groupType === 'vowel3') {
-          // Nguyên âm 3: toàn bộ Hàng 0 (: ? " + - = / < > ;)
-          const vowel3Row0 = [':', '?', '"', '+', '-', '=', '/', '<', '>', ';'];
-          if (vowel3Row0.includes(key) || ['iêu', 'uyê', 'oai', 'ươi', 'yêu', 'uôi', 'uây', 'oay', 'ya', 'ươu'].some(s => tl === s)) {
-            isMatched = true;
-          }
-        } else if (groupType === 'consonant') {
-          // Phụ âm kép: Row 0 (: ? " + - = / < > ;) và các phím chữ phụ âm (q, t, p, c, z, g, j, k, n, r)
-          const consonantRow0 = [':', '?', '"', '+', '-', '=', '/', '<', '>', ';'];
-          const consonantLetters = ['q', 't', 'p', 'c', 'z', 'g', 'j', 'k', 'n', 'r', 'y'];
-          if (consonantRow0.includes(key) || consonantLetters.includes(key) || ['ch', 'gh', 'gi', 'kh', 'ng', 'ngh', 'nh', 'ph', 'qu', 'th', 'tr'].some(s => note.includes(s))) {
-            isMatched = true;
-          }
-        }
-
-        if (isMatched) {
-          el.classList.add('key-highlight');
-          matchCount++;
-          matchedKeysList.push(el.dataset.key);
-        } else {
-          el.classList.remove('key-highlight');
-        }
-      });
-
-      const groupNames = {
-        vowel2: 'Nguyên âm đôi',
-        vowel3: 'Nguyên âm 3',
-        consonant: 'Phụ âm kép'
-      };
-
-      searchStats.innerHTML = `<span style="color: var(--neon-cyan);">Đang làm sáng <b>${matchCount}</b> phím [${groupNames[groupType] || groupType}]</span>`;
-    }
-
-    function renderLookupTags(filterType = 'all') {
-      currentLookupFilter = filterType;
+    function renderLookupTags(filterType = currentFilterType) {
+      currentFilterType = filterType;
       lookupTagsContainer.innerHTML = '';
-
+      const allItems = getDynamicLookupItems();
       const filtered = (filterType === 'all')
-        ? LOOKUP_ITEMS
-        : LOOKUP_ITEMS.filter(item => item.type === filterType);
+        ? allItems
+        : allItems.filter(item => item.type === filterType);
 
       lookupCountBadge.textContent = `${filtered.length} âm`;
 
@@ -1175,55 +3590,1364 @@
         const tag = document.createElement('div');
         tag.className = 'lookup-tag';
         tag.dataset.sound = item.text;
-        tag.title = `${item.text} (${item.desc})`;
-
-        if (chipSearchInput.value.trim().toLowerCase() === item.text.toLowerCase()) {
-          tag.classList.add('active');
-        }
-
         tag.innerHTML = `
           <span>${item.text}</span>
           <span class="tag-desc">${item.desc}</span>
         `;
-
         tag.addEventListener('click', () => {
-          if (tag.classList.contains('active')) {
-            chipSearchInput.value = '';
-            performSearch();
-          } else {
-            chipSearchInput.value = item.text;
-            performSearch();
-          }
+          chipSearchInput.value = item.text;
+          performSearch();
         });
-
         lookupTagsContainer.appendChild(tag);
       });
     }
 
-    // Filter Buttons Handlers
     document.querySelectorAll('.lookup-filter-btn').forEach(btn => {
       btn.addEventListener('click', () => {
-        const filterType = btn.dataset.filter;
-
-        if (btn.classList.contains('active') && filterType !== 'all') {
-          // Bấm lại nút nhóm đang chọn -> tắt highlight nhóm, quay về 'all'
-          document.querySelectorAll('.lookup-filter-btn').forEach(b => b.classList.remove('active'));
-          const allBtn = document.querySelector('.lookup-filter-btn[data-filter="all"]');
-          if (allBtn) allBtn.classList.add('active');
-          renderLookupTags('all');
-          highlightSoundGroup('all');
-          return;
-        }
-
         document.querySelectorAll('.lookup-filter-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        renderLookupTags(filterType);
-        highlightSoundGroup(filterType);
+        renderLookupTags(btn.dataset.filter);
       });
     });
 
-    // Khởi tạo render bảng tra cứu A-Z
     renderLookupTags('all');
+
+    // === HÀM LÀM MỚI TOÀN BỘ GIAO DIỆN BÀN PHÍM & TRA CỨU ===
+    function refreshAllViews() {
+      renderRow('rowSymbols', KEY_CONFIG.rowSymbols);
+      renderRow('rowNumbers', KEY_CONFIG.rowNumbers);
+      renderRow('rowQWERTY', KEY_CONFIG.rowQWERTY);
+      renderRow('rowASDF', KEY_CONFIG.rowASDF);
+      renderRow('rowZXCV', KEY_CONFIG.rowZXCV);
+      renderLookupTags();
+      if (chipSearchInput && chipSearchInput.value.trim()) {
+        performSearch();
+      }
+    }
+
+    // =========================================================
+    // === STUDIO TINH CHỈNH VẦN & QUẢN LÝ TỪ NEO VCOMP ===
+    // =========================================================
+    const btnOpenStudio = document.getElementById('btnOpenStudio');
+    const btnCloseStudio = document.getElementById('btnCloseStudio');
+    const studioModal = document.getElementById('studioModal');
+    const studioOverlay = document.getElementById('studioOverlay');
+    const studioGridContainer = document.getElementById('studioGridContainer');
+
+    const btnApplyAllAnchors = document.getElementById('btnApplyAllAnchors');
+    const btnSaveStudioConfig = document.getElementById('btnSaveStudioConfig');
+    const btnResetStudioConfig = document.getElementById('btnResetStudioConfig');
+    const btnApplyKeyChanges = document.getElementById('btnApplyKeyChanges');
+
+    let currentlySelectedKey = 'h';
+    let currentInspectorRowId = 'rowASDF';
+    let currentInspectorKeyIdx = 5;
+
+    // Phân tích trạng thái sức khỏe cấu hình vần & từ neo
+    function analyzeStudioHealth() {
+      const rhymeMap = new Map();
+      let activeAnchorsCount = 0;
+      let totalKeys = 0;
+      let perfectCount = 0;
+      let thinkingCount = 0;
+      let wonderingCount = 0;
+
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rowId => {
+        KEY_CONFIG[rowId].forEach(cfg => {
+          totalKeys++;
+          if (cfg.status === 'perfect') perfectCount++;
+          else if (cfg.status === 'thinking') thinkingCount++;
+          else if (cfg.status === 'wondering') wonderingCount++;
+
+          const r = (cfg.rhyme || '').toLowerCase().trim();
+          if (r) {
+            if (!rhymeMap.has(r)) rhymeMap.set(r, []);
+            rhymeMap.get(r).push(cfg.key);
+          }
+
+          if (SACRED_ANCHORS[cfg.key]) {
+            const isAnchor = SACRED_ANCHORS[cfg.key].some(a => a.rhyme.toLowerCase() === r);
+            if (isAnchor) activeAnchorsCount++;
+          }
+        });
+      });
+
+      const duplicates = [];
+      rhymeMap.forEach((keys, rhyme) => {
+        if (keys.length > 1) {
+          duplicates.push({ rhyme, keys });
+        }
+      });
+
+      return {
+        totalKeys,
+        uniqueRhymesCount: rhymeMap.size,
+        activeAnchorsCount,
+        duplicates,
+        perfectCount,
+        thinkingCount,
+        wonderingCount
+      };
+    }
+
+    function updateStudioHealthUI(health) {
+      const statAnchors = document.getElementById('statActiveAnchors');
+      const statRhymes = document.getElementById('statUniqueRhymes');
+      const statPerfect = document.getElementById('statPerfectCount');
+      const statThinking = document.getElementById('statThinkingCount');
+      const statWondering = document.getElementById('statWonderingCount');
+
+      if (statAnchors) statAnchors.textContent = health.activeAnchorsCount;
+      if (statRhymes) statRhymes.textContent = health.uniqueRhymesCount;
+      if (statPerfect) statPerfect.textContent = health.perfectCount || 0;
+      if (statThinking) statThinking.textContent = health.thinkingCount || 0;
+      if (statWondering) statWondering.textContent = health.wonderingCount || 0;
+
+      const banner = document.getElementById('studioHealthBanner');
+      const conflictList = document.getElementById('conflictList');
+      if (!banner || !conflictList) return;
+
+      if (health.duplicates.length > 0) {
+        banner.className = 'studio-health-banner has-conflict';
+        conflictList.style.display = 'flex';
+        conflictList.innerHTML = `
+          <div><b>⚠️ Phát hiện ${health.duplicates.length} trường hợp trùng lặp vần:</b></div>
+          ${health.duplicates.map(d => {
+            const swapBtn = d.keys.length === 2 ? 
+              `<button class="btn-swap" style="display:inline-flex; margin-left:8px; padding:1px 7px; font-size:10px;" onclick="window.quickSwapKeys('${d.keys[0]}', '${d.keys[1]}')">🔄 Hoán đổi [${d.keys[0]}] ↔ [${d.keys[1]}]</button>
+               <button class="btn-swap" style="display:inline-flex; margin-left:4px; padding:1px 7px; font-size:10px; background: rgba(0, 229, 255, 0.2); border-color: var(--neon-cyan);" onclick="window.autoFixDuplicateKey('${d.keys[0]}', '${d.keys[1]}')">⚡ Khôi phục [${d.keys[1]}]</button>` : '';
+            return `<div style="display:flex; align-items:center; flex-wrap:wrap; gap:4px;">• Vần <b>"${d.rhyme}"</b> đang gán cho các phím: <b>[${d.keys.join(', ')}]</b> ${swapBtn}</div>`;
+          }).join('')}
+        `;
+      } else {
+        banner.className = 'studio-health-banner clean';
+        conflictList.style.display = 'none';
+        conflictList.innerHTML = '';
+      }
+    }
+
+    // Hiển thị lưới phím trong Studio
+    function renderStudioGrid() {
+      if (!studioGridContainer) return;
+      studioGridContainer.innerHTML = '';
+
+      const health = analyzeStudioHealth();
+      updateStudioHealthUI(health);
+
+      const rowLabels = {
+        rowSymbols: 'Hàng 0: Ký hiệu & Nguyên âm 3 (: ? " + - = / < > ;)',
+        rowNumbers: 'Hàng 1: Hàng Số (1 - 0: Nguyên âm đôi)',
+        rowQWERTY: 'Hàng 2: QWERTY (q - p)',
+        rowASDF: 'Hàng 3: ASDF (a - l)',
+        rowZXCV: 'Hàng 4: ZXCV (z - m)'
+      };
+
+      const dupKeysSet = new Set();
+      health.duplicates.forEach(d => {
+        d.keys.forEach(k => dupKeysSet.add(k));
+      });
+
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rowId => {
+        const labelEl = document.createElement('div');
+        labelEl.className = 'studio-row-label';
+        labelEl.textContent = rowLabels[rowId];
+        studioGridContainer.appendChild(labelEl);
+
+        const rowEl = document.createElement('div');
+        rowEl.className = 'studio-row';
+
+        KEY_CONFIG[rowId].forEach((cfg, idx) => {
+          const card = document.createElement('div');
+          card.className = 'studio-key-card';
+          card.dataset.key = cfg.key;
+          card.dataset.row = rowId;
+          card.dataset.idx = idx;
+
+          if (cfg.key === currentlySelectedKey) {
+            card.classList.add('selected');
+          }
+
+          // Kiểm tra Anchor
+          const isAnchor = SACRED_ANCHORS[cfg.key] && SACRED_ANCHORS[cfg.key].some(a => a.rhyme.toLowerCase() === (cfg.rhyme || '').toLowerCase().trim());
+          if (isAnchor) {
+            card.classList.add('has-anchor');
+          }
+
+          // Kiểm tra Duplicate
+          if (dupKeysSet.has(cfg.key)) {
+            card.classList.add('is-duplicate');
+          }
+
+          let statusDotHtml = '';
+          if (cfg.status === 'perfect') {
+            statusDotHtml = '<div class="card-status-dot dot-perfect" title="Hoàn hảo"></div>';
+          } else if (cfg.status === 'thinking') {
+            statusDotHtml = '<div class="card-status-dot dot-thinking" title="Ưng, đang nghĩ bổ sung"></div>';
+          } else if (cfg.status === 'wondering') {
+            statusDotHtml = '<div class="card-status-dot dot-wondering" title="Băn khoăn nút đó"></div>';
+          }
+
+          card.innerHTML = `
+            ${statusDotHtml}
+            <div class="card-top">
+              <span class="card-key-name">${cfg.key}</span>
+              <span class="card-tr-code">${cfg.tap !== undefined && cfg.tap !== cfg.key ? cfg.tap : (cfg.tr || '')}</span>
+            </div>
+            <div class="card-rhyme-val">${cfg.rhyme || '-'}</div>
+            <div class="card-sub-info">
+              <span>${cfg.sc2 || ''}</span>
+              <span>${cfg.sc1 || ''}</span>
+            </div>
+          `;
+
+          card.addEventListener('click', () => {
+            selectKeyForInspection(cfg.key, rowId, idx);
+          });
+
+          rowEl.appendChild(card);
+        });
+
+        studioGridContainer.appendChild(rowEl);
+      });
+    }
+
+    // Render Ma Trận Đa Vần VCOMP Lõi Base60 (1 Chính + 5 Phụ hoặc 2 Phụ)
+    function renderMultiRhymeMatrix(key, cfg) {
+      const container = document.getElementById('multiRhymeMatrix');
+      if (!container) return;
+
+      const lowChar = key.toLowerCase();
+      const upChar = key.toUpperCase();
+      const isAlpha = /^[a-zA-Z]$/.test(key);
+      const isDigit = /^[0-9]$/.test(key);
+
+      const lowIdx = BASE60_MAPPING.indexOf(lowChar);
+      const upIdx = isAlpha ? BASE60_MAPPING.indexOf(upChar) : -1;
+
+      let html = `
+        <div class="mrm-title">
+          <span>📐 Ma Trận Đa Vần VCOMP Lõi Base60:</span>
+          <span style="font-size: 10px; color: var(--text-muted); font-weight: normal;">(1 Chính + ${isAlpha ? '5' : isDigit ? '2' : '0'} Phụ)</span>
+        </div>
+      `;
+
+      const curRhyme = (cfg.rhyme || '').toLowerCase().trim();
+
+      const makeRow = (tableLabel, rhymeVal, isAnchor) => {
+        const isEmpty = !rhymeVal || rhymeVal === '-' || rhymeVal === 'null';
+        const displayVal = isEmpty ? '-' : rhymeVal;
+        const isCurrentMain = !isEmpty && rhymeVal.toLowerCase() === curRhyme;
+        const activeClass = isCurrentMain ? 'is-active' : '';
+        const anchorIcon = isAnchor ? '⭐ ' : '';
+        const mainBadge = isCurrentMain ? '<span class="mrm-active-tag">🟢 Vần chính</span>' : '';
+        return `
+          <div class="mrm-row" onclick="window.quickPickRhyme('${!isEmpty ? rhymeVal : ''}')" title="${!isEmpty ? `Bấm để chọn vần '${rhymeVal}' làm vần chính` : ''}">
+            <span class="mrm-table-badge">${tableLabel}</span>
+            <span class="mrm-rhyme-val ${activeClass}">${anchorIcon}${displayVal} ${mainBadge}</span>
+          </div>
+        `;
+      };
+
+      if (isAlpha) {
+        // 6 vần: Lowercase (B1, B2, B3) & Uppercase Shift (B1, B2, B3)
+        const lowB1 = lowIdx !== -1 ? (CUSTOM_RHYMES_BASE[lowIdx] || '-') : '-';
+        const lowB2 = lowIdx !== -1 ? (CUSTOM_RHYMES_EXTRA_1[lowIdx] || '-') : '-';
+        const lowB3 = lowIdx !== -1 ? (CUSTOM_RHYMES_EXTRA_2[lowIdx] || '-') : '-';
+
+        const upB1 = upIdx !== -1 ? (CUSTOM_RHYMES_BASE[upIdx] || '-') : '-';
+        const upB2 = upIdx !== -1 ? (CUSTOM_RHYMES_EXTRA_1[upIdx] || '-') : '-';
+        const upB3 = upIdx !== -1 ? (CUSTOM_RHYMES_EXTRA_2[upIdx] || '-') : '-';
+
+        const checkAnchor = (r) => {
+          if (!r || r === '-') return false;
+          return SACRED_ANCHORS[lowChar] && SACRED_ANCHORS[lowChar].some(a => a.rhyme.toLowerCase() === r.toLowerCase());
+        };
+
+        html += `
+          <div class="mrm-tables-grid">
+            <div class="mrm-col">
+              <div class="mrm-col-head">
+                <span>Chữ Thường [${lowChar}]</span>
+                <div style="display:flex; align-items:center; gap:4px;">
+                  <button class="btn-swap-layer" onclick="window.swapCoreTables('${lowChar}', 'b1', 'b2')" title="Hoán đổi vị trí B1 (Base) và B2 (Extra 1) trong Lõi Base60">🔄 Đổi B1 ↔ B2</button>
+                  <span style="font-size: 9px; opacity: 0.8;">B60: ${lowIdx}</span>
+                </div>
+              </div>
+              ${makeRow('B1 (Base)', lowB1, checkAnchor(lowB1))}
+              ${makeRow('B2 (Extra 1)', lowB2, checkAnchor(lowB2))}
+              ${makeRow('B3 (Extra 2)', lowB3, checkAnchor(lowB3))}
+            </div>
+            <div class="mrm-col">
+              <div class="mrm-col-head">
+                <span>Chữ Hoa / Shift [${upChar}]</span>
+                <div style="display:flex; align-items:center; gap:4px;">
+                  <button class="btn-swap-layer" onclick="window.swapCoreTables('${upChar}', 'b1', 'b2')" title="Hoán đổi vị trí B1 và B2 chữ hoa">🔄 Đổi B1 ↔ B2</button>
+                  <span style="font-size: 9px; opacity: 0.8;">B60: ${upIdx !== -1 ? upIdx : '-'}</span>
+                </div>
+              </div>
+              ${makeRow('B1 (Base)', upB1, checkAnchor(upB1))}
+              ${makeRow('B2 (Extra 1)', upB2, checkAnchor(upB2))}
+              ${makeRow('B3 (Extra 2)', upB3, checkAnchor(upB3))}
+            </div>
+          </div>
+        `;
+      } else if (isDigit) {
+        // Phím số: 3 vần (B1, B2, B3)
+        const digIdx = BASE60_MAPPING.indexOf(key);
+        const digB1 = digIdx !== -1 ? (CUSTOM_RHYMES_BASE[digIdx] || '-') : '-';
+        const digB2 = digIdx !== -1 ? (CUSTOM_RHYMES_EXTRA_1[digIdx] || '-') : '-';
+        const digB3 = digIdx !== -1 ? (CUSTOM_RHYMES_EXTRA_2[digIdx] || '-') : '-';
+
+        html += `
+          <div class="mrm-tables-grid" style="grid-template-columns: 1fr;">
+            <div class="mrm-col">
+              <div class="mrm-col-head">
+                <span>Phím Số [${key}]</span>
+                <span style="font-size: 9px; opacity: 0.8;">B60: ${digIdx} | Shift: ${cfg.shiftKey || ''}</span>
+              </div>
+              ${makeRow('B1 (Base)', digB1, false)}
+              ${makeRow('B2 (Extra 1)', digB2, false)}
+              ${makeRow('B3 (Extra 2)', digB3, false)}
+            </div>
+          </div>
+        `;
+      } else {
+        html += `
+          <div style="font-size: 11px; color: #94a3b8; padding: 4px 6px;">
+            Phím ký hiệu mới sinh <b>[${key}]</b> đại diện cho vần chính: <b style="color: var(--neon-cyan);">${cfg.rhyme}</b> (Phụ âm: ${cfg.sc2} / ${cfg.sc1}).
+          </div>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    // Biến lưu trữ dữ liệu hoán đổi tạm thời
+    let pendingSwapData = null;
+
+    function checkAndShowSwapPrompt(targetRhyme, currentKey) {
+      const box = document.getElementById('swapPromptBox');
+      const txt = document.getElementById('swapPromptText');
+      const btn = document.getElementById('btnDoSwap');
+      if (!box || !txt || !btn) return;
+
+      const cleanRhyme = (targetRhyme || '').toLowerCase().trim();
+      if (!cleanRhyme) {
+        box.style.display = 'none';
+        pendingSwapData = null;
+        return;
+      }
+
+      // Lấy cấu hình phím hiện tại
+      let currentKeyCfg = null;
+      let currentKeyRow = null;
+      let currentKeyIdx = null;
+
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+        KEY_CONFIG[rId].forEach((cfg, idx) => {
+          if (cfg.key === currentKey) {
+            currentKeyCfg = cfg;
+            currentKeyRow = rId;
+            currentKeyIdx = idx;
+          }
+        });
+      });
+
+      if (!currentKeyCfg) {
+        box.style.display = 'none';
+        pendingSwapData = null;
+        return;
+      }
+
+      // Nếu vần nhập vào chính là vần hiện tại của phím thì không xung đột
+      if (cleanRhyme === (currentKeyCfg.rhyme || '').toLowerCase().trim()) {
+        box.style.display = 'none';
+        pendingSwapData = null;
+        return;
+      }
+
+      // Tìm xem có phím KHÁC đang sở hữu cleanRhyme không
+      let ownerKey = null;
+      let ownerRow = null;
+      let ownerIdx = null;
+
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+        KEY_CONFIG[rId].forEach((cfg, idx) => {
+          if (cfg.key !== currentKey && (cfg.rhyme || '').toLowerCase().trim() === cleanRhyme) {
+            ownerKey = cfg.key;
+            ownerRow = rId;
+            ownerIdx = idx;
+          }
+        });
+      });
+
+      if (ownerKey) {
+        const curRhyme = currentKeyCfg.rhyme || '';
+        pendingSwapData = {
+          keyA: currentKey,
+          rowA: currentKeyRow,
+          idxA: currentKeyIdx,
+          rhymeA: cleanRhyme,
+          keyB: ownerKey,
+          rowB: ownerRow,
+          idxB: ownerIdx,
+          rhymeB: curRhyme
+        };
+
+        txt.innerHTML = `⚠️ Vần <b>"${cleanRhyme}"</b> đang thuộc về phím <b>[${ownerKey}]</b>. Hoán đổi để <b>[${currentKey}]</b> lấy "${cleanRhyme}" và <b>[${ownerKey}]</b> lấy "${curRhyme || 'trống'}"?`;
+        btn.innerHTML = `🔄 Đổi Chỗ [${currentKey}] ↔ [${ownerKey}]`;
+        box.style.display = 'flex';
+      } else {
+        box.style.display = 'none';
+        pendingSwapData = null;
+      }
+    }
+
+    function doAutoSwap() {
+      if (!pendingSwapData) return;
+      const { keyA, rowA, idxA, rhymeA, keyB, rowB, idxB, rhymeB } = pendingSwapData;
+
+      const cfgA = KEY_CONFIG[rowA][idxA];
+      const cfgB = KEY_CONFIG[rowB][idxB];
+
+      cfgA.rhyme = rhymeA;
+      cfgA.note = `${rhymeA} | sc1: ${cfgA.sc1} | sc2: ${cfgA.sc2} (tr: ${cfgA.tr})`;
+
+      cfgB.rhyme = rhymeB;
+      cfgB.note = `${rhymeB} | sc1: ${cfgB.sc1} | sc2: ${cfgB.sc2} (tr: ${cfgB.tr})`;
+
+      const inspRhyme = document.getElementById('inspRhyme');
+      if (inspRhyme) inspRhyme.value = rhymeA;
+
+      const box = document.getElementById('swapPromptBox');
+      if (box) box.style.display = 'none';
+      pendingSwapData = null;
+
+      renderStudioGrid();
+      renderMultiRhymeMatrix(cfgA.key, cfgA);
+      updateKeyCompassPreview(cfgA);
+      updateQuickActionButtonLabels();
+      saveCustomConfig(true);
+    }
+
+    const btnDoSwap = document.getElementById('btnDoSwap');
+    if (btnDoSwap) {
+      btnDoSwap.onclick = () => doAutoSwap();
+    }
+
+    let currentSelectedKeyStatus = '';
+
+    function updateReviewButtonsUI(status) {
+      currentSelectedKeyStatus = status || '';
+      const btnPerfect = document.getElementById('btnReviewPerfect');
+      const btnThinking = document.getElementById('btnReviewThinking');
+      const btnWondering = document.getElementById('btnReviewWondering');
+      if (btnPerfect) btnPerfect.classList.toggle('active-perfect', status === 'perfect');
+      if (btnThinking) btnThinking.classList.toggle('active-thinking', status === 'thinking');
+      if (btnWondering) btnWondering.classList.toggle('active-wondering', status === 'wondering');
+    }
+
+    function setKeyReviewStatus(status) {
+      if (!currentInspectorRowId || currentInspectorKeyIdx === undefined) return;
+      const cfg = KEY_CONFIG[currentInspectorRowId][currentInspectorKeyIdx];
+      const newStatus = (cfg.status === status) ? '' : status;
+      cfg.status = newStatus;
+      updateReviewButtonsUI(newStatus);
+      renderStudioGrid();
+      saveCustomConfig(false);
+    }
+
+    function updateKeyCompassPreview(cfg) {
+      if (!cfg) return;
+      const kcpKeyName = document.getElementById('kcpKeyName');
+      if (kcpKeyName) kcpKeyName.textContent = `[${cfg.key}]`;
+
+      const tapVal = (cfg.tap !== undefined && cfg.tap !== null) ? cfg.tap : cfg.key;
+      const rhyme = (cfg.rhyme || '').trim();
+      const sc1Val = (cfg.sc1 !== undefined && cfg.sc1 !== null) ? cfg.sc1 : cfg.key;
+      const sc2Val = (cfg.sc2 !== undefined && cfg.sc2 !== null) ? cfg.sc2 : '';
+
+      const setCell = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.textContent = val || '-';
+          el.style.opacity = val ? '1' : '0.35';
+        }
+      };
+
+      setCell('kcpValTap', tapVal);
+      setCell('kcpValBang', rhyme ? (getTonedRhyme(rhyme, 0) || rhyme) : '');
+      setCell('kcpValSac', rhyme ? getTonedRhyme(rhyme, 1) : '');
+      setCell('kcpValHuyen', rhyme ? getTonedRhyme(rhyme, 2) : '');
+      setCell('kcpValHoi', rhyme ? getTonedRhyme(rhyme, 3) : '');
+      setCell('kcpValNga', rhyme ? getTonedRhyme(rhyme, 4) : '');
+      setCell('kcpValNang', rhyme ? getTonedRhyme(rhyme, 5) : '');
+      setCell('kcpValSc1', sc1Val);
+      setCell('kcpValSc2', sc2Val);
+    }
+
+    function getPreviewConfigFromInputs() {
+      if (!currentInspectorRowId || currentInspectorKeyIdx === undefined) return null;
+      const baseCfg = KEY_CONFIG[currentInspectorRowId][currentInspectorKeyIdx];
+      const tapInput = document.getElementById('inspTap');
+      const rhymeInput = document.getElementById('inspRhyme');
+      const sc1Input = document.getElementById('inspSc1');
+      const sc2Input = document.getElementById('inspSc2');
+
+      return {
+        ...baseCfg,
+        tap: tapInput ? tapInput.value : (baseCfg.tap !== undefined ? baseCfg.tap : baseCfg.key),
+        rhyme: rhymeInput ? rhymeInput.value.trim() : (baseCfg.rhyme || ''),
+        sc1: sc1Input ? sc1Input.value : (baseCfg.sc1 !== undefined ? baseCfg.sc1 : baseCfg.key),
+        sc2: sc2Input ? sc2Input.value : (baseCfg.sc2 !== undefined ? baseCfg.sc2 : '')
+      };
+    }
+
+    function updateQuickActionButtonLabels() {
+      const rhymeVal = document.getElementById('inspRhyme')?.value?.trim() || '';
+      const unaccented = rhymeVal ? stripAllVietnameseAccents(rhymeVal) : '';
+      const txtFillUnaccented = document.getElementById('txtFillUnaccented');
+      if (txtFillUnaccented) {
+        txtFillUnaccented.textContent = unaccented ? `"${unaccented}"` : `"vần"`;
+      }
+      const tapVal = document.getElementById('inspTap')?.value?.trim() || currentlySelectedKey;
+      const txtFillKey = document.getElementById('txtFillKey');
+      if (txtFillKey) {
+        txtFillKey.textContent = `[${tapVal || currentlySelectedKey}]`;
+      }
+    }
+
+    // Chọn phím để đưa vào hộp thoại chỉnh sửa
+    function selectKeyForInspection(key, rowId, idx) {
+      currentlySelectedKey = key;
+      currentInspectorRowId = rowId;
+      currentInspectorKeyIdx = idx;
+
+      document.querySelectorAll('.studio-key-card').forEach(c => {
+        c.classList.toggle('selected', c.dataset.key === key);
+      });
+
+      const cfg = KEY_CONFIG[rowId][idx];
+      const inspBadge = document.getElementById('inspKeyBadge');
+      if (inspBadge) inspBadge.textContent = cfg.key;
+
+      const inspTap = document.getElementById('inspTap');
+      const inspRhyme = document.getElementById('inspRhyme');
+      const inspSc1 = document.getElementById('inspSc1');
+      const inspSc2 = document.getElementById('inspSc2');
+
+      if (inspTap) inspTap.value = (cfg.tap !== undefined) ? cfg.tap : cfg.key;
+      if (inspRhyme) inspRhyme.value = cfg.rhyme || '';
+      if (inspSc1) inspSc1.value = (cfg.sc1 !== undefined) ? cfg.sc1 : cfg.key;
+      if (inspSc2) inspSc2.value = (cfg.sc2 !== undefined) ? cfg.sc2 : '';
+
+      updateReviewButtonsUI(cfg.status || '');
+      updateKeyCompassPreview(cfg);
+      updateQuickActionButtonLabels();
+
+      // Hiển thị ma trận đa vần VCOMP
+      renderMultiRhymeMatrix(cfg.key, cfg);
+
+      // Kiểm tra xung đột vần với phím khác
+      checkAndShowSwapPrompt(cfg.rhyme, cfg.key);
+
+      // Hiển thị các nút gợi ý từ neo nếu có
+      const anchorSuggestions = document.getElementById('anchorSuggestions');
+      if (anchorSuggestions) {
+        anchorSuggestions.innerHTML = '';
+        if (SACRED_ANCHORS[cfg.key]) {
+          SACRED_ANCHORS[cfg.key].forEach(item => {
+            const btn = document.createElement('button');
+            btn.className = 'anchor-tag-btn';
+            btn.innerHTML = `⭐ Gán Neo: <b>${item.rhyme}</b> (${item.note})`;
+            btn.title = `Nhấn để gán nhanh vần '${item.rhyme}' cho phím '${cfg.key}'`;
+            btn.onclick = () => {
+              if (inspRhyme) inspRhyme.value = item.rhyme;
+              checkAndShowSwapPrompt(item.rhyme, cfg.key);
+              updateKeyCompassPreview(getPreviewConfigFromInputs());
+              updateQuickActionButtonLabels();
+              saveCurrentKeyChanges();
+            };
+            anchorSuggestions.appendChild(btn);
+          });
+        }
+      }
+    }
+
+    // Cập nhật phím đang sửa
+    function saveCurrentKeyChanges() {
+      if (!currentInspectorRowId || currentInspectorKeyIdx === undefined) return;
+      const cfg = KEY_CONFIG[currentInspectorRowId][currentInspectorKeyIdx];
+
+      const tapInput = document.getElementById('inspTap');
+      const rhymeInput = document.getElementById('inspRhyme');
+      const sc1Input = document.getElementById('inspSc1');
+      const sc2Input = document.getElementById('inspSc2');
+
+      const tap = tapInput ? tapInput.value : (cfg.tap !== undefined ? cfg.tap : cfg.key);
+      const r = rhymeInput ? rhymeInput.value.trim() : (cfg.rhyme || '');
+      const s1 = sc1Input ? sc1Input.value : (cfg.sc1 !== undefined ? cfg.sc1 : cfg.key);
+      const s2 = sc2Input ? sc2Input.value : (cfg.sc2 !== undefined ? cfg.sc2 : '');
+
+      cfg.tap = tap;
+      cfg.rhyme = r;
+      cfg.sc1 = s1;
+      cfg.sc2 = s2;
+      cfg.status = currentSelectedKeyStatus || '';
+      cfg.note = `${r} | tap: ${tap} | sc1: ${s1} | sc2: ${s2}`;
+
+      renderStudioGrid();
+      renderMultiRhymeMatrix(cfg.key, cfg);
+      checkAndShowSwapPrompt(cfg.rhyme, cfg.key);
+      updateKeyCompassPreview(cfg);
+      updateQuickActionButtonLabels();
+      saveCustomConfig(false); // Lưu vào localStorage và cập nhật bàn phím
+    }
+
+    if (btnApplyKeyChanges) {
+      btnApplyKeyChanges.onclick = () => saveCurrentKeyChanges();
+    }
+
+    // Live preview khi gõ trong các ô inspector
+    ['inspTap', 'inspRhyme', 'inspSc1', 'inspSc2'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', () => {
+          if (id === 'inspRhyme') {
+            checkAndShowSwapPrompt(el.value, currentlySelectedKey);
+          }
+          updateKeyCompassPreview(getPreviewConfigFromInputs());
+          updateQuickActionButtonLabels();
+        });
+      }
+    });
+
+    // Hàm hoán vị giữa 2 ô inspector kèm hiệu ứng flash sáng ở góc tương ứng
+    function swapInspectorFields(idA, idB, cornerIdA, cornerIdB) {
+      const elA = document.getElementById(idA);
+      const elB = document.getElementById(idB);
+      if (!elA || !elB) return;
+
+      const temp = elA.value;
+      elA.value = elB.value;
+      elB.value = temp;
+
+      // Kích hoạt hiệu ứng flash animation tại các góc được hoán vị
+      [cornerIdA, cornerIdB].forEach(cId => {
+        if (cId) {
+          const cornerEl = document.getElementById(cId);
+          if (cornerEl) {
+            cornerEl.classList.remove('flash-swapped');
+            void cornerEl.offsetWidth; // trigger reflow
+            cornerEl.classList.add('flash-swapped');
+          }
+        }
+      });
+
+      if (idA === 'inspRhyme' || idB === 'inspRhyme') {
+        const rhymeInp = document.getElementById('inspRhyme');
+        if (rhymeInp) checkAndShowSwapPrompt(rhymeInp.value, currentlySelectedKey);
+      }
+
+      updateKeyCompassPreview(getPreviewConfigFromInputs());
+      updateQuickActionButtonLabels();
+      saveCurrentKeyChanges();
+    }
+
+    // Gán sự kiện nút Xoá Trống
+    const btnClearTap = document.getElementById('btnClearTap');
+    if (btnClearTap) {
+      btnClearTap.onclick = () => {
+        const inp = document.getElementById('inspTap');
+        if (inp) {
+          inp.value = '';
+          updateKeyCompassPreview(getPreviewConfigFromInputs());
+          updateQuickActionButtonLabels();
+          saveCurrentKeyChanges();
+        }
+      };
+    }
+    const btnClearRhyme = document.getElementById('btnClearRhyme');
+    if (btnClearRhyme) {
+      btnClearRhyme.onclick = () => {
+        const inp = document.getElementById('inspRhyme');
+        if (inp) {
+          inp.value = '';
+          checkAndShowSwapPrompt('', currentlySelectedKey);
+          updateKeyCompassPreview(getPreviewConfigFromInputs());
+          updateQuickActionButtonLabels();
+          saveCurrentKeyChanges();
+        }
+      };
+    }
+    const btnClearSc1 = document.getElementById('btnClearSc1');
+    if (btnClearSc1) {
+      btnClearSc1.onclick = () => {
+        const inp = document.getElementById('inspSc1');
+        if (inp) {
+          inp.value = '';
+          updateKeyCompassPreview(getPreviewConfigFromInputs());
+          saveCurrentKeyChanges();
+        }
+      };
+    }
+    const btnClearSc2 = document.getElementById('btnClearSc2');
+    if (btnClearSc2) {
+      btnClearSc2.onclick = () => {
+        const inp = document.getElementById('inspSc2');
+        if (inp) {
+          inp.value = '';
+          updateKeyCompassPreview(getPreviewConfigFromInputs());
+          saveCurrentKeyChanges();
+        }
+      };
+    }
+
+    // Gán sự kiện cho 6 hướng hoán vị trên sơ đồ
+    // 1) Hub Trung Tâm - Chéo \: Click ⤡ 4h30
+    const btnSwapDiag1 = document.getElementById('btnSwapDiag1');
+    if (btnSwapDiag1) {
+      btnSwapDiag1.onclick = () => swapInspectorFields('inspTap', 'inspSc1', 'cornerClick', 'cornerSc1');
+    }
+    // 2) Hub Trung Tâm - Chéo /: 7h30 ⤢ 3h
+    const btnSwapDiag2 = document.getElementById('btnSwapDiag2');
+    if (btnSwapDiag2) {
+      btnSwapDiag2.onclick = () => swapInspectorFields('inspSc2', 'inspRhyme', 'cornerSc2', 'cornerRhyme');
+    }
+    // 3) Cạnh Trên (Ngang): Click ⇄ 3h
+    const btnSwapTop = document.getElementById('btnSwapTop');
+    if (btnSwapTop) {
+      btnSwapTop.onclick = () => swapInspectorFields('inspTap', 'inspRhyme', 'cornerClick', 'cornerRhyme');
+    }
+    // 4) Cạnh Dưới (Ngang): 7h30 ⇄ 4h30
+    const btnSwapBottom = document.getElementById('btnSwapBottom');
+    if (btnSwapBottom) {
+      btnSwapBottom.onclick = () => swapInspectorFields('inspSc2', 'inspSc1', 'cornerSc2', 'cornerSc1');
+    }
+    // 5) Cạnh Trái (Dọc): Click ⇅ 7h30
+    const btnSwapLeft = document.getElementById('btnSwapLeft');
+    if (btnSwapLeft) {
+      btnSwapLeft.onclick = () => swapInspectorFields('inspTap', 'inspSc2', 'cornerClick', 'cornerSc2');
+    }
+    // 6) Cạnh Phải (Dọc): 3h ⇅ 4h30
+    const btnSwapRight = document.getElementById('btnSwapRight');
+    if (btnSwapRight) {
+      btnSwapRight.onclick = () => swapInspectorFields('inspRhyme', 'inspSc1', 'cornerRhyme', 'cornerSc1');
+    }
+
+    // Hiệu ứng hover highlight: Rê chuột vào nút hoán vị sẽ làm nổi bật 2 góc tương ứng
+    function bindSwapHover(btnId, cornerIds) {
+      const btn = document.getElementById(btnId);
+      if (!btn) return;
+      btn.addEventListener('mouseenter', () => {
+        cornerIds.forEach(cId => document.getElementById(cId)?.classList.add('hover-highlight'));
+      });
+      btn.addEventListener('mouseleave', () => {
+        cornerIds.forEach(cId => document.getElementById(cId)?.classList.remove('hover-highlight'));
+      });
+    }
+    bindSwapHover('btnSwapDiag1', ['cornerClick', 'cornerSc1']);
+    bindSwapHover('btnSwapDiag2', ['cornerSc2', 'cornerRhyme']);
+    bindSwapHover('btnSwapTop', ['cornerClick', 'cornerRhyme']);
+    bindSwapHover('btnSwapBottom', ['cornerSc2', 'cornerSc1']);
+    bindSwapHover('btnSwapLeft', ['cornerClick', 'cornerSc2']);
+    bindSwapHover('btnSwapRight', ['cornerRhyme', 'cornerSc1']);
+    const btnFillUnaccentedSc1 = document.getElementById('btnFillUnaccentedSc1');
+    if (btnFillUnaccentedSc1) {
+      btnFillUnaccentedSc1.onclick = () => {
+        const rhymeInp = document.getElementById('inspRhyme');
+        const sc1Inp = document.getElementById('inspSc1');
+        if (rhymeInp && sc1Inp) {
+          const r = rhymeInp.value.trim();
+          sc1Inp.value = r ? stripAllVietnameseAccents(r) : '';
+          const c = document.getElementById('cornerSc1');
+          if (c) {
+            c.classList.remove('flash-swapped');
+            void c.offsetWidth;
+            c.classList.add('flash-swapped');
+          }
+          updateKeyCompassPreview(getPreviewConfigFromInputs());
+          saveCurrentKeyChanges();
+        }
+      };
+    }
+    const btnFillKeySc1 = document.getElementById('btnFillKeySc1');
+    if (btnFillKeySc1) {
+      btnFillKeySc1.onclick = () => {
+        const sc1Inp = document.getElementById('inspSc1');
+        if (sc1Inp) {
+          const tapVal = document.getElementById('inspTap')?.value?.trim();
+          sc1Inp.value = tapVal || currentlySelectedKey;
+          const c = document.getElementById('cornerSc1');
+          if (c) {
+            c.classList.remove('flash-swapped');
+            void c.offsetWidth;
+            c.classList.add('flash-swapped');
+          }
+          updateKeyCompassPreview(getPreviewConfigFromInputs());
+          saveCurrentKeyChanges();
+        }
+      };
+    }
+
+    // Gán sự kiện nút Đánh Giá Trạng Thái (Review Status)
+    const btnReviewPerfect = document.getElementById('btnReviewPerfect');
+    const btnReviewThinking = document.getElementById('btnReviewThinking');
+    const btnReviewWondering = document.getElementById('btnReviewWondering');
+    if (btnReviewPerfect) btnReviewPerfect.onclick = () => setKeyReviewStatus('perfect');
+    if (btnReviewThinking) btnReviewThinking.onclick = () => setKeyReviewStatus('thinking');
+    if (btnReviewWondering) btnReviewWondering.onclick = () => setKeyReviewStatus('wondering');
+
+    window.quickPickRhyme = function(r) {
+      if (!r || r === '-') return;
+      const inspRhyme = document.getElementById('inspRhyme');
+      if (inspRhyme) {
+        inspRhyme.value = r;
+        checkAndShowSwapPrompt(r, currentlySelectedKey);
+        updateKeyCompassPreview(getPreviewConfigFromInputs());
+        updateQuickActionButtonLabels();
+      }
+    };
+
+    window.quickSwapKeys = function(keyA, keyB) {
+      let cfgA = null, cfgB = null;
+      let rowA = null, rowB = null, idxA = null, idxB = null;
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+        KEY_CONFIG[rId].forEach((it, idx) => {
+          if (it.key === keyA) { cfgA = it; rowA = rId; idxA = idx; }
+          if (it.key === keyB) { cfgB = it; rowB = rId; idxB = idx; }
+        });
+      });
+      if (cfgA && cfgB) {
+        const tempRhyme = cfgA.rhyme;
+        cfgA.rhyme = cfgB.rhyme;
+        cfgB.rhyme = tempRhyme;
+        cfgA.note = `${cfgA.rhyme} | sc1: ${cfgA.sc1} | sc2: ${cfgA.sc2} (tr: ${cfgA.tr})`;
+        cfgB.note = `${cfgB.rhyme} | sc1: ${cfgB.sc1} | sc2: ${cfgB.sc2} (tr: ${cfgB.tr})`;
+        renderStudioGrid();
+        if (currentlySelectedKey === keyA) {
+          selectKeyForInspection(keyA, rowA, idxA);
+        } else if (currentlySelectedKey === keyB) {
+          selectKeyForInspection(keyB, rowB, idxB);
+        }
+        saveCustomConfig(true);
+      }
+    };
+
+    window.autoFixDuplicateKey = function(keyA, keyB) {
+      let itemB = null;
+      let defItemB = null;
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+        const cur = KEY_CONFIG[rId].find(it => it.key === keyB);
+        const def = DEFAULT_KEY_CONFIG[rId].find(it => it.key === keyB);
+        if (cur) itemB = cur;
+        if (def) defItemB = def;
+      });
+
+      if (itemB && defItemB) {
+        itemB.rhyme = defItemB.rhyme;
+        itemB.note = `${itemB.rhyme} | sc1: ${itemB.sc1} | sc2: ${itemB.sc2} (tr: ${itemB.tr})`;
+        renderStudioGrid();
+        ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+          KEY_CONFIG[rId].forEach((cfg, idx) => {
+            if (cfg.key === currentlySelectedKey) {
+              renderMultiRhymeMatrix(cfg.key, cfg);
+            }
+          });
+        });
+        saveCustomConfig(true);
+      }
+    };
+
+    window.swapCoreTables = function(charKey, t1, t2) {
+      const idx = BASE60_MAPPING.indexOf(charKey);
+      if (idx === -1) return;
+
+      if (t1 === 'b1' && t2 === 'b2') {
+        const temp = CUSTOM_RHYMES_BASE[idx];
+        CUSTOM_RHYMES_BASE[idx] = CUSTOM_RHYMES_EXTRA_1[idx];
+        CUSTOM_RHYMES_EXTRA_1[idx] = temp;
+      }
+      try {
+        localStorage.setItem('vcomp_custom_rhymes_base', JSON.stringify(CUSTOM_RHYMES_BASE));
+        localStorage.setItem('vcomp_custom_rhymes_extra_1', JSON.stringify(CUSTOM_RHYMES_EXTRA_1));
+      } catch (err) {
+        console.error('Lỗi lưu custom rhymes:', err);
+      }
+
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+        KEY_CONFIG[rId].forEach(cfg => {
+          if (cfg.key.toLowerCase() === charKey.toLowerCase()) {
+            renderMultiRhymeMatrix(cfg.key, cfg);
+          }
+        });
+      });
+    };
+
+    // Lưu cấu hình vào localStorage
+    function saveCustomConfig(showNotice = true) {
+      try {
+        localStorage.setItem('vcomp_chip_custom_config', JSON.stringify(KEY_CONFIG));
+        refreshAllViews();
+        if (showNotice) {
+          const btn = document.getElementById('btnSaveStudioConfig');
+          if (btn) {
+            const oldText = btn.innerHTML;
+            btn.innerHTML = '✅ Đã Lưu Thành Công!';
+            setTimeout(() => { btn.innerHTML = oldText; }, 1500);
+          }
+        }
+      } catch (err) {
+        console.error('Lỗi lưu cấu hình:', err);
+      }
+    }
+
+    if (btnSaveStudioConfig) {
+      btnSaveStudioConfig.onclick = () => saveCustomConfig(true);
+    }
+
+    // Bật tất cả các từ neo thiêng (h=iêu, s=ương, d=ơ, c=ich, r=ên, m=ut, v=u...)
+    function applyAllSacredAnchors() {
+      const updateKey = (k, newRhyme, newSc1, newSc2, newTr) => {
+        ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+          const item = KEY_CONFIG[rId].find(it => it.key === k);
+          if (item) {
+            if (newRhyme !== undefined) item.rhyme = newRhyme;
+            if (newSc1 !== undefined) item.sc1 = newSc1;
+            if (newSc2 !== undefined) item.sc2 = newSc2;
+            if (newTr !== undefined) item.tr = newTr;
+            item.note = `${item.rhyme} | sc1: ${item.sc1} | sc2: ${item.sc2} (tr: ${item.tr})`;
+          }
+        });
+      };
+
+      // Đôn vần iêu lên B1 (Base) cho phím h trong Lõi Base60
+      const hIdx = BASE60_MAPPING.indexOf('h');
+      if (hIdx !== -1) {
+        CUSTOM_RHYMES_BASE[hIdx] = 'iêu';
+        CUSTOM_RHYMES_EXTRA_1[hIdx] = 'ôn';
+        try {
+          localStorage.setItem('vcomp_custom_rhymes_base', JSON.stringify(CUSTOM_RHYMES_BASE));
+          localStorage.setItem('vcomp_custom_rhymes_extra_1', JSON.stringify(CUSTOM_RHYMES_EXTRA_1));
+        } catch (e) {}
+      }
+
+      // Áp dụng bộ từ neo hoàn chỉnh không trùng lặp:
+      updateKey('h', 'iêu', 'h', 'nh', 'H');
+      updateKey('s', 'ương', 's', 'x', 's');
+      updateKey('d', 'ơ', 'd', 'đ', 'D');
+      updateKey('c', 'ich', 'c', 'ch', 'C');
+      updateKey('r', 'ên', 'r', 'tr', 'R');
+      updateKey('m', 'ut', 'm', 'M', 'm');
+      updateKey('v', 'u', 'v', 'V', 'v');
+      updateKey('u', 'ung', 'u', 'U', 'u');
+      updateKey('b', 'ươm', 'b', 'B', 'b');
+      updateKey('l', 'iêm', 'l', 'L', 'l');
+      updateKey('n', 'ưng', 'n', 'ng', 'N');
+      updateKey('y', 'yên', 'y', 'y', 'y');
+      updateKey('x', 'ao', 'x', 's', 'x');
+      updateKey('j', 'ay', 'j', 'gi', 'j');
+      updateKey('p', 'ươn', 'p', 'p', 'p');
+      updateKey('q', 'oan', 'q', 'qu', 'q');
+      updateKey('w', 'ư', 'w', 'ngh', 'W');
+      updateKey('a', 'ai', 'a', 'ă', 'a');
+      updateKey('f', 'au', 'f', 'ph', 'f');
+      updateKey('g', 'âu', 'g', 'gh', 'G');
+      updateKey('k', 'oi', 'k', 'kh', 'K');
+      updateKey('z', 'ơi', 'z', 'd', 'z');
+
+      renderStudioGrid();
+      selectKeyForInspection(currentlySelectedKey, currentInspectorRowId, currentInspectorKeyIdx);
+      saveCustomConfig(true);
+    }
+
+    if (btnApplyAllAnchors) {
+      btnApplyAllAnchors.onclick = () => applyAllSacredAnchors();
+    }
+
+    // Reset về mặc định
+    function resetStudioConfig() {
+      if (!confirm('Khôi phục cấu hình mặc định ban đầu của bàn phím vi mạch?')) return;
+      localStorage.removeItem('vcomp_chip_custom_config');
+      localStorage.removeItem('vcomp_custom_rhymes_base');
+      localStorage.removeItem('vcomp_custom_rhymes_extra_1');
+      localStorage.removeItem('vcomp_custom_rhymes_extra_2');
+      CUSTOM_RHYMES_BASE = [...RHYMES_BASE];
+      CUSTOM_RHYMES_EXTRA_1 = [...RHYMES_EXTRA_1];
+      CUSTOM_RHYMES_EXTRA_2 = [...RHYMES_EXTRA_2];
+
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+        KEY_CONFIG[rId] = JSON.parse(JSON.stringify(DEFAULT_KEY_CONFIG[rId]));
+      });
+      renderStudioGrid();
+      selectKeyForInspection(currentlySelectedKey, currentInspectorRowId, currentInspectorKeyIdx);
+      refreshAllViews();
+    }
+
+    if (btnResetStudioConfig) {
+      btnResetStudioConfig.onclick = () => resetStudioConfig();
+    }
+
+    // Toggle Studio Modal
+    function toggleStudio(show) {
+      studioModal.classList.toggle('open', show);
+      studioOverlay.classList.toggle('open', show);
+      if (show) {
+        renderStudioGrid();
+        // Mặc định chọn phím 'h' để người dùng kiểm tra ngay từ neo 'iêu' / 'ôn'
+        selectKeyForInspection('h', 'rowASDF', 5);
+      }
+    }
+
+    if (btnOpenStudio) btnOpenStudio.onclick = () => toggleStudio(true);
+    if (btnCloseStudio) btnCloseStudio.onclick = () => toggleStudio(false);
+    if (studioOverlay) studioOverlay.onclick = () => toggleStudio(false);
+
+    // =========================================================
+    // === XUẤT CẤU HÌNH SANG JAVASCRIPT & KOTLIN ANDROID ===
+    // =========================================================
+    const btnOpenExport = document.getElementById('btnOpenExport');
+    const btnCloseExport = document.getElementById('btnCloseExport');
+    const exportModal = document.getElementById('exportModal');
+    const exportOverlay = document.getElementById('exportOverlay');
+    const tabExportJs = document.getElementById('tabExportJs');
+    const tabExportKotlin = document.getElementById('tabExportKotlin');
+    const exportTextarea = document.getElementById('exportTextarea');
+    const btnCopyExport = document.getElementById('btnCopyExport');
+
+    let currentExportTab = 'js';
+
+    function generateJsExport() {
+      return `// === CẤU HÌNH BÀN PHÍM VI MẠCH VCOMP (Xuất từ Studio) ===\nexport const KEY_CONFIG = ${JSON.stringify(KEY_CONFIG, null, 2)};`;
+    }
+
+    function generateKotlinExport() {
+      const lines = [];
+      lines.push('package vn.ehou.vsecretkeyboard');
+      lines.push('');
+      lines.push('// Bảng tra cứu vần phím vi mạch VCOMP 8 hướng (Đồng bộ từ Studio Web)');
+      lines.push('object VCompChipConfig {');
+      lines.push('    data class ChipKey(');
+      lines.push('        val key: String,');
+      lines.push('        val rhyme: String,');
+      lines.push('        val sc1: String,');
+      lines.push('        val sc2: String,');
+      lines.push('        val tr: String,');
+      lines.push('        val tap: String = "",');
+      lines.push('        val status: String = ""');
+      lines.push('    )');
+      lines.push('');
+      lines.push('    val ALL_KEYS = listOf(');
+
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+        lines.push(`        // --- ${rId} ---`);
+        KEY_CONFIG[rId].forEach(c => {
+          lines.push(`        ChipKey(key = "${c.key}", rhyme = "${c.rhyme || ''}", sc1 = "${c.sc1 || ''}", sc2 = "${c.sc2 || ''}", tr = "${c.tr || ''}", tap = "${c.tap !== undefined ? c.tap : c.key}", status = "${c.status || ''}"),`);
+        });
+      });
+
+      lines.push('    )');
+      lines.push('}');
+      return lines.join('\n');
+    }
+
+    function updateExportText() {
+      if (!exportTextarea) return;
+      exportTextarea.value = (currentExportTab === 'js') ? generateJsExport() : generateKotlinExport();
+    }
+
+    function toggleExport(show) {
+      exportModal.classList.toggle('open', show);
+      exportOverlay.classList.toggle('open', show);
+      if (show) {
+        updateExportText();
+      }
+    }
+
+    if (btnOpenExport) btnOpenExport.onclick = () => toggleExport(true);
+    if (btnCloseExport) btnCloseExport.onclick = () => toggleExport(false);
+    if (exportOverlay) exportOverlay.onclick = () => toggleExport(false);
+
+    if (tabExportJs) {
+      tabExportJs.onclick = () => {
+        currentExportTab = 'js';
+        tabExportJs.classList.add('active');
+        tabExportKotlin.classList.remove('active');
+        updateExportText();
+      };
+    }
+
+    if (tabExportKotlin) {
+      tabExportKotlin.onclick = () => {
+        currentExportTab = 'kotlin';
+        tabExportKotlin.classList.add('active');
+        tabExportJs.classList.remove('active');
+        updateExportText();
+      };
+    }
+
+    if (btnCopyExport) {
+      btnCopyExport.onclick = () => {
+        if (!exportTextarea) return;
+        exportTextarea.select();
+        navigator.clipboard.writeText(exportTextarea.value).then(() => {
+          const oldText = btnCopyExport.innerHTML;
+          btnCopyExport.innerHTML = '✅ Đã Sao Chép!';
+          setTimeout(() => { btnCopyExport.innerHTML = oldText; }, 1500);
+        });
+      };
+    }
+
+    // =========================================================
+    // === ĐỒNG BỘ CẤU HÌNH ĐA THIẾT BỊ (IMPORT / EXPORT JSON) ===
+    // =========================================================
+    const btnOpenSyncModal = document.getElementById('btnOpenSyncModal');
+    const btnCloseSync = document.getElementById('btnCloseSync');
+    const syncModal = document.getElementById('syncModal');
+    const syncOverlay = document.getElementById('syncOverlay');
+    const tabSyncExport = document.getElementById('tabSyncExport');
+    const tabSyncImport = document.getElementById('tabSyncImport');
+    const panelSyncExport = document.getElementById('panelSyncExport');
+    const panelSyncImport = document.getElementById('panelSyncImport');
+    const syncExportTextarea = document.getElementById('syncExportTextarea');
+    const syncImportTextarea = document.getElementById('syncImportTextarea');
+    const btnCopySyncJson = document.getElementById('btnCopySyncJson');
+    const btnDownloadSyncJson = document.getElementById('btnDownloadSyncJson');
+    const btnApplyImportJson = document.getElementById('btnApplyImportJson');
+    const syncFileInput = document.getElementById('syncFileInput');
+    const syncStatusMsg = document.getElementById('syncStatusMsg');
+
+    function generateSyncJsonPackage() {
+      let perfectCount = 0, thinkingCount = 0, wonderingCount = 0, totalKeys = 0;
+      ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'].forEach(rId => {
+        KEY_CONFIG[rId].forEach(cfg => {
+          totalKeys++;
+          if (cfg.status === 'perfect') perfectCount++;
+          else if (cfg.status === 'thinking') thinkingCount++;
+          else if (cfg.status === 'wondering') wonderingCount++;
+        });
+      });
+
+      const backupPackage = {
+        app: "vsecretnote-vcomp-studio",
+        version: "1.0",
+        exportDate: new Date().toISOString(),
+        stats: {
+          totalKeys,
+          perfectCount,
+          thinkingCount,
+          wonderingCount
+        },
+        data: {
+          keyConfig: KEY_CONFIG,
+          customRhymesBase: CUSTOM_RHYMES_BASE,
+          customRhymesExtra1: CUSTOM_RHYMES_EXTRA_1,
+          customRhymesExtra2: CUSTOM_RHYMES_EXTRA_2
+        }
+      };
+
+      return JSON.stringify(backupPackage, null, 2);
+    }
+
+    function updateSyncExportView() {
+      if (syncExportTextarea) {
+        syncExportTextarea.value = generateSyncJsonPackage();
+      }
+    }
+
+    function toggleSyncModal(show) {
+      if (!syncModal || !syncOverlay) return;
+      syncModal.classList.toggle('open', show);
+      syncOverlay.classList.toggle('open', show);
+      if (show) {
+        switchSyncTab('export');
+        updateSyncExportView();
+        if (syncStatusMsg) {
+          syncStatusMsg.style.display = 'none';
+        }
+      }
+    }
+
+    function switchSyncTab(tab) {
+      if (tab === 'export') {
+        tabSyncExport?.classList.add('active');
+        tabSyncImport?.classList.remove('active');
+        if (panelSyncExport) panelSyncExport.style.display = 'flex';
+        if (panelSyncImport) panelSyncImport.style.display = 'none';
+        updateSyncExportView();
+      } else {
+        tabSyncImport?.classList.add('active');
+        tabSyncExport?.classList.remove('active');
+        if (panelSyncImport) panelSyncImport.style.display = 'flex';
+        if (panelSyncExport) panelSyncExport.style.display = 'none';
+      }
+    }
+
+    if (btnOpenSyncModal) btnOpenSyncModal.onclick = () => toggleSyncModal(true);
+    if (btnCloseSync) btnCloseSync.onclick = () => toggleSyncModal(false);
+    if (syncOverlay) syncOverlay.onclick = () => toggleSyncModal(false);
+    if (tabSyncExport) tabSyncExport.onclick = () => switchSyncTab('export');
+    if (tabSyncImport) tabSyncImport.onclick = () => switchSyncTab('import');
+
+    // Sao chép JSON vào clipboard
+    if (btnCopySyncJson) {
+      btnCopySyncJson.onclick = () => {
+        if (!syncExportTextarea) return;
+        syncExportTextarea.select();
+        const textToCopy = syncExportTextarea.value;
+        const setCopied = () => {
+          const oldText = btnCopySyncJson.innerHTML;
+          btnCopySyncJson.innerHTML = '✅ Đã Sao Chép!';
+          setTimeout(() => { btnCopySyncJson.innerHTML = oldText; }, 1500);
+        };
+
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(textToCopy).then(setCopied).catch(() => {
+            try {
+              document.execCommand('copy');
+              setCopied();
+            } catch(e) {
+              alert('Không thể sao chép tự động, bạn hãy bôi đen và nhấn Ctrl+C');
+            }
+          });
+        } else {
+          try {
+            document.execCommand('copy');
+            setCopied();
+          } catch(e) {
+            alert('Không thể sao chép tự động, bạn hãy bôi đen và nhấn Ctrl+C');
+          }
+        }
+      };
+    }
+
+    // Tải tệp JSON về máy
+    if (btnDownloadSyncJson) {
+      btnDownloadSyncJson.onclick = () => {
+        const jsonContent = syncExportTextarea ? syncExportTextarea.value : generateSyncJsonPackage();
+        const blob = new Blob([jsonContent], { type: 'application/json;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const now = new Date();
+        const dateStr = now.toISOString().slice(0, 10);
+        const timeStr = now.toTimeString().slice(0, 8).replace(/:/g, '');
+        a.href = url;
+        a.download = `vcomp-studio-backup-${dateStr}-${timeStr}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      };
+    }
+
+    function showSyncStatus(msg, type = 'success') {
+      if (!syncStatusMsg) return;
+      syncStatusMsg.textContent = msg;
+      syncStatusMsg.className = `sync-status-msg ${type}`;
+      syncStatusMsg.style.display = 'flex';
+    }
+
+    // Chọn file JSON từ máy
+    if (syncFileInput) {
+      syncFileInput.onchange = (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const content = evt.target.result;
+          if (syncImportTextarea) {
+            syncImportTextarea.value = content;
+          }
+          showSyncStatus(`Đã đọc tệp "${file.name}" (${(file.size / 1024).toFixed(1)} KB). Nhấn "Áp Dụng Cấu Hình" để nạp!`, 'success');
+        };
+        reader.onerror = () => {
+          showSyncStatus('Không thể đọc tệp đã chọn. Vui lòng thử lại.', 'error');
+        };
+        reader.readAsText(file, 'utf-8');
+      };
+    }
+
+    // Nhập cấu hình JSON
+    function applyImportedJson() {
+      const raw = syncImportTextarea?.value?.trim();
+      if (!raw) {
+        showSyncStatus('Vui lòng dán chuỗi JSON hoặc chọn tệp .json trước khi áp dụng!', 'error');
+        return;
+      }
+
+      let parsed = null;
+      try {
+        parsed = JSON.parse(raw);
+      } catch (err) {
+        showSyncStatus(`Lỗi cú pháp JSON: ${err.message}`, 'error');
+        return;
+      }
+
+      // Xác định nguồn keyConfig (gói bọc data.keyConfig hoặc raw object)
+      let importedConfig = null;
+      let importedBase = null, importedEx1 = null, importedEx2 = null;
+
+      if (parsed.data && parsed.data.keyConfig) {
+        importedConfig = parsed.data.keyConfig;
+        importedBase = parsed.data.customRhymesBase;
+        importedEx1 = parsed.data.customRhymesExtra1;
+        importedEx2 = parsed.data.customRhymesExtra2;
+      } else if (parsed.keyConfig) {
+        importedConfig = parsed.keyConfig;
+      } else if (parsed.rowSymbols && parsed.rowZXCV) {
+        importedConfig = parsed;
+      } else {
+        showSyncStatus('Cấu trúc JSON không hợp lệ: Thiếu các hàng phím rowSymbols, rowZXCV...!', 'error');
+        return;
+      }
+
+      // Kiểm tra tính toàn vẹn của 5 hàng
+      const requiredRows = ['rowSymbols', 'rowNumbers', 'rowQWERTY', 'rowASDF', 'rowZXCV'];
+      for (const rId of requiredRows) {
+        if (!Array.isArray(importedConfig[rId])) {
+          showSyncStatus(`Cấu trúc JSON thiếu hàng phím bắt buộc: ${rId}!`, 'error');
+          return;
+        }
+      }
+
+      // Nạp cấu hình vào KEY_CONFIG
+      requiredRows.forEach(rId => {
+        KEY_CONFIG[rId] = JSON.parse(JSON.stringify(importedConfig[rId]));
+      });
+
+      // Nạp các bảng vần Base60 nếu có
+      if (Array.isArray(importedBase)) {
+        CUSTOM_RHYMES_BASE = [...importedBase];
+        localStorage.setItem('vcomp_custom_rhymes_base', JSON.stringify(CUSTOM_RHYMES_BASE));
+      }
+      if (Array.isArray(importedEx1)) {
+        CUSTOM_RHYMES_EXTRA_1 = [...importedEx1];
+        localStorage.setItem('vcomp_custom_rhymes_extra_1', JSON.stringify(CUSTOM_RHYMES_EXTRA_1));
+      }
+      if (Array.isArray(importedEx2)) {
+        CUSTOM_RHYMES_EXTRA_2 = [...importedEx2];
+        localStorage.setItem('vcomp_custom_rhymes_extra_2', JSON.stringify(CUSTOM_RHYMES_EXTRA_2));
+      }
+
+      // Lưu cấu hình vào localStorage và cập nhật toàn bộ views
+      saveCustomConfig(true);
+      renderStudioGrid();
+      if (currentlySelectedKey && currentInspectorRowId && currentInspectorKeyIdx !== undefined) {
+        selectKeyForInspection(currentlySelectedKey, currentInspectorRowId, currentInspectorKeyIdx);
+      } else {
+        selectKeyForInspection('h', 'rowASDF', 5);
+      }
+      refreshAllViews();
+
+      let count = 0;
+      requiredRows.forEach(rId => { count += KEY_CONFIG[rId].length; });
+
+      showSyncStatus(`🎉 Nạp thành công ${count} phím! Toàn bộ tiến trình đã được đồng bộ chuẩn xác.`, 'success');
+    }
+
+    if (btnApplyImportJson) {
+      btnApplyImportJson.onclick = () => applyImportedJson();
+    }
   </script>
 </body>
 </html>
