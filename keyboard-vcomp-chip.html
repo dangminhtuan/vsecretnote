@@ -675,50 +675,39 @@
 
     .compass-petal {
       position: absolute;
-      width: 46px;
-      height: 38px;
+      width: 44px;
+      height: 34px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
       transform: translate(-50%, -50%);
-      border-radius: 6px;
+      border-radius: 8px;
       transition: all 0.08s ease;
-      background: rgba(24, 34, 48, 0.6);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .compass-petal .petal-label {
-      font-size: 7.5px;
-      color: #94a3b8;
-      font-weight: 700;
-      line-height: 1;
+      background: rgba(24, 34, 48, 0.75);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
     }
 
     .compass-petal .petal-val {
       font-family: var(--font-mono);
-      font-size: 11.5px;
+      font-size: 13.5px;
       font-weight: 700;
       color: #fff;
-      line-height: 1.2;
-      margin-top: 1px;
+      line-height: 1;
+      text-align: center;
     }
 
     .compass-petal.active {
-      background: rgba(0, 229, 255, 0.3) !important;
+      background: rgba(0, 229, 255, 0.35) !important;
       border: 1.5px solid var(--neon-cyan) !important;
-      box-shadow: 0 0 14px rgba(0, 229, 255, 0.9) !important;
-      transform: translate(-50%, -50%) scale(1.18);
+      box-shadow: 0 0 16px rgba(0, 229, 255, 0.95) !important;
+      transform: translate(-50%, -50%) scale(1.2);
       z-index: 5;
-    }
-
-    .compass-petal.active .petal-label {
-      color: var(--neon-green) !important;
     }
 
     .compass-petal.active .petal-val {
       color: #fff !important;
-      text-shadow: 0 0 8px var(--neon-cyan);
+      text-shadow: 0 0 10px var(--neon-cyan);
     }
 
     /* Petal Positions on the 176px circle (Center = 88, 88) */
@@ -2654,35 +2643,27 @@
     
     <!-- 8 Direction Petals matching user's image -->
     <div class="compass-petal petal-sac" data-dir="sac">
-      <span class="petal-label">sắc (12h)</span>
       <span class="petal-val">-</span>
     </div>
     <div class="compass-petal petal-hoi" data-dir="hoi">
-      <span class="petal-label">hỏi (1h30)</span>
       <span class="petal-val">-</span>
     </div>
     <div class="compass-petal petal-bang" data-dir="bang">
-      <span class="petal-label">bằng (3h)</span>
       <span class="petal-val">-</span>
     </div>
     <div class="compass-petal petal-shortcut1" data-dir="shortcut1">
-      <span class="petal-label">sc 1 (5h)</span>
       <span class="petal-val">-</span>
     </div>
     <div class="compass-petal petal-nang" data-dir="nang">
-      <span class="petal-label">nặng (6h)</span>
       <span class="petal-val">-</span>
     </div>
     <div class="compass-petal petal-shortcut2" data-dir="shortcut2">
-      <span class="petal-label">sc 2 (7h30)</span>
       <span class="petal-val">-</span>
     </div>
     <div class="compass-petal petal-nga" data-dir="nga">
-      <span class="petal-label">ngã (9h)</span>
       <span class="petal-val">-</span>
     </div>
     <div class="compass-petal petal-huyen" data-dir="huyen">
-      <span class="petal-label">huyền (10h30)</span>
       <span class="petal-val">-</span>
     </div>
 
