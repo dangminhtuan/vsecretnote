@@ -3030,74 +3030,516 @@
 
     // === CẤU HÌNH DỮ LIỆU VI MẠCH 46 PHÍM (CHIP KEY CONFIG 8-DIRECTION) ===
     const KEY_CONFIG = {
-      // --- HÀNG 0: 10 KÝ HIỆU & NGUYÊN ÂM 3 ĐỘC LẬP (: ? " + - = / < > ;) ---
-      rowSymbols: [
-        { key: ':', rhyme: 'ưi', sc1: ':', sc2: '', tr: '', note: 'ưi (gửi)' },
-        { key: '?', rhyme: 'uơ', sc1: '?', sc2: '', tr: '', note: 'uơ (thuở, quơ)' },
-        { key: '"', rhyme: 'ui', sc1: '"', sc2: '', tr: '', note: 'ui (vui)' },
-        { key: '+', rhyme: 'ươi', sc1: '+', sc2: '', tr: '', note: 'ươi (người)' },
-        { key: '-', rhyme: 'oe', sc1: '-', sc2: '', tr: '', note: 'oe (khoe)' },
-        { key: '=', rhyme: 'uôi', sc1: '=', sc2: '', tr: '', note: 'uôi (nuôi, tuổi)' },
-        { key: '/', rhyme: 'uây', sc1: '/', sc2: '', tr: '', note: 'uây (khuấy)' },
-        { key: '<', rhyme: 'oay', sc1: '<', sc2: '', tr: '', note: 'oay (loay hoay)' },
-        { key: '>', rhyme: 'ya',  sc1: '>', sc2: '', tr: '', note: 'ya (khuya)' },
-        { key: ';', rhyme: 'ươu', sc1: ';', sc2: '', tr: '', note: 'ươu (rượu, hươu)' }
-      ],
+  "rowSymbols": [
+    {
+      "key": ":",
+      "rhyme": "uô",
+      "sc1": "uông",
+      "sc2": "uôc",
+      "tr": "",
+      "note": "uô + uôc | 12h: uốc | 6h: uộc | 3h: uông",
+      "tap": ":",
+      "status": "perfect",
+      "directions": {
+        "bang": "uông",
+        "sac": "uốc",
+        "nang": "uộc"
+      }
+    },
+    {
+      "key": "?",
+      "rhyme": "ui",
+      "sc1": "gì",
+      "sc2": "sao",
+      "tr": "",
+      "note": "ui | sc1: gì | sc2: sao",
+      "tap": "?",
+      "status": "perfect"
+    },
+    {
+      "key": "\"",
+      "rhyme": "ua",
+      "sc1": "oe",
+      "sc2": "qua",
+      "tr": "",
+      "note": "ua | sc1: oe | sc2: qua",
+      "tap": "\"",
+      "status": "perfect"
+    },
+    {
+      "key": "+",
+      "rhyme": "ươi",
+      "sc1": "người",
+      "sc2": "tươi",
+      "tr": "",
+      "note": "ươi | sc1: người | sc2: tươi",
+      "tap": "+",
+      "status": "perfect"
+    },
+    {
+      "key": "-",
+      "rhyme": "uâ",
+      "sc1": "uân",
+      "sc2": "uât",
+      "tr": "",
+      "note": "uâ + uât | 12h: uất | 6h: uật | 3h: uân",
+      "tap": "-",
+      "status": "perfect",
+      "directions": {
+        "bang": "uân",
+        "sac": "uất",
+        "nang": "uật"
+      }
+    },
+    {
+      "key": "=",
+      "rhyme": "uyê",
+      "sc1": "uyên",
+      "sc2": "uyêt",
+      "tr": "",
+      "note": "uyê + uyêt | 12h: quyết | 6h: tuyệt | 3h: uyên",
+      "tap": "=",
+      "status": "perfect",
+      "directions": {
+        "bang": "uyên",
+        "sac": "quyết",
+        "nang": "tuyệt"
+      }
+    },
+    {
+      "key": "/",
+      "rhyme": "uây",
+      "sc1": "uơ",
+      "sc2": "khuấy",
+      "tr": "",
+      "note": "uây | sc1: uơ | sc2: khuấy",
+      "tap": "/",
+      "status": "perfect"
+    },
+    {
+      "key": "<",
+      "rhyme": "oay",
+      "sc1": "xoay",
+      "sc2": "loay",
+      "tr": "",
+      "note": "oay | sc1: xoay | sc2: loay",
+      "tap": "<",
+      "status": "perfect"
+    },
+    {
+      "key": ">",
+      "rhyme": "uya",
+      "sc1": "khuya",
+      "sc2": "uych",
+      "tr": "",
+      "note": "uya + uych | 12h: uých | 3h: uya | 6h: uỵch",
+      "tap": ">",
+      "status": "perfect",
+      "directions": {
+        "bang": "uya",
+        "sac": "uých",
+        "nang": "uỵch"
+      }
+    },
+    {
+      "key": ";",
+      "rhyme": "ay",
+      "sc1": "này",
+      "sc2": "ngày",
+      "tr": "",
+      "note": "ay | sc1: này | sc2: ngày",
+      "tap": ";",
+      "status": "perfect"
+    }
+  ],
+  "rowNumbers": [
+    {
+      "key": "1",
+      "shiftKey": "!",
+      "rhyme": "yê",
+      "sc1": "luyện",
+      "sc2": "chuyện",
+      "tr": "",
+      "note": "yê | tap: 1 | sc1: luyện | sc2: chuyện",
+      "tap": "1",
+      "status": "perfect"
+    },
+    {
+      "key": "2",
+      "shiftKey": "@",
+      "rhyme": "oat",
+      "sc1": "thoát",
+      "sc2": "oac",
+      "tr": "",
+      "note": "oat | sc1: thoát | sc2: oac",
+      "tap": "2",
+      "status": "perfect"
+    },
+    {
+      "key": "3",
+      "shiftKey": "#",
+      "rhyme": "ê",
+      "sc1": "yêu",
+      "sc2": "yếu",
+      "tr": "",
+      "note": "ê | sc1: yêu | sc2: yếu",
+      "tap": "3",
+      "status": "perfect"
+    },
+    {
+      "key": "4",
+      "shiftKey": "$",
+      "rhyme": "ươu",
+      "sc1": "rượu",
+      "sc2": "hươu",
+      "tr": "",
+      "note": "ươu | sc1: rượu | sc2: hươu",
+      "tap": "4",
+      "status": "perfect"
+    },
+    {
+      "key": "5",
+      "shiftKey": "%",
+      "rhyme": "âu",
+      "sc1": "đâu",
+      "sc2": "sau",
+      "tr": "",
+      "note": "âu | sc1: đâu | sc2: sau",
+      "tap": "5",
+      "status": "perfect"
+    },
+    {
+      "key": "6",
+      "shiftKey": "^",
+      "rhyme": "ươ",
+      "sc1": "thường",
+      "sc2": "trước",
+      "tr": "",
+      "note": "ươ | tap: 6 | sc1: thường | sc2: trước",
+      "tap": "6",
+      "status": "perfect"
+    },
+    {
+      "key": "7",
+      "shiftKey": "&",
+      "rhyme": "oai",
+      "sc1": "ngoài",
+      "sc2": "thoải",
+      "tr": "",
+      "note": "oai | sc1: ngoài | sc2: thoải",
+      "tap": "7",
+      "status": "perfect"
+    },
+    {
+      "key": "8",
+      "shiftKey": "*",
+      "rhyme": "oă",
+      "sc1": "hoặc",
+      "sc2": "khoăn",
+      "tr": "",
+      "note": "oă | sc1: hoặc | sc2: khoăn",
+      "tap": "8",
+      "status": "perfect"
+    },
+    {
+      "key": "9",
+      "shiftKey": "(",
+      "rhyme": "ây",
+      "sc1": "đây",
+      "sc2": "thấy",
+      "tr": "",
+      "note": "ây | sc1: đây | sc2: thấy",
+      "tap": "9",
+      "status": "perfect"
+    },
+    {
+      "key": "0",
+      "shiftKey": ")",
+      "rhyme": "ô",
+      "sc1": "ông",
+      "sc2": "rồi",
+      "tr": "",
+      "note": "ô | sc1: ông | sc2: rồi",
+      "tap": "0",
+      "status": "perfect"
+    }
+  ],
+  "rowQWERTY": [
+    {
+      "key": "q",
+      "rhyme": "ôi",
+      "sc1": "quá",
+      "sc2": "qu",
+      "tr": "q",
+      "note": "ôi | sc1: quá | sc2: qu",
+      "tap": "q",
+      "status": "perfect"
+    },
+    {
+      "key": "w",
+      "rhyme": "ư",
+      "sc1": "như",
+      "sc2": "ngh",
+      "tr": "W",
+      "note": "ư | sc1: như | sc2: ngh",
+      "tap": "w",
+      "status": "perfect"
+    },
+    {
+      "key": "e",
+      "rhyme": "e",
+      "sc1": "em",
+      "sc2": "quét",
+      "tr": "E",
+      "note": "e | tap: đẹp | sc1: em | sc2: quét",
+      "tap": "đẹp",
+      "status": "perfect"
+    },
+    {
+      "key": "r",
+      "rhyme": "ưu",
+      "sc1": "hữu",
+      "sc2": "tr",
+      "tr": "R",
+      "note": "ưu + êu | 12h: ứu | 3h: ưu | 6h: ựu | 10h30: ều | 1h30: ếu | 9h: êu",
+      "tap": "r",
+      "status": "perfect",
+      "directions": {
+        "bang": "ưu",
+        "sac": "ứu",
+        "nang": "ựu",
+        "huyen": "ều",
+        "hoi": "ếu",
+        "nga": "êu"
+      }
+    },
+    {
+      "key": "t",
+      "rhyme": "au",
+      "sc1": "trong",
+      "sc2": "th",
+      "tr": "T",
+      "note": "au | sc1: trong | sc2: th",
+      "tap": "t",
+      "status": "perfect"
+    },
+    {
+      "key": "y",
+      "rhyme": "iê",
+      "sc1": "ý",
+      "sc2": "yên",
+      "tr": "y",
+      "note": "iê | sc1: ý | sc2: yên",
+      "tap": "y",
+      "status": "perfect"
+    },
+    {
+      "key": "u",
+      "rhyme": "u",
+      "sc1": "cũng",
+      "sc2": "nếu",
+      "tr": "u",
+      "note": "u | tap: u | sc1: cũng | sc2: nếu",
+      "tap": "u",
+      "status": "perfect"
+    },
+    {
+      "key": "i",
+      "rhyme": "i",
+      "sc1": "in",
+      "sc2": "y",
+      "tr": "i",
+      "note": "i | sc1: in | sc2: y",
+      "tap": "i",
+      "status": "perfect"
+    },
+    {
+      "key": "o",
+      "rhyme": "o",
+      "sc1": "ong",
+      "sc2": "cho",
+      "tr": "o",
+      "note": "o | tap: o | sc1: ong | sc2: cho",
+      "tap": "o",
+      "status": "perfect"
+    },
+    {
+      "key": "p",
+      "rhyme": "ao",
+      "sc1": "phải",
+      "sc2": "cao",
+      "tr": "p",
+      "note": "ao | tap: p | sc1: phải | sc2: cao",
+      "tap": "p",
+      "status": "perfect"
+    }
+  ],
+  "rowASDF": [
+    {
+      "key": "a",
+      "rhyme": "a",
+      "sc1": "anh",
+      "sc2": "ă",
+      "tr": "a",
+      "note": "a | sc1: anh | sc2: ă",
+      "tap": "a",
+      "status": "perfect"
+    },
+    {
+      "key": "s",
+      "rhyme": "oan",
+      "sc1": "sẽ",
+      "sc2": "x",
+      "tr": "s",
+      "note": "oan | sc1: sẽ | sc2: x",
+      "tap": "s",
+      "status": "perfect"
+    },
+    {
+      "key": "d",
+      "rhyme": "ơ",
+      "sc1": "được",
+      "sc2": "đ",
+      "tr": "D",
+      "note": "ơ | sc1: được | sc2: đ",
+      "tap": "d",
+      "status": "perfect"
+    },
+    {
+      "key": "f",
+      "rhyme": "ươn",
+      "sc1": "phần",
+      "sc2": "ph",
+      "tr": "f",
+      "note": "ươn | sc1: phần | sc2: ph",
+      "tap": "f",
+      "status": "perfect"
+    },
+    {
+      "key": "g",
+      "rhyme": "ai",
+      "sc1": "gửi",
+      "sc2": "gh",
+      "tr": "G",
+      "note": "ai | sc1: gửi | sc2: gh",
+      "tap": "g",
+      "status": "perfect"
+    },
+    {
+      "key": "h",
+      "rhyme": "iêu",
+      "sc1": "những",
+      "sc2": "nh",
+      "tr": "H",
+      "note": "iêu | sc1: những | sc2: nh",
+      "tap": "h",
+      "status": "perfect"
+    },
+    {
+      "key": "j",
+      "rhyme": "eo",
+      "sc1": "giờ",
+      "sc2": "gi",
+      "tr": "j",
+      "note": "eo | sc1: giờ | sc2: gi",
+      "tap": "j",
+      "status": "perfect"
+    },
+    {
+      "key": "k",
+      "rhyme": "iu",
+      "sc1": "không",
+      "sc2": "kh",
+      "tr": "K",
+      "note": "iu | sc1: không | sc2: kh",
+      "tap": "k",
+      "status": "perfect"
+    },
+    {
+      "key": "l",
+      "rhyme": "oi",
+      "sc1": "là",
+      "sc2": "lại",
+      "tr": "l",
+      "note": "oi | sc1: là | sc2: lại",
+      "tap": "l",
+      "status": "perfect"
+    }
+  ],
+  "rowZXCV": [
+    {
+      "key": "z",
+      "rhyme": "ưa",
+      "sc1": "đã",
+      "sc2": "d",
+      "tr": "z",
+      "note": "ưa | sc1: đã | sc2: d",
+      "tap": "z",
+      "status": "perfect"
+    },
+    {
+      "key": "x",
+      "rhyme": "ơi",
+      "sc1": "xem",
+      "sc2": "s",
+      "tr": "x",
+      "note": "ơi | sc1: xem | sc2: s",
+      "tap": "x",
+      "status": "perfect"
+    },
+    {
+      "key": "c",
+      "rhyme": "oa",
+      "sc1": "loa",
+      "sc2": "ch",
+      "tr": "C",
+      "note": "oa | tap: c | sc1: loa | sc2: ch",
+      "tap": "c",
+      "status": "perfect"
+    },
+    {
+      "key": "v",
+      "rhyme": "ia",
+      "sc1": "và",
+      "sc2": "việc",
+      "tr": "v",
+      "note": "ia | sc1: và | sc2: việc",
+      "tap": "v",
+      "status": "perfect"
+    },
+    {
+      "key": "b",
+      "rhyme": "uy",
+      "sc1": "bằng",
+      "sc2": "bởi",
+      "tr": "b",
+      "note": "uy | sc1: bằng | sc2: bởi",
+      "tap": "b",
+      "status": "perfect"
+    },
+    {
+      "key": "n",
+      "rhyme": "ưi",
+      "sc1": "năm",
+      "sc2": "ng",
+      "tr": "N",
+      "note": "ưi | sc1: năm | sc2: ng",
+      "tap": "n",
+      "status": "perfect"
+    },
+    {
+      "key": "m",
+      "rhyme": "uôi",
+      "sc1": "mình",
+      "sc2": "muốn",
+      "tr": "m",
+      "note": "uôi | sc1: mình | sc2: muốn",
+      "tap": "m",
+      "status": "perfect"
+    }
+  ]
+};
 
-      // --- HÀNG 1: HÀNG SỐ 1 - 0 (10 NGUYÊN ÂM ĐÔI KINH ĐIỂN NHẤT) ---
-      rowNumbers: [
-        { key: '1', shiftKey: '!', rhyme: 'ươ', sc1: '1', sc2: 'uo', tr: 'uo', note: 'ươ (trước, được) | sc2: uo' },
-        { key: '2', shiftKey: '@', rhyme: 'ưa', sc1: '2', sc2: 'ua', tr: 'ua', note: 'ưa (chưa, mưa) | sc2: ua' },
-        { key: '3', shiftKey: '#', rhyme: 'uâ', sc1: '3', sc2: 'ua', tr: 'ua', note: 'uâ (chuẩn, xuất) | sc2: ua' },
-        { key: '4', shiftKey: '$', rhyme: 'iê', sc1: '4', sc2: 'ie', tr: 'ie', note: 'iê (tiến, hiện) | sc2: ie' },
-        { key: '5', shiftKey: '%', rhyme: 'ia', sc1: '5', sc2: 'ia', tr: 'ia', note: 'ia (chia, nghĩa) | sc2: ia' },
-        { key: '6', shiftKey: '^', rhyme: 'uô', sc1: '6', sc2: 'uo', tr: 'uo', note: 'uô (luôn, cuộc) | sc2: uo' },
-        { key: '7', shiftKey: '&', rhyme: 'oa', sc1: '7', sc2: 'oa', tr: 'oa', note: 'oa (toàn, hoa) | sc2: oa' },
-        { key: '8', shiftKey: '*', rhyme: 'oă', sc1: '8', sc2: 'oa', tr: 'oa', note: 'oă (hoặc, khoăn) | sc2: oa' },
-        { key: '9', shiftKey: '(', rhyme: 'uy', sc1: '9', sc2: 'uy', tr: 'uy', note: 'uy (quy, tuy) | sc2: uy' },
-        { key: '0', shiftKey: ')', rhyme: 'yê', sc1: '0', sc2: 'ye', tr: '0',  note: 'yê (yêu, chuyện) | sc2: ye' }
-      ],
-
-      // --- HÀNG 2: QWERTY (10 phím q - p) ---
-      rowQWERTY: [
-        { key: 'q', rhyme: 'oan', sc1: 'q', sc2: 'qu',  tr: 'q', note: 'oan | sc1: q | sc2: qu (q)' },
-        { key: 'w', rhyme: 'ư',   sc1: 'w', sc2: 'ngh', tr: 'W', note: 'ư | sc1: w | sc2: ngh (Base60: W)' },
-        { key: 'e', rhyme: 'e',   sc1: 'e', sc2: 'ê',   tr: 'E', note: 'e | sc1: e | sc2: ê (E hoa)' },
-        { key: 'r', rhyme: 'êu',  sc1: 'r', sc2: 'tr',  tr: 'R', note: 'êu | sc1: r | sc2: tr (R hoa)' },
-        { key: 't', rhyme: 'oat', sc1: 't', sc2: 'th',  tr: 'T', note: 'oat | sc1: t | sc2: th (T hoa)' },
-        { key: 'y', rhyme: 'iêu', sc1: 'y', sc2: 'iêu', tr: 'y', note: 'iêu (top 1 nguyên âm 3) | Base60: y' },
-        { key: 'u', rhyme: 'u',   sc1: 'u', sc2: 'U',   tr: 'u', note: 'u | sc1: u | sc2: U' },
-        { key: 'i', rhyme: 'i',   sc1: 'i', sc2: 'I',   tr: 'i', note: 'i | sc1: i | sc2: I' },
-        { key: 'o', rhyme: 'o',   sc1: 'o', sc2: 'ô',   tr: 'o', note: 'o | sc1: o | sc2: ô (0)' },
-        { key: 'p', rhyme: 'ươn', sc1: 'p', sc2: 'p',   tr: 'p', note: 'ươn | sc1: p | sc2: p (Base60: p)' }
-      ],
-
-      // --- HÀNG 3: ASDF (9 phím a - l) ---
-      rowASDF: [
-        { key: 'a', rhyme: 'ai', sc1: 'a', sc2: 'ă',  tr: 'a', note: 'ai | sc1: a | sc2: ă' },
-        { key: 's', rhyme: 'ao', sc1: 's', sc2: 'x',  tr: 's', note: 'ao | sc1: s | sc2: x' },
-        { key: 'd', rhyme: 'ơ',  sc1: 'd', sc2: 'đ',  tr: 'D', note: 'ơ | sc1: d | sc2: đ (D hoa)' },
-        { key: 'f', rhyme: 'au', sc1: 'f', sc2: 'ph', tr: 'f', note: 'au | sc1: f | sc2: ph (Base60: f)' },
-        { key: 'g', rhyme: 'âu', sc1: 'g', sc2: 'gh', tr: 'G', note: 'âu | sc1: g | sc2: gh (G hoa)' },
-        { key: 'h', rhyme: 'ay', sc1: 'h', sc2: 'nh', tr: 'H', note: 'ay | sc1: h | sc2: nh (Base60: H)' },
-        { key: 'j', rhyme: 'ây', sc1: 'j', sc2: 'gi', tr: 'j', note: 'ây | sc1: j | sc2: gi (j)' },
-        { key: 'k', rhyme: 'oi', sc1: 'k', sc2: 'kh', tr: 'K', note: 'oi | sc1: k | sc2: kh (K hoa)' },
-        { key: 'l', rhyme: 'ôi', sc1: 'l', sc2: 'L',  tr: 'l', note: 'ôi | sc1: l | sc2: L' }
-      ],
-
-      // --- HÀNG 4: ZXCV (7 phím z - m) ---
-      rowZXCV: [
-        { key: 'z', rhyme: 'ơi',  sc1: 'z', sc2: 'd',  tr: 'z', note: 'ơi | sc1: z | sc2: d' },
-        { key: 'x', rhyme: 'eo',  sc1: 'x', sc2: 's',  tr: 'x', note: 'eo | sc1: x | sc2: s' },
-        { key: 'c', rhyme: 'ưu',  sc1: 'c', sc2: 'ch', tr: 'C', note: 'ưu | sc1: c | sc2: ch (C hoa)' },
-        { key: 'v', rhyme: 'oai', sc1: 'v', sc2: 'V',  tr: 'v', note: 'oai | sc1: v | sc2: V' },
-        { key: 'b', rhyme: 'yêu', sc1: 'b', sc2: 'B',  tr: 'b', note: 'yêu | sc1: b | sc2: B' },
-        { key: 'n', rhyme: 'iu',  sc1: 'n', sc2: 'ng', tr: 'N', note: 'iu | sc1: n | sc2: ng (N hoa)' },
-        { key: 'm', rhyme: 'uyê', sc1: 'm', sc2: 'M',  tr: 'm', note: 'uyê | sc1: m | sc2: M' }
-      ]
-    };
-
-    // Bản sao cấu hình mặc định (phục vụ chức năng Reset)
     const DEFAULT_KEY_CONFIG = JSON.parse(JSON.stringify(KEY_CONFIG));
 
     // === TOÀN BỘ 169 VẦN TIẾNG VIỆT ĐẦY ĐỦ CHO TÙY BIẾN ===
