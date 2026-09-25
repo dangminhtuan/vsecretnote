@@ -4466,14 +4466,12 @@
         return { words, activeIdx: forcedOmniWordIdx };
       }
 
-      // Tìm từ đang chứa con trỏ, nếu con trỏ ở khoảng trắng cuối câu thì lấy từ cuối cùng
-      let activeIdx = words.length - 1;
+      // Chỉ phân tích khi con trỏ đang chạm hoặc nằm trong từ (start <= cursorPos <= end).
+      // Khi đã gõ dấu cách rời khỏi từ (cursorPos > end hoặc ở khoảng trắng giữa các từ) -> trả về -1 để tắt toàn bộ đèn phím!
+      let activeIdx = -1;
       for (let i = 0; i < words.length; i++) {
         if (cursorPos >= words[i].start && cursorPos <= words[i].end) {
           activeIdx = i;
-          break;
-        } else if (cursorPos < words[i].start) {
-          activeIdx = Math.max(0, i - 1);
           break;
         }
       }
@@ -4802,6 +4800,25 @@
 
       if (words.length === 0 || activeIdx === -1) {
         keyboardWrapper.classList.remove('searching');
+        if (omniAnatomyBar && words.length > 0) {
+          let html = `<div class="omni-word-list">`;
+          words.slice(-6).forEach((wObj, idx) => {
+            const realIdx = words.length > 6 ? (words.length - 6 + idx) : idx;
+            html += `<span class="omni-word-pill" data-widx="${realIdx}" title="Chạm để soi lại phím cho từ '${wObj.word}'">${wObj.word}</span>`;
+          });
+          html += `</div>`;
+          html += `<span class="omni-hint">⌨️ Đã cách từ — Bàn phím tắt đèn để sẵn sàng gõ từ mới <i>(chạm vào từ bên cạnh nếu muốn soi lại)</i></span>`;
+          html += `<button class="btn-omni-hide-guide" id="btnHideOmniAnatomy" title="Ẩn khung thuyết minh này để tiết kiệm diện tích">🔼 Ẩn</button>`;
+          omniAnatomyBar.innerHTML = html;
+          const btnHideDyn = omniAnatomyBar.querySelector('#btnHideOmniAnatomy');
+          if (btnHideDyn) btnHideDyn.addEventListener('click', () => setOmniAnatomyVisible(false));
+          omniAnatomyBar.querySelectorAll('.omni-word-pill[data-widx]').forEach(pill => {
+            pill.addEventListener('click', () => {
+              forcedOmniWordIdx = parseInt(pill.dataset.widx, 10);
+              performSearch();
+            });
+          });
+        }
         return;
       }
 
