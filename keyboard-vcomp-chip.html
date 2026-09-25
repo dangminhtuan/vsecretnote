@@ -3145,9 +3145,9 @@
  
     // === BẢNG VẦN LÕI BASE60 (HỖ TRỢ TÙY BIẾN HOÁN ĐỔI TẦNG B1/B2/B3) ===
     // Mặc định lõi VCOMP Base60 đã đồng bộ 100% với bàn phím (36/36 Khớp, 0 trùng lặp, đủ 171 vần)
-    const DEFAULT_CUSTOM_RHYMES_BASE = ["êt","ơ","ach","ai","am","an","ang","ôn","ia","âm","ut","ich","ên","ương","ưng","ươm","iêm","im","ac","ôm","ưc","âp","-","anh","ao","ap","at","au","ay","ă","ăc","ăm","ăn","ăng","ăp","ăt","âu","âc","ân","âng","ât","â","yêu","-","ec","em","en","eo","ep","et","êu","êch","êm","ênh","êp","a","e","i","u","ư"];
+    const DEFAULT_CUSTOM_RHYMES_BASE = ["êt","ơ","ach","ai","am","an","ang","ôn","ia","âm","ut","ich","ên","ương","ưng","ươm","iêm","im","ac","ôm","ưc","âp","-","anh","ao","ap","at","au","ay","ă","ăc","ăm","ăn","ăng","ăp","ăt","âu","âc","ân","âng","ât","oat","yêu","-","ec","em","en","eo","ep","et","êu","êch","êm","ênh","êp","a","e","i","u","ư"];
     const DEFAULT_CUSTOM_RHYMES_EXTRA_1 = ["iêc","iên","iêng","iêp","iêt","iu","in","iêu","ip","it","inh","oa","uâng","oan","oc","oe","oi","om","on","ong","op","ot","oăn","oăng","ơm","ôc","ôi","ông","ôp","ôt","ơi","ô","ơn","ơp","ơt","oen","oac","oach","oam","oang","oanh","oap","uêch","oay","oeo","oem","o","oet","ooc","oong","oăc","oăm","oăt","iê","eng","yêt",null,null,null,null];
-    const DEFAULT_CUSTOM_RHYMES_EXTRA_2 = ["ua","uât","uc","uê","ui","um","un","uân","ung","uôc","uôi","uôn","uông","uôt","up","uy","uyên","uyêt","ynh","ưa","ưi","y","ưn","ươc","ươi","ươn","ươp","ươt","ưt","ưu","ưm","yêm","yê","oat","ê","ươu","uôm","ươ","oai","oă","ây","uênh","uya","uych","uyn","uynh","uyp","uyt","uyu","yn","yên","yt","yêng","ăk","n","uây","uơ",null,null,null];
+    const DEFAULT_CUSTOM_RHYMES_EXTRA_2 = ["ua","uât","â","uê","ui","um","un","uân","ung","uôc","uôi","uôn","uông","uôt","up","uy","uyên","uyêt","ynh","ưa","ưi","y","ưn","ươc","ươi","ươn","ươp","ươt","ưt","ưu","ưm","yêm","yê","uc","ê","ươu","uôm","ươ","oai","oă","ây","uênh","uya","uych","uyn","uynh","uyp","uyt","uyu","yn","yên","yt","yêng","ăk","n","uây","uơ",null,null,null];
 
     let CUSTOM_RHYMES_BASE = [...DEFAULT_CUSTOM_RHYMES_BASE];
     let CUSTOM_RHYMES_EXTRA_1 = [...DEFAULT_CUSTOM_RHYMES_EXTRA_1];
@@ -3155,12 +3155,12 @@
 
     try {
       const dedupVer = localStorage.getItem('vcomp_base60_dedup_ver');
-      if (dedupVer !== 'v2_clean_171') {
-        // Tự động nâng cấp bảng Base60 đã khử 5 vần trùng (ây, oai, oat, ư, ôn) và khôi phục vần yêu
+      if (dedupVer !== 'v3_clean_171_an') {
+        // Tự động nâng cấp bảng Base60 đồng bộ phím 2 = â
         localStorage.setItem('vcomp_custom_rhymes_base', JSON.stringify(DEFAULT_CUSTOM_RHYMES_BASE));
         localStorage.setItem('vcomp_custom_rhymes_extra_1', JSON.stringify(DEFAULT_CUSTOM_RHYMES_EXTRA_1));
         localStorage.setItem('vcomp_custom_rhymes_extra_2', JSON.stringify(DEFAULT_CUSTOM_RHYMES_EXTRA_2));
-        localStorage.setItem('vcomp_base60_dedup_ver', 'v2_clean_171');
+        localStorage.setItem('vcomp_base60_dedup_ver', 'v3_clean_171_an');
       } else {
         const sBase = localStorage.getItem('vcomp_custom_rhymes_base');
         const sEx1 = localStorage.getItem('vcomp_custom_rhymes_extra_1');
@@ -3276,18 +3276,13 @@
     },
     {
       "key": ">",
-      "rhyme": "uya",
-      "sc1": "khuya",
-      "sc2": "uych",
+      "rhyme": "ă",
+      "sc1": "ăn",
+      "sc2": "ăng",
       "tr": "",
-      "note": "uya + uych | 12h: uých | 3h: uya | 6h: uỵch",
+      "note": "ă (6 hướng dấu: ă/ắ/ằ/ẳ/ẵ/ặ + ghép âm cuối) | sc1: ăn | sc2: ăng",
       "tap": ">",
-      "status": "perfect",
-      "directions": {
-        "bang": "uya",
-        "sac": "uých",
-        "nang": "uỵch"
-      }
+      "status": "perfect"
     },
     {
       "key": ";",
@@ -3315,11 +3310,11 @@
     {
       "key": "2",
       "shiftKey": "@",
-      "rhyme": "oat",
-      "sc1": "thoát",
-      "sc2": "oac",
+      "rhyme": "â",
+      "sc1": "ân",
+      "sc2": "âm",
       "tr": "",
-      "note": "oat | sc1: thoát | sc2: oac",
+      "note": "â (6 hướng dấu: â/ấ/ầ/ẩ/ẫ/ậ + ghép âm cuối) | sc1: ân | sc2: âm",
       "tap": "2",
       "status": "perfect"
     },
@@ -3792,8 +3787,8 @@
       });
     }
 
-    // Tự động đồng bộ cấu hình mới nhất (v3_multirhyme_sync: u="u", r="ưu+êu", Row 0 nguyên âm kép thuần khiết)
-    const CURRENT_CFG_VER = 'v3_multirhyme_sync';
+    // Tự động đồng bộ cấu hình mới nhất (v4_an_a_family: phím 2 = â/ân/âm, phím > = ă/ăn/ăng)
+    const CURRENT_CFG_VER = 'v4_an_a_family';
     if (localStorage.getItem('vcomp_chip_config_ver') !== CURRENT_CFG_VER) {
       localStorage.removeItem('vcomp_chip_custom_config');
       localStorage.setItem('vcomp_chip_config_ver', CURRENT_CFG_VER);
