@@ -19,12 +19,7 @@
           "tr": "",
           "note": "uô + uôc | 12h: uốc | 6h: uộc | 3h: uông",
           "tap": ":",
-          "status": "perfect",
-          "directions": {
-            "bang": "uông",
-            "sac": "uốc",
-            "nang": "uộc"
-          }
+          "status": "perfect"
         },
         {
           "key": "?",
@@ -64,12 +59,7 @@
           "tr": "",
           "note": "uâ + uât | 12h: uất | 6h: uật | 3h: uân",
           "tap": "-",
-          "status": "perfect",
-          "directions": {
-            "bang": "uân",
-            "sac": "uất",
-            "nang": "uật"
-          }
+          "status": "perfect"
         },
         {
           "key": "=",
@@ -79,12 +69,7 @@
           "tr": "",
           "note": "uyê + uyêt | 12h: quyết | 6h: tuyệt | 3h: uyên",
           "tap": "=",
-          "status": "perfect",
-          "directions": {
-            "bang": "uyên",
-            "sac": "quyết",
-            "nang": "tuyệt"
-          }
+          "status": "perfect"
         },
         {
           "key": "/",

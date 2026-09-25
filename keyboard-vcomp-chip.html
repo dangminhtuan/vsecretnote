@@ -3200,14 +3200,9 @@
       "sc1": "uông",
       "sc2": "uôc",
       "tr": "",
-      "note": "uô + uôc | 12h: uốc | 6h: uộc | 3h: uông",
+      "note": "uô (6 hướng dấu: uô/uố/uồ/uổ/uỗ/uộ + ghép âm cuối) | sc1: uông | sc2: uôc",
       "tap": ":",
-      "status": "perfect",
-      "directions": {
-        "bang": "uông",
-        "sac": "uốc",
-        "nang": "uộc"
-      }
+      "status": "perfect"
     },
     {
       "key": "?",
@@ -3245,14 +3240,9 @@
       "sc1": "uân",
       "sc2": "uât",
       "tr": "",
-      "note": "uâ + uât | 12h: uất | 6h: uật | 3h: uân",
+      "note": "uâ (6 hướng dấu: uâ/uấ/uầ/uẩ/uẫ/uậ + ghép âm cuối) | sc1: uân | sc2: uât",
       "tap": "-",
-      "status": "perfect",
-      "directions": {
-        "bang": "uân",
-        "sac": "uất",
-        "nang": "uật"
-      }
+      "status": "perfect"
     },
     {
       "key": "=",
@@ -3260,14 +3250,9 @@
       "sc1": "uyên",
       "sc2": "uyêt",
       "tr": "",
-      "note": "uyê + uyêt | 12h: quyết | 6h: tuyệt | 3h: uyên",
+      "note": "uyê (6 hướng dấu: uyê/uyế/uyề/uyể/uyễ/uyệ + ghép âm cuối) | sc1: uyên | sc2: uyêt",
       "tap": "=",
-      "status": "perfect",
-      "directions": {
-        "bang": "uyên",
-        "sac": "quyết",
-        "nang": "tuyệt"
-      }
+      "status": "perfect"
     },
     {
       "key": "/",
@@ -3835,6 +3820,10 @@
           }
           if (LEGACY_DUP_SC2.includes((cfg.sc2 || '').toLowerCase().trim())) {
             cfg.sc2 = '';
+            needResaveRowSymbols = true;
+          }
+          if ([':', '-', '='].includes(cfg.key) && cfg.directions) {
+            delete cfg.directions;
             needResaveRowSymbols = true;
           }
         }
@@ -4621,24 +4610,24 @@
           }
         });
 
-        // 4c. Tìm trên sc1 / sc2 nếu vần nằm ở góc shortcut (vd: anh, em, in, ong, uông, uyên, uân)
+        // 4c. Tìm trên sc1 / sc2 nếu vần khớp chính xác cả dấu thanh (vd: "chuyên" -> uyên ở sc1, "uông" -> uông ở sc1)
         if (rhymeHits.length === 0) {
           allCfgList.forEach(cfg => {
             const sc1Low = (cfg.sc1 || '').toLowerCase();
             const sc2Low = (cfg.sc2 || '').toLowerCase();
-            if (sc1Low === tonedRhyme || sc1Low === baseRhyme) {
+            if (sc1Low === tonedRhyme || (tone === 0 && sc1Low === baseRhyme)) {
               rhymeHits.push({
                 key: cfg.key,
-                dirArrow: '↘ 5h (sc1)' + (tone > 0 && sc1Low === baseRhyme ? ` + ${toneInfo.name}` : ''),
+                dirArrow: '↘ 5h (sc1)',
                 shortDir: '↘5h',
                 val: cfg.sc1,
                 baseRhyme,
                 toneName: toneInfo.name
               });
-            } else if (sc2Low === tonedRhyme || sc2Low === baseRhyme) {
+            } else if (sc2Low === tonedRhyme || (tone === 0 && sc2Low === baseRhyme)) {
               rhymeHits.push({
                 key: cfg.key,
-                dirArrow: '↙ 7h30 (sc2)' + (tone > 0 && sc2Low === baseRhyme ? ` + ${toneInfo.name}` : ''),
+                dirArrow: '↙ 7h30 (sc2)',
                 shortDir: '↙7h30',
                 val: cfg.sc2,
                 baseRhyme,
