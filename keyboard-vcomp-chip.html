@@ -231,6 +231,59 @@
       color: #fff;
     }
 
+    /* Nút Bật lại thuyết minh (nằm gọn trong ô nhập cạnh nút Xóa, không tốn diện tích dọc) */
+    .btn-omni-show-guide {
+      position: absolute;
+      right: 33px;
+      top: 7px;
+      height: 22px;
+      padding: 0 7px;
+      border-radius: 11px;
+      background: rgba(16, 185, 129, 0.16);
+      border: 1px solid rgba(0, 255, 136, 0.5);
+      color: #6ee7b7;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.15s ease;
+      z-index: 3;
+      white-space: nowrap;
+    }
+
+    .btn-omni-show-guide:hover {
+      background: rgba(0, 255, 136, 0.28);
+      border-color: var(--neon-green);
+      color: #fff;
+      box-shadow: 0 0 8px rgba(0, 255, 136, 0.4);
+    }
+
+    /* Nút Tắt thuyết minh (nằm bên phải thanh Giải Phẫu Ngữ Âm) */
+    .btn-omni-hide-guide {
+      margin-left: auto;
+      background: rgba(30, 41, 59, 0.9);
+      border: 1px solid #475569;
+      color: #94a3b8;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 10.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-omni-hide-guide:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #f87171;
+      color: #fecaca;
+    }
+
     /* Dải Giải Phẫu Ngữ Âm & Chỉ Dẫn Phím Hợp Nhất */
     .omni-anatomy-bar {
       display: flex;
@@ -2675,10 +2728,12 @@
     <div class="sandbox-panel">
       <div class="input-box-wrapper">
         <textarea id="targetInput" placeholder="Gõ văn bản hoặc từ bất kỳ (vd: tôi muốn thấy)... Bàn phím sẽ tự động tách Phụ âm đầu + Vần + Hướng dấu!"></textarea>
+        <button id="btnShowOmniAnatomy" class="btn-omni-show-guide" title="Bật lại khung thuyết minh giải phẫu ngữ âm" style="display: none;">💡 Thuyết minh</button>
         <button id="btnOmniClear" class="btn-omni-clear" title="Xóa toàn bộ nội dung" style="display: none;">✕</button>
       </div>
       <div class="omni-anatomy-bar" id="omniAnatomyBar">
-        <span class="omni-hint">💡 Gõ câu bất kỳ (vd: <b>tôi muốn thấy</b>) ➔ Hệ thống tự động bóc tách <b>Phụ âm đầu (th) + Vần (ấy)</b> và thắp sáng phím!</span>
+        <span class="omni-hint">💡 Gõ câu bất kỳ (vd: <b>tôi muốn thấy</b>) ➔ Hệ thống tự động bóc tách <b>🔵 Âm đầu + 🟢 Vần mặt phím + 🟣 Vần ẩn Base60</b>!</span>
+        <button class="btn-omni-hide-guide" id="btnHideOmniAnatomy" title="Ẩn khung thuyết minh này để tiết kiệm diện tích (phím dưới vẫn sáng màu bình thường)">🔼 Ẩn</button>
       </div>
     </div>
 
@@ -4708,7 +4763,9 @@
         keyboardWrapper.classList.remove('searching');
         if (btnOmniClear) btnOmniClear.style.display = 'none';
         if (omniAnatomyBar) {
-          omniAnatomyBar.innerHTML = `<span class="omni-hint">💡 Gõ câu bất kỳ (vd: <b>tôi muốn thấy</b>) ➔ Hệ thống tự động bóc tách <b>🔵 Âm đầu + 🟢 Vần mặt phím + 🟣 Vần ẩn Base60</b>!</span>`;
+          omniAnatomyBar.innerHTML = `<span class="omni-hint">💡 Gõ câu bất kỳ (vd: <b>tôi muốn thấy</b>) ➔ Hệ thống tự động bóc tách <b>🔵 Âm đầu + 🟢 Vần mặt phím + 🟣 Vần ẩn Base60</b>!</span><button class="btn-omni-hide-guide" id="btnHideOmniAnatomy" title="Ẩn khung thuyết minh này để tiết kiệm diện tích">🔼 Ẩn</button>`;
+          const bHide = omniAnatomyBar.querySelector('#btnHideOmniAnatomy');
+          if (bHide) bHide.addEventListener('click', () => setOmniAnatomyVisible(false));
         }
         return;
       }
@@ -4904,7 +4961,14 @@
           html += `<span class="omni-hint">Không tìm thấy tổ hợp khớp trực tiếp cho "${activeWordObj.word}"</span>`;
         }
 
+        html += `<button class="btn-omni-hide-guide" id="btnHideOmniAnatomy" title="Ẩn khung thuyết minh này để tiết kiệm diện tích (phím dưới vẫn sáng màu bình thường)">🔼 Ẩn</button>`;
+
         omniAnatomyBar.innerHTML = html;
+
+        const btnHideDyn = omniAnatomyBar.querySelector('#btnHideOmniAnatomy');
+        if (btnHideDyn) {
+          btnHideDyn.addEventListener('click', () => setOmniAnatomyVisible(false));
+        }
 
         omniAnatomyBar.querySelectorAll('.omni-word-pill[data-widx]').forEach(pill => {
           pill.addEventListener('click', () => {
@@ -4913,6 +4977,32 @@
           });
         });
       }
+    }
+
+    const btnShowOmniAnatomy = document.getElementById('btnShowOmniAnatomy');
+    let isOmniAnatomyHidden = localStorage.getItem('vcomp_hide_omni_anatomy') === '1';
+
+    function setOmniAnatomyVisible(visible) {
+      isOmniAnatomyHidden = !visible;
+      localStorage.setItem('vcomp_hide_omni_anatomy', isOmniAnatomyHidden ? '1' : '0');
+      if (omniAnatomyBar) {
+        omniAnatomyBar.style.display = isOmniAnatomyHidden ? 'none' : 'flex';
+      }
+      if (btnShowOmniAnatomy) {
+        btnShowOmniAnatomy.style.display = isOmniAnatomyHidden ? 'flex' : 'none';
+      }
+    }
+
+    // Khởi tạo trạng thái ẩn/hiện thuyết minh theo lựa chọn đã lưu
+    setOmniAnatomyVisible(!isOmniAnatomyHidden);
+
+    if (btnShowOmniAnatomy) {
+      btnShowOmniAnatomy.addEventListener('click', () => setOmniAnatomyVisible(true));
+    }
+
+    const initHideBtn = document.getElementById('btnHideOmniAnatomy');
+    if (initHideBtn) {
+      initHideBtn.addEventListener('click', () => setOmniAnatomyVisible(false));
     }
 
     targetInput.addEventListener('input', () => {

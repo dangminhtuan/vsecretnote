@@ -40,5 +40,6 @@
   3. **Đánh Số Đồng Bộ (Numbered Trigger Mechanism)**:
      - Trên các mũi tên hoán vị hoặc luồng xử lý, đánh dấu số định danh nổi bật (ví dụ: `①`, `②`, `③`).
      - Các nút bấm hành động tương ứng ở bên ngoài cũng mang cùng mã số định danh (ví dụ: `[ 🔄 1 ]`, `[ 🔄 2 ]`) để tạo sự liên kết phản xạ tức thì giữa mắt nhìn và ngón tay bấm.
-
-
+  4. **Tiết Kiệm Diện Tích & Ẩn Thuyết Minh Khi Đã Quá Rõ Ràng (Zero-Bloat / Dismissible Explanation)**:
+     - Khi các tín hiệu thị giác trực tiếp trên giao diện (như màu sắc phím, nhãn góc, mũi tên hướng) nhìn liếc qua đã quá rõ ràng rồi thì **không cần phải thuyết minh dài dòng tốn diện tích màn hình** (đặc biệt trên điện thoại).
+     - Nếu có thanh thuyết minh/giải thích cho người mới dùng lần đầu, **bắt buộc phải có nút Tắt (`Ẩn thuyết minh` / `✕`)** để thu gọn hoàn toàn khi người dùng đã hiểu quy tắc, kèm một **nút nhỏ gọn (`💡`)** ngay trên thanh công cụ/ô nhập để bật lại bất cứ khi nào muốn soi chi tiết. Trạng thái bật/tắt phải được lưu lại (`localStorage`).
