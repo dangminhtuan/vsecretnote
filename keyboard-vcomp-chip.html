@@ -313,6 +313,13 @@
       color: #fde047;
     }
 
+    .omni-step-extra {
+      background: rgba(192, 132, 252, 0.2);
+      border: 1px solid rgba(192, 132, 252, 0.8);
+      color: #f3e8ff;
+      box-shadow: 0 0 8px rgba(168, 85, 247, 0.3);
+    }
+
     .omni-step-key {
       background: #0b0f14;
       color: #fff;
@@ -352,6 +359,22 @@
       box-shadow: 0 0 8px rgba(0, 255, 136, 0.85);
       top: 1px;
       left: 1.5px;
+    }
+
+    /* Góc Trên-Phải (.chip-tr): Chuyên hiển thị Vần Ẩn thuộc Lõi Base60 (Màu Tím Thạch Anh) */
+    .chip-tr.slot-active-extra {
+      background: #3b0764;
+      border: 1.2px solid #c084fc;
+      color: #f3e8ff !important;
+      padding: 1px 3.5px;
+      border-radius: 4px;
+      font-size: 8.5px !important;
+      font-weight: 800 !important;
+      z-index: 16;
+      box-shadow: 0 0 9px rgba(192, 132, 252, 0.95);
+      top: 1px;
+      right: 1.5px;
+      white-space: nowrap;
     }
 
     .chip-bl.slot-active-sc,
@@ -556,16 +579,17 @@
       text-shadow: 0 0 8px var(--neon-amber);
     }
 
+    /* key-highlight-3: Màu Tím Thạch Anh (Neon Purple) chuyên biệt cho Vần Ẩn Lõi Base60 */
     .chip-key.key-highlight-3 {
-      border-color: var(--neon-pink) !important;
-      background: rgba(255, 42, 133, 0.28) !important;
-      box-shadow: 0 0 16px rgba(255, 42, 133, 0.95), inset 0 0 8px rgba(255, 42, 133, 0.5) !important;
+      border-color: #c084fc !important;
+      background: rgba(168, 85, 247, 0.32) !important;
+      box-shadow: 0 0 16px rgba(192, 132, 252, 0.95), inset 0 0 8px rgba(168, 85, 247, 0.55) !important;
       transform: scale(1.06) !important;
       z-index: 10;
     }
     .chip-key.key-highlight-3 .chip-main {
-      color: #fff !important;
-      text-shadow: 0 0 8px var(--neon-pink);
+      color: #f3e8ff !important;
+      text-shadow: 0 0 8px #c084fc;
     }
 
     .chip-key.key-highlight-multi {
@@ -4560,7 +4584,24 @@
           });
         }
 
-        // 4d. Nếu là vần khép có âm cuối (vd: "muốn" -> uôn = uô + n, "trường" -> ương = ươ + ng), tách Nguyên âm lõi + Âm cuối & Tìm trong Lõi Base60
+        // 4d. LUÔN LUÔN quét Lõi Base60 (B1/B2/B3/⇧B1/⇧B2/⇧B3) để tìm các Vần Ẩn dưới bề mặt phím (Màu Tím Thạch Anh 🟣)
+        allCfgList.forEach(cfg => {
+          const surfaceRhyme = (cfg.rhyme || '').toLowerCase();
+          const sc1Low = (cfg.sc1 || '').toLowerCase();
+          const sc2Low = (cfg.sc2 || '').toLowerCase();
+          // Chỉ tính là Vần Ẩn nếu vần đó KHÔNG in trực tiếp trên bề mặt phím đó
+          if (surfaceRhyme === baseRhyme || sc1Low === baseRhyme || sc2Low === baseRhyme) return;
+
+          const extras = getKeyExtraRhymes(cfg.key, cfg.tr);
+          for (const ex of extras) {
+            if (ex.rhyme === baseRhyme) {
+              extraHits.push({ key: cfg.key, extraRhyme: ex.origRhyme, extraLabel: ex.label });
+              break;
+            }
+          }
+        });
+
+        // 4e. Nếu chưa có vần bề mặt trực tiếp và là vần khép có âm cuối (vd: "muốn" -> uôn = uô + n), gợi ý ghép Nguyên âm mặt phím + Âm cuối
         if (rhymeHits.length === 0) {
           let c3 = '';
           for (const cm of CODAS_MULTI) {
@@ -4586,20 +4627,9 @@
               }
             });
           }
-
-          // Quét thêm Lõi Base60 (B1/B2/B3) để báo vần ẩn nếu có
-          allCfgList.forEach(cfg => {
-            const extras = getKeyExtraRhymes(cfg.key, cfg.tr);
-            for (const ex of extras) {
-              if (ex.rhyme === baseRhyme) {
-                extraHits.push({ key: cfg.key, extraRhyme: ex.origRhyme, extraLabel: ex.label });
-                break;
-              }
-            }
-          });
         }
 
-        // 4e. Fuzzy Match khi người dùng gõ không dấu (vd: "thay" -> ây/ay, "ruou" -> ươu, "khuay" -> uây)
+        // 4f. Fuzzy Match khi người dùng gõ không dấu (vd: "thay" -> ây/ay, "ruou" -> ươu, "muon" -> uôn)
         if (stripAllVietnameseAccents(w) === w) {
           const unaccentedBase = stripAllVietnameseAccents(baseRhyme);
           allCfgList.forEach(cfg => {
@@ -4613,6 +4643,16 @@
                 baseRhyme: cfg.rhyme,
                 toneName: 'Gợi ý không dấu'
               });
+            }
+            // Tìm cả Vần Ẩn Base60 khi gõ không dấu
+            if (!extraHits.some(e => e.key === cfg.key) && (cfg.rhyme || '').toLowerCase() !== baseRhyme) {
+              const extras = getKeyExtraRhymes(cfg.key, cfg.tr);
+              for (const ex of extras) {
+                if (stripAllVietnameseAccents(ex.rhyme) === unaccentedBase && (cfg.rhyme || '').toLowerCase() !== ex.rhyme) {
+                  extraHits.push({ key: cfg.key, extraRhyme: ex.origRhyme, extraLabel: ex.label });
+                  break;
+                }
+              }
             }
           });
         }
@@ -4652,10 +4692,10 @@
         const mainEl = el.querySelector('.chip-main');
         if (mainEl) mainEl.classList.remove('slot-active-tap');
 
-        ['.chip-tl', '.chip-bl', '.chip-br'].forEach(sel => {
+        ['.chip-tl', '.chip-tr', '.chip-bl', '.chip-br'].forEach(sel => {
           const slotEl = el.querySelector(sel);
           if (slotEl) {
-            slotEl.classList.remove('slot-active-rhyme', 'slot-active-sc', 'sc-word');
+            slotEl.classList.remove('slot-active-rhyme', 'slot-active-extra', 'slot-active-sc', 'sc-word');
             if (slotEl.dataset.origText !== undefined) {
               slotEl.textContent = slotEl.dataset.origText;
               delete slotEl.dataset.origText;
@@ -4668,7 +4708,7 @@
         keyboardWrapper.classList.remove('searching');
         if (btnOmniClear) btnOmniClear.style.display = 'none';
         if (omniAnatomyBar) {
-          omniAnatomyBar.innerHTML = `<span class="omni-hint">💡 Gõ câu bất kỳ (vd: <b>tôi muốn thấy</b>) ➔ Hệ thống tự động bóc tách <b>Phụ âm đầu (th) + Vần (ấy)</b> và thắp sáng phím!</span>`;
+          omniAnatomyBar.innerHTML = `<span class="omni-hint">💡 Gõ câu bất kỳ (vd: <b>tôi muốn thấy</b>) ➔ Hệ thống tự động bóc tách <b>🔵 Âm đầu + 🟢 Vần mặt phím + 🟣 Vần ẩn Base60</b>!</span>`;
         }
         return;
       }
@@ -4798,12 +4838,15 @@
           }
         });
 
+        // Thắp sáng Vần Ẩn Base60 trực tiếp tại Góc Trên-Phải (.chip-tr - Góc Mã Base60) bằng màu Tím Thạch Anh 🟣
         if (info.extra) {
           el.classList.add('key-has-extra');
-          const badge = document.createElement('span');
-          badge.className = 'chip-extra-badge' + (info.extra.extraLabel.includes('⇧') ? ' badge-shift' : '');
-          badge.textContent = `★ ${info.extra.extraRhyme} (${info.extra.extraLabel})`;
-          el.appendChild(badge);
+          const trEl = el.querySelector('.chip-tr');
+          if (trEl) {
+            if (trEl.dataset.origText === undefined) trEl.dataset.origText = trEl.textContent;
+            trEl.classList.add('slot-active-extra');
+            trEl.textContent = `★${info.extra.extraRhyme}·${info.extra.extraLabel}`;
+          }
         }
       });
 
@@ -4838,10 +4881,13 @@
           stepParts.push(
             `<span class="omni-step-badge omni-step-rhyme">🟢 Vần <b>${analysis.tonedRhyme || analysis.baseRhyme}</b> ➔ Phím <span class="omni-step-key">${h.key.toUpperCase()}</span> (${h.dirArrow})</span>`
           );
-        } else if (analysis.extraHits.length > 0) {
-          const ex = analysis.extraHits[0];
+        }
+
+        // LUÔN hiển thị viên thuốc Tím Thạch Anh 🟣 nếu từ đó có Vần Ẩn nằm trong Lõi Base60 (B1/B2/B3/⇧)
+        if (analysis.extraHits.length > 0) {
+          const exList = analysis.extraHits.map(ex => `<span class="omni-step-key">${ex.key.toUpperCase()}</span> (${ex.extraLabel})`).join(', ');
           stepParts.push(
-            `<span class="omni-step-badge omni-step-rhyme">🟣 Vần Lõi <b>${ex.extraRhyme}</b> ➔ Phím <span class="omni-step-key">${ex.key.toUpperCase()}</span> (${ex.extraLabel})</span>`
+            `<span class="omni-step-badge omni-step-extra">🟣 Ẩn Base60: <b>${analysis.extraHits[0].extraRhyme}</b> ➔ Phím ${exList}</span>`
           );
         }
 
