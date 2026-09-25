@@ -3144,22 +3144,31 @@
     import { RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2, BASE60_MAPPING } from './data.js';
  
     // === BẢNG VẦN LÕI BASE60 (HỖ TRỢ TÙY BIẾN HOÁN ĐỔI TẦNG B1/B2/B3) ===
-    // Mặc định lõi VCOMP Base60 đã đồng bộ 100% với bàn phím (36/36 Khớp)
-    const DEFAULT_CUSTOM_RHYMES_BASE = ["êt","ơ","ach","ai","am","an","ang","ôn","ia","âm","ut","ich","ên","ương","ưng","ươm","iêm","im","ac","ôm","ưc","âp","ôn","anh","ao","ap","at","au","ay","ă","ăc","ăm","ăn","ăng","ăp","ăt","âu","âc","ân","âng","ât","â","ây","-","ec","em","en","eo","ep","et","êu","êch","êm","ênh","êp","a","e","i","u","ư"];
-    const DEFAULT_CUSTOM_RHYMES_EXTRA_1 = ["iêc","iên","iêng","iêp","iêt","iu","in","iêu","ip","it","inh","oa","oai","oan","oc","oe","oi","om","on","ong","op","ot","oăn","oăng","ơm","ôc","ôi","ông","ôp","ôt","ơi","ô","ơn","ơp","ơt","oen","oac","oach","ư","oang","oanh","oap","oat","oay","oeo","oem","o","oet","ooc","oong","oăc","oăm","oăt","iê","eng","yêt","oam",null,null,null];
-    const DEFAULT_CUSTOM_RHYMES_EXTRA_2 = ["ua","uât","uc","uê","ui","um","un","uân","ung","uôc","uôi","uôn","uông","uôt","up","uy","uyên","uyêt","ynh","ưa","ưi","y","ưn","ươc","ươi","ươn","ươp","ươt","ưt","ưu","ưm","yêm","yê","oat","ê","ươu","uôm","ươ","oai","oă","ây","uênh","uya","uych","uyn","uynh","uyp","uyt","uyu","yn","ư","yt","yêng","ăk","n","uây","uơ","uâng","uêch","yên"];
+    // Mặc định lõi VCOMP Base60 đã đồng bộ 100% với bàn phím (36/36 Khớp, 0 trùng lặp, đủ 171 vần)
+    const DEFAULT_CUSTOM_RHYMES_BASE = ["êt","ơ","ach","ai","am","an","ang","ôn","ia","âm","ut","ich","ên","ương","ưng","ươm","iêm","im","ac","ôm","ưc","âp","-","anh","ao","ap","at","au","ay","ă","ăc","ăm","ăn","ăng","ăp","ăt","âu","âc","ân","âng","ât","â","yêu","-","ec","em","en","eo","ep","et","êu","êch","êm","ênh","êp","a","e","i","u","ư"];
+    const DEFAULT_CUSTOM_RHYMES_EXTRA_1 = ["iêc","iên","iêng","iêp","iêt","iu","in","iêu","ip","it","inh","oa","uâng","oan","oc","oe","oi","om","on","ong","op","ot","oăn","oăng","ơm","ôc","ôi","ông","ôp","ôt","ơi","ô","ơn","ơp","ơt","oen","oac","oach","oam","oang","oanh","oap","uêch","oay","oeo","oem","o","oet","ooc","oong","oăc","oăm","oăt","iê","eng","yêt",null,null,null,null];
+    const DEFAULT_CUSTOM_RHYMES_EXTRA_2 = ["ua","uât","uc","uê","ui","um","un","uân","ung","uôc","uôi","uôn","uông","uôt","up","uy","uyên","uyêt","ynh","ưa","ưi","y","ưn","ươc","ươi","ươn","ươp","ươt","ưt","ưu","ưm","yêm","yê","oat","ê","ươu","uôm","ươ","oai","oă","ây","uênh","uya","uych","uyn","uynh","uyp","uyt","uyu","yn","yên","yt","yêng","ăk","n","uây","uơ",null,null,null];
 
     let CUSTOM_RHYMES_BASE = [...DEFAULT_CUSTOM_RHYMES_BASE];
     let CUSTOM_RHYMES_EXTRA_1 = [...DEFAULT_CUSTOM_RHYMES_EXTRA_1];
     let CUSTOM_RHYMES_EXTRA_2 = [...DEFAULT_CUSTOM_RHYMES_EXTRA_2];
 
     try {
-      const sBase = localStorage.getItem('vcomp_custom_rhymes_base');
-      const sEx1 = localStorage.getItem('vcomp_custom_rhymes_extra_1');
-      const sEx2 = localStorage.getItem('vcomp_custom_rhymes_extra_2');
-      if (sBase) CUSTOM_RHYMES_BASE = JSON.parse(sBase);
-      if (sEx1) CUSTOM_RHYMES_EXTRA_1 = JSON.parse(sEx1);
-      if (sEx2) CUSTOM_RHYMES_EXTRA_2 = JSON.parse(sEx2);
+      const dedupVer = localStorage.getItem('vcomp_base60_dedup_ver');
+      if (dedupVer !== 'v2_clean_171') {
+        // Tự động nâng cấp bảng Base60 đã khử 5 vần trùng (ây, oai, oat, ư, ôn) và khôi phục vần yêu
+        localStorage.setItem('vcomp_custom_rhymes_base', JSON.stringify(DEFAULT_CUSTOM_RHYMES_BASE));
+        localStorage.setItem('vcomp_custom_rhymes_extra_1', JSON.stringify(DEFAULT_CUSTOM_RHYMES_EXTRA_1));
+        localStorage.setItem('vcomp_custom_rhymes_extra_2', JSON.stringify(DEFAULT_CUSTOM_RHYMES_EXTRA_2));
+        localStorage.setItem('vcomp_base60_dedup_ver', 'v2_clean_171');
+      } else {
+        const sBase = localStorage.getItem('vcomp_custom_rhymes_base');
+        const sEx1 = localStorage.getItem('vcomp_custom_rhymes_extra_1');
+        const sEx2 = localStorage.getItem('vcomp_custom_rhymes_extra_2');
+        if (sBase) CUSTOM_RHYMES_BASE = JSON.parse(sBase);
+        if (sEx1) CUSTOM_RHYMES_EXTRA_1 = JSON.parse(sEx1);
+        if (sEx2) CUSTOM_RHYMES_EXTRA_2 = JSON.parse(sEx2);
+      }
     } catch (e) {
       console.warn('Lỗi đọc custom rhymes từ localStorage:', e);
     }
@@ -6639,7 +6648,7 @@
       window.replaceCoreRhymeWithCurrent(charKey, tableType, '-');
     };
 
-    // Thay thế một vần trong Lõi VCOMP Base60 bằng vần mới (hoặc '-' nếu xóa)
+    // Thay thế một vần trong Lõi VCOMP Base60 bằng vần mới (hoán đổi 1-1 xuyên 3 bảng để KHÔNG BAO GIỜ tạo vần trùng hoặc làm mất vần cũ)
     window.replaceCoreRhymeWithCurrent = function(charKey, tableType, newRhyme) {
       if (!charKey || !tableType) return;
       const idx = BASE60_MAPPING.indexOf(charKey);
@@ -6649,9 +6658,22 @@
         ? newRhyme.trim().toLowerCase()
         : '-';
 
-      if (tableType === 'b1') CUSTOM_RHYMES_BASE[idx] = cleanRhyme;
-      else if (tableType === 'b2') CUSTOM_RHYMES_EXTRA_1[idx] = cleanRhyme;
-      else if (tableType === 'b3') CUSTOM_RHYMES_EXTRA_2[idx] = cleanRhyme;
+      const targetArr = tableType === 'b1' ? CUSTOM_RHYMES_BASE : (tableType === 'b2' ? CUSTOM_RHYMES_EXTRA_1 : CUSTOM_RHYMES_EXTRA_2);
+      const displacedRhyme = (targetArr[idx] && targetArr[idx] !== 'null') ? targetArr[idx] : '-';
+
+      // Nếu cleanRhyme đang nằm ở bất kỳ vị trí nào khác trong B1/B2/B3 -> Chuyển displacedRhyme sang vị trí cũ đó (Hoán đổi bảo toàn 1-1)
+      if (cleanRhyme !== '-') {
+        [CUSTOM_RHYMES_BASE, CUSTOM_RHYMES_EXTRA_1, CUSTOM_RHYMES_EXTRA_2].forEach(arr => {
+          for (let i = 0; i < arr.length; i++) {
+            if (arr === targetArr && i === idx) continue;
+            if (arr[i] && arr[i].toLowerCase().trim() === cleanRhyme) {
+              arr[i] = displacedRhyme;
+            }
+          }
+        });
+      }
+
+      targetArr[idx] = cleanRhyme;
 
       try {
         localStorage.setItem('vcomp_custom_rhymes_base', JSON.stringify(CUSTOM_RHYMES_BASE));
