@@ -3792,6 +3792,13 @@
       });
     }
 
+    // Tự động đồng bộ cấu hình mới nhất (v3_multirhyme_sync: u="u", r="ưu+êu", Row 0 nguyên âm kép thuần khiết)
+    const CURRENT_CFG_VER = 'v3_multirhyme_sync';
+    if (localStorage.getItem('vcomp_chip_config_ver') !== CURRENT_CFG_VER) {
+      localStorage.removeItem('vcomp_chip_custom_config');
+      localStorage.setItem('vcomp_chip_config_ver', CURRENT_CFG_VER);
+    }
+
     // Tải cấu hình tùy biến từ localStorage nếu đã lưu trước đó
     const savedCustomCfg = localStorage.getItem('vcomp_chip_custom_config');
     if (savedCustomCfg) {
@@ -4486,6 +4493,7 @@
       const shortcutHits = [];
       const onsetHits = [];
       const rhymeHits = [];
+      const codaHits = [];
       const extraHits = [];
 
       // 1. Kiểm tra xem cả từ (vd: "thấy", "muốn", "luyện", "được") có nằm sẵn ở Shortcut hoặc Tap/Directions không
@@ -4654,7 +4662,7 @@
           }
         });
 
-        // 4e. Nếu chưa có vần bề mặt trực tiếp và là vần khép có âm cuối (vd: "muốn" -> uôn = uô + n), gợi ý ghép Nguyên âm mặt phím + Âm cuối
+        // 4e. Nếu chưa có vần bề mặt trực tiếp và là vần khép có âm cuối (vd: "mình" -> ì + nh, "muốn" -> uố + n, "tuốt" -> uố + t), tách Nguyên âm mặt phím + Âm cuối và làm sáng cả phím Âm cuối (codaHits)!
         if (rhymeHits.length === 0) {
           let c3 = '';
           for (const cm of CODAS_MULTI) {
@@ -4679,6 +4687,24 @@
                 });
               }
             });
+
+            // Nếu tìm thấy nguyên âm ghép, tự động tìm luôn phím chứa Âm cuối (c3: nh, ng, ch, c, m, n, p, t) để thắp sáng!
+            if (rhymeHits.length > 0) {
+              allCfgList.forEach(cfg => {
+                const kLow = (cfg.key || '').toLowerCase();
+                const tapLow = (cfg.tap !== undefined ? cfg.tap : cfg.key).toLowerCase();
+                const sc1Low = (cfg.sc1 || '').toLowerCase();
+                const sc2Low = (cfg.sc2 || '').toLowerCase();
+
+                if (sc2Low === c3) {
+                  codaHits.push({ key: cfg.key, dirArrow: '↙ 7h30', shortDir: '↙7h30', val: cfg.sc2 });
+                } else if (sc1Low === c3) {
+                  codaHits.push({ key: cfg.key, dirArrow: '↘ 5h', shortDir: '↘5h', val: cfg.sc1 });
+                } else if (tapLow === c3 || kLow === c3) {
+                  codaHits.push({ key: cfg.key, dirArrow: '🖱️ Tap', shortDir: 'Tap', val: c3 });
+                }
+              });
+            }
           }
         }
 
@@ -4720,6 +4746,7 @@
         toneInfo,
         onsetHits,
         rhymeHits,
+        codaHits,
         shortcutHits,
         extraHits
       };
@@ -4825,6 +4852,21 @@
           entry.slots.push({ type: 'rhyme', val: h.val, arrow: extractArrowSymbol(h.shortDir) || '➡' });
         }
       });
+
+      // Thắp sáng luôn phím Âm cuối (codaHits: nh, ng, ch, c, m, n, p, t) khi vần được ghép từ Nguyên âm + Âm cuối
+      if (analysis.codaHits) {
+        analysis.codaHits.forEach(h => {
+          const entry = ensureKeyEntry(h.key);
+          entry.roles.add('rhyme');
+          if (h.shortDir === 'Tap') {
+            entry.slots.push({ type: 'tap', val: h.val });
+          } else if (h.shortDir.includes('7h30')) {
+            entry.slots.push({ type: 'sc2', val: h.val, arrow: '↙', isWord: false });
+          } else if (h.shortDir.includes('5h') || h.shortDir.includes('4h30')) {
+            entry.slots.push({ type: 'sc1', val: h.val, arrow: '↘', isWord: false });
+          }
+        });
+      }
 
       analysis.shortcutHits.forEach(h => {
         const entry = ensureKeyEntry(h.key);
@@ -4935,6 +4977,13 @@
           const h = analysis.rhymeHits[0];
           stepParts.push(
             `<span class="omni-step-badge omni-step-rhyme">🟢 Vần <b>${analysis.tonedRhyme || analysis.baseRhyme}</b> ➔ Phím <span class="omni-step-key">${h.key.toUpperCase()}</span> (${h.dirArrow})</span>`
+          );
+        }
+
+        if (analysis.codaHits && analysis.codaHits.length > 0) {
+          const ch = analysis.codaHits[0];
+          stepParts.push(
+            `<span class="omni-step-badge omni-step-rhyme">🟢 Âm cuối <b>${ch.val}</b> ➔ Phím <span class="omni-step-key">${ch.key.toUpperCase()}</span> (${ch.dirArrow})</span>`
           );
         }
 
