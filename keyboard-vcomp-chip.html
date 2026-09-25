@@ -329,34 +329,51 @@
       font-size: 11px;
     }
 
-    /* Badge chỉ dẫn hướng vuốt nổi trực tiếp trên phím */
-    .chip-guide-badge {
-      position: absolute;
-      top: -8px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 8.5px;
-      font-weight: 800;
-      font-family: var(--font-mono);
-      background: #090d14;
-      color: #fff;
-      border: 1.2px solid var(--neon-cyan);
+    /* Thắp sáng trực tiếp đúng góc/vị trí trên phím (In-Place Slot Illumination) - Không che chữ, không bị cắt cụt */
+    .chip-main.slot-active-tap {
+      background: rgba(0, 229, 255, 0.28);
+      border: 1.5px solid var(--neon-cyan);
+      color: #fff !important;
+      padding: 0px 5px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.75);
+      transform: scale(1.08);
+    }
+
+    .chip-tl.slot-active-rhyme {
+      background: #042f1e;
+      border: 1.2px solid var(--neon-green);
+      color: #fff !important;
       padding: 1px 4px;
       border-radius: 4px;
-      white-space: nowrap;
-      z-index: 20;
-      pointer-events: none;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.85);
+      font-size: 9.5px !important;
+      font-weight: 800 !important;
+      z-index: 15;
+      box-shadow: 0 0 8px rgba(0, 255, 136, 0.85);
+      top: 1px;
+      left: 1.5px;
     }
 
-    .chip-guide-badge.guide-rhyme {
-      border-color: var(--neon-green);
-      color: #a7f3d0;
+    .chip-bl.slot-active-sc,
+    .chip-br.slot-active-sc {
+      background: #082f49;
+      border: 1.2px solid var(--neon-cyan);
+      color: #fff !important;
+      padding: 1px 3.5px;
+      border-radius: 4px;
+      font-size: 8.5px !important;
+      font-weight: 800 !important;
+      z-index: 15;
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.85);
+      bottom: 1px;
     }
 
-    .chip-guide-badge.guide-shortcut {
+    .chip-bl.slot-active-sc.sc-word,
+    .chip-br.slot-active-sc.sc-word {
+      background: #3b2106;
       border-color: var(--neon-amber);
-      color: #fde047;
+      color: #fde047 !important;
+      box-shadow: 0 0 8px rgba(255, 184, 0, 0.85);
     }
 
     /* Keyboard Layout */
@@ -394,7 +411,7 @@
       justify-content: center;
       cursor: pointer;
       transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
-      overflow: hidden;
+      overflow: visible;
       touch-action: none;
       user-select: none;
       -webkit-user-select: none;
@@ -4619,7 +4636,7 @@
       const fullText = targetInput ? targetInput.value : '';
       const allKeys = document.querySelectorAll('.chip-key[data-key]');
 
-      // Xóa trạng thái highlight và badge cũ trên toàn bộ bàn phím
+      // Xóa trạng thái highlight, khôi phục nhãn gốc và xóa badge cũ trên toàn bộ bàn phím
       allKeys.forEach(el => {
         el.classList.remove(
           'key-highlight',
@@ -4631,6 +4648,20 @@
           'key-has-extra'
         );
         el.querySelectorAll('.chip-extra-badge, .chip-guide-badge').forEach(b => b.remove());
+
+        const mainEl = el.querySelector('.chip-main');
+        if (mainEl) mainEl.classList.remove('slot-active-tap');
+
+        ['.chip-tl', '.chip-bl', '.chip-br'].forEach(sel => {
+          const slotEl = el.querySelector(sel);
+          if (slotEl) {
+            slotEl.classList.remove('slot-active-rhyme', 'slot-active-sc', 'sc-word');
+            if (slotEl.dataset.origText !== undefined) {
+              slotEl.textContent = slotEl.dataset.origText;
+              delete slotEl.dataset.origText;
+            }
+          }
+        });
       });
 
       if (!fullText || !fullText.trim()) {
@@ -4661,32 +4692,55 @@
 
       keyboardWrapper.classList.add('searching');
 
-      // Map lưu thông tin highlight cho từng phím: key -> { roles: Set, badges: [] }
+      // Map lưu thông tin highlight cho từng phím: key -> { roles: Set, slots: [], extra: null }
       const keyHighlightMap = new Map();
       const ensureKeyEntry = (k) => {
         if (!keyHighlightMap.has(k)) {
-          keyHighlightMap.set(k, { roles: new Set(), guides: [], extra: null });
+          keyHighlightMap.set(k, { roles: new Set(), slots: [], extra: null });
         }
         return keyHighlightMap.get(k);
+      };
+
+      const extractArrowSymbol = (shortDir) => {
+        if (!shortDir) return '';
+        const m = shortDir.match(/[⬆⬇⬅➡↖↗↙↘]/);
+        return m ? m[0] : '';
       };
 
       analysis.onsetHits.forEach(h => {
         const entry = ensureKeyEntry(h.key);
         entry.roles.add('onset');
-        entry.guides.push(`${h.shortDir}: ${h.val}`);
+        if (h.shortDir === 'Tap') {
+          entry.slots.push({ type: 'tap', val: h.val });
+        } else if (h.shortDir.includes('7h30')) {
+          entry.slots.push({ type: 'sc2', val: h.val, arrow: '↙', isWord: false });
+        } else if (h.shortDir.includes('5h') || h.shortDir.includes('4h30')) {
+          entry.slots.push({ type: 'sc1', val: h.val, arrow: '↘', isWord: false });
+        }
       });
 
       analysis.rhymeHits.forEach(h => {
         const entry = ensureKeyEntry(h.key);
         entry.roles.add('rhyme');
-        entry.guides.push(`${h.shortDir}: ${h.val}`);
+        if (h.shortDir.includes('7h30')) {
+          entry.slots.push({ type: 'sc2', val: h.val, arrow: '↙', isWord: false });
+        } else if (h.shortDir.includes('5h') || h.shortDir.includes('4h30')) {
+          entry.slots.push({ type: 'sc1', val: h.val, arrow: '↘', isWord: false });
+        } else {
+          entry.slots.push({ type: 'rhyme', val: h.val, arrow: extractArrowSymbol(h.shortDir) || '➡' });
+        }
       });
 
       analysis.shortcutHits.forEach(h => {
         const entry = ensureKeyEntry(h.key);
         entry.roles.add('shortcut');
-        const gText = `${h.shortDir}: ${h.val}`;
-        if (!entry.guides.includes(gText)) entry.guides.push(gText);
+        if (h.shortDir === 'Tap') {
+          entry.slots.push({ type: 'tap', val: h.val });
+        } else if (h.shortDir.includes('7h30')) {
+          entry.slots.push({ type: 'sc2', val: h.val, arrow: '↙', isWord: true });
+        } else {
+          entry.slots.push({ type: 'sc1', val: h.val, arrow: '↘', isWord: true });
+        }
       });
 
       analysis.extraHits.forEach(h => {
@@ -4695,7 +4749,7 @@
         entry.extra = h;
       });
 
-      // Áp dụng class phát sáng và gắn badge chỉ dẫn lên từng phím
+      // Áp dụng class phát sáng và thắp sáng trực tiếp đúng góc/vị trí trên từng phím
       allKeys.forEach(el => {
         const k = el.dataset.key;
         if (!keyHighlightMap.has(k)) return;
@@ -4713,14 +4767,36 @@
           el.classList.add('key-highlight', 'key-highlight-3');
         }
 
-        if (info.guides.length > 0) {
-          const gBadge = document.createElement('span');
-          const isOnlyRhyme = info.roles.has('rhyme') && !info.roles.has('onset');
-          const isOnlySc = info.roles.has('shortcut') && !info.roles.has('onset') && !info.roles.has('rhyme');
-          gBadge.className = 'chip-guide-badge' + (isOnlyRhyme ? ' guide-rhyme' : (isOnlySc ? ' guide-shortcut' : ''));
-          gBadge.textContent = info.guides.join(' | ');
-          el.appendChild(gBadge);
-        }
+        // Thắp sáng trực tiếp vị trí (Tap giữa / Góc trên trái Vần / Góc dưới trái sc2 / Góc dưới phải sc1)
+        info.slots.forEach(s => {
+          if (s.type === 'tap') {
+            const mainEl = el.querySelector('.chip-main');
+            if (mainEl) mainEl.classList.add('slot-active-tap');
+          } else if (s.type === 'rhyme') {
+            const tlEl = el.querySelector('.chip-tl');
+            if (tlEl) {
+              if (tlEl.dataset.origText === undefined) tlEl.dataset.origText = tlEl.textContent;
+              tlEl.classList.add('slot-active-rhyme');
+              tlEl.textContent = `${s.val} ${s.arrow}`;
+            }
+          } else if (s.type === 'sc2') {
+            const blEl = el.querySelector('.chip-bl');
+            if (blEl) {
+              if (blEl.dataset.origText === undefined) blEl.dataset.origText = blEl.textContent;
+              blEl.classList.add('slot-active-sc');
+              if (s.isWord) blEl.classList.add('sc-word');
+              blEl.textContent = `${s.arrow}${s.val}`;
+            }
+          } else if (s.type === 'sc1') {
+            const brEl = el.querySelector('.chip-br');
+            if (brEl) {
+              if (brEl.dataset.origText === undefined) brEl.dataset.origText = brEl.textContent;
+              brEl.classList.add('slot-active-sc');
+              if (s.isWord) brEl.classList.add('sc-word');
+              brEl.textContent = `${s.val}${s.arrow}`;
+            }
+          }
+        });
 
         if (info.extra) {
           el.classList.add('key-has-extra');
