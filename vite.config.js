@@ -21,6 +21,19 @@ export default defineConfig({
           res.end(JSON.stringify(result, null, 2));
         });
       }
+    },
+    {
+      name: 'apk-mime-middleware',
+      configureServer(server) {
+        server.middlewares.use((req, res, next) => {
+          const pathname = req.url ? req.url.split('?')[0] : '';
+          if (pathname.endsWith('.apk')) {
+            res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+            res.setHeader('Content-Disposition', 'attachment; filename="vboard.apk"');
+          }
+          next();
+        });
+      }
     }
   ],
   server: {
