@@ -1512,9 +1512,16 @@ class VSecretKeyboardService : InputMethodService() {
 
             // ===== 4 TÍNH NĂNG BÔI ĐEN CHUYÊN SÂU =====
             SwipeKeyboardView.KeyboardAction.SelectAll -> {
-                val before = ic.getTextBeforeCursor(100000, 0)?.toString() ?: ""
-                val after = ic.getTextAfterCursor(100000, 0)?.toString() ?: ""
-                ic.setSelection(0, before.length + after.length)
+                ic.finishComposingText()
+                val handled = ic.performContextMenuAction(android.R.id.selectAll)
+                if (!handled) {
+                    sendCtrlKey(KeyEvent.KEYCODE_A)
+                    val before = ic.getTextBeforeCursor(100000, 0)?.toString() ?: ""
+                    val after = ic.getTextAfterCursor(100000, 0)?.toString() ?: ""
+                    if (before.isNotEmpty() || after.isNotEmpty()) {
+                        ic.setSelection(0, before.length + after.length)
+                    }
+                }
             }
 
             SwipeKeyboardView.KeyboardAction.SelectToStart -> {
