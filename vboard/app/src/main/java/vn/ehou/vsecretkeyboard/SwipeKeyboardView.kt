@@ -165,6 +165,8 @@ class SwipeKeyboardView @JvmOverloads constructor(
     }
 
     fun isCompassInputMode(): Boolean {
+        // Khi đang có đèn soi vần (Rhyme Tutor) sáng -> Tạm thời khóa Swipe đa phím để nhường 100% quyền cho Quẹt La bàn chốt vần
+        if (rhymeTutorHighlights.isNotEmpty()) return true
         return currentIOMode == IOMode.VN_TO_VN || currentIOMode == IOMode.VN_TO_B60
     }
 
