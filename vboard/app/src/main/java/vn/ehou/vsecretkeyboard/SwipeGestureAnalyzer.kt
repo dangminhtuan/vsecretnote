@@ -136,41 +136,9 @@ object SwipeGestureAnalyzer {
             candidateKeys.add(endKey)
         }
 
-        // Nếu chuỗi > 3 ký tự và đang ở chế độ Base60 (do lướt võng qua các phím thẳng hàng), tìm đỉnh góc rẽ rõ nhất
-        if (isBase60 && candidateKeys.size > 3 && startKey != null && endKey != null) {
-            val pStart = rawPoints.first()
-            val pEnd = rawPoints.last()
-            val dx = pEnd.x - pStart.x
-            val dy = pEnd.y - pStart.y
-            val mag2 = dx * dx + dy * dy
-
-            var maxCornerDist = 0f
-            var bestCornerPt: Point? = null
-
-            for (i in 1 until rawPoints.size - 1) {
-                val pt = rawPoints[i]
-                val dist = if (mag2 == 0f) {
-                    hypot((pt.x - pStart.x).toDouble(), (pt.y - pStart.y).toDouble()).toFloat()
-                } else {
-                    var t = ((pt.x - pStart.x) * dx + (pt.y - pStart.y) * dy) / mag2
-                    t = max(0f, min(1f, t))
-                    val cx = pStart.x + t * dx
-                    val cy = pStart.y + t * dy
-                    hypot((pt.x - cx).toDouble(), (pt.y - cy).toDouble()).toFloat()
-                }
-
-                if (dist > maxCornerDist) {
-                    maxCornerDist = dist
-                    bestCornerPt = pt
-                }
-            }
-
-            if (bestCornerPt != null && maxCornerDist > epsilon) {
-                val cornerKey = keyFinder(bestCornerPt.x, bestCornerPt.y)
-                if (cornerKey != null && cornerKey != startKey && cornerKey != endKey) {
-                    return SwipeAnalysisResult(listOf(startKey, cornerKey, endKey))
-                }
-            }
+        // Nếu chuỗi > 3 ký tự và đang ở chế độ Base60 (do quán tính nhấc tay trượt thêm phím thứ 4):
+        // Giữ đúng 3 phím thực thụ: Phụ âm (C1) + Vần (C2) + Dấu/Coda (C3)
+        if (isBase60 && candidateKeys.size > 3) {
             return SwipeAnalysisResult(candidateKeys.take(3))
         }
 

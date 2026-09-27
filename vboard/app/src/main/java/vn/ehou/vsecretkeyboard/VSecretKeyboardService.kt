@@ -551,15 +551,23 @@ class VSecretKeyboardService : InputMethodService() {
             val isCaps = swipeKeyboardView.isCapsLock
             val isShift = swipeKeyboardView.isShiftActive
             if (mode == SwipeKeyboardView.IOMode.B60_TO_VN || mode == SwipeKeyboardView.IOMode.NO_ACCENT_TO_VN) {
-                val candidates = generateCandidatesForWord(swipedWord, mode, isCaps, isShift)
+                var effectiveWord = swipedWord
+                var candidates = generateCandidatesForWord(effectiveWord, mode, isCaps, isShift)
+                if (candidates.isEmpty() && lastSuggestedRawWord.isNotEmpty() && currentSuggestions.isNotEmpty()) {
+                    val liveCandidates = generateCandidatesForWord(lastSuggestedRawWord, mode, isCaps, isShift)
+                    if (liveCandidates.isNotEmpty()) {
+                        effectiveWord = lastSuggestedRawWord
+                        candidates = liveCandidates
+                    }
+                }
                 if (candidates.isNotEmpty()) {
                     val chosen = if (pickIndex in candidates.indices) candidates[pickIndex] else candidates.first()
-                    UserHabitManager.recordSelection(swipedWord, chosen)
+                    UserHabitManager.recordSelection(effectiveWord, chosen)
                     val ic = currentInputConnection
                     ic?.commitText("$chosen ", 1)
                     lastAutoCommittedWord = chosen
-                    lastSuggestedRawWord = swipedWord
-                    lastSwipedRawCandidates = swipedWord.split("/").map { it.trim() }.filter { it.isNotEmpty() }
+                    lastSuggestedRawWord = effectiveWord
+                    lastSwipedRawCandidates = effectiveWord.split("/").map { it.trim() }.filter { it.isNotEmpty() }
                     lastSwipedCommittedWord = chosen
                     lastSwipeCommitTime = System.currentTimeMillis()
                     isSwipeCorrectionPending = false
@@ -1161,18 +1169,57 @@ class VSecretKeyboardService : InputMethodService() {
         when (val mode = swipeKeyboardView.currentIOMode) {
             SwipeKeyboardView.IOMode.B60_TO_VN,
             SwipeKeyboardView.IOMode.NO_ACCENT_TO_VN -> {
-                val candidates = generateCandidatesForWord(word, mode, isCaps, isShift)
+                var effectiveWord = word
+                var candidates = generateCandidatesForWord(effectiveWord, mode, isCaps, isShift)
+
+                // 1. Phục hồi từ Live Preview: Nếu lúc nhấc tay bị trượt sang phím rác (0 ứng viên),
+                // nhưng lúc đang vuốt qua đã bắt trúng từ chuẩn xác (lastSuggestedRawWord / currentSuggestions)
+                if (candidates.isEmpty() && lastSuggestedRawWord.isNotEmpty() && currentSuggestions.isNotEmpty()) {
+                    val liveCandidates = generateCandidatesForWord(lastSuggestedRawWord, mode, isCaps, isShift)
+                    if (liveCandidates.isNotEmpty()) {
+                        effectiveWord = lastSuggestedRawWord
+                        candidates = liveCandidates
+                    }
+                }
+
+                // 2. Thử với các phím lân cận nếu bị trượt quán tính ở phím cuối (Adjacent Key Drift)
+                if (candidates.isEmpty() && mode == SwipeKeyboardView.IOMode.B60_TO_VN && effectiveWord.length in 2..4) {
+                    val adjacentMap = mapOf(
+                        '1' to listOf('2', 'q', 'w'),
+                        '2' to listOf('1', '3', 'w', 'e'),
+                        '3' to listOf('2', '4', 'e', 'r'),
+                        '4' to listOf('3', '5', 'r', 't'),
+                        '5' to listOf('4', '6', 't', 'y'),
+                        '6' to listOf('5', '7', 'y', 'u'),
+                        '7' to listOf('6', '8', 'u', 'i'),
+                        '8' to listOf('7', '9', 'i', 'o'),
+                        '9' to listOf('8', '0', 'o', 'p'),
+                        '0' to listOf('9', 'p')
+                    )
+                    val lastChar = effectiveWord.last()
+                    val neighbors = adjacentMap[lastChar] ?: emptyList()
+                    for (n in neighbors) {
+                        val testWord = effectiveWord.dropLast(1) + n
+                        val testCandidates = generateCandidatesForWord(testWord, mode, isCaps, isShift)
+                        if (testCandidates.isNotEmpty()) {
+                            effectiveWord = testWord
+                            candidates = testCandidates
+                            break
+                        }
+                    }
+                }
+
                 if (candidates.isNotEmpty()) {
                     val top = candidates.first()
                     ic.commitText("$top ", 1)
                     lastAutoCommittedWord = top
-                    lastSuggestedRawWord = word
-                    lastSwipedRawCandidates = word.split("/").map { it.trim() }.filter { it.isNotEmpty() }
+                    lastSuggestedRawWord = effectiveWord
+                    lastSwipedRawCandidates = effectiveWord.split("/").map { it.trim() }.filter { it.isNotEmpty() }
                     lastSwipedCommittedWord = top
                     lastSwipeCommitTime = System.currentTimeMillis()
                     isSwipeCorrectionPending = false
-                    UserHabitManager.recordSelection(word, top)
-                    showSuggestions(word, candidates)
+                    UserHabitManager.recordSelection(effectiveWord, top)
+                    showSuggestions(effectiveWord, candidates)
                 } else {
                     val formatted = formatWordCasing(word, isCaps, isShift)
                     ic.commitText("$formatted ", 1)
