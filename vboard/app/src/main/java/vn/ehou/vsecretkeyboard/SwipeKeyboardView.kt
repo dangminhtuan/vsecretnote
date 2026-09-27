@@ -155,6 +155,7 @@ class SwipeKeyboardView @JvmOverloads constructor(
         currentIOMode = modes[nextIdx]
         calculateKeys(width, height)
         invalidate()
+        onIOModeChanged?.invoke(currentIOMode)
         return currentIOMode
     }
 
@@ -162,12 +163,13 @@ class SwipeKeyboardView @JvmOverloads constructor(
         currentIOMode = mode
         calculateKeys(width, height)
         invalidate()
+        onIOModeChanged?.invoke(currentIOMode)
     }
 
     fun isCompassInputMode(): Boolean {
         // Khi đang có đèn soi vần (Rhyme Tutor) sáng -> Tạm thời khóa Swipe đa phím để nhường 100% quyền cho Quẹt La bàn chốt vần
         if (rhymeTutorHighlights.isNotEmpty()) return true
-        return currentIOMode == IOMode.VN_TO_VN || currentIOMode == IOMode.VN_TO_B60
+        return currentIOMode == IOMode.VN_TO_VN
     }
 
     private val initialConsonants = setOf(
@@ -203,6 +205,7 @@ class SwipeKeyboardView @JvmOverloads constructor(
 
     var onAction: ((KeyboardAction) -> Unit)? = null
     var onLayerChanged: ((KeyboardLayer) -> Unit)? = null
+    var onIOModeChanged: ((IOMode) -> Unit)? = null
     var onOpenIOModeMenu: (() -> Unit)? = null
     var onSwipeWord: ((String) -> Unit)? = null
     var onSwipeLivePreview: ((String) -> Unit)? = null

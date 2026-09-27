@@ -48,7 +48,7 @@ class VSecretKeyboardService : InputMethodService() {
         }
 
         fun transcodeText(input: String): String {
-            if (input.isBlank() || activeHexMode == '0') return input
+            if (input.isBlank()) return input
 
             fun transformWords(text: String, transform: (String) -> String): String {
                 val tokens = text.split(" ")
@@ -60,6 +60,17 @@ class VSecretKeyboardService : InputMethodService() {
                     } else t
                 }
             }
+
+            // Nếu đang ở chế độ VN_TO_B60, tự động chuyển đổi sang mã Base60
+            if (instance?.swipeKeyboardView?.currentIOMode == SwipeKeyboardView.IOMode.VN_TO_B60) {
+                return transformWords(input) { w ->
+                    val enc = VCompEngine.encodeWord(w, bypassShortcut = true)
+                    val b60 = VCompEngine.timeToBase60(enc)
+                    if (b60.isNotBlank() && b60 != enc && !b60.startsWith("[")) b60 else w
+                }
+            }
+
+            if (activeHexMode == '0') return input
 
             return when (activeHexMode) {
                 '1' -> { // Base60 (cách từ)
@@ -269,9 +280,9 @@ class VSecretKeyboardService : InputMethodService() {
             }
         }
 
-        fun applyIOModeTransform(word: String, ioMode: SwipeKeyboardView.IOMode): String {
+        fun transformWordForOutput(word: String, ioMode: SwipeKeyboardView.IOMode = instance?.swipeKeyboardView?.currentIOMode ?: SwipeKeyboardView.IOMode.VN_TO_VN): String {
             if (word.isBlank()) return word
-            val clean = word.trim(',', '.', '!', '?', ';', ':', '-', '"', '\'')
+            val clean = word.trim(',', '.', '!', '?', ';', ':', '-', '"', '\'', '(', ')', '[', ']', '{', '}')
             if (clean.isEmpty()) return word
 
             val isAllUpper = clean.length > 1 && clean.all { !it.isLetter() || it.isUpperCase() }
@@ -289,7 +300,7 @@ class VSecretKeyboardService : InputMethodService() {
                 SwipeKeyboardView.IOMode.VN_TO_B60 -> {
                     val enc = VCompEngine.encodeWord(clean, bypassShortcut = true)
                     val b60 = VCompEngine.timeToBase60(enc)
-                    if (b60.isNotBlank() && b60 != enc) b60 else clean
+                    if (b60.isNotBlank() && b60 != enc && !b60.startsWith("[")) b60 else clean
                 }
                 SwipeKeyboardView.IOMode.NO_ACCENT_TO_VN -> {
                     val candidates = generateCandidatesForWord(clean, ioMode, isCaps = isAllUpper, isShift = isTitle)
@@ -309,6 +320,10 @@ class VSecretKeyboardService : InputMethodService() {
                 }
             }
             return word.replace(clean, transformed)
+        }
+
+        fun applyIOModeTransform(word: String, ioMode: SwipeKeyboardView.IOMode): String {
+            return transformWordForOutput(word, ioMode)
         }
     }
 
@@ -447,9 +462,10 @@ class VSecretKeyboardService : InputMethodService() {
     }
 
     private fun setupListeners() {
-        // Nút bấm Mode trên toolbar: Bật/tắt Mode layer
+        updateModeBadgeVisual()
+        // Nút bấm Mode trên toolbar: Mở nhanh bảng chọn chế độ I/O (Input/Output)
         btnMode.setOnClickListener {
-            swipeKeyboardView.toggleModeLayer()
+            showIOModeMenu()
         }
 
         // Nút 📋 CLIPBOARD: Bật/tắt Drawer Bộ Nhớ Tạm
@@ -588,6 +604,7 @@ class VSecretKeyboardService : InputMethodService() {
 
         fun selectIOMode(mode: SwipeKeyboardView.IOMode) {
             swipeKeyboardView.setIOMode(mode)
+            updateModeBadgeVisual()
             iomodeMenuOverlay.visibility = View.GONE
             android.widget.Toast.makeText(this, "Chế độ: ${mode.displayName} [${mode.badge}]", android.widget.Toast.LENGTH_SHORT).show()
         }
@@ -597,6 +614,10 @@ class VSecretKeyboardService : InputMethodService() {
         itemIomodeVnB60.setOnClickListener { selectIOMode(SwipeKeyboardView.IOMode.VN_TO_B60) }
         itemIomodeKdauVn.setOnClickListener { selectIOMode(SwipeKeyboardView.IOMode.NO_ACCENT_TO_VN) }
         itemIomodeB60B60.setOnClickListener { selectIOMode(SwipeKeyboardView.IOMode.B60_TO_B60) }
+
+        swipeKeyboardView.onIOModeChanged = {
+            updateModeBadgeVisual()
+        }
 
         // Nút 🎙️ MIC trên toolbar: Ép buộc lắng nghe giọng nói ngay lập tức
         btnMic.setOnClickListener {
@@ -669,6 +690,71 @@ class VSecretKeyboardService : InputMethodService() {
         swipeKeyboardView.onAction = { action ->
             handleKeyboardAction(action)
         }
+    }
+
+    fun updateModeBadgeVisual() {
+        if (!::btnMode.isInitialized || !::swipeKeyboardView.isInitialized) return
+        val ioMode = swipeKeyboardView.currentIOMode
+        when (ioMode) {
+            SwipeKeyboardView.IOMode.VN_TO_B60 -> {
+                btnMode.text = "🔒 VN ➔ B60"
+                btnMode.setTextColor(Color.parseColor("#F2CC60")) // Vàng neon bảo mật
+                btnMode.setBackgroundColor(Color.parseColor("#271C48")) // Nền tím đậm sang trọng
+            }
+            SwipeKeyboardView.IOMode.B60_TO_VN -> {
+                btnMode.text = "⚡ B60 ➔ VN"
+                btnMode.setTextColor(Color.parseColor("#3FB950")) // Xanh lá
+                btnMode.setBackgroundColor(Color.parseColor("#1C2D42"))
+            }
+            SwipeKeyboardView.IOMode.NO_ACCENT_TO_VN -> {
+                btnMode.text = "✍️ K.Dấu ➔ VN"
+                btnMode.setTextColor(Color.parseColor("#FFA657")) // Cam
+                btnMode.setBackgroundColor(Color.parseColor("#21262D"))
+            }
+            SwipeKeyboardView.IOMode.B60_TO_B60 -> {
+                btnMode.text = "🔤 B60 ➔ B60"
+                btnMode.setTextColor(Color.parseColor("#58A6FF")) // Xanh dương
+                btnMode.setBackgroundColor(Color.parseColor("#161B22"))
+            }
+            SwipeKeyboardView.IOMode.VN_TO_VN -> {
+                if (activeHexMode == '0') {
+                    btnMode.text = "🇻🇳 VN ➔ VN"
+                    btnMode.setTextColor(Color.parseColor("#58A6FF"))
+                    btnMode.setBackgroundColor(Color.parseColor("#1F242C"))
+                } else {
+                    val hexName = when (activeHexMode) {
+                        '1' -> "🔒 VN ➔ B60 (cách)"
+                        '2' -> "🔒 VN ➔ B60 (liền)"
+                        '3' -> "🟡 VN ➔ 4 số"
+                        '8' -> "⏱️ VN ➔ 6 số"
+                        '9' -> "🔢 VN ➔ 5 số"
+                        'a' -> "// VN ➔ CVNSS"
+                        'b' -> "✝️ VN ➔ Giả Việt"
+                        'c' -> "🐫 VN ➔ camelCase"
+                        'd' -> "📝 VN ➔ Không dấu"
+                        'e' -> "🌟 VN ➔ Giả Việt Tối giản"
+                        else -> "🇻🇳 VN ➔ Mode $activeHexMode"
+                    }
+                    btnMode.text = hexName
+                    btnMode.setTextColor(Color.parseColor("#FFA657"))
+                    btnMode.setBackgroundColor(Color.parseColor("#271C48"))
+                }
+            }
+        }
+    }
+
+    private fun transformWordBeforeCursor(): String? {
+        val ic = currentInputConnection ?: return null
+        val textBefore = ic.getTextBeforeCursor(100, 0)?.toString() ?: ""
+        val match = Regex("""([\p{L}\p{M}\p{N}_]+)$""").find(textBefore) ?: return null
+        val lastWord = match.value
+        val transformed = transformWordForOutput(lastWord, swipeKeyboardView.currentIOMode)
+        if (transformed != lastWord) {
+            ic.deleteSurroundingText(lastWord.length, 0)
+            ic.commitText(transformed, 1)
+            return transformed
+        }
+        return lastWord
     }
 
     private fun showIOModeMenu() {
@@ -1018,24 +1104,26 @@ class VSecretKeyboardService : InputMethodService() {
             ic.deleteSurroundingText(lastSuggestedRawWord.length, 0)
         }
 
-        ic.commitText("$word ", 1)
+        val outWord = transformWordForOutput(word, swipeKeyboardView.currentIOMode)
+        ic.commitText("$outWord ", 1)
+        lastAutoCommittedWord = outWord
         if (lastSuggestedRawWord.isNotEmpty() && word != lastSuggestedRawWord) {
             UserHabitManager.recordSelection(lastSuggestedRawWord, word)
         }
 
         // Tự động học sửa sai Realtime nếu người dùng chọn từ này sau khi vừa xóa từ swipe
         if (isSwipeCorrectionPending) {
-            learnSwipeCorrection(word)
+            learnSwipeCorrection(outWord)
         }
 
         // Tự động học cặp từ tiếp theo (bigram) nếu trước đó đã có từ
-        if (lastCommittedFullWord.isNotEmpty() && lastCommittedFullWord != word) {
-            NextWordPredictor.recordBigram(lastCommittedFullWord, word)
+        if (lastCommittedFullWord.isNotEmpty() && lastCommittedFullWord != outWord) {
+            NextWordPredictor.recordBigram(lastCommittedFullWord, outWord)
         }
-        lastCommittedFullWord = word
+        lastCommittedFullWord = outWord
 
         hideSuggestions()
-        showNextWordPredictions(word)
+        showNextWordPredictions(outWord)
     }
 
     private fun learnSwipeCorrection(targetWord: String) {
@@ -1102,10 +1190,12 @@ class VSecretKeyboardService : InputMethodService() {
                 }
             }
             SwipeKeyboardView.IOMode.VN_TO_B60 -> {
-                val enc = VCompEngine.encodeWord(word, bypassShortcut = true)
-                val b60 = VCompEngine.timeToBase60(enc)
-                val out = if (b60.isNotBlank() && b60 != enc) b60 else word
+                val candidates = generateCandidatesForWord(word, SwipeKeyboardView.IOMode.NO_ACCENT_TO_VN, isCaps, isShift)
+                val vnWord = if (candidates.isNotEmpty()) candidates.first() else word
+                val out = transformWordForOutput(vnWord, SwipeKeyboardView.IOMode.VN_TO_B60)
                 ic.commitText("$out ", 1)
+                lastAutoCommittedWord = out
+                lastCommittedFullWord = out
                 hideSuggestions()
             }
             SwipeKeyboardView.IOMode.B60_TO_B60 -> {
@@ -1172,24 +1262,9 @@ class VSecretKeyboardService : InputMethodService() {
                         commitSuggestion(top)
                         return
                     }
-                    val textBefore = ic.getTextBeforeCursor(100, 0)?.toString() ?: ""
-                    val match = Regex("([a-zA-Z0-9_\u00C0-\u024F\u1E00-\u1EFF]+)$").find(textBefore)
-                    var committedWord: String? = null
-                    if (match != null) {
-                        val lastWord = match.value
-                        val transformed = applyIOModeTransform(lastWord, swipeKeyboardView.currentIOMode)
-                        if (transformed != lastWord) {
-                            ic.deleteSurroundingText(lastWord.length, 0)
-                            ic.commitText(transformed, 1)
-                        }
-                        committedWord = transformed
-                    }
-                    if (isSwipeCorrectionPending) {
-                        val wordToCheck = match?.value ?: ""
-                        if (wordToCheck.isNotEmpty()) {
-                            val finalWord = applyIOModeTransform(wordToCheck, swipeKeyboardView.currentIOMode)
-                            learnSwipeCorrection(finalWord)
-                        }
+                    val committedWord = transformWordBeforeCursor()
+                    if (isSwipeCorrectionPending && !committedWord.isNullOrEmpty()) {
+                        learnSwipeCorrection(committedWord)
                     }
                     if (activeHexMode != '2' && activeHexMode != 'd' && activeHexMode != 'c') {
                         ic.commitText(" ", 1)
@@ -1213,6 +1288,8 @@ class VSecretKeyboardService : InputMethodService() {
                     // Bỏ dấu cách phía trước các dấu khi gõ dấu, bám sát từ đứng trước, và thêm dấu cách chuẩn phía sau
                     val isClingingPunctuation = (action.text.length == 1 && action.text[0] in ".,!?:;…)]}%") || action.text == "…"
                     if (isClingingPunctuation) {
+                        // Trước khi gắn dấu câu, chốt và chuyển đổi từ đứng trước con trỏ (ví dụ: không -> KtK)!
+                        transformWordBeforeCursor()
                         val before = ic.getTextBeforeCursor(10, 0)?.toString() ?: ""
                         val trailingSpaces = before.takeLastWhile { it == ' ' }.length
 
@@ -1255,18 +1332,31 @@ class VSecretKeyboardService : InputMethodService() {
                         lastCommittedFullWord = ""
                     }
                     lastAutoCommittedWord = ""
-                    ic.commitText(action.text, 1)
+
+                    // Chuyển đổi output cho cụm từ macro hoặc văn bản hoàn chỉnh
+                    val textToCommit = if ((swipeKeyboardView.currentIOMode == SwipeKeyboardView.IOMode.VN_TO_B60 || activeHexMode != '0') && action.text.length > 1 && action.text.any { it.isLetter() }) {
+                        action.text.split(Regex("(?<=\\s)|(?=\\s)")).joinToString("") { token ->
+                            if (token.isNotBlank() && token.any { it.isLetter() }) {
+                                transformWordForOutput(token, swipeKeyboardView.currentIOMode)
+                            } else token
+                        }
+                    } else {
+                        action.text
+                    }
+                    ic.commitText(textToCommit, 1)
+
                     val mode = swipeKeyboardView.currentIOMode
-                    if (mode == SwipeKeyboardView.IOMode.B60_TO_VN || mode == SwipeKeyboardView.IOMode.NO_ACCENT_TO_VN) {
+                    if (mode == SwipeKeyboardView.IOMode.B60_TO_VN || mode == SwipeKeyboardView.IOMode.NO_ACCENT_TO_VN || mode == SwipeKeyboardView.IOMode.VN_TO_B60) {
                         val textBefore = ic.getTextBeforeCursor(15, 0)?.toString() ?: ""
-                        val match = Regex("([a-zA-Z0-9]+)$").find(textBefore)
+                        val match = Regex("""([\p{L}\p{M}\p{N}_]+)$""").find(textBefore)
                         val word = match?.value ?: ""
                         val minLen = 1
                         val maxLen = if (mode == SwipeKeyboardView.IOMode.B60_TO_VN) 4 else 12
                         if (word.length in minLen..maxLen) {
                             val isAllUpper = word.length > 1 && word.all { !it.isLetter() || it.isUpperCase() }
                             val isTitle = word.firstOrNull()?.isUpperCase() == true
-                            val candidates = generateCandidatesForWord(word, mode, isCaps = isAllUpper, isShift = isTitle)
+                            val lookupMode = if (mode == SwipeKeyboardView.IOMode.VN_TO_B60) SwipeKeyboardView.IOMode.NO_ACCENT_TO_VN else mode
+                            val candidates = generateCandidatesForWord(word, lookupMode, isCaps = isAllUpper, isShift = isTitle)
                             if (candidates.isNotEmpty()) {
                                 showSuggestions(word, candidates)
                             } else {
@@ -1537,6 +1627,7 @@ class VSecretKeyboardService : InputMethodService() {
             }
 
             SwipeKeyboardView.KeyboardAction.Enter -> {
+                transformWordBeforeCursor()
                 lastCommittedFullWord = ""
                 if (isShowingNextWordPredictions) {
                     hideNextWordPredictions()
@@ -1547,7 +1638,7 @@ class VSecretKeyboardService : InputMethodService() {
             // ===== CHUYỂN ĐỔI CHẾ ĐỘ BASE-16 =====
             is SwipeKeyboardView.KeyboardAction.SwitchMode -> {
                 activeHexMode = action.hexKey
-                btnMode.text = "${action.icon} ${action.modeName}"
+                updateModeBadgeVisual()
                 // Tự động trả về tầng thường sau khi chọn Mode
                 swipeKeyboardView.setLayer(SwipeKeyboardView.KeyboardLayer.NORMAL)
             }
@@ -1560,19 +1651,32 @@ class VSecretKeyboardService : InputMethodService() {
                 val before = ic.getTextBeforeCursor(30, 0)?.toString() ?: ""
                 val baseWord = if (before.length >= action.prefixLength) {
                     val remainingBefore = before.dropLast(action.prefixLength)
-                    val consonantMatch = Regex("([a-zA-ZàáảãạăắằẳẵặâấầẩẫậèéẻẽẹêếềểễệìíỉĩịòóỏõọôốồổỗộơớờởỡợùúủũụưứừửữựỳýỷỹỵđĐ]+)$").find(remainingBefore)
+                    val consonantMatch = Regex("""([\p{L}\p{M}\p{N}_]+)$""").find(remainingBefore)
                     (consonantMatch?.value ?: "") + action.replacementText
                 } else {
                     action.replacementText
                 }
 
-                if (action.prefixLength > 0) {
-                    ic.deleteSurroundingText(action.prefixLength, 0)
+                val isTransformNeeded = swipeKeyboardView.currentIOMode == SwipeKeyboardView.IOMode.VN_TO_B60 || activeHexMode != '0'
+                if (isTransformNeeded) {
+                    val outWord = transformWordForOutput(baseWord, swipeKeyboardView.currentIOMode)
+                    val beforeWordMatch = Regex("""([\p{L}\p{M}\p{N}_]+)$""").find(before)
+                    val deleteLen = beforeWordMatch?.value?.length ?: action.prefixLength
+                    if (deleteLen > 0) {
+                        ic.deleteSurroundingText(deleteLen, 0)
+                    }
+                    ic.commitText("$outWord ", 1)
+                    lastAutoCommittedWord = outWord
+                    lastCommittedFullWord = outWord
+                } else {
+                    if (action.prefixLength > 0) {
+                        ic.deleteSurroundingText(action.prefixLength, 0)
+                    }
+                    // Tự động thêm khoảng trắng sau từ vừa hoàn tất để gõ tiếp liền mạch
+                    ic.commitText("${action.replacementText} ", 1)
+                    lastAutoCommittedWord = baseWord
+                    lastCommittedFullWord = baseWord
                 }
-                // Tự động thêm khoảng trắng sau từ vừa hoàn tất để gõ tiếp liền mạch
-                ic.commitText("${action.replacementText} ", 1)
-                lastAutoCommittedWord = baseWord
-                lastCommittedFullWord = baseWord
                 hideSuggestions()
                 swipeKeyboardView.clearRhymeTutor()
             }
