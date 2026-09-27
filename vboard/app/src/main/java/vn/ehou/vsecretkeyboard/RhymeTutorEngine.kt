@@ -170,45 +170,28 @@ object RhymeTutorEngine {
         val cleanPrefix = stripToneOnly(prefix.lowercase().trim())
         if (cleanPrefix.isBlank()) return emptyMap()
 
-        val isSpecificAccent = cleanPrefix.any { it in "ăâêôơưđ" }
         val foldedPrefix = foldVowels(cleanPrefix)
         val result = mutableMapOf<String, String>()
 
         for (info in keyRhymeList) {
-            if (isSpecificAccent) {
-                // Người dùng gõ đích danh mũ/móc: chỉ tìm chính xác
-                val exactMatch = info.allRhymes.firstOrNull { it == cleanPrefix }
-                if (exactMatch != null) {
-                    result[info.gridKey] = exactMatch
-                    continue
-                }
-                val prefixMatch = info.allRhymes
-                    .filter { it.startsWith(cleanPrefix) }
-                    .minByOrNull { it.length }
-                if (prefixMatch != null) {
-                    result[info.gridKey] = prefixMatch
-                }
-            } else {
-                // Quy đồng họ nguyên âm: o khớp cả o, ô, ơ; an khớp an, ang, ăn, ăng, ân, âng...
-                // 1. Khớp chính xác không cần fold (ưu tiên cao nhất)
-                val strictExact = info.allRhymes.firstOrNull { it == cleanPrefix }
-                if (strictExact != null) {
-                    result[info.gridKey] = strictExact
-                    continue
-                }
-                // 2. Khớp chính xác sau khi fold (vd: gõ "oi" -> khớp "ôi" hoặc "ơi")
-                val foldExact = info.allRhymes.firstOrNull { foldVowels(it) == foldedPrefix }
-                if (foldExact != null) {
-                    result[info.gridKey] = foldExact
-                    continue
-                }
-                // 3. Khớp tiền tố (bắt đầu bằng) sau khi fold, ưu tiên vần ngắn nhất
-                val prefixMatch = info.allRhymes
-                    .filter { foldVowels(it).startsWith(foldedPrefix) }
-                    .minByOrNull { it.length }
-                if (prefixMatch != null) {
-                    result[info.gridKey] = prefixMatch
-                }
+            // 1. Khớp chính xác không cần fold (ưu tiên tuyệt đối trên phím này)
+            val strictExact = info.allRhymes.firstOrNull { it == cleanPrefix }
+            if (strictExact != null) {
+                result[info.gridKey] = strictExact
+                continue
+            }
+            // 2. Khớp chính xác sau khi fold (quy đồng cả họ nguyên âm: ap khớp cả ap, ăp, âp)
+            val foldExact = info.allRhymes.firstOrNull { foldVowels(it) == foldedPrefix }
+            if (foldExact != null) {
+                result[info.gridKey] = foldExact
+                continue
+            }
+            // 3. Khớp tiền tố (bắt đầu bằng) sau khi fold, ưu tiên vần ngắn nhất
+            val prefixMatch = info.allRhymes
+                .filter { foldVowels(it).startsWith(foldedPrefix) }
+                .minByOrNull { it.length }
+            if (prefixMatch != null) {
+                result[info.gridKey] = prefixMatch
             }
         }
 
