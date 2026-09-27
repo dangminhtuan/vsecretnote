@@ -70,6 +70,7 @@ object SwipeGestureAnalyzer {
         epsilon: Float,
         dpDensity: Float,
         isBase60: Boolean = true,
+        letterTopY: Float = 0f,
         keyFinder: (Float, Float) -> String?
     ): SwipeAnalysisResult {
         if (rawPoints.isEmpty()) return SwipeAnalysisResult(emptyList())
@@ -83,15 +84,18 @@ object SwipeGestureAnalyzer {
         val simplified = simplifyPath(rawPoints, epsilon)
         val minFlickDy = -20f * dpDensity
 
-        // 1. Kiểm tra xem đoạn đuôi cuối cùng có phải là cử chỉ bẻ góc hất lên trên để chọn từ gợi ý không
-        if (simplified.size >= 4) {
+        // 1. Kiểm tra xem đoạn đuôi cuối cùng có phải là cử chỉ bẻ góc hất lên trên để chọn từ gợi ý không.
+        // Điều kiện tiên quyết: ngón tay PHẢI hất vượt lên trên khu vực các hàng chữ cái (pLast.y < letterTopY).
+        val effectiveTop = if (letterTopY <= 0f) 5f * dpDensity else letterTopY
+        val isAboveLetters = simplified.last().y < effectiveTop
+        if (isAboveLetters && simplified.size >= 4) {
             val pLast = simplified.last()
             val pPrev = simplified[simplified.size - 2]
             val dy = pLast.y - pPrev.y
             val dx = pLast.x - pPrev.x
 
             // Nếu đoạn cuối đi lên trên rõ rệt (dy âm lớn và góc dốc lên trên)
-            if (dy < minFlickDy && abs(dx) < abs(dy) * 2.2f) {
+            if (dy < minFlickDy && abs(dx) < abs(dy) * 1.8f) {
                 // Trích xuất các phím từ các đỉnh trước cú hất lên
                 val pointsBeforeFlick = simplified.dropLast(1)
                 val baseKeys = mutableListOf<String>()

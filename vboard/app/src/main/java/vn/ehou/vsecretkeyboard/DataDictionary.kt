@@ -68,7 +68,9 @@ object DataDictionary {
         "người", "như", "lại", "nghĩ", "được", "một", "hai", "ba", "bốn", "năm",
         "sáu", "bảy", "tám", "chín", "anh", "em", "phải", "in", "phim", "tôi",
         "uống", "web", "xem", "ai", "bạn", "ếch", "file", "hỏi", "ít", "giờ",
-        "mới", "pin", "qua", "ra", "tiền", "úc", "vào", "xin", "yêu", "zalo"
+        "mới", "pin", "qua", "ra", "tiền", "úc", "vào", "xin", "yêu", "zalo",
+        "gõ", "sửa", "chạy", "bấm", "chọn", "tải", "cài", "xóa", "lỗi", "link",
+        "code", "test", "tiếp", "mở", "thử", "bật", "tắt", "số", "biển"
     )
 
     val ENGLISH_DICT = listOf(
@@ -130,13 +132,13 @@ object DataDictionary {
                 }
             }
 
+            // Đưa các từ thông dụng thực tế lên vị trí số 0 đầu tiên của danh sách từ không dấu
             for (w in (SHORTCUT_WORDS + TWO_DIGIT_WORDS)) {
                 val lower = w.lowercase()
                 val unacc = removeAccents(lower).lowercase()
                 val list = unaccentedMap.getOrPut(unacc) { mutableListOf() }
-                if (!list.contains(lower)) {
-                    list.add(lower)
-                }
+                list.remove(lower)
+                list.add(0, lower)
             }
 
             isInitialized = true
@@ -162,5 +164,9 @@ object DataDictionary {
 
     fun getTopWordsForChar(ch: Char): List<String> {
         return prefix1Map[ch.lowercaseChar()] ?: emptyList()
+    }
+
+    fun getUnaccentedKeys(): Set<String> {
+        return unaccentedMap.keys
     }
 }

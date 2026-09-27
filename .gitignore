@@ -9,3 +9,7 @@ vboard/build/
 vboard/*/build/
 vboard/local.properties
 vboard/.idea/
+
+jadx*
+*.bak
+

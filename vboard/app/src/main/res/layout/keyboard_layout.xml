@@ -231,7 +231,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Bật La bàn 6 hướng chọn dấu thanh siêu tốc (0ms)"
+                                android:text="Bật La bàn 8 hướng chọn dấu thanh siêu tốc (0ms)"
                                 android:textSize="11sp"
                                 android:textColor="#8B949E"/>
                         </LinearLayout>
@@ -317,7 +317,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Gõ chữ tự mã hóa ngược • Tắt la bàn, bật Swipe"
+                                android:text="Tự mã hóa sang Base60 • Bật La bàn 8 hướng (0ms)"
                                 android:textSize="11sp"
                                 android:textColor="#8B949E"/>
                         </LinearLayout>
@@ -446,33 +446,87 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="📋 BỘ NHỚ TẠM"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:textColor="#58A6FF"
+                    android:singleLine="true"
+                    android:ellipsize="end"/>
+
+                <!-- Nút ⌫ Xóa nhanh -->
+                <TextView
+                    android:id="@+id/btn_clipboard_bksp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⌫"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#F85149"
+                    android:background="#21262D"
+                    android:paddingHorizontal="9dp"
+                    android:paddingVertical="4dp"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <!-- Nút ↵ Xuống dòng -->
+                <TextView
+                    android:id="@+id/btn_clipboard_enter"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="↵"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"
+                    android:background="#238636"
+                    android:paddingHorizontal="9dp"
+                    android:paddingVertical="4dp"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+
+                <!-- Nút 🔍 Tìm kiếm -->
+                <TextView
+                    android:id="@+id/btn_clipboard_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🔍"
                     android:textSize="13sp"
                     android:textStyle="bold"
-                    android:textColor="#58A6FF"/>
+                    android:textColor="#FFFFFF"
+                    android:background="#1F6FEB"
+                    android:paddingHorizontal="9dp"
+                    android:paddingVertical="4dp"
+                    android:layout_marginEnd="6dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
 
+                <!-- Nút 🗑️ Dọn dẹp chưa ghim -->
                 <TextView
                     android:id="@+id/btn_clear_clipboard"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="🗑️ Xóa chưa ghim"
-                    android:textSize="11.5sp"
+                    android:text="🗑️"
+                    android:textSize="12sp"
                     android:textColor="#8B949E"
                     android:paddingHorizontal="8dp"
                     android:paddingVertical="4dp"
                     android:background="#21262D"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="6dp"
                     android:clickable="true"
                     android:focusable="true"/>
 
+                <!-- Nút ✕ Đóng về bàn phím -->
                 <TextView
                     android:id="@+id/btn_close_clipboard"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="✕ Bàn phím"
-                    android:textSize="12.5sp"
+                    android:text="✕"
+                    android:textSize="13sp"
                     android:textStyle="bold"
                     android:textColor="#3FB950"
-                    android:padding="6dp"
+                    android:paddingHorizontal="9dp"
+                    android:paddingVertical="4dp"
+                    android:background="#21262D"
                     android:clickable="true"
                     android:focusable="true"/>
             </LinearLayout>
