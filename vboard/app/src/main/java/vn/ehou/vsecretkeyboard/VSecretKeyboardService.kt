@@ -603,6 +603,7 @@ class VSecretKeyboardService : InputMethodService() {
         }
 
         fun selectIOMode(mode: SwipeKeyboardView.IOMode) {
+            activeHexMode = '0'
             swipeKeyboardView.setIOMode(mode)
             updateModeBadgeVisual()
             iomodeMenuOverlay.visibility = View.GONE
@@ -616,6 +617,7 @@ class VSecretKeyboardService : InputMethodService() {
         itemIomodeB60B60.setOnClickListener { selectIOMode(SwipeKeyboardView.IOMode.B60_TO_B60) }
 
         swipeKeyboardView.onIOModeChanged = {
+            activeHexMode = '0'
             updateModeBadgeVisual()
         }
 
