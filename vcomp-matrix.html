@@ -507,17 +507,57 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 1px;
+      gap: 2px;
     }
 
-    .rhyme-name {
-      font-size: 13px;
-      font-weight: 700;
-      color: #fff;
-      line-height: 1.2;
+    .rhyme-meta-header {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 3px;
+      line-height: 1;
+    }
+
+    .badge-order {
+      display: inline-block;
+      padding: 0 3px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 8.5px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.08);
+      color: #94a3b8;
+    }
+
+    .badge-b60 {
+      display: inline-block;
+      padding: 0 3px;
+      border-radius: 3px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--neon-cyan);
+      background: rgba(0, 229, 255, 0.12);
+      border: 1px solid rgba(0, 229, 255, 0.28);
+      letter-spacing: 0.3px;
+    }
+
+    .rhyme-word-display {
+      font-size: 13.5px;
+      font-weight: 800;
+      line-height: 1.15;
+      display: inline-flex;
+      align-items: baseline;
+      justify-content: center;
+    }
+
+    .word-cons {
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .word-rhyme {
+      font-weight: 900;
     }
 
     .rhyme-name.empty {
@@ -526,29 +566,9 @@
       font-weight: 400;
     }
 
-    .b1-color { color: var(--neon-green); }
-    .b2-color { color: var(--neon-cyan); }
-    .b3-color { color: var(--neon-amber); }
-
-    .rhyme-meta {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 3px;
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--text-muted);
-    }
-
-    .badge-order {
-      display: inline-block;
-      padding: 0 3px;
-      border-radius: 3px;
-      font-size: 9px;
-      font-weight: 700;
-      background: rgba(255, 255, 255, 0.08);
-      color: #cbd5e1;
-    }
+    .b1-color { color: var(--neon-green); text-shadow: 0 0 8px rgba(0, 255, 136, 0.3); }
+    .b2-color { color: var(--neon-cyan); text-shadow: 0 0 8px rgba(0, 229, 255, 0.3); }
+    .b3-color { color: var(--neon-amber); text-shadow: 0 0 8px rgba(255, 184, 0, 0.3); }
 
     /* Anomaly Tags (Vần Cụt / Vần Rác) */
     .anomaly-badge {
@@ -1816,7 +1836,7 @@
                 </div>
                 <div class="mag-ex-row">
                   <span class="mag-lbl">VD:</span>
-                  <span id="magExamples" class="mag-examples"><span class="mag-sample-word">đường</span> <span style="color:#64748b; font-style:normal;">➔</span> <span class="mag-b60-code">dsf</span></span>
+                  <span id="magExamples" class="mag-examples"><span class="mag-sample-word">sướng</span> <span style="color:#64748b; font-style:normal;">➔</span> <span class="mag-b60-code">sss</span></span>
                 </div>
               </div>
 
@@ -1945,7 +1965,7 @@
 
   <script type="module">
     import { BASE60_MAPPING, RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2 } from './data.js';
-    import { encodeWord, decodeWord, timeToBase60, base60ToTime } from './vcomp.js';
+    import { encodeWord, decodeWord, timeToBase60, base60ToTime, extractPhonetics } from './vcomp.js';
 
     // Danh sách các vần cụt / bất thường cần đánh dấu cảnh báo
     const ANOMALY_RHYMES = {
@@ -1954,7 +1974,8 @@
       'yê': { label: 'Vần cụt (thiếu âm cuối)', danger: false },
       'ươ': { label: 'Vần cụt (thiếu âm cuối)', danger: false },
       'oă': { label: 'Vần cụt (thiếu âm cuối)', danger: false },
-      'uơ': { label: 'Vần cụt (chỉ có thuở/huơ)', danger: false }
+      'uơ': { label: 'Vần cụt (chỉ có thuở/huơ)', danger: false },
+      'ưn': { label: 'Vần cụt (từ lóng anh Tứn)', danger: false }
     };
 
     // 1. Audit Duplicates & Statistics
@@ -2168,16 +2189,34 @@
       const orderNum = rhymeOrderMap[lower] || '';
       const anomaly = ANOMALY_RHYMES[lower];
 
+      const sampleWord = RHYME_SAMPLE_WORD[lower] || rhyme;
+      let b60 = '';
+      let consPart = '';
+      let rhymePart = sampleWord;
+
+      try {
+        const ph = extractPhonetics(sampleWord);
+        if (ph && ph.consonant) {
+          consPart = sampleWord.slice(0, ph.consonant.length);
+          rhymePart = sampleWord.slice(ph.consonant.length);
+        }
+        const timeCode = encodeWord(sampleWord);
+        b60 = timeToBase60(timeCode);
+      } catch (e) {
+        b60 = '';
+      }
+
       return `
-        <td class="td-cell${dividerClass}" data-rhyme="${lower}">
+        <td class="td-cell${dividerClass}" data-rhyme="${lower}" title="#${orderNum} vần '${rhyme}' ➔ ${sampleWord} (${b60})">
           <div class="rhyme-unit">
-            <span class="rhyme-name ${colorClass}">
-              ${rhyme}
-              ${anomaly ? `<span class="anomaly-badge ${anomaly.danger ? 'danger' : ''}" title="${anomaly.label}">⚠️</span>` : ''}
-            </span>
-            <span class="rhyme-meta">
+            <div class="rhyme-meta-header">
               <span class="badge-order">#${orderNum}</span>
-            </span>
+              ${b60 ? `<span class="badge-b60">${b60}</span>` : ''}
+              ${anomaly ? `<span class="anomaly-badge ${anomaly.danger ? 'danger' : ''}" title="${anomaly.label}">⚠️</span>` : ''}
+            </div>
+            <div class="rhyme-word-display">
+              <span class="word-cons">${consPart}</span><span class="word-rhyme ${colorClass}">${rhymePart}</span>
+            </div>
           </div>
         </td>
       `;
@@ -2205,29 +2244,29 @@
     };
 
     const RHYME_SAMPLE_WORD = {
-      'a': 'cá', 'e': 'xe', 'ê': 'ghế', 'i': 'đi', 'o': 'bò', 'ô': 'cô', 'ơ': 'mơ', 'u': 'đu', 'ư': 'từ',
-      'an': 'bàn', 'ang': 'làng', 'anh': 'chanh', 'iên': 'tiên', 'iêng': 'tiếng', 'uôc': 'thuốc', 'uông': 'uống',
-      'ương': 'đường', 'uyên': 'thuyền', 'uyêt': 'tuyết', 'uya': 'khuya', 'ât': 'đất', 'âu': 'cầu', 'ân': 'chân',
-      'âng': 'tầng', 'ăt': 'mặt', 'ăn': 'khăn', 'ăng': 'trăng', 'ăm': 'năm', 'em': 'xem', 'en': 'đen', 'im': 'tim',
-      'in': 'tin', 'om': 'xóm', 'on': 'con', 'un': 'bùn', 'ưa': 'mưa', 'ưng': 'rừng', 'ơi': 'chơi', 'ôi': 'tôi',
-      'ơn': 'sơn', 'am': 'cam', 'ap': 'cáp', 'at': 'hát', 'ay': 'tay', 'au': 'tàu', 'êu': 'kêu', 'êm': 'đêm',
+      'a': 'cá', 'e': 'xe', 'ê': 'ghế', 'i': 'đi', 'o': 'bò', 'ô': 'cô', 'ơ': 'sờ', 'u': 'bú', 'ư': 'từ',
+      'an': 'bàn', 'ang': 'háng', 'anh': 'banh', 'iên': 'điện', 'iêng': 'tiếng', 'uôc': 'thuốc', 'uông': 'uống',
+      'ương': 'sướng', 'uyên': 'thuyền', 'uyêt': 'tuyết', 'uya': 'khuya', 'ât': 'đất', 'âu': 'cầu', 'ân': 'mân',
+      'âng': 'tầng', 'ăt': 'mặt', 'ăn': 'khăn', 'ăng': 'trăng', 'ăm': 'năm', 'em': 'thèm', 'en': 'đen', 'im': 'chim',
+      'in': 'tin', 'om': 'xóm', 'on': 'con', 'un': 'bùn', 'ưa': 'chửa', 'ưng': 'nứng', 'ơi': 'chơi', 'ôi': 'tôi',
+      'ơn': 'sơn', 'am': 'hãm', 'ap': 'pháp', 'at': 'hát', 'ay': 'tay', 'au': 'tàu', 'êu': 'kêu', 'êm': 'đêm',
       'ên': 'đến', 'ênh': 'bệnh', 'êch': 'ếch', 'oa': 'hoa', 'oan': 'toán', 'oang': 'thoáng', 'uôi': 'suối',
-      'uôn': 'muốn', 'uc': 'cúc', 'ung': 'đúng', 'uy': 'quy', 'ui': 'túi', 'ươu': 'rượu', 'ươp': 'mướp',
-      'ich': 'thích', 'ach': 'sách', 'ôn': 'thôn', 'ia': 'mía', 'ut': 'bút', 'it': 'thịt', 'ươm': 'bướm',
-      'iêm': 'kiếm', 'ac': 'bác', 'ôm': 'tôm', 'ưc': 'mực', 'âp': 'tập', 'ao': 'sao', 'ăc': 'bắc', 'ăp': 'bắp',
+      'uôn': 'muốn', 'uc': 'đục', 'ung': 'đúng', 'uy': 'quy', 'ui': 'túi', 'ươu': 'rượu', 'ươp': 'mướp',
+      'ich': 'chịch', 'ach': 'sách', 'ôn': 'hôn', 'ia': 'ỉa', 'ut': 'mút', 'it': 'địt', 'ươm': 'bướm',
+      'iêm': 'liếm', 'ac': 'bác', 'ôm': 'tôm', 'ưc': 'mực', 'âp': 'tập', 'ao': 'sao', 'ăc': 'cặc', 'ăp': 'bắp',
       'âc': 'bậc', 'yêu': 'yêu', 'uâng': 'bâng', 'ec': 'két', 'eo': 'mèo', 'ep': 'đẹp', 'et': 'sét', 'êp': 'bếp',
-      'iêc': 'việc', 'iêp': 'tiếp', 'iêt': 'viết', 'iu': 'dịu', 'iêu': 'kiệu', 'ip': 'kịp', 'inh': 'xinh',
-      'oc': 'học', 'oe': 'loé', 'oi': 'nói', 'ong': 'lòng', 'op': 'họp', 'ot': 'gọt', 'oăn': 'xoăn', 'oăng': 'khoăng',
-      'ơm': 'cơm', 'ôc': 'gốc', 'ông': 'sông', 'ôp': 'hộp', 'ôt': 'cột', 'ơp': 'chớp', 'ơt': 'bớt', 'oen': 'hoen',
+      'iêc': 'việc', 'iêp': 'hiếp', 'iêt': 'viết', 'iu': 'bìu', 'iêu': 'kiệu', 'ip': 'kịp', 'inh': 'mình',
+      'oc': 'móc', 'oe': 'loé', 'oi': 'nói', 'ong': 'lòng', 'op': 'bóp', 'ot': 'phọt', 'oăn': 'xoăn', 'oăng': 'khoăng',
+      'ơm': 'cơm', 'ôc': 'gốc', 'ông': 'thông', 'ôp': 'hộp', 'ôt': 'cột', 'ơp': 'chớp', 'ơt': 'bớt', 'oen': 'hoen',
       'oac': 'khoác', 'oach': 'hoạch', 'oam': 'ngoàm', 'oanh': 'doanh', 'oap': 'ngoáp', 'uêch': 'khuếch',
-      'oay': 'xoay', 'oeo': 'ngoéo', 'oem': 'ngoem', 'oet': 'khoét', 'ooc': 'moóc', 'oong': 'boong', 'oăc': 'ngoắc',
-      'oăm': 'khoằm', 'oăt': 'thoắt', 'iê': 'kia', 'eng': 'keng', 'yêt': 'yết', 'ua': 'mua', 'uât': 'xuất',
-      'uê': 'huế', 'âm': 'tâm', 'um': 'chùm', 'uân': 'xuân', 'uôt': 'chuột', 'up': 'búp', 'ynh': 'huynh',
-      'ưi': 'gửi', 'y': 'mỹ', 'ưn': 'mưng', 'ươc': 'nước', 'ươi': 'cười', 'ươn': 'lườn', 'ươt': 'ướt',
+      'oay': 'ngoáy', 'oeo': 'ngoéo', 'oem': 'ngoem', 'oet': 'khoét', 'ooc': 'moóc', 'oong': 'boong', 'oăc': 'ngoắc',
+      'oăm': 'khoằm', 'oăt': 'thoắt', 'iê': 'kia', 'eng': 'keng', 'yêt': 'yết', 'ua': 'của', 'uât': 'xuất',
+      'uê': 'huế', 'âm': 'dâm', 'um': 'chùm', 'uân': 'xuân', 'uôt': 'chuột', 'up': 'húp', 'ynh': 'huynh',
+      'ưi': 'gửi', 'y': 'mỹ', 'ưn': 'tứn', 'ươc': 'nước', 'ươi': 'cười', 'ươn': 'lườn', 'ươt': 'ướt',
       'ưt': 'đứt', 'ưu': 'lưu', 'ưm': 'tươm', 'yêm': 'yếm', 'yê': 'yên', 'oat': 'thoát', 'uôm': 'nhuộm',
       'oai': 'khoai', 'oă': 'hoặc', 'ây': 'cây', 'uênh': 'huênh', 'uych': 'huých', 'uyn': 'buýt', 'uynh': 'quýnh',
-      'uyp': 'tuýp', 'uyt': 'huýt', 'uyu': 'khuỷu', 'yn': 'kin', 'yên': 'yên', 'yt': 'mít', 'yêng': 'kiểng',
-      'uơ': 'thuở', 'uây': 'khuấy', 'êt': 'tết', 'ai': 'tai', 'ă': 'bắt', 'â': 'ấm', 'ươ': 'lướt'
+      'uyp': 'tuýp', 'uyt': 'huýt', 'uyu': 'khuỷu', 'yn': 'kin', 'yên': 'yên', 'yt': 'đít', 'yêng': 'kiểng',
+      'uơ': 'thuở', 'uây': 'khuấy', 'êt': 'tết', 'ai': 'đái', 'ă': 'bắt', 'â': 'ấm', 'ươ': 'lướt'
     };
 
     // Hàm lấy danh sách toàn bộ 169 vần không trùng lặp
