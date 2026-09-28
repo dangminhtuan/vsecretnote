@@ -1293,6 +1293,245 @@
       .square-cell.smart-target-active {
         transform: scale(1.02);
       }
+      .magnifier-nav-box {
+        width: 100%;
+        max-width: 100%;
+        padding: 2px;
+        gap: 2px;
+      }
+      .nav-btn-up, .nav-btn-down {
+        width: 65%;
+        height: 18px;
+        font-size: 10px;
+      }
+      .nav-btn-left, .nav-btn-right {
+        width: 26px;
+        height: 42px;
+        font-size: 12px;
+      }
+      .magnifier-card {
+        height: 42px;
+        padding: 2px 6px;
+        gap: 6px;
+      }
+      .mag-key-badge {
+        font-size: 14px;
+        padding: 1px 5px;
+      }
+      .mag-rhyme-text {
+        font-size: 17px;
+      }
+      .mag-floor-badge {
+        font-size: 7.5px;
+        padding: 0 3px;
+      }
+      .mag-meta-row {
+        font-size: 9px;
+      }
+      .mag-ex-row {
+        font-size: 9.5px;
+      }
+      .view-mode-bar {
+        padding: 4px 6px;
+        gap: 6px;
+      }
+      .view-mode-hint {
+        display: none;
+      }
+    }
+
+    /* Magnifier Card & 4-Direction Nav Pad (▲ ▼ ◀ ▶) */
+    .magnifier-nav-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 3px 6px;
+      background: rgba(14, 21, 32, 0.95);
+      border: 1.5px solid rgba(0, 229, 255, 0.4);
+      border-radius: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0, 229, 255, 0.08);
+      user-select: none;
+      min-width: 280px;
+      max-width: 440px;
+      flex: 1;
+    }
+
+    .magnifier-mid-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .nav-arrow-btn {
+      background: #182435;
+      border: 1.5px solid #2d3e54;
+      border-radius: 5px;
+      color: var(--neon-cyan);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.1s ease;
+      touch-action: manipulation;
+    }
+    .nav-arrow-btn:hover {
+      background: rgba(0, 229, 255, 0.2);
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 8px var(--neon-cyan);
+      color: #fff;
+    }
+    .nav-arrow-btn:active {
+      transform: scale(0.92);
+      background: var(--neon-cyan);
+      color: #000;
+    }
+
+    .nav-btn-up, .nav-btn-down {
+      width: 50%;
+      height: 20px;
+      border-radius: 4px;
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .nav-btn-left, .nav-btn-right {
+      width: 28px;
+      height: 48px;
+      font-size: 13px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .nav-arrow-glyph {
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .magnifier-card {
+      flex: 1;
+      height: 48px;
+      background: linear-gradient(135deg, #101926 0%, #162234 100%);
+      border: 1.5px solid rgba(0, 255, 136, 0.6);
+      border-radius: 6px;
+      padding: 3px 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.15);
+      min-width: 0;
+      overflow: hidden;
+    }
+
+    .mag-col-left {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .mag-key-badge {
+      font-family: var(--font-mono);
+      font-size: 15px;
+      font-weight: 800;
+      color: #fff;
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-radius: 5px;
+      padding: 2px 6px;
+      line-height: 1.1;
+    }
+    .mag-key-badge.is-upper {
+      color: #e9d5ff;
+      border-color: #a855f7;
+      background: rgba(168, 85, 247, 0.15);
+    }
+
+    .mag-rhyme-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1;
+    }
+
+    .mag-rhyme-text {
+      font-size: 19px;
+      font-weight: 900;
+      color: var(--neon-green);
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+      line-height: 1.1;
+      letter-spacing: -0.3px;
+    }
+
+    .mag-floor-badge {
+      font-size: 8px;
+      font-weight: 800;
+      padding: 1px 4px;
+      border-radius: 2px;
+      margin-top: 1px;
+    }
+    .mag-floor-badge.floor-b1 { background: rgba(0, 255, 136, 0.18); color: var(--neon-green); border: 1px solid rgba(0, 255, 136, 0.4); }
+    .mag-floor-badge.floor-b2 { background: rgba(0, 229, 255, 0.18); color: var(--neon-cyan); border: 1px solid rgba(0, 229, 255, 0.4); }
+    .mag-floor-badge.floor-b3 { background: rgba(255, 184, 0, 0.18); color: var(--neon-amber); border: 1px solid rgba(255, 184, 0, 0.4); }
+
+    .mag-col-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .mag-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .mag-stt {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: #94a3b8;
+    }
+
+    .mag-floor-title {
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    .mag-ex-row {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 10.5px;
+      color: #e2e8f0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mag-lbl {
+      color: var(--text-muted);
+      font-size: 9px;
+      font-weight: 700;
+    }
+
+    .mag-examples {
+      font-style: italic;
+      color: #93c5fd;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #filterBar.in-square-mode #filterBtnGroup {
+      display: none;
     }
 
     /* Footer */
@@ -1399,15 +1638,62 @@
     </div>
 
     <!-- Filter & Sort Bar -->
-    <div class="filter-bar">
+    <div class="filter-bar" id="filterBar">
       <input type="text" id="searchInput" class="search-input" placeholder="🔍 Tìm vần hoặc phím (vd: yên, iên, ư, u, oai, w, d, a...)...">
       
-      <div class="filter-btn-group">
+      <div class="filter-btn-group" id="sortBtnGroup">
         <button class="filter-btn active" id="btnSortAZ">🔤 Xếp Thứ Tự A-Z</button>
         <button class="filter-btn" id="btnSortKeyboard">⌨️ Xếp Theo Bàn Phím</button>
       </div>
 
-      <div class="filter-btn-group" style="margin-left: auto;">
+      <!-- Cụm Kính Lúp Phóng To & Bàn Phím Điều Hướng 4 Chiều (▲ ▼ ◀ ▶) -->
+      <div id="magnifierNavBox" class="magnifier-nav-box" style="display: none;">
+        <!-- Nút Lên -->
+        <button id="btnNavUp" class="nav-arrow-btn nav-btn-up" aria-label="Lên hàng trên" title="Lên hàng trên (▲ / W / Phím Mũi Tên Lên)">
+          <span class="nav-arrow-glyph">▲</span>
+        </button>
+
+        <div class="magnifier-mid-row">
+          <!-- Nút Trái -->
+          <button id="btnNavLeft" class="nav-arrow-btn nav-btn-left" aria-label="Sang cột trước" title="Sang cột trước (◀ / A / Phím Mũi Tên Trái)">
+            <span class="nav-arrow-glyph">◀</span>
+          </button>
+
+          <!-- Thẻ Kính Lúp Phóng To (Magnifier Card) -->
+          <div id="magnifierCard" class="magnifier-card" title="Vuốt cảm ứng Trái/Phải/Lên/Xuống để duyệt vần">
+            <div class="mag-col-left">
+              <span id="magKeyBadge" class="mag-key-badge">s</span>
+              <div class="mag-rhyme-wrap">
+                <span id="magRhymeText" class="mag-rhyme-text">ương</span>
+                <span id="magFloorBadge" class="mag-floor-badge floor-b1">B1</span>
+              </div>
+            </div>
+            <div class="mag-col-right">
+              <div class="mag-meta-row">
+                <span id="magStt" class="mag-stt">#95</span>
+                <span id="magFloorTitle" class="mag-floor-title">Tầng 1 (B1)</span>
+                <span id="magAnomalyTag" class="anomaly-badge" style="display: none;">⚠️ Vần cụt</span>
+              </div>
+              <div class="mag-ex-row">
+                <span class="mag-lbl">VD:</span>
+                <span id="magExamples" class="mag-examples">đường, thương, lương</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Nút Phải -->
+          <button id="btnNavRight" class="nav-arrow-btn nav-btn-right" aria-label="Sang cột sau" title="Sang cột sau (▶ / D / Phím Mũi Tên Phải)">
+            <span class="nav-arrow-glyph">▶</span>
+          </button>
+        </div>
+
+        <!-- Nút Xuống -->
+        <button id="btnNavDown" class="nav-arrow-btn nav-btn-down" aria-label="Xuống hàng dưới" title="Xuống hàng dưới (▼ / S / Phím Mũi Tên Xuống)">
+          <span class="nav-arrow-glyph">▼</span>
+        </button>
+      </div>
+
+      <div class="filter-btn-group" id="filterBtnGroup" style="margin-left: auto;">
         <button class="filter-btn active" data-filter="all">Tất Cả</button>
         <button class="filter-btn" data-filter="alpha">Chữ Cái (a-z)</button>
         <button class="filter-btn" data-filter="digits">Chữ Số (0-9)</button>
@@ -2211,12 +2497,13 @@
           cell.title = `#${item.order} (${item.floor}) phím [${item.key}]: vần "${item.rhyme}"`;
         }
 
-        // Click ô: Tìm kiếm thông minh các vần liên quan
+        // Click ô: Tìm kiếm thông minh các vần liên quan & Phóng to
         cell.onclick = () => {
           if (activeSmartSearchRhyme === item.lower) {
             clearSmartSearch();
           } else {
             activateSmartSearch(item.lower);
+            updateMagnifier(item, index);
           }
 
           // Cập nhật ô thử nghiệm
@@ -2234,6 +2521,173 @@
       if (counter) counter.textContent = `${visibleCount} / 169 ô`;
     }
 
+    // === CỤM PHÓNG TO & ĐIỀU HƯỚNG 4 CHIỀU (MAGNIFIER & 4-WAY D-PAD) ===
+    let currentNavIndex = -1; // 0..168
+
+    function updateMagnifier(item, index) {
+      if (!item) return;
+      currentNavIndex = typeof index === 'number' ? index : currentNavIndex;
+
+      const box = document.getElementById('magnifierNavBox');
+      if (box) box.style.display = 'flex';
+
+      const keyBadge = document.getElementById('magKeyBadge');
+      const rhymeText = document.getElementById('magRhymeText');
+      const floorBadge = document.getElementById('magFloorBadge');
+      const stt = document.getElementById('magStt');
+      const floorTitle = document.getElementById('magFloorTitle');
+      const exSpan = document.getElementById('magExamples');
+      const card = document.getElementById('magnifierCard');
+      const anomalyTag = document.getElementById('magAnomalyTag');
+
+      if (keyBadge) {
+        keyBadge.textContent = item.key;
+        if (item.isShift) keyBadge.classList.add('is-upper');
+        else keyBadge.classList.remove('is-upper');
+      }
+
+      if (rhymeText) {
+        rhymeText.textContent = item.rhyme;
+        if (item.floor === 'B1') {
+          rhymeText.style.color = 'var(--neon-green)';
+          rhymeText.style.textShadow = '0 0 10px rgba(0, 255, 136, 0.5)';
+        } else if (item.floor === 'B2') {
+          rhymeText.style.color = 'var(--neon-cyan)';
+          rhymeText.style.textShadow = '0 0 10px rgba(0, 229, 255, 0.5)';
+        } else {
+          rhymeText.style.color = 'var(--neon-amber)';
+          rhymeText.style.textShadow = '0 0 10px rgba(255, 184, 0, 0.5)';
+        }
+      }
+
+      if (floorBadge) {
+        floorBadge.textContent = item.floor;
+        floorBadge.className = `mag-floor-badge floor-${item.floor.toLowerCase()}`;
+      }
+
+      if (stt) {
+        stt.textContent = `#${item.order}`;
+      }
+
+      if (floorTitle) {
+        floorTitle.textContent = `${item.floor} (${item.isShift ? '⇧ Shift' : 'Thường'})`;
+      }
+
+      if (exSpan) {
+        const ex = RHYME_EXAMPLES[item.lower] || `${item.rhyme}..`;
+        exSpan.textContent = ex;
+      }
+
+      if (anomalyTag) {
+        if (item.anomaly) {
+          anomalyTag.style.display = 'inline-block';
+          anomalyTag.textContent = `⚠️ ${item.anomaly.label || 'Vần cụt'}`;
+        } else {
+          anomalyTag.style.display = 'none';
+        }
+      }
+
+      if (card) {
+        card.style.borderColor = (item.floor === 'B1') ? 'var(--neon-green)' : (item.floor === 'B2') ? 'var(--neon-cyan)' : 'var(--neon-amber)';
+      }
+    }
+
+    function navigateMatrix(deltaRow, deltaCol) {
+      const allList = getAllRhymesList();
+      if (!allList || allList.length === 0) return;
+
+      if (currentNavIndex === -1) {
+        if (activeSmartSearchRhyme) {
+          currentNavIndex = allList.findIndex(x => x.lower === activeSmartSearchRhyme);
+        }
+        if (currentNavIndex === -1) currentNavIndex = 0;
+      }
+
+      const currentRow = Math.floor(currentNavIndex / 13);
+      const currentCol = currentNavIndex % 13;
+
+      let nextRow = currentRow + deltaRow;
+      let nextCol = currentCol + deltaCol;
+
+      if (nextRow < 0) nextRow = 0;
+      if (nextRow > 12) nextRow = 12;
+      if (nextCol < 0) nextCol = 0;
+      if (nextCol > 12) nextCol = 12;
+
+      const nextIndex = nextRow * 13 + nextCol;
+      if (nextIndex >= 0 && nextIndex < allList.length) {
+        const nextItem = allList[nextIndex];
+        currentNavIndex = nextIndex;
+        activateSmartSearch(nextItem.lower);
+        updateMagnifier(nextItem, nextIndex);
+
+        const cell = document.getElementById(`square_cell_rhyme_${nextItem.lower}`);
+        if (cell) {
+          cell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        const testInput = document.getElementById('liveInputViet');
+        if (testInput) {
+          testInput.value = nextItem.rhyme;
+          updateLiveEncoder(nextItem.rhyme);
+        }
+      }
+    }
+
+    // Gán sự kiện click 4 nút mũi tên
+    const btnNavUp = document.getElementById('btnNavUp');
+    const btnNavDown = document.getElementById('btnNavDown');
+    const btnNavLeft = document.getElementById('btnNavLeft');
+    const btnNavRight = document.getElementById('btnNavRight');
+
+    if (btnNavUp) btnNavUp.onclick = (e) => { e.stopPropagation(); navigateMatrix(-1, 0); };
+    if (btnNavDown) btnNavDown.onclick = (e) => { e.stopPropagation(); navigateMatrix(1, 0); };
+    if (btnNavLeft) btnNavLeft.onclick = (e) => { e.stopPropagation(); navigateMatrix(0, -1); };
+    if (btnNavRight) btnNavRight.onclick = (e) => { e.stopPropagation(); navigateMatrix(0, 1); };
+
+    // Điều hướng bằng phím mũi tên máy tính & phím WASD
+    window.addEventListener('keydown', (e) => {
+      if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+      if (currentViewMode !== 'square') return;
+
+      if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') {
+        e.preventDefault();
+        navigateMatrix(-1, 0);
+      } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+        e.preventDefault();
+        navigateMatrix(1, 0);
+      } else if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+        e.preventDefault();
+        navigateMatrix(0, -1);
+      } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+        e.preventDefault();
+        navigateMatrix(0, 1);
+      }
+    });
+
+    // Cử chỉ vuốt cảm ứng Touch Swipe trên ô phóng to
+    let magTouchStartX = 0;
+    let magTouchStartY = 0;
+    const magCardEl = document.getElementById('magnifierCard');
+    if (magCardEl) {
+      magCardEl.addEventListener('touchstart', (e) => {
+        magTouchStartX = e.touches[0].clientX;
+        magTouchStartY = e.touches[0].clientY;
+      }, { passive: true });
+
+      magCardEl.addEventListener('touchend', (e) => {
+        const dx = e.changedTouches[0].clientX - magTouchStartX;
+        const dy = e.changedTouches[0].clientY - magTouchStartY;
+        if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 25) {
+          if (dx > 0) navigateMatrix(0, 1);
+          else navigateMatrix(0, -1);
+        } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > 25) {
+          if (dy > 0) navigateMatrix(1, 0);
+          else navigateMatrix(-1, 0);
+        }
+      }, { passive: true });
+    }
+
     // Chuyển đổi giữa 2 chế độ xem: Bảng 7 Cột vs Ma Trận Vuông 13x13
     let currentViewMode = localStorage.getItem('vcomp_matrix_view_mode') || 'table';
 
@@ -2245,16 +2699,30 @@
       const squareWrapper = document.getElementById('squareWrapper');
       const btnTable = document.getElementById('btnViewTable');
       const btnSquare = document.getElementById('btnViewSquare');
+      const filterBar = document.getElementById('filterBar');
+      const magBox = document.getElementById('magnifierNavBox');
 
       if (mode === 'square') {
         if (tableWrapper) tableWrapper.style.display = 'none';
         if (squareWrapper) squareWrapper.style.display = 'flex';
+        if (filterBar) filterBar.classList.add('in-square-mode');
+        if (magBox) magBox.style.display = 'flex';
         if (btnTable) btnTable.classList.remove('active');
         if (btnSquare) btnSquare.classList.add('active');
         renderSquareGrid();
+
+        // Tự động nạp thông tin ô đang chọn hoặc ô đầu tiên vào kính lúp
+        const allList = getAllRhymesList();
+        if (allList && allList.length > 0) {
+          const initIdx = activeSmartSearchRhyme ? allList.findIndex(x => x.lower === activeSmartSearchRhyme) : (currentNavIndex !== -1 ? currentNavIndex : 0);
+          const targetIdx = initIdx !== -1 ? initIdx : 0;
+          updateMagnifier(allList[targetIdx], targetIdx);
+        }
       } else {
         if (squareWrapper) squareWrapper.style.display = 'none';
         if (tableWrapper) tableWrapper.style.display = 'block';
+        if (filterBar) filterBar.classList.remove('in-square-mode');
+        if (magBox) magBox.style.display = 'none';
         if (btnSquare) btnSquare.classList.remove('active');
         if (btnTable) btnTable.classList.add('active');
         renderMatrix();
