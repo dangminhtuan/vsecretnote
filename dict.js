@@ -10,7 +10,7 @@ let sortCol = 'no';
 let sortAsc = true;
 
 const allConsonants = [...new Set([...CONSONANTS_BASE, ...CONSONANTS_EXTRA].filter(c => c !== null))].sort((a,b) => b.length - a.length);
-const allRhymes = [...new Set([...RHYMES_BASE, ...RHYMES_EXTRA_1, ...RHYMES_EXTRA_2].filter(r => r !== null))].sort();
+const allRhymes = [...new Set([...RHYMES_BASE, ...RHYMES_EXTRA_1, ...RHYMES_EXTRA_2].filter(r => r && r !== '-' && r !== 'null'))].sort();
 
 let selectedCons = new Set();
 let selectedRhymes = new Set();

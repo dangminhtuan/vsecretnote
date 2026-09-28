@@ -233,7 +233,7 @@ function buildMatrixData() {
 
   tables.forEach(({ list, tableIdx }) => {
     list.forEach((rhyme, mm) => {
-      if (!rhyme || rhyme.trim() === '') return;
+      if (!rhyme || rhyme.trim() === '' || rhyme === '-' || rhyme === 'null') return;
 
       const rhymeChar = BASE60_MAPPING[mm] || '?';
       
@@ -716,7 +716,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Init Dict Tab
   buildDictionaryData();
 
-  const allRhymesList = [...new Set([...RHYMES_BASE, ...RHYMES_EXTRA_1, ...RHYMES_EXTRA_2].filter(r => r !== null))].sort();
+  const allRhymesList = [...new Set([...RHYMES_BASE, ...RHYMES_EXTRA_1, ...RHYMES_EXTRA_2].filter(r => r && r !== '-' && r !== 'null'))].sort();
   initMultiSelect('ms-cons', allConsonants, selectedCons);
   initMultiSelect('ms-rhymes', allRhymesList, selectedRhymes);
   initMultiSelect('ms-tones', allTones, selectedTones);

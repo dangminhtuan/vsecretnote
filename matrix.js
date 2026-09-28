@@ -81,7 +81,7 @@ function buildMatrixData() {
 
   tables.forEach(({ list, tableIdx }) => {
     list.forEach((rhyme, mm) => {
-      if (!rhyme || rhyme.trim() === '') return;
+      if (!rhyme || rhyme.trim() === '' || rhyme === '-' || rhyme === 'null') return;
 
       const rhymeChar = BASE60_MAPPING[mm] || '?';
       

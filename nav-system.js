@@ -70,7 +70,7 @@ export const VSN_PAGES = [
         title: 'Ma Trận Vần',
         shortTitle: 'Ma Trận Vần',
         badge: 'RHYME MATRIX',
-        desc: 'Tra cứu 155 vần & mã hóa 6 thanh',
+        desc: 'Tra cứu 169 vần & mã hóa 6 thanh',
         icon: '📊',
         path: '/dict-matrix.html?tab=matrix',
         tabTarget: 'tab-matrix',
