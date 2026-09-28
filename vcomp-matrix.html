@@ -1484,7 +1484,7 @@
       padding: 3px 6px 3px 8px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-start;
       gap: 6px;
       box-shadow: 0 0 10px rgba(0, 255, 136, 0.15);
       min-width: 0;
@@ -1493,6 +1493,7 @@
       user-select: none;
       transition: all 0.15s ease;
       touch-action: manipulation;
+      position: relative;
     }
 
     .magnifier-card:hover {
@@ -1506,29 +1507,30 @@
     }
 
     .mag-next-action {
+      position: absolute;
+      right: 5px;
+      top: 50%;
+      transform: translateY(-50%);
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0 4px 0 6px;
-      margin-left: 2px;
-      border-left: 1px solid rgba(0, 229, 255, 0.25);
       color: var(--neon-cyan);
-      height: 38px;
-      cursor: pointer;
-      flex-shrink: 0;
+      opacity: 0.45;
+      pointer-events: none;
       transition: all 0.15s ease;
+      z-index: 2;
     }
 
     .mag-next-glyph {
-      font-size: 13px;
+      font-size: 14px;
       font-weight: 900;
       line-height: 1;
       transition: transform 0.15s ease;
     }
 
     .magnifier-card:hover .mag-next-action {
+      opacity: 0.9;
       color: #fff;
-      border-left-color: var(--neon-cyan);
     }
 
     .magnifier-card:hover .mag-next-glyph {
