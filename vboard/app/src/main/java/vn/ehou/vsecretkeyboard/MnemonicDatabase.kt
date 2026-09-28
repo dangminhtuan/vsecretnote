@@ -142,10 +142,10 @@ object MnemonicDatabase {
         // 16. W / w
         MnemonicItem(
             category = "alpha", lower = 'w', upper = 'W', lowerIdx = 59, upperIdx = 23,
-            lowerPhrase = "qu ➔ qu ➔ qu", upperPhrase = "thành ➔ hoằng ➔ nước",
-            lowerRhymes = listOf("", "", ""), upperRhymes = listOf("anh", "oăng", "ươc"),
-            samples = listOf(MnemonicSample("qu", "qwz"), MnemonicSample("qu", "qwz"), MnemonicSample("qu", "qwz"), MnemonicSample("thành", "TWf"), MnemonicSample("hoằng", "hWF"), MnemonicSample("nước", "nW1")),
-            story = "Gõ chữ qu tốc ký liền tay, lập chiến công thành công vang dội sáng hoằng soi dòng sông nước!"
+            lowerPhrase = "như ➔ từ ➔ tử", upperPhrase = "thành ➔ hoằng ➔ nước",
+            lowerRhymes = listOf("", "", "ư"), upperRhymes = listOf("anh", "oăng", "ươc"),
+            samples = listOf(MnemonicSample("như", "Hw0"), MnemonicSample("từ", "tw2"), MnemonicSample("tử", "tw3"), MnemonicSample("thành", "TWf"), MnemonicSample("hoằng", "hWF"), MnemonicSample("nước", "nW1")),
+            story = "Gõ phím w như từ trong tử sách, lập chiến công thành công vang dội sáng hoằng soi dòng sông nước!"
         ),
         // 17. P / p
         MnemonicItem(
@@ -206,10 +206,10 @@ object MnemonicDatabase {
         // 24. U / u
         MnemonicItem(
             category = "alpha", lower = 'u', upper = 'U', lowerIdx = 58, upperIdx = 50,
-            lowerPhrase = "thu ➔ ru ➔ đu", upperPhrase = "nêu ➔ ngoặc ➔ như",
-            lowerRhymes = listOf("u", "", ""), upperRhymes = listOf("êu", "oăc", "ư"),
-            samples = listOf(MnemonicSample("thu", "Tuz"), MnemonicSample("ru", "ruz"), MnemonicSample("đu", "duz"), MnemonicSample("nêu", "nUz"), MnemonicSample("ngoặc", "NUJ"), MnemonicSample("như", "HU0")),
-            story = "Gió mùa thu lời ru ru êm đềm võng đu đưa, tấm gương được nêu trong dấu ngoặc sáng trong như ngọc!"
+            lowerPhrase = "thu ➔ ru ➔ đu", upperPhrase = "nêu ➔ ngoặc ➔ yên",
+            lowerRhymes = listOf("u", "", ""), upperRhymes = listOf("êu", "oăc", "yên"),
+            samples = listOf(MnemonicSample("thu", "Tuz"), MnemonicSample("ru", "ruz"), MnemonicSample("đu", "duz"), MnemonicSample("nêu", "nUz"), MnemonicSample("ngoặc", "NUJ"), MnemonicSample("yên", "zU0"), MnemonicSample("tiến", "tU1")),
+            story = "Gió mùa thu lời ru ru êm đềm võng đu đưa, tấm gương được nêu trong dấu ngoặc sống bình yên!"
         ),
         // 25. i / o
         MnemonicItem(

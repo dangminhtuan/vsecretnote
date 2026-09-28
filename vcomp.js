@@ -180,6 +180,7 @@ export const decodeWord = (code) => {
   else if (rhymeTable === 1) rhyme = RHYMES_EXTRA_1[mm];
   else if (rhymeTable === 2) rhyme = RHYMES_EXTRA_2[mm];
   
+  if ((!rhyme || rhyme === '-') && mm === 59) rhyme = 'ư';
   if (!rhyme && consonant === '') return '[ERR:RHYME]';
   
   let prefix = consonant;

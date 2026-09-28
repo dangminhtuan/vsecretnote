@@ -12,40 +12,26 @@ export const CONSONANTS_EXTRA = [
   'p', 'ph', 'qu', 't', 'th', 'tr', 'x', null
 ];
 
-// === VẦN ===
-// RHYMES_BASE: a/ă/â/e/ê + anchors
+// === VẦN (171 VẦN CHUẨN VCOMP BASE60 - 0 TRÙNG LẶP - QUY TỤ TOÀN BỘ NGUYÊN ÂM ĐƠN VỀ B1 BÀN PHÍM CHỮ) ===
+// RHYMES_BASE: 60 vần Bảng 1 (Toàn bộ 11 nguyên âm đơn a, ă, â, e, ê, i, o, ô, ơ, u, ư quy tụ về B1 bàn phím chữ)
 export const RHYMES_BASE = [
-  'êt', 'ơ', 'ach', 'ai', 'am', 'an', 'ang',
-  'ôn', 'ia', 'âm', 'ut', 'ich', 'ên', 'ương',
-  'ưng', 'ươm', 'iêm', 'im', 'ac', 'ôm',
-  'ưc', 'âp', 'ôn',
-  'anh', 'ao', 'ap', 'at', 'au', 'ay',
-  'ă', 'ăc', 'ăm', 'ăn', 'ăng', 'ăp', 'ăt',
-  'âu', 'âc', 'ân', 'âng', 'ât', 'â', 'ây',
-  'ê', 'ec', 'em', 'en', 'eo', 'ep', 'et',
-  'êu', 'êch', 'êm', 'ênh', 'êp', 'a', 'e',
-  'i', 'u', ''
+  'êt', 'ơ', 'ach', 'ai', 'am', 'an', 'ang', 'ôn', 'ia', '-', 'ut', 'ich', 'ê', 'ương', 'it', 'ươm', 'iêm', 'at', 'ac', 'ôm',
+  'ưc', 'âp', '-', 'anh', 'ao', 'ap', 'ô', 'au', 'ay', 'ă', 'ăc', 'ăm', 'ăn', 'ăng', 'ăp', 'ăt', 'âu', 'âc', 'ân', 'âng',
+  'ât', 'â', 'yêu', 'uâng', 'ec', '-', 'o', 'eo', 'ep', 'et', 'êu', 'êch', 'êm', 'ênh', 'êp', 'a', 'e', 'i', 'u', 'ư'
 ];
 
-// RHYMES_EXTRA_1: i/o/ô/ơ
+// RHYMES_EXTRA_1: 60 vần Bảng 2 (i/o/ô/ơ + lấp đầy phím thường)
 export const RHYMES_EXTRA_1 = [
-  'iêc', 'iên', 'iêng', 'iêp', 'iêt', 'iu', 'in', 'iêu', 'ip', 'it', 'inh',
-  'oa', 'oai', 'oan', 'oc', 'oe', 'oi', 'om', 'on', 'ong', 'op', 'ot', 'oăn', 'oăng',
-  'ơm', 'ôc', 'ôi', 'ông', 'ôp', 'ôt',
-  'ơi', 'ô', 'ơn', 'ơp', 'ơt',
-  'oen', 'oac', 'oach', 'oam', 'oang', 'oanh', 'oap', 'oat', 'oay', 'oeo',
-  'oem', 'o', 'oet', 'ooc', 'oong', 'oăc', 'oăm', 'oăt', 'iê', 'eng',
-  null, null, null, null, null
+  'iêc', 'iên', 'iêng', 'iêp', 'iêt', 'iu', '-', 'iêu', 'ip', '-', 'inh', 'oa', 'ên', 'oan', 'oc', 'oe', 'oi', '-', 'on', 'ong',
+  'op', 'ot', 'oăn', 'oăng', 'ơm', 'ôc', 'ôi', 'ông', 'ôp', 'ôt', 'ơi', '-', 'ơn', 'ơp', 'ơt', 'oen', 'oac', 'oach', 'oam', 'oang',
+  'oanh', 'oap', 'uêch', 'oay', 'oeo', 'oem', 'om', 'oet', 'ooc', 'oong', 'oăc', 'oăm', 'oăt', 'iê', 'eng', 'yêt', 'em', 'in', 'un', 'ưng'
 ];
 
-// RHYMES_EXTRA_2: u/ư/y
+// RHYMES_EXTRA_2: 60 vần Bảng 3 (u/ư/y + lấp đầy uôc, uya, âm, ưa)
 export const RHYMES_EXTRA_2 = [
-  'ua', 'uât', 'uc', 'uê', 'ui', 'um', 'un', 'uân', 'ung', 'uôc', 'uôi', 'uôn', 'uông', 'uôt', 'up', 'uy', 'uyên', 'uyêt',
-  'ynh', 'ưa', 'ưi', 'y', 'ưn', 'ươc', 'ươi', 'ươn', 'ươp', 'ươt', 'ưt', 'ưu',
-  'ưm', 'yêm', 'yên', 'yêt', 'yêu',
-  'ươu', 'uôm', 'uơ', 'uâng', 'uây', 'uêch', 'uênh', 'uya', 'uych', 'uyn',
-  'uynh', 'uyp', 'uyt', 'uyu', 'yn', 'ư', 'yt', 'yêng', 'ăk', 'n',
-  null, null, null, null, null
+  'ua', 'uât', 'uc', 'uê', 'âm', 'um', '-', 'uân', 'ung', '-', 'uôi', 'uôn', 'uông', 'uôt', 'up', 'uy', 'uyên', 'uyêt', 'ynh', 'ui',
+  'ưi', 'y', 'ưn', 'ươc', 'ươi', 'ươn', 'ươp', 'ươt', 'ưt', 'ưu', 'ưm', 'yêm', 'yê', 'oat', '-', 'ươu', 'uôm', 'ươ', 'oai', 'oă',
+  'ây', 'uênh', '-', 'uych', 'uyn', 'uynh', 'uyp', 'uyt', 'uyu', 'yn', 'yên', 'yt', 'yêng', 'uya', 'uơ', 'uây', 'en', 'im', 'uôc', 'ưa'
 ];
 
 export const BASE60_MAPPING = [

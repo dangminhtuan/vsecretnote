@@ -1,0 +1,2310 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VCOMP Matrix & Rhyme Audit Dashboard - Sắp Xếp A-Z & Toàn Cảnh Base60</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-dark: #080c10;
+      --bg-card: #101620;
+      --bg-card-hover: #16202c;
+      --bg-input: #182230;
+      --border-color: #243244;
+      --border-highlight: #3b82f6;
+
+      --neon-green: #00ff88;
+      --neon-cyan: #00e5ff;
+      --neon-amber: #ffb800;
+      --neon-pink: #ff2a85;
+      --neon-purple: #b388ff;
+      --neon-red: #ff3b30;
+
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --text-subtle: #334155;
+
+      --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-ui);
+      padding: 10px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1380px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Header */
+    header {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--neon-green), var(--neon-cyan));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 800;
+      color: #000;
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+    }
+
+    .brand-text h1 {
+      font-size: 15px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #fff, #93c5fd);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.2px;
+    }
+
+    .brand-text p {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .header-nav {
+      display: flex;
+      gap: 6px;
+    }
+
+    .nav-link {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 4px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    .nav-link:hover {
+      border-color: var(--neon-cyan);
+      color: var(--neon-cyan);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 8px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 3px;
+      height: 100%;
+      background: var(--neon-cyan);
+    }
+    .stat-card.green::after { background: var(--neon-green); }
+    .stat-card.amber::after { background: var(--neon-amber); }
+    .stat-card.purple::after { background: var(--neon-purple); }
+    .stat-card.red::after { background: var(--neon-red); }
+
+    .stat-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-size: 18px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #fff;
+    }
+
+    .stat-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    /* Proposal Banner */
+    .proposal-banner {
+      background: linear-gradient(90deg, rgba(255, 184, 0, 0.08), rgba(0, 229, 255, 0.05));
+      border: 1px solid rgba(255, 184, 0, 0.3);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 11.5px;
+    }
+
+    .proposal-title {
+      color: var(--neon-amber);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .proposal-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 6px;
+      color: var(--text-main);
+      padding-left: 14px;
+    }
+
+    /* Interactive Live Sandbox (KHÔNG TỰ TRÔI MÀN HÌNH) */
+    .sandbox-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sandbox-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .sandbox-title {
+      font-size: 13px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 768px) {
+      .sandbox-form { grid-template-columns: 1fr; }
+    }
+
+    .box-field {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .box-field label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .box-input-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .box-input {
+      flex: 1;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      font-weight: 600;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .box-input:focus {
+      border-color: var(--neon-cyan);
+    }
+
+    .box-result-wrapper {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .box-result {
+      flex: 1;
+      background: var(--bg-dark);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-locate {
+      background: #1e293b;
+      border: 1px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+    .btn-locate:hover {
+      background: var(--neon-cyan);
+      color: #000;
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
+    }
+
+    .result-badge {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 11.5px;
+      font-weight: 700;
+    }
+    .badge-b60 {
+      background: rgba(0, 255, 136, 0.15);
+      border: 1px solid var(--neon-green);
+      color: var(--neon-green);
+    }
+    .badge-details {
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    /* Filter & Search Bar */
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 6px 10px;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 180px;
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: #fff;
+      font-size: 12px;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--neon-green); }
+
+    .filter-btn-group {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      border-color: var(--neon-cyan);
+      color: #fff;
+      background: var(--bg-card-hover);
+    }
+    .filter-btn.highlight-alert {
+      border-color: var(--neon-amber);
+      color: var(--neon-amber);
+    }
+
+    /* Matrix Table - COMPACT 7 COLUMNS NO-SCROLL */
+    .table-wrapper {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      overflow-x: auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+
+    table.matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+      table-layout: fixed;
+    }
+
+    table.matrix-table thead th {
+      background: #141c28;
+      padding: 8px 4px;
+      font-weight: 700;
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      border-bottom: 2px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      text-align: center;
+    }
+
+    .th-key {
+      width: 48px;
+      background: #182232 !important;
+      color: #fff;
+      border-right: 2px solid var(--border-color);
+    }
+
+    .th-lower {
+      color: var(--neon-cyan);
+      border-bottom-color: var(--neon-cyan) !important;
+    }
+
+    .th-upper {
+      color: var(--neon-purple);
+      border-bottom-color: var(--neon-purple) !important;
+      border-left: 2px solid var(--border-color);
+    }
+
+    table.matrix-table tbody tr {
+      border-bottom: 1px solid #1a2332;
+      transition: background 0.15s;
+    }
+    table.matrix-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+    table.matrix-table tbody tr.highlighted {
+      background: rgba(0, 229, 255, 0.18) !important;
+      outline: 2px solid var(--neon-cyan);
+    }
+
+    /* Key Badge Column */
+    .td-key {
+      text-align: center;
+      padding: 4px 2px;
+      border-right: 2px solid var(--border-color);
+      background: rgba(0,0,0,0.25);
+      vertical-align: middle;
+    }
+
+    .key-badge {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      padding: 2px 2px;
+      background: var(--bg-input);
+      border: 1px solid #304056;
+      border-radius: 6px;
+    }
+
+    .key-primary {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+    }
+
+    .key-shift {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      color: var(--text-muted);
+      border-top: 1px solid #304056;
+      width: 100%;
+      margin-top: 1px;
+      padding-top: 1px;
+      line-height: 1;
+    }
+
+    /* Cells */
+    .td-cell {
+      padding: 5px 3px;
+      vertical-align: middle;
+      position: relative;
+      text-align: center;
+    }
+
+    .cell-divider {
+      border-left: 2px solid var(--border-color);
+    }
+
+    .rhyme-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1px;
+    }
+
+    .rhyme-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.2;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .rhyme-name.empty {
+      color: var(--text-subtle);
+      font-size: 11px;
+      font-weight: 400;
+    }
+
+    .b1-color { color: var(--neon-green); }
+    .b2-color { color: var(--neon-cyan); }
+    .b3-color { color: var(--neon-amber); }
+
+    .rhyme-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      font-family: var(--font-mono);
+      font-size: 9px;
+      color: var(--text-muted);
+    }
+
+    .badge-order {
+      display: inline-block;
+      padding: 0 3px;
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: 700;
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+    }
+
+    /* Anomaly Tags (Vần Cụt / Vần Rác) */
+    .anomaly-badge {
+      display: inline-block;
+      padding: 0 3px;
+      border-radius: 2px;
+      font-size: 8px;
+      font-weight: 800;
+      background: rgba(255, 184, 0, 0.2);
+      border: 1px solid var(--neon-amber);
+      color: var(--neon-amber);
+    }
+    .anomaly-badge.danger {
+      background: rgba(255, 59, 48, 0.2);
+      border-color: var(--neon-red);
+      color: #ff8a80;
+    }
+
+    /* View Mode Switcher Bar */
+    .view-mode-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 8px 12px;
+      flex-wrap: wrap;
+    }
+
+    .view-mode-label {
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .view-mode-buttons {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .view-mode-btn {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      color: var(--text-muted);
+      padding: 6px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.18s ease;
+    }
+
+    .view-mode-btn:hover {
+      border-color: var(--neon-cyan);
+      color: #fff;
+      background: var(--bg-card-hover);
+    }
+
+    .view-mode-btn.active {
+      background: rgba(0, 229, 255, 0.16);
+      border-color: var(--neon-cyan);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(0, 229, 255, 0.35);
+    }
+
+    .view-mode-hint {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* 13x13 Square Matrix Layout (169 = 13^2) */
+    .square-matrix-wrapper {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .square-inspect-bar {
+      background: var(--bg-input);
+      border: 1px solid #2d3e54;
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 44px;
+    }
+
+    .inspect-main {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+    }
+
+    .inspect-hint {
+      color: var(--text-muted);
+      font-size: 11.5px;
+    }
+
+    .inspect-rhyme-badge {
+      font-family: var(--font-mono);
+      font-size: 17px;
+      font-weight: 800;
+      padding: 1px 8px;
+      border-radius: 5px;
+      background: rgba(0, 255, 136, 0.15);
+      border: 1px solid var(--neon-green);
+      color: var(--neon-green);
+      line-height: 1.2;
+    }
+
+    .inspect-stt {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: #94a3b8;
+      font-size: 11px;
+      background: rgba(255,255,255,0.06);
+      padding: 2px 5px;
+      border-radius: 3px;
+    }
+
+    .inspect-vowel-tag {
+      font-size: 10.5px;
+      font-weight: 800;
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    .inspect-meta {
+      font-size: 11.5px;
+      color: #cbd5e1;
+    }
+    .inspect-meta b {
+      color: #fff;
+      font-family: var(--font-mono);
+    }
+
+    .inspect-ex {
+      color: #94a3b8;
+      font-size: 11px;
+    }
+    .inspect-ex i {
+      color: var(--neon-cyan);
+    }
+
+    .inspect-switch-table-btn {
+      background: #141c28;
+      border: 1px solid #3b82f6;
+      border-radius: 5px;
+      color: #93c5fd;
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .inspect-switch-table-btn:hover {
+      background: #1d4ed8;
+      color: #fff;
+    }
+
+    .square-legend-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      padding: 2px 4px;
+    }
+
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+    .legend-dot.floor-b1 { background: var(--neon-green); }
+    .legend-dot.floor-b2 { background: var(--neon-cyan); }
+    .legend-dot.floor-b3 { background: var(--neon-amber); }
+    .legend-dot.is-shift-dot { background: var(--neon-purple); }
+    .legend-dot.single-vowel-dot { background: #fbbf24; border: 1px solid #fff; }
+
+    .legend-count {
+      margin-left: auto;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--neon-cyan);
+      background: rgba(0, 229, 255, 0.1);
+      padding: 1px 6px;
+      border-radius: 4px;
+    }
+
+    /* 13x13 Ultra-Compact Matrix (Toàn Cảnh 13x13 Trên 1 Màn Hình) */
+    .square-matrix-wrapper {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 6px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* Interactive Filter Bar (Bộ Lọc Đa Chọn Từ Mô Tả Màu) */
+    .square-filter-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--text-muted);
+      flex-wrap: wrap;
+      padding: 3px 6px;
+      background: var(--bg-input);
+      border: 1px solid #243244;
+      border-radius: 6px;
+    }
+
+    .filter-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: #111823;
+      border: 1px solid #2d3e54;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
+      font-size: 10px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+
+    .filter-chip:hover {
+      border-color: var(--neon-cyan);
+      color: #fff;
+    }
+
+    .filter-chip input[type="checkbox"] {
+      cursor: pointer;
+      width: 12px;
+      height: 12px;
+      margin: 0;
+    }
+
+    /* Màu ô vuông tick đồng màu với phân loại (xanh, xanh ngọc, cam, tím, vàng, đỏ) */
+    .filter-chip.chip-b1 input[type="checkbox"] { accent-color: var(--neon-green); }
+    .filter-chip.chip-b2 input[type="checkbox"] { accent-color: var(--neon-cyan); }
+    .filter-chip.chip-b3 input[type="checkbox"] { accent-color: var(--neon-amber); }
+    .filter-chip.chip-shift input[type="checkbox"] { accent-color: var(--neon-purple); }
+    .filter-chip.chip-vowel input[type="checkbox"] { accent-color: #fbbf24; }
+    .filter-chip.chip-anomaly input[type="checkbox"] { accent-color: var(--neon-red); }
+
+    .filter-chip.chip-b1:has(input:checked) { border-color: rgba(0, 255, 136, 0.45); background: rgba(0, 255, 136, 0.08); }
+    .filter-chip.chip-b2:has(input:checked) { border-color: rgba(0, 229, 255, 0.45); background: rgba(0, 229, 255, 0.08); }
+    .filter-chip.chip-b3:has(input:checked) { border-color: rgba(255, 184, 0, 0.45); background: rgba(255, 184, 0, 0.08); }
+    .filter-chip.chip-shift:has(input:checked) { border-color: rgba(168, 85, 247, 0.5); background: rgba(168, 85, 247, 0.08); }
+    .filter-chip.chip-vowel:has(input:checked) { border-color: rgba(251, 191, 36, 0.5); background: rgba(251, 191, 36, 0.08); }
+    .filter-chip.chip-anomaly:has(input:checked) { border-color: rgba(255, 59, 48, 0.45); background: rgba(255, 59, 48, 0.08); }
+
+    .chip-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 2px;
+      display: inline-block;
+    }
+    .chip-dot.floor-b1 { background: var(--neon-green); }
+    .chip-dot.floor-b2 { background: var(--neon-cyan); }
+    .chip-dot.floor-b3 { background: var(--neon-amber); }
+    .chip-dot.is-shift-dot { background: var(--neon-purple); }
+    .chip-dot.single-vowel-dot { background: #fbbf24; border: 1px solid #fff; }
+    .chip-dot.anomaly-dot { background: var(--neon-red); }
+
+    .smart-search-bar {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(0, 229, 255, 0.12);
+      border: 1px solid var(--neon-cyan);
+      border-radius: 4px;
+      padding: 1px 4px;
+      white-space: nowrap;
+    }
+
+    .smart-target-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 800;
+      color: #fff;
+      background: rgba(0, 255, 136, 0.25);
+      border: 1px solid var(--neon-green);
+      border-radius: 3px;
+      padding: 1px 5px;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      line-height: 1.2;
+    }
+
+    .smart-phoneme-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .btn-phoneme-toggle {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 800;
+      border-radius: 3px;
+      padding: 1px 5px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.1s ease;
+      line-height: 1.2;
+      border: 1px solid rgba(0, 229, 255, 0.6);
+      background: rgba(0, 229, 255, 0.22);
+      color: #fff;
+    }
+
+    .btn-phoneme-toggle:hover {
+      border-color: #fff;
+      box-shadow: 0 0 5px var(--neon-cyan);
+    }
+
+    .btn-phoneme-toggle.inactive {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: #475569;
+      color: #64748b;
+      text-decoration: line-through;
+      opacity: 0.55;
+    }
+
+    .btn-smart-clear {
+      background: rgba(255, 59, 48, 0.2);
+      border: 1px solid rgba(255, 59, 48, 0.6);
+      color: #ff8a80;
+      font-weight: 800;
+      cursor: pointer;
+      padding: 1px 5px;
+      font-size: 10px;
+      border-radius: 3px;
+      line-height: 1.2;
+      transition: all 0.1s ease;
+    }
+
+    .btn-smart-clear:hover {
+      background: var(--neon-red);
+      color: #fff;
+      border-color: var(--neon-red);
+    }
+
+    .square-grid-container {
+      width: 100%;
+      overflow-x: hidden;
+      padding: 0;
+      position: relative;
+    }
+
+    .square-grid {
+      display: grid;
+      grid-template-columns: repeat(13, 1fr);
+      gap: 2px;
+      width: 100%;
+    }
+
+    /* Ô Siêu Gọn 2 Hàng (Không Hình Vuông, Tiết Kiệm Tối Đa Không Gian) */
+    .square-cell {
+      background: var(--bg-input);
+      border: 1px solid #1e293b;
+      border-radius: 4px;
+      padding: 3px 2px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      min-height: 38px;
+      line-height: 1.15;
+      text-align: center;
+      transition: border-color 0.12s, background 0.12s, box-shadow 0.12s;
+      position: relative;
+    }
+
+    /* Bỏ hoàn toàn hiệu ứng nhảy kích thước khi hover */
+    .square-cell:hover {
+      border-color: var(--neon-cyan);
+      background: #192636;
+    }
+
+    .square-cell.active-cell {
+      border-color: var(--neon-green) !important;
+      background: rgba(0, 255, 136, 0.18) !important;
+    }
+
+    .square-cell.pulse-highlight {
+      border-color: #fff !important;
+      box-shadow: 0 0 10px var(--neon-cyan), 0 0 16px var(--neon-green);
+      background: rgba(0, 229, 255, 0.25) !important;
+    }
+
+    .square-cell.dimmed {
+      opacity: 0.10;
+      filter: grayscale(85%);
+    }
+
+    /* Đường gióng ngang & dọc (Crosshair) cho ô vừa click: sáng hơn để dễ nhận ra tọa độ */
+    .square-cell.crosshair-row-active,
+    .square-cell.crosshair-col-active {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: rgba(0, 229, 255, 0.28);
+    }
+    .square-cell.crosshair-row-active.dimmed,
+    .square-cell.crosshair-col-active.dimmed {
+      opacity: 0.38 !important; /* Hàng & cột gióng sáng rõ hơn hẳn các ô mờ (0.10) */
+      filter: grayscale(30%) !important;
+      background: rgba(0, 229, 255, 0.07) !important;
+      border-color: rgba(0, 229, 255, 0.28) !important;
+    }
+    .square-cell.crosshair-row-active.smart-related-active,
+    .square-cell.crosshair-col-active.smart-related-active {
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.7), inset 0 0 6px rgba(0, 255, 136, 0.25) !important;
+    }
+
+    /* Ô phím viết hoa A, V, E, B... (Shift) thì có viền tím rõ rệt */
+    .square-cell.cell-shift-border {
+      border: 1.5px solid rgba(168, 85, 247, 0.75) !important;
+      background: rgba(168, 85, 247, 0.06);
+    }
+    .square-cell.cell-shift-border .cell-key-inline,
+    .square-cell.cell-shift-border .meta-key {
+      color: #e9d5ff !important;
+      font-weight: 800;
+    }
+
+    /* Khung ô vừa click: SÁNG CHÓI RỰC RỠ, viền kép trắng neon + tia sáng định vị beacon */
+    .square-cell.smart-target-active {
+      border: 2px solid #ffffff !important;
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.45), rgba(0, 229, 255, 0.45)) !important;
+      box-shadow: 0 0 0 2px #fff, 0 0 16px var(--neon-green), 0 0 32px var(--neon-cyan) !important;
+      z-index: 10 !important;
+      transform: scale(1.06);
+      animation: beaconPulse 1.2s infinite alternate ease-in-out;
+    }
+    .square-cell.smart-target-active .cell-line-rhyme {
+      color: #ffffff !important;
+      text-shadow: 0 0 8px #00ff88, 0 0 16px #00e5ff;
+      font-weight: 900;
+    }
+    .square-cell.smart-target-active .meta-stt {
+      color: #fff !important;
+      font-weight: 800;
+      opacity: 1;
+    }
+
+    @keyframes beaconPulse {
+      0% {
+        box-shadow: 0 0 0 1.5px #fff, 0 0 14px var(--neon-green), 0 0 24px rgba(0, 229, 255, 0.6);
+        transform: scale(1.04);
+      }
+      100% {
+        box-shadow: 0 0 0 2.5px #fff, 0 0 25px var(--neon-green), 0 0 45px rgba(0, 255, 136, 0.95);
+        transform: scale(1.08);
+      }
+    }
+
+    .square-cell.smart-related-active {
+      border-color: var(--neon-cyan) !important;
+      background: rgba(0, 229, 255, 0.18) !important;
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.5) !important;
+      z-index: 4;
+    }
+
+    /* Floating Tooltip Giải Thích Âm Trùng */
+    .square-cell-tooltip {
+      position: fixed;
+      z-index: 99999;
+      pointer-events: none;
+      background: rgba(13, 20, 31, 0.97);
+      border: 1.5px solid var(--neon-cyan);
+      box-shadow: 0 6px 22px rgba(0, 0, 0, 0.8), 0 0 12px rgba(0, 229, 255, 0.45);
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 11px;
+      color: #e2e8f0;
+      white-space: nowrap;
+      backdrop-filter: blur(8px);
+      transform: translate(-50%, -100%);
+      transition: none;
+    }
+    .square-cell-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      margin-left: -5px;
+      border-width: 5px;
+      border-style: solid;
+      border-color: var(--neon-cyan) transparent transparent transparent;
+    }
+    .square-cell-tooltip.tip-below {
+      transform: translate(-50%, 0);
+    }
+    .square-cell-tooltip.tip-below::after {
+      top: auto;
+      bottom: 100%;
+      border-color: transparent transparent var(--neon-cyan) transparent;
+    }
+    .square-cell-tooltip .tip-title {
+      font-weight: 800;
+      color: #fff;
+      font-size: 11.5px;
+    }
+    .square-cell-tooltip .tip-desc {
+      font-size: 10.5px;
+      color: #cbd5e1;
+      margin-top: 2px;
+    }
+    .square-cell-tooltip .tip-highlight {
+      color: var(--neon-cyan);
+      font-weight: 800;
+      text-shadow: 0 0 6px rgba(0, 229, 255, 0.6);
+    }
+
+    /* Ẩn khi bỏ tick bộ lọc */
+    .square-cell.filter-hidden {
+      opacity: 0.05 !important;
+      filter: grayscale(100%) !important;
+      pointer-events: none !important;
+      border-color: transparent !important;
+    }
+
+    /* Hàng 1: #2 B2 hoặc 95 1 s */
+    .cell-line-meta {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      width: 100%;
+      letter-spacing: -0.3px;
+    }
+
+    .meta-stt {
+      opacity: 0.75;
+      font-size: 8px;
+      color: #94a3b8;
+    }
+
+    .meta-floor {
+      font-weight: 700;
+      font-size: 7.5px;
+      padding: 0 1px;
+      border-radius: 2px;
+    }
+    .meta-floor.b1 { color: var(--neon-green); }
+    .meta-floor.b2 { color: var(--neon-cyan); }
+    .meta-floor.b3 { color: var(--neon-amber); }
+
+    .meta-key {
+      font-weight: 800;
+      color: #fff;
+      font-size: 9px;
+    }
+    .meta-key.is-upper {
+      color: #d8b4fe;
+    }
+
+    /* Hàng 2: a yết hoặc ương */
+    .cell-line-rhyme {
+      font-size: 11.5px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-top: 1px;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5px;
+    }
+
+    .cell-key-inline {
+      font-family: var(--font-mono);
+      font-size: 9.5px;
+      font-weight: 800;
+      color: #cbd5e1;
+      opacity: 0.88;
+    }
+    .cell-key-inline.is-upper {
+      color: #d8b4fe;
+    }
+
+    .cell-rhyme-inline {
+      font-weight: 800;
+    }
+
+    .vowel-single-glow {
+      border: 1.5px solid rgba(251, 191, 36, 0.85) !important;
+      background: rgba(251, 191, 36, 0.08);
+    }
+    .vowel-single-glow .cell-line-rhyme {
+      color: #fde047 !important;
+      text-shadow: 0 0 6px rgba(253, 224, 71, 0.6);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 10px;
+      text-align: center;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Header -->
+    <header>
+      <div class="brand-group">
+        <div class="brand-icon">⚡</div>
+        <div class="brand-text">
+          <h1>VCOMP Matrix & Rhyme Audit Dashboard</h1>
+          <p>Sắp Xếp Chuẩn A-Z (26 Chữ Cái + 10 Số) • Đếm Liên Tục #1..#171 • Soi Chi Tiết Vần Cụt & Slot Trống</p>
+        </div>
+      </div>
+      <div class="header-nav">
+        <a href="index.html" class="nav-link">🏠 Trang Chính</a>
+        <a href="keyboard-vcomp-chip.html" class="nav-link">⌨️ Bàn Phím Vi Mạch</a>
+        <a href="demo.html" class="nav-link">🧪 Demo</a>
+      </div>
+    </header>
+
+    <div class="stats-grid">
+      <div class="stat-card green">
+        <span class="stat-label">Tổng Vần Khả Dụng</span>
+        <span class="stat-value" id="statTotalRhymes">169 / 171</span>
+        <span class="stat-sub">Đã tống khứ rác ăk, đếm liên tục</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Trùng Lặp (Duplicates)</span>
+        <span class="stat-value" style="color: var(--neon-green);">0</span>
+        <span class="stat-sub">Tuyệt đối an toàn 100%</span>
+      </div>
+      <div class="stat-card green">
+        <span class="stat-label">Phím Thường Bỏ Trống</span>
+        <span class="stat-value" id="statEmptyLower" style="color: var(--neon-green);">0 slots</span>
+        <span class="stat-sub">100% Lấp đầy 26 phím (a-z)</span>
+      </div>
+      <div class="stat-card purple">
+        <span class="stat-label">Vần Phổ Biến Kéo Về Thường</span>
+        <span class="stat-value" style="color: var(--neon-cyan);">11 vần</span>
+        <span class="stat-sub">uya, uôc, âm, in, im, un, em, en, om, ưa, ưng</span>
+      </div>
+    </div>
+
+    <!-- Banner: Tối ưu hóa Toàn diện Bảng VCOMP -->
+    <div class="proposal-banner">
+      <div class="proposal-title">⚡ Đã Hoàn Tất Quy Tụ Toàn Bộ 9 Nguyên Âm Đơn Độc Lập về Phím Thường B1:</div>
+      <ol class="proposal-list">
+        <li><b>100% 9 Nguyên âm đơn ở Phím Thường (B1):</b> <code>a, e, i, o, u, ư</code>, <code>ơ</code> (phím d), <b><code>ô</code> (phím q)</b>, <b><code>ê</code> (phím r ngay cạnh e)</b>. Gõ 100% từ nguyên âm đơn không cần Shift!</li>
+        <li><b>Đồng nhất hệ dấu thanh Telex cho mọi nguyên âm đơn:</b> Ngang=<code>z</code>, Sắc=<code>s</code>, Huyền=<code>f</code>, Hỏi=<code>r</code>, Ngã=<code>x</code>, Nặng=<code>j</code> (vd: cô=<code>cqz</code>, mê=<code>mrz</code>, như=<code>nhwf</code>, tử=<code>twr</code>/<code>tw3</code>).</li>
+        <li><b>Giải phóng hoàn toàn hàng phím số (0-9):</b> Số 0 và 3 không còn giữ nguyên âm đơn; toàn bộ từ vựng cơ bản được gõ 100% trên hàng chữ cái.</li>
+        <li><b>Lấp đầy 100% 26 phím thường (a-z):</b> Không còn một slot trống nào; các vần cực thông dụng (<code>uôc, uya, âm, in, im, un, em, en, om, ưa, ưng</code>) nằm gọn gàng trên phím thường.</li>
+      </ol>
+    </div>
+
+    <!-- Live Interactive Sandbox (KHÔNG TỰ TRÔI MÀN HÌNH) -->
+    <div class="sandbox-panel">
+      <div class="sandbox-header">
+        <div class="sandbox-title">⚡ Thử Nghiệm Mã Hóa & Tra Cứu (Ấn nút để định vị trên bảng)</div>
+        <span style="font-size: 11px; color: var(--text-muted);">💡 Không tự trôi màn hình khi gõ — Bấm nút [📍 Soi trên bảng] khi gõ xong</span>
+      </div>
+      <div class="sandbox-form">
+        <!-- Encoder Box -->
+        <div class="box-field">
+          <label>Nhập từ tiếng Việt (vd: tử, như, tiến, tiên, biển, việt, nam):</label>
+          <div class="box-input-group">
+            <input type="text" id="liveInputViet" class="box-input" placeholder="Gõ từ... (vd: tử)" value="tử">
+          </div>
+          <div class="box-result-wrapper">
+            <div class="box-result" id="liveResultViet">
+              <span class="result-badge badge-b60">tw3</span>
+              <span class="badge-details">[t] + [w: vần 'ư' (B3)] + [3: hỏi]</span>
+            </div>
+            <button id="btnLocateViet" class="btn-locate" title="Cuộn màn hình đến dòng phím trên bảng ma trận">📍 Soi trên bảng</button>
+          </div>
+        </div>
+
+        <!-- Decoder Box -->
+        <div class="box-field">
+          <label>Nhập mã Base60 3 ký tự (vd: tw3, Hw0, tU1, tdZ, tdS):</label>
+          <div class="box-input-group">
+            <input type="text" id="liveInputBase60" class="box-input" placeholder="Mã Base60... (vd: tw3)" value="tw3">
+          </div>
+          <div class="box-result-wrapper">
+            <div class="box-result" id="liveResultBase60">
+              <span class="result-badge badge-b60" style="background: rgba(0, 229, 255, 0.15); border-color: var(--neon-cyan); color: var(--neon-cyan);">tử</span>
+              <span class="badge-details">Thời gian: 035933</span>
+            </div>
+            <button id="btnLocateBase60" class="btn-locate" title="Cuộn màn hình đến dòng phím trên bảng ma trận">📍 Soi trên bảng</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter & Sort Bar -->
+    <div class="filter-bar">
+      <input type="text" id="searchInput" class="search-input" placeholder="🔍 Tìm vần hoặc phím (vd: yên, iên, ư, u, oai, w, d, a...)...">
+      
+      <div class="filter-btn-group">
+        <button class="filter-btn active" id="btnSortAZ">🔤 Xếp Thứ Tự A-Z</button>
+        <button class="filter-btn" id="btnSortKeyboard">⌨️ Xếp Theo Bàn Phím</button>
+      </div>
+
+      <div class="filter-btn-group" style="margin-left: auto;">
+        <button class="filter-btn active" data-filter="all">Tất Cả</button>
+        <button class="filter-btn" data-filter="alpha">Chữ Cái (a-z)</button>
+        <button class="filter-btn" data-filter="digits">Chữ Số (0-9)</button>
+        <button class="filter-btn" data-filter="anomalies">⚠️ Soi Vần Cụt (Shift)</button>
+        <button class="filter-btn" data-filter="empty_slots">🔍 Slot Thường Trống (0)</button>
+      </div>
+    </div>
+
+    <!-- View Mode Switcher Bar -->
+    <div class="view-mode-bar">
+      <div class="view-mode-label">⚡ Bố Cục Hiển Thị:</div>
+      <div class="view-mode-buttons">
+        <button class="view-mode-btn active" id="btnViewTable" data-view="table">
+          <span class="btn-icon">📊</span>
+          <span>Bảng 7 Cột (Chi Tiết Phím)</span>
+        </button>
+        <button class="view-mode-btn" id="btnViewSquare" data-view="square">
+          <span class="btn-icon">⏹️</span>
+          <span>Ma Trận Vuông 13×13 (169 Vần Siêu Bao Quát)</span>
+        </button>
+      </div>
+      <div class="view-mode-hint" id="viewModeHint">
+        💡 169 vần = 13² ô vuông ma trận — bao quát toàn bộ vần tiếng Việt trên 1 góc nhìn!
+      </div>
+    </div>
+
+    <!-- Matrix Table (Compact 7 Columns No-Scroll) -->
+    <div class="table-wrapper" id="tableWrapper">
+      <table class="matrix-table" id="matrixTable">
+        <thead>
+          <tr>
+            <th class="th-key">Phím</th>
+            <th class="th-lower">B1 (Thường)</th>
+            <th class="th-lower">B2 (Thường)</th>
+            <th class="th-lower">B3 (Thường)</th>
+            <th class="th-upper">⇧ B1 (Shift)</th>
+            <th class="th-upper">⇧ B2 (Shift)</th>
+            <th class="th-upper">⇧ B3 (Shift)</th>
+          </tr>
+        </thead>
+        <tbody id="matrixTbody">
+          <!-- Rendered dynamically via JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 13x13 Square Matrix View (169 = 13^2) -->
+    <div id="squareWrapper" class="square-matrix-wrapper" style="display: none;">
+      <!-- Interactive Filter Bar (Bộ Lọc Đa Chọn) -->
+      <div class="square-filter-bar" id="squareFilterBar">
+        <label class="filter-chip chip-b1" title="Bật/Tắt hiển thị vần Tầng 1">
+          <input type="checkbox" id="chkFilterB1" checked>
+          <span class="chip-dot floor-b1"></span>
+          <span>B1 (Tầng 1)</span>
+        </label>
+        <label class="filter-chip chip-b2" title="Bật/Tắt hiển thị vần Tầng 2">
+          <input type="checkbox" id="chkFilterB2" checked>
+          <span class="chip-dot floor-b2"></span>
+          <span>B2 (Tầng 2)</span>
+        </label>
+        <label class="filter-chip chip-b3" title="Bật/Tắt hiển thị vần Tầng 3">
+          <input type="checkbox" id="chkFilterB3" checked>
+          <span class="chip-dot floor-b3"></span>
+          <span>B3 (Tầng 3)</span>
+        </label>
+        <label class="filter-chip chip-shift" title="Bật/Tắt hiển thị vần Phím Hoa (Shift)">
+          <input type="checkbox" id="chkFilterShift" checked>
+          <span class="chip-dot is-shift-dot"></span>
+          <span>Phím Hoa (Shift)</span>
+        </label>
+        <label class="filter-chip chip-vowel" title="Bật/Tắt hiển thị 9 Nguyên Âm Đơn B1">
+          <input type="checkbox" id="chkFilterVowel" checked>
+          <span class="chip-dot single-vowel-dot"></span>
+          <span>🌟 9 Nguyên Âm Đơn B1</span>
+        </label>
+        <label class="filter-chip chip-anomaly" title="Bật/Tắt hiển thị Vần cụt (yê, ươ, oă, uơ)">
+          <input type="checkbox" id="chkFilterAnomaly" checked>
+          <span class="chip-dot anomaly-dot"></span>
+          <span>⚠️ Vần cụt</span>
+        </label>
+
+        <!-- Smart Search Status (Nút Bật/Tắt Âm Tố Siêu Gọn) -->
+        <div id="smartSearchStatus" class="smart-search-bar" style="display: none;">
+          <span class="smart-target-badge" id="smartTargetBadge">🎯</span>
+          <div class="smart-phoneme-group" id="smartPhonemeGroup"></div>
+          <button id="btnSmartSearchClear" class="btn-smart-clear" title="Bỏ lọc">✕</button>
+        </div>
+
+        <span class="legend-count" id="squareVisibleCount">169 / 169 ô</span>
+      </div>
+
+      <!-- 13x13 Grid Container -->
+      <div class="square-grid-container">
+        <div class="square-grid" id="squareGrid">
+          <!-- Rendered dynamically via JavaScript -->
+        </div>
+        <!-- Floating Tooltip Giải Thích Trùng Âm -->
+        <div id="squareCellTooltip" class="square-cell-tooltip" style="display: none;"></div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      VCOMP Matrix Dashboard • 171 Vần Tiếng Việt Độc Nhất • Đếm Liên Tục #1..#171 • Sắp Xếp A-Z Khoa Học
+    </footer>
+
+  </div>
+
+  <script type="module">
+    import { BASE60_MAPPING, RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2 } from './data.js';
+    import { encodeWord, decodeWord, timeToBase60, base60ToTime } from './vcomp.js';
+
+    // Danh sách các vần cụt / bất thường cần đánh dấu cảnh báo
+    const ANOMALY_RHYMES = {
+      'ăk': { label: 'Rác (không chuẩn VN)', danger: true },
+      'n':  { label: 'Rác (âm cuối rò rỉ)', danger: true },
+      'yê': { label: 'Vần cụt (thiếu âm cuối)', danger: false },
+      'ươ': { label: 'Vần cụt (thiếu âm cuối)', danger: false },
+      'oă': { label: 'Vần cụt (thiếu âm cuối)', danger: false },
+      'uơ': { label: 'Vần cụt (chỉ có thuở/huơ)', danger: false }
+    };
+
+    // 1. Audit Duplicates & Statistics
+    const rhymeCountMap = {};
+    let totalNonEmpty = 0;
+
+    [RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2].forEach(tbl => {
+      tbl.forEach(r => {
+        if (r && r !== '-' && r !== 'null') {
+          const lower = r.toLowerCase().trim();
+          rhymeCountMap[lower] = (rhymeCountMap[lower] || 0) + 1;
+          totalNonEmpty++;
+        }
+      });
+    });
+
+    document.getElementById('statTotalRhymes').textContent = `${totalNonEmpty} / 171`;
+
+    // 2. Định nghĩa danh sách phím theo 2 chế độ: A-Z và Keyboard Layout
+    const KEYS_AZ = [
+      // 26 Chữ cái xếp theo bảng chữ cái A-Z
+      { key: 'a', shift: 'A', type: 'alpha' },
+      { key: 'b', shift: 'B', type: 'alpha' },
+      { key: 'c', shift: 'C', type: 'alpha' },
+      { key: 'd', shift: 'D', type: 'alpha' },
+      { key: 'e', shift: 'E', type: 'alpha' },
+      { key: 'f', shift: 'F', type: 'alpha' },
+      { key: 'g', shift: 'G', type: 'alpha' },
+      { key: 'h', shift: 'H', type: 'alpha' },
+      { key: 'i', shift: 'I', type: 'alpha' },
+      { key: 'j', shift: 'J', type: 'alpha' },
+      { key: 'k', shift: 'K', type: 'alpha' },
+      { key: 'l', shift: 'L', type: 'alpha' },
+      { key: 'm', shift: 'M', type: 'alpha' },
+      { key: 'n', shift: 'N', type: 'alpha' },
+      { key: 'o', shift: 'O', type: 'alpha' },
+      { key: 'p', shift: 'P', type: 'alpha' },
+      { key: 'q', shift: 'Q', type: 'alpha' },
+      { key: 'r', shift: 'R', type: 'alpha' },
+      { key: 's', shift: 'S', type: 'alpha' },
+      { key: 't', shift: 'T', type: 'alpha' },
+      { key: 'u', shift: 'U', type: 'alpha' },
+      { key: 'v', shift: 'V', type: 'alpha' },
+      { key: 'w', shift: 'W', type: 'alpha' },
+      { key: 'x', shift: 'X', type: 'alpha' },
+      { key: 'y', shift: 'Y', type: 'alpha' },
+      { key: 'z', shift: 'Z', type: 'alpha' },
+      // 10 Chữ số 0-9
+      { key: '0', shift: ')', type: 'digit' },
+      { key: '1', shift: '!', type: 'digit' },
+      { key: '2', shift: '@', type: 'digit' },
+      { key: '3', shift: '#', type: 'digit' },
+      { key: '4', shift: '$', type: 'digit' },
+      { key: '5', shift: '%', type: 'digit' },
+      { key: '6', shift: '^', type: 'digit' },
+      { key: '7', shift: '&', type: 'digit' },
+      { key: '8', shift: '*', type: 'digit' },
+      { key: '9', shift: '(', type: 'digit' }
+    ];
+
+    const KEYS_KEYBOARD = [
+      // Hàng số
+      { key: '1', shift: '!', type: 'digit' },
+      { key: '2', shift: '@', type: 'digit' },
+      { key: '3', shift: '#', type: 'digit' },
+      { key: '4', shift: '$', type: 'digit' },
+      { key: '5', shift: '%', type: 'digit' },
+      { key: '6', shift: '^', type: 'digit' },
+      { key: '7', shift: '&', type: 'digit' },
+      { key: '8', shift: '*', type: 'digit' },
+      { key: '9', shift: '(', type: 'digit' },
+      { key: '0', shift: ')', type: 'digit' },
+      // Hàng QWERTY
+      { key: 'q', shift: 'Q', type: 'alpha' },
+      { key: 'w', shift: 'W', type: 'alpha' },
+      { key: 'e', shift: 'E', type: 'alpha' },
+      { key: 'r', shift: 'R', type: 'alpha' },
+      { key: 't', shift: 'T', type: 'alpha' },
+      { key: 'y', shift: 'Y', type: 'alpha' },
+      { key: 'u', shift: 'U', type: 'alpha' },
+      { key: 'i', shift: 'I', type: 'alpha' },
+      { key: 'o', shift: 'O', type: 'alpha' },
+      { key: 'p', shift: 'P', type: 'alpha' },
+      // Hàng ASDF
+      { key: 'a', shift: 'A', type: 'alpha' },
+      { key: 's', shift: 'S', type: 'alpha' },
+      { key: 'd', shift: 'D', type: 'alpha' },
+      { key: 'f', shift: 'F', type: 'alpha' },
+      { key: 'g', shift: 'G', type: 'alpha' },
+      { key: 'h', shift: 'H', type: 'alpha' },
+      { key: 'j', shift: 'J', type: 'alpha' },
+      { key: 'k', shift: 'K', type: 'alpha' },
+      { key: 'l', shift: 'L', type: 'alpha' },
+      // Hàng ZXCV
+      { key: 'z', shift: 'Z', type: 'alpha' },
+      { key: 'x', shift: 'X', type: 'alpha' },
+      { key: 'c', shift: 'C', type: 'alpha' },
+      { key: 'v', shift: 'V', type: 'alpha' },
+      { key: 'b', shift: 'B', type: 'alpha' },
+      { key: 'n', shift: 'N', type: 'alpha' },
+      { key: 'm', shift: 'M', type: 'alpha' }
+    ];
+
+    // Tạo bản đồ số thứ tự liên tục 1..171 theo thứ tự bảng A-Z
+    const rhymeOrderMap = {};
+    let runningOrder = 1;
+
+    KEYS_AZ.forEach(item => {
+      const lowIdx = BASE60_MAPPING.indexOf(item.key);
+      const upIdx = BASE60_MAPPING.indexOf(item.shift);
+
+      const rhymesOnKey = [
+        lowIdx !== -1 ? RHYMES_BASE[lowIdx] : null,
+        lowIdx !== -1 ? RHYMES_EXTRA_1[lowIdx] : null,
+        lowIdx !== -1 ? RHYMES_EXTRA_2[lowIdx] : null,
+        upIdx !== -1 ? RHYMES_BASE[upIdx] : null,
+        upIdx !== -1 ? RHYMES_EXTRA_1[upIdx] : null,
+        upIdx !== -1 ? RHYMES_EXTRA_2[upIdx] : null
+      ];
+
+      rhymesOnKey.forEach(r => {
+        if (r && r !== '-' && r !== 'null') {
+          const lower = r.toLowerCase().trim();
+          if (!rhymeOrderMap[lower]) {
+            rhymeOrderMap[lower] = runningOrder++;
+          }
+        }
+      });
+    });
+
+    let currentSortMode = 'az'; // 'az' | 'keyboard'
+    let currentFilter = 'all';
+
+    function renderMatrix() {
+      const tbody = document.getElementById('matrixTbody');
+      tbody.innerHTML = '';
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const keyList = currentSortMode === 'az' ? KEYS_AZ : KEYS_KEYBOARD;
+
+      keyList.forEach(item => {
+        if (currentFilter === 'alpha' && item.type !== 'alpha') return;
+        if (currentFilter === 'digit' && item.type !== 'digit') return;
+
+        const lowIdx = BASE60_MAPPING.indexOf(item.key);
+        const upIdx = BASE60_MAPPING.indexOf(item.shift);
+
+        const rB1 = lowIdx !== -1 ? RHYMES_BASE[lowIdx] : null;
+        const rB2 = lowIdx !== -1 ? RHYMES_EXTRA_1[lowIdx] : null;
+        const rB3 = lowIdx !== -1 ? RHYMES_EXTRA_2[lowIdx] : null;
+
+        const upB1 = upIdx !== -1 ? RHYMES_BASE[upIdx] : null;
+        const upB2 = upIdx !== -1 ? RHYMES_EXTRA_1[upIdx] : null;
+        const upB3 = upIdx !== -1 ? RHYMES_EXTRA_2[upIdx] : null;
+
+        const allRhymesOnKey = [rB1, rB2, rB3, upB1, upB2, upB3].filter(Boolean);
+
+        // Filter: Soi vần cụt / vần rác
+        if (currentFilter === 'anomalies') {
+          const hasAnomaly = allRhymesOnKey.some(r => r && ANOMALY_RHYMES[r.toLowerCase()]);
+          if (!hasAnomaly) return;
+        }
+
+        // Filter: Phím thường bỏ trống
+        if (currentFilter === 'empty_slots') {
+          const hasEmptyLower = item.type === 'alpha' && (!rB1 || rB1 === '-' || !rB2 || rB2 === '-' || !rB3 || rB3 === '-');
+          if (!hasEmptyLower) return;
+        }
+
+        // Search query
+        if (query) {
+          const matchKey = item.key.toLowerCase().includes(query) || item.shift.toLowerCase().includes(query);
+          const matchRhyme = allRhymesOnKey.some(r => r.toLowerCase().includes(query));
+          if (!matchKey && !matchRhyme) return;
+        }
+
+        const tr = document.createElement('tr');
+        tr.id = `row_key_${item.key}`;
+
+        // Cột phím gốc
+        tr.innerHTML = `
+          <td class="td-key">
+            <div class="key-badge">
+              <span class="key-primary">${item.key}</span>
+              <span class="key-shift">${item.shift}</span>
+            </div>
+          </td>
+          ${renderCell(rB1, 'b1-color')}
+          ${renderCell(rB2, 'b2-color')}
+          ${renderCell(rB3, 'b3-color')}
+          ${renderCell(upB1, 'b1-color', true)}
+          ${renderCell(upB2, 'b2-color')}
+          ${renderCell(upB3, 'b3-color')}
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderCell(rhyme, colorClass, isDivider = false) {
+      const dividerClass = isDivider ? ' cell-divider' : '';
+      if (!rhyme || rhyme === '-' || rhyme === 'null') {
+        return `
+          <td class="td-cell${dividerClass}">
+            <div class="rhyme-unit">
+              <span class="rhyme-name empty">—</span>
+            </div>
+          </td>
+        `;
+      }
+
+      const lower = rhyme.toLowerCase();
+      const orderNum = rhymeOrderMap[lower] || '';
+      const anomaly = ANOMALY_RHYMES[lower];
+
+      return `
+        <td class="td-cell${dividerClass}" data-rhyme="${lower}">
+          <div class="rhyme-unit">
+            <span class="rhyme-name ${colorClass}">
+              ${rhyme}
+              ${anomaly ? `<span class="anomaly-badge ${anomaly.danger ? 'danger' : ''}" title="${anomaly.label}">⚠️</span>` : ''}
+            </span>
+            <span class="rhyme-meta">
+              <span class="badge-order">#${orderNum}</span>
+            </span>
+          </div>
+        </td>
+      `;
+    }
+
+    // === SINGLE VOWELS & EXAMPLES ===
+    const SINGLE_VOWELS = new Set(['a', 'e', 'ê', 'i', 'o', 'ô', 'ơ', 'u', 'ư']);
+
+    const RHYME_EXAMPLES = {
+      'a': 'ba, cá, má', 'e': 'xe, mẹ, bé', 'ê': 'bê, về, ghế', 'i': 'đi, ví, chỉ',
+      'o': 'bò, cho, nó', 'ô': 'cô, bố, ngô', 'ơ': 'mơ, bơ, nhớ', 'u': 'đu, ru, ngủ',
+      'ư': 'từ, như, chữ', 'an': 'bàn, can, lan', 'ang': 'làng, vang, sang', 'anh': 'chanh, nhanh, anh',
+      'iên': 'tiên, biến, biển', 'iêng': 'tiếng, riêng, giếng', 'uôc': 'cuộc, thuốc, buộc', 'uông': 'uống, buông, cuống',
+      'ương': 'đường, thương, lương', 'uyên': 'truyện, khuyên, thuyền', 'uyêt': 'tuyết, quyết, duyệt', 'uya': 'khuya',
+      'ât': 'đất, rất, tất', 'âu': 'cầu, sâu, đầu', 'ân': 'sân, gần, chân', 'âng': 'vâng, tầng, nâng',
+      'ăt': 'mặt, bắt, chặt', 'ăn': 'căn, trăn, khăn', 'ăng': 'măng, trăng, văng', 'ăm': 'chăm, năm, tăm',
+      'em': 'xem, tem, kem', 'en': 'đen, sen, kèn', 'im': 'tim, chim, sim', 'in': 'tin, kín, chín',
+      'om': 'chòm, xóm, nhòm', 'on': 'con, tròn, đòn', 'un': 'vun, cún, bùn', 'ưa': 'mưa, chưa, xưa',
+      'ưng': 'mừng, rừng, từng', 'ơi': 'chơi, bơi, với', 'ôi': 'tôi, ngồi, rồi', 'ơn': 'nơi, sơn, lớn',
+      'am': 'cam, làm, nam', 'ap': 'cáp, tháp, ráp', 'at': 'hát, bát, mát', 'ay': 'bay, hay, tay',
+      'au': 'cau, mau, tàu', 'êu': 'kêu, nếu, đều', 'êm': 'đêm, thêm, êm', 'ên': 'đến, quên, tên',
+      'ênh': 'bệnh, lệnh, kênh', 'êch': 'ếch, dếch', 'oa': 'hoa, qua, tòa', 'oan': 'đoàn, toán, hoan',
+      'oang': 'hoàng, thoáng', 'uôi': 'buổi, suối, cuối', 'uôn': 'muốn, luôn, cuốn', 'uc': 'cúc, chúc, đục',
+      'ung': 'cùng, đúng, súng', 'uy': 'huy, quy, duy', 'ui': 'túi, vui, bụi', 'ưa': 'mưa, thưa, dừa'
+    };
+
+    // Hàm lấy danh sách toàn bộ 169 vần không trùng lặp
+    function getAllRhymesList() {
+      const list = [];
+      const keyList = currentSortMode === 'az' ? KEYS_AZ : KEYS_KEYBOARD;
+
+      keyList.forEach(item => {
+        const lowIdx = BASE60_MAPPING.indexOf(item.key);
+        const upIdx = BASE60_MAPPING.indexOf(item.shift);
+
+        const combos = [
+          { key: item.key, isShift: false, floor: 'B1', rhyme: lowIdx !== -1 ? RHYMES_BASE[lowIdx] : null, color: 'b1-color' },
+          { key: item.key, isShift: false, floor: 'B2', rhyme: lowIdx !== -1 ? RHYMES_EXTRA_1[lowIdx] : null, color: 'b2-color' },
+          { key: item.key, isShift: false, floor: 'B3', rhyme: lowIdx !== -1 ? RHYMES_EXTRA_2[lowIdx] : null, color: 'b3-color' },
+          { key: item.shift, isShift: true, floor: 'B1', rhyme: upIdx !== -1 ? RHYMES_BASE[upIdx] : null, color: 'b1-color' },
+          { key: item.shift, isShift: true, floor: 'B2', rhyme: upIdx !== -1 ? RHYMES_EXTRA_1[upIdx] : null, color: 'b2-color' },
+          { key: item.shift, isShift: true, floor: 'B3', rhyme: upIdx !== -1 ? RHYMES_EXTRA_2[upIdx] : null, color: 'b3-color' }
+        ];
+
+        combos.forEach(c => {
+          if (c.rhyme && c.rhyme !== '-' && c.rhyme !== 'null') {
+            const lower = c.rhyme.toLowerCase().trim();
+            list.push({
+              order: rhymeOrderMap[lower] || (list.length + 1),
+              rhyme: c.rhyme,
+              lower: lower,
+              key: c.key,
+              isShift: c.isShift,
+              floor: c.floor,
+              color: c.color,
+              anomaly: ANOMALY_RHYMES[lower] || null
+            });
+          }
+        });
+      });
+      return list;
+    }
+
+    // === PHÂN TÁCH ÂM TỐ CHO NÚT BẬT/TẮT TÌM KIẾM THÔNG MINH ===
+    function getRhymePhonemes(rhyme) {
+      if (!rhyme) return [];
+      const r = rhyme.toLowerCase().trim();
+      const phonemes = [];
+      let remaining = r;
+
+      let ending = '';
+      if (remaining.endsWith('ng')) {
+        ending = 'ng';
+        remaining = remaining.slice(0, -2);
+      } else if (remaining.endsWith('nh')) {
+        ending = 'nh';
+        remaining = remaining.slice(0, -2);
+      } else if (remaining.endsWith('ch')) {
+        ending = 'ch';
+        remaining = remaining.slice(0, -2);
+      }
+
+      for (const ch of remaining) {
+        if (!phonemes.includes(ch)) {
+          phonemes.push(ch);
+        }
+      }
+
+      if (ending && !phonemes.includes(ending)) {
+        phonemes.push(ending);
+      }
+
+      return phonemes;
+    }
+
+    // === THUẬT TOÁN GIẢI THÍCH CHI TIẾT TRÙNG ÂM KHI HOVER ===
+    function getSmartMatchExplanation(candRhyme, targetRhyme, activePhonemes) {
+      const c = (candRhyme || '').toLowerCase().trim();
+      const t = (targetRhyme || '').toLowerCase().trim();
+
+      if (c === t) {
+        return {
+          isTarget: true,
+          tipTitle: `🎯 [ ${candRhyme} ]`,
+          tipDesc: `Ô mục tiêu đang chọn`
+        };
+      }
+
+      const activeList = Array.from(activePhonemes || []);
+      const matched = activeList.filter(ph => c.includes(ph));
+
+      if (matched.length === 0) {
+        return {
+          isTarget: false,
+          tipTitle: `[ ${candRhyme} ]`,
+          tipDesc: `Không khớp âm nào đang bật`
+        };
+      }
+
+      return {
+        isTarget: false,
+        tipTitle: `💡 [ ${candRhyme} ]`,
+        tipDesc: `Khớp âm: <span class="tip-highlight">'${matched.join("', '")}'</span>`
+      };
+    }
+
+    function showCellTooltip(e, html) {
+      const tip = document.getElementById('squareCellTooltip');
+      if (!tip) return;
+      tip.innerHTML = html;
+      tip.style.display = 'block';
+      positionCellTooltip(e);
+    }
+
+    function positionCellTooltip(e) {
+      const tip = document.getElementById('squareCellTooltip');
+      if (!tip || tip.style.display === 'none') return;
+      const target = e.currentTarget;
+      const rect = target.getBoundingClientRect();
+      const tipWidth = tip.offsetWidth || 150;
+      
+      let left = rect.left + rect.width / 2;
+      left = Math.max(tipWidth / 2 + 10, Math.min(window.innerWidth - tipWidth / 2 - 10, left));
+      
+      let top = rect.top - 8;
+      if (top < 45) {
+        top = rect.bottom + 8;
+        tip.classList.add('tip-below');
+      } else {
+        tip.classList.remove('tip-below');
+      }
+      tip.style.left = `${left}px`;
+      tip.style.top = `${top}px`;
+    }
+
+    function hideCellTooltip() {
+      const tip = document.getElementById('squareCellTooltip');
+      if (tip) tip.style.display = 'none';
+    }
+
+    let activeSmartSearchRhyme = null;
+    let activePhonemesList = [];
+    let activeSelectedPhonemes = new Set();
+
+    function activateSmartSearch(rhymeLower) {
+      activeSmartSearchRhyme = rhymeLower;
+      activePhonemesList = getRhymePhonemes(rhymeLower);
+      activeSelectedPhonemes = new Set(activePhonemesList);
+
+      const statusBox = document.getElementById('smartSearchStatus');
+      const targetBadge = document.getElementById('smartTargetBadge');
+      const phonemeGroup = document.getElementById('smartPhonemeGroup');
+
+      if (statusBox && targetBadge && phonemeGroup) {
+        statusBox.style.display = 'inline-flex';
+        targetBadge.textContent = `🎯 ${rhymeLower}`;
+        phonemeGroup.innerHTML = '';
+
+        activePhonemesList.forEach(ph => {
+          const btn = document.createElement('button');
+          btn.className = 'btn-phoneme-toggle';
+          btn.dataset.phoneme = ph;
+          btn.textContent = ph;
+          btn.title = `Bật/Tắt tìm '${ph}'`;
+          btn.onclick = (e) => {
+            e.stopPropagation();
+            if (activeSelectedPhonemes.has(ph)) {
+              activeSelectedPhonemes.delete(ph);
+              btn.classList.add('inactive');
+            } else {
+              activeSelectedPhonemes.add(ph);
+              btn.classList.remove('inactive');
+            }
+            renderSquareGrid();
+          };
+          phonemeGroup.appendChild(btn);
+        });
+      }
+
+      renderSquareGrid();
+    }
+
+    function clearSmartSearch() {
+      activeSmartSearchRhyme = null;
+      activePhonemesList = [];
+      activeSelectedPhonemes.clear();
+
+      const statusBox = document.getElementById('smartSearchStatus');
+      if (statusBox) statusBox.style.display = 'none';
+
+      hideCellTooltip();
+      renderSquareGrid();
+    }
+
+    const btnClearSmart = document.getElementById('btnSmartSearchClear');
+    if (btnClearSmart) {
+      btnClearSmart.onclick = (e) => {
+        e.stopPropagation();
+        clearSmartSearch();
+      };
+    }
+
+    // Lắng nghe sự kiện của 6 Checkbox Bộ lọc
+    const chkFilterB1 = document.getElementById('chkFilterB1');
+    const chkFilterB2 = document.getElementById('chkFilterB2');
+    const chkFilterB3 = document.getElementById('chkFilterB3');
+    const chkFilterShift = document.getElementById('chkFilterShift');
+    const chkFilterVowel = document.getElementById('chkFilterVowel');
+    const chkFilterAnomaly = document.getElementById('chkFilterAnomaly');
+
+    [chkFilterB1, chkFilterB2, chkFilterB3, chkFilterShift, chkFilterVowel, chkFilterAnomaly].forEach(chk => {
+      if (chk) chk.onchange = () => renderSquareGrid();
+    });
+
+    // Render Ma Trận Vuông 13x13 (169 ô = 13^2)
+    function renderSquareGrid() {
+      const grid = document.getElementById('squareGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      hideCellTooltip();
+
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const allList = getAllRhymesList();
+      let visibleCount = 0;
+
+      // Xác định tọa độ (hàng, cột) của ô đang chọn để tạo đường gióng Crosshair
+      let targetRow = -1;
+      let targetCol = -1;
+      if (activeSmartSearchRhyme) {
+        const targetIdx = allList.findIndex(x => x.lower === activeSmartSearchRhyme);
+        if (targetIdx !== -1) {
+          targetRow = Math.floor(targetIdx / 13);
+          targetCol = targetIdx % 13;
+        }
+      }
+
+      // Trạng thái các checkbox bộ lọc
+      const showB1 = chkFilterB1 ? chkFilterB1.checked : true;
+      const showB2 = chkFilterB2 ? chkFilterB2.checked : true;
+      const showB3 = chkFilterB3 ? chkFilterB3.checked : true;
+      const showShift = chkFilterShift ? chkFilterShift.checked : true;
+      const showVowel = chkFilterVowel ? chkFilterVowel.checked : true;
+      const showAnomaly = chkFilterAnomaly ? chkFilterAnomaly.checked : true;
+
+      allList.forEach((item, index) => {
+        const cellRow = Math.floor(index / 13);
+        const cellCol = index % 13;
+        const isSameRow = (activeSmartSearchRhyme && cellRow === targetRow);
+        const isSameCol = (activeSmartSearchRhyme && cellCol === targetCol);
+
+        const isSingleVowel = SINGLE_VOWELS.has(item.lower);
+        const isDigitKey = !isNaN(parseInt(item.key));
+        const isAlphaKey = !isDigitKey;
+        const isUpper = item.key !== item.key.toLowerCase() || item.isShift;
+        const isAnomaly = !!item.anomaly;
+
+        let isFilterVisible = true;
+
+        // 1. Lọc theo tầng B1/B2/B3
+        if (item.floor === 'B1' && !showB1) isFilterVisible = false;
+        if (item.floor === 'B2' && !showB2) isFilterVisible = false;
+        if (item.floor === 'B3' && !showB3) isFilterVisible = false;
+
+        // 2. Lọc phím viết hoa (Shift)
+        if (isUpper && !showShift) isFilterVisible = false;
+
+        // 3. Lọc 9 nguyên âm đơn B1
+        if (isSingleVowel && !showVowel) isFilterVisible = false;
+
+        // 4. Lọc vần cụt / vần hiếm
+        if (isAnomaly && !showAnomaly) isFilterVisible = false;
+
+        // 5. Thanh lọc chung trên cùng
+        if (currentFilter === 'alpha' && !isAlphaKey) isFilterVisible = false;
+        if (currentFilter === 'digits' && !isDigitKey) isFilterVisible = false;
+        if (currentFilter === 'anomalies' && !isAnomaly) isFilterVisible = false;
+        if (currentFilter === 'empty_slots') isFilterVisible = false;
+
+        // 6. Tìm kiếm văn bản
+        if (query) {
+          const matchRhyme = item.lower.includes(query);
+          const matchKey = item.key.toLowerCase().includes(query);
+          if (!matchRhyme && !matchKey) isFilterVisible = false;
+        }
+
+        // 7. Lọc thông minh khi click vào ô (Smart Rhyme Cross-Search)
+        let isSmartTarget = false;
+        let isSmartRelated = false;
+
+        if (activeSmartSearchRhyme) {
+          if (item.lower === activeSmartSearchRhyme) {
+            isSmartTarget = true;
+          } else {
+            // Soi xem vần này có chứa bất kỳ âm nào đang được BẬT không
+            isSmartRelated = Array.from(activeSelectedPhonemes).some(ph => item.lower.includes(ph));
+          }
+        }
+
+        if (isFilterVisible && (!activeSmartSearchRhyme || isSmartTarget || isSmartRelated)) {
+          visibleCount++;
+        }
+
+        const cell = document.createElement('div');
+        
+        let cellClass = `square-cell ${item.color}`;
+        if (isSingleVowel) cellClass += ' vowel-single-glow';
+        if (isUpper) cellClass += ' cell-shift-border'; // Viền tím nhận diện phím hoa Shift
+
+        if (isSameRow) cellClass += ' crosshair-row-active';
+        if (isSameCol) cellClass += ' crosshair-col-active';
+
+        if (!isFilterVisible) {
+          cellClass += ' filter-hidden';
+        } else if (activeSmartSearchRhyme) {
+          if (isSmartTarget) {
+            cellClass += ' smart-target-active';
+          } else if (isSmartRelated) {
+            cellClass += ' smart-related-active';
+          } else {
+            cellClass += ' dimmed';
+          }
+        }
+
+        cell.className = cellClass;
+        cell.id = `square_cell_rhyme_${item.lower}`;
+        cell.dataset.rhyme = item.lower;
+        cell.dataset.key = item.key;
+        cell.dataset.floor = item.floor;
+        cell.dataset.row = cellRow;
+        cell.dataset.col = cellCol;
+
+        const floorNum = item.floor.replace('B', '');
+        const floorLower = item.floor.toLowerCase();
+        const isLongRhyme = item.rhyme.length >= 4;
+
+        let line1Html = '';
+        let line2Html = '';
+
+        if (isLongRhyme) {
+          // Trường hợp vần quá dài: bỏ cả '#' và 'B' đi để gọn hơn (vd: 95 1 s / ương)
+          line1Html = `
+            <div class="cell-line-meta">
+              <span class="meta-stt">${isSmartTarget ? '🎯 ' : ''}${item.order}</span>
+              <span class="meta-floor ${floorLower}">${floorNum}</span>
+              <span class="meta-key ${isUpper ? 'is-upper' : ''}">${item.key}</span>
+            </div>
+          `;
+          line2Html = `
+            <div class="cell-line-rhyme ${item.color}">
+              <span class="cell-rhyme-inline">${item.rhyme}</span>
+              ${item.anomaly ? `<span class="anomaly-badge ${item.anomaly.danger ? 'danger' : ''}" style="font-size:6px; vertical-align:super;">⚠️</span>` : ''}
+            </div>
+          `;
+        } else {
+          // Trường hợp vần ngắn: Dòng 1: #STT BTầng (vd: #2 B2) / Dòng 2: Phím Vần (vd: a yết)
+          line1Html = `
+            <div class="cell-line-meta">
+              <span class="meta-stt">${isSmartTarget ? '🎯 ' : ''}#${item.order}</span>
+              <span class="meta-floor ${floorLower}">B${floorNum}</span>
+            </div>
+          `;
+          line2Html = `
+            <div class="cell-line-rhyme ${item.color}">
+              <span class="cell-key-inline ${isUpper ? 'is-upper' : ''}">${item.key}</span>
+              <span class="cell-rhyme-inline">${item.rhyme}</span>
+              ${item.anomaly ? `<span class="anomaly-badge ${item.anomaly.danger ? 'danger' : ''}" style="font-size:6px; vertical-align:super;">⚠️</span>` : ''}
+            </div>
+          `;
+        }
+
+        cell.innerHTML = line1Html + line2Html;
+
+        // Hover: Giải thích lý do hiện lên khi đang ở chế độ lọc thông minh (chỉ hiển thị qua Tooltip popup để không làm giật giao diện)
+        cell.onmouseenter = (e) => {
+          if (activeSmartSearchRhyme) {
+            const exp = getSmartMatchExplanation(item.rhyme, activeSmartSearchRhyme, activeSelectedPhonemes);
+            showCellTooltip(e, `
+              <div class="tip-title">${exp.tipTitle}</div>
+              <div class="tip-desc">${exp.tipDesc}</div>
+            `);
+          }
+        };
+
+        cell.onmousemove = (e) => {
+          if (activeSmartSearchRhyme) {
+            positionCellTooltip(e);
+          }
+        };
+
+        cell.onmouseleave = () => {
+          hideCellTooltip();
+        };
+
+        if (activeSmartSearchRhyme) {
+          const exp = getSmartMatchExplanation(item.rhyme, activeSmartSearchRhyme, activeSelectedPhonemes);
+          cell.title = `${exp.tipTitle.replace(/<[^>]*>/g, '')}: ${exp.tipDesc.replace(/<[^>]*>/g, '')}`;
+        } else {
+          cell.title = `#${item.order} (${item.floor}) phím [${item.key}]: vần "${item.rhyme}"`;
+        }
+
+        // Click ô: Tìm kiếm thông minh các vần liên quan
+        cell.onclick = () => {
+          if (activeSmartSearchRhyme === item.lower) {
+            clearSmartSearch();
+          } else {
+            activateSmartSearch(item.lower);
+          }
+
+          // Cập nhật ô thử nghiệm
+          const testInput = document.getElementById('liveInputViet');
+          if (testInput) {
+            testInput.value = item.rhyme;
+            updateLiveEncoder(item.rhyme);
+          }
+        };
+
+        grid.appendChild(cell);
+      });
+
+      const counter = document.getElementById('squareVisibleCount');
+      if (counter) counter.textContent = `${visibleCount} / 169 ô`;
+    }
+
+    // Chuyển đổi giữa 2 chế độ xem: Bảng 7 Cột vs Ma Trận Vuông 13x13
+    let currentViewMode = localStorage.getItem('vcomp_matrix_view_mode') || 'table';
+
+    function switchViewMode(mode) {
+      currentViewMode = mode;
+      localStorage.setItem('vcomp_matrix_view_mode', mode);
+
+      const tableWrapper = document.getElementById('tableWrapper');
+      const squareWrapper = document.getElementById('squareWrapper');
+      const btnTable = document.getElementById('btnViewTable');
+      const btnSquare = document.getElementById('btnViewSquare');
+
+      if (mode === 'square') {
+        if (tableWrapper) tableWrapper.style.display = 'none';
+        if (squareWrapper) squareWrapper.style.display = 'flex';
+        if (btnTable) btnTable.classList.remove('active');
+        if (btnSquare) btnSquare.classList.add('active');
+        renderSquareGrid();
+      } else {
+        if (squareWrapper) squareWrapper.style.display = 'none';
+        if (tableWrapper) tableWrapper.style.display = 'block';
+        if (btnSquare) btnSquare.classList.remove('active');
+        if (btnTable) btnTable.classList.add('active');
+        renderMatrix();
+      }
+    }
+
+    document.getElementById('btnViewTable').onclick = () => switchViewMode('table');
+    document.getElementById('btnViewSquare').onclick = () => switchViewMode('square');
+
+    // 3. Switch Sort & Filter Events
+    const btnSortAZ = document.getElementById('btnSortAZ');
+    const btnSortKeyboard = document.getElementById('btnSortKeyboard');
+
+    btnSortAZ.onclick = () => {
+      btnSortAZ.classList.add('active');
+      btnSortKeyboard.classList.remove('active');
+      currentSortMode = 'az';
+      renderMatrix();
+      renderSquareGrid();
+    };
+
+    btnSortKeyboard.onclick = () => {
+      btnSortKeyboard.classList.add('active');
+      btnSortAZ.classList.remove('active');
+      currentSortMode = 'keyboard';
+      renderMatrix();
+      renderSquareGrid();
+    };
+
+    document.querySelectorAll('.filter-btn[data-filter]').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.filter-btn[data-filter]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderMatrix();
+        renderSquareGrid();
+      };
+    });
+
+    document.getElementById('searchInput').oninput = () => {
+      renderMatrix();
+      renderSquareGrid();
+    };
+
+    // Khởi tạo chế độ xem mặc định từ localStorage
+    switchViewMode(currentViewMode);
+
+    // 4. Live Encoder Sandbox (KHÔNG TỰ ĐỘNG SCROLL KHI GÕ)
+    const liveInputViet = document.getElementById('liveInputViet');
+    const liveResultViet = document.getElementById('liveResultViet');
+    const btnLocateViet = document.getElementById('btnLocateViet');
+    let currentTargetKeyViet = null;
+    let currentTargetRhymeViet = null;
+
+    function updateLiveEncoder(word) {
+      if (!word) {
+        liveResultViet.innerHTML = '<span style="color: var(--text-muted);">Nhập từ để kiểm tra...</span>';
+        currentTargetKeyViet = null;
+        currentTargetRhymeViet = null;
+        return;
+      }
+      try {
+        const timeCode = encodeWord(word.trim());
+        const b60 = timeToBase60(timeCode);
+        
+        let details = `Mã: ${timeCode}`;
+        if (b60.length === 3) {
+          const c1 = b60[0], c2 = b60[1], c3 = b60[2];
+          details = `[${c1}] + [${c2}] + [${c3}]`;
+        }
+
+        liveResultViet.innerHTML = `
+          <span class="result-badge badge-b60">${b60}</span>
+          <span class="badge-details">${details} (TG: ${timeCode})</span>
+        `;
+
+        if (timeCode && timeCode.length === 6) {
+          const mm = parseInt(timeCode.slice(2, 4), 10);
+          const ss = parseInt(timeCode.slice(4, 6), 10);
+          const floorIdx = Math.floor(ss / 20);
+          if (floorIdx === 0) currentTargetRhymeViet = RHYMES_BASE[mm];
+          else if (floorIdx === 1) currentTargetRhymeViet = RHYMES_EXTRA_1[mm];
+          else if (floorIdx === 2) currentTargetRhymeViet = RHYMES_EXTRA_2[mm];
+        }
+
+        if (b60.length >= 2) {
+          currentTargetKeyViet = b60[1].toLowerCase();
+        } else {
+          currentTargetKeyViet = null;
+        }
+      } catch (err) {
+        liveResultViet.innerHTML = `<span style="color: var(--neon-red);">Lỗi: ${err.message}</span>`;
+        currentTargetKeyViet = null;
+        currentTargetRhymeViet = null;
+      }
+    }
+
+    liveInputViet.oninput = (e) => updateLiveEncoder(e.target.value);
+    updateLiveEncoder(liveInputViet.value);
+
+    // Bấm nút mới cuộn màn hình và highlight
+    btnLocateViet.onclick = () => {
+      if (currentViewMode === 'square') {
+        if (!currentTargetRhymeViet) return;
+        document.querySelectorAll('.square-cell').forEach(c => c.classList.remove('pulse-highlight', 'active-cell'));
+        const cell = document.getElementById(`square_cell_rhyme_${currentTargetRhymeViet.toLowerCase()}`);
+        if (cell) {
+          cell.classList.add('pulse-highlight', 'active-cell');
+          cell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const allList = getAllRhymesList();
+          const found = allList.find(x => x.lower === currentTargetRhymeViet.toLowerCase());
+          if (found) inspectRhyme(found);
+        }
+      } else {
+        if (!currentTargetKeyViet) return;
+        document.querySelectorAll('.matrix-table tr').forEach(r => r.classList.remove('highlighted'));
+        const targetRow = document.getElementById(`row_key_${currentTargetKeyViet}`);
+        if (targetRow) {
+          targetRow.classList.add('highlighted');
+          targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    };
+
+    // 5. Live Decoder Sandbox
+    const liveInputBase60 = document.getElementById('liveInputBase60');
+    const liveResultBase60 = document.getElementById('liveResultBase60');
+    const btnLocateBase60 = document.getElementById('btnLocateBase60');
+    let currentTargetKeyBase60 = null;
+    let currentTargetRhymeBase60 = null;
+
+    function updateLiveDecoder(b60) {
+      if (!b60) {
+        liveResultBase60.innerHTML = '<span style="color: var(--text-muted);">Nhập mã Base60...</span>';
+        currentTargetKeyBase60 = null;
+        currentTargetRhymeBase60 = null;
+        return;
+      }
+      try {
+        const time = base60ToTime(b60.trim());
+        const decoded = decodeWord(time);
+        liveResultBase60.innerHTML = `
+          <span class="result-badge badge-b60" style="background: rgba(0, 229, 255, 0.15); border-color: var(--neon-cyan); color: var(--neon-cyan);">${decoded}</span>
+          <span class="badge-details">TG: ${time} ➔ Chuẩn xác 100%</span>
+        `;
+
+        if (time && time.length === 6) {
+          const mm = parseInt(time.slice(2, 4), 10);
+          const ss = parseInt(time.slice(4, 6), 10);
+          const floorIdx = Math.floor(ss / 20);
+          if (floorIdx === 0) currentTargetRhymeBase60 = RHYMES_BASE[mm];
+          else if (floorIdx === 1) currentTargetRhymeBase60 = RHYMES_EXTRA_1[mm];
+          else if (floorIdx === 2) currentTargetRhymeBase60 = RHYMES_EXTRA_2[mm];
+        }
+
+        if (b60.length >= 2) {
+          currentTargetKeyBase60 = b60[1].toLowerCase();
+        } else {
+          currentTargetKeyBase60 = null;
+        }
+      } catch (err) {
+        liveResultBase60.innerHTML = `<span style="color: var(--neon-red);">Lỗi: ${err.message}</span>`;
+        currentTargetKeyBase60 = null;
+        currentTargetRhymeBase60 = null;
+      }
+    }
+
+    liveInputBase60.oninput = (e) => updateLiveDecoder(e.target.value);
+    updateLiveDecoder(liveInputBase60.value);
+
+    btnLocateBase60.onclick = () => {
+      if (currentViewMode === 'square') {
+        if (!currentTargetRhymeBase60) return;
+        document.querySelectorAll('.square-cell').forEach(c => c.classList.remove('pulse-highlight', 'active-cell'));
+        const cell = document.getElementById(`square_cell_rhyme_${currentTargetRhymeBase60.toLowerCase()}`);
+        if (cell) {
+          cell.classList.add('pulse-highlight', 'active-cell');
+          cell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          const allList = getAllRhymesList();
+          const found = allList.find(x => x.lower === currentTargetRhymeBase60.toLowerCase());
+          if (found) inspectRhyme(found);
+        }
+      } else {
+        if (!currentTargetKeyBase60) return;
+        document.querySelectorAll('.matrix-table tr').forEach(r => r.classList.remove('highlighted'));
+        const targetRow = document.getElementById(`row_key_${currentTargetKeyBase60}`);
+        if (targetRow) {
+          targetRow.classList.add('highlighted');
+          targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    };
+
+  </script>
+</body>
+</html>

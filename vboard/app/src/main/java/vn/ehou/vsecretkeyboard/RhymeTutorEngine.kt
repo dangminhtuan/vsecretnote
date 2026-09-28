@@ -42,9 +42,15 @@ object RhymeTutorEngine {
         fun addRhymeToKey(key: String, rhyme: String?) {
             if (key.isBlank() || rhyme.isNullOrBlank() || rhyme == "-" || rhyme == "null") return
             val cleanRhyme = rhyme.lowercase().trim()
-            if (cleanRhyme.isNotEmpty()) {
-                keyToRhymes.getOrPut(key) { mutableSetOf() }.add(cleanRhyme)
-            }
+            if (cleanRhyme.isEmpty()) return
+
+            // KHÓA CỨNG BẢO VỆ PHÍM 'u' & 'w':
+            // Phím 'u': Chỉ nhận nguyên âm 'u' và vần gốc 'u' (ua, ui, um, un...), TUYỆT ĐỐI KHÔNG nhận vần chứa 'ư'
+            if (key == "u" && cleanRhyme.contains('ư')) return
+            // Phím 'w': Độc quyền nguyên âm 'ư' và vần gốc 'ư' (ưa, ưng, ươc, ươn, ưu...), không nhận vần gốc 'u'
+            if (key == "w" && !cleanRhyme.contains('ư') && cleanRhyme != "w") return
+
+            keyToRhymes.getOrPut(key) { mutableSetOf() }.add(cleanRhyme)
         }
 
         // 1. Nạp từ ChipKeyConfig (các vần góc trên-trái, sc1, sc2)
@@ -87,6 +93,8 @@ object RhymeTutorEngine {
         addRhymeToKey("a", "at")
         addRhymeToKey("a", "ac")
         addRhymeToKey("a", "ap")
+        addRhymeToKey("u", "u")
+        addRhymeToKey("w", "ư")
 
         // Chuyển map sang danh sách KeyRhymeInfo
         keyRhymeList.clear()

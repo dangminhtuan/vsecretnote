@@ -29,6 +29,7 @@ export default defineConfig({
           const pathname = req.url ? req.url.split('?')[0] : '';
           if (pathname.endsWith('.apk')) {
             res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+            res.setHeader('X-Content-Type-Options', 'nosniff');
             res.setHeader('Content-Disposition', 'attachment; filename="vboard.apk"');
           }
           next();
@@ -59,7 +60,8 @@ export default defineConfig({
         v2b_demo: resolve(import.meta.dirname, 'v2b-demo.html'),
         viscript_encoder: resolve(import.meta.dirname, 'viscript-encoder.html'),
         subtitle: resolve(import.meta.dirname, 'subtitle.html'),
-        keyboard_vcomp_chip: resolve(import.meta.dirname, 'keyboard-vcomp-chip.html')
+        keyboard_vcomp_chip: resolve(import.meta.dirname, 'keyboard-vcomp-chip.html'),
+        vcomp_matrix: resolve(import.meta.dirname, 'vcomp-matrix.html')
       }
     }
   }

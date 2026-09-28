@@ -256,6 +256,7 @@ object VCompEngine {
             2, 5 -> rhyme = if (mm < DataDictionary.RHYMES_EXTRA_2.size) DataDictionary.RHYMES_EXTRA_2[mm] ?: "" else ""
         }
 
+        if ((rhyme.isEmpty() || rhyme == "-") && mm == 59) rhyme = "ư"
         if (rhyme.isEmpty() && consonant.isEmpty()) return "[ERR:RHYME]"
 
         val tonedRhyme = applyTone(rhyme, s1)
