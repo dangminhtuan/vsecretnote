@@ -1589,10 +1589,31 @@
     }
 
     .mag-examples {
-      font-style: italic;
+      font-style: normal;
       color: #93c5fd;
       overflow: hidden;
       text-overflow: ellipsis;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .mag-sample-word {
+      font-weight: 700;
+      color: #f1f5f9;
+      font-style: normal;
+    }
+
+    .mag-b60-code {
+      color: var(--neon-cyan);
+      font-family: var(--font-mono);
+      font-weight: 800;
+      font-style: normal;
+      background: rgba(0, 229, 255, 0.12);
+      border: 1px solid rgba(0, 229, 255, 0.35);
+      border-radius: 3px;
+      padding: 0 4px;
+      letter-spacing: 0.5px;
     }
 
     #filterBar.in-square-mode #filterBtnGroup {
@@ -1743,12 +1764,12 @@
               <div class="mag-col-right">
                 <div class="mag-meta-row">
                   <span id="magStt" class="mag-stt">#95</span>
-                  <span id="magFloorTitle" class="mag-floor-title">Tầng 1 (B1)</span>
+                  <span id="magFloorTitle" class="mag-floor-title">B1 (Telex)</span>
                   <span id="magAnomalyTag" class="anomaly-badge" style="display: none;">⚠️ Vần cụt</span>
                 </div>
                 <div class="mag-ex-row">
                   <span class="mag-lbl">VD:</span>
-                  <span id="magExamples" class="mag-examples">đường, thương, lương</span>
+                  <span id="magExamples" class="mag-examples"><span class="mag-sample-word">đường</span> <span style="color:#64748b; font-style:normal;">➔</span> <span class="mag-b60-code">dsf</span></span>
                 </div>
               </div>
             </div>
@@ -2134,6 +2155,32 @@
       'ênh': 'bệnh, lệnh, kênh', 'êch': 'ếch, dếch', 'oa': 'hoa, qua, tòa', 'oan': 'đoàn, toán, hoan',
       'oang': 'hoàng, thoáng', 'uôi': 'buổi, suối, cuối', 'uôn': 'muốn, luôn, cuốn', 'uc': 'cúc, chúc, đục',
       'ung': 'cùng, đúng, súng', 'uy': 'huy, quy, duy', 'ui': 'túi, vui, bụi', 'ưa': 'mưa, thưa, dừa'
+    };
+
+    const RHYME_SAMPLE_WORD = {
+      'a': 'cá', 'e': 'xe', 'ê': 'ghế', 'i': 'đi', 'o': 'bò', 'ô': 'cô', 'ơ': 'mơ', 'u': 'đu', 'ư': 'từ',
+      'an': 'bàn', 'ang': 'làng', 'anh': 'chanh', 'iên': 'tiên', 'iêng': 'tiếng', 'uôc': 'thuốc', 'uông': 'uống',
+      'ương': 'đường', 'uyên': 'thuyền', 'uyêt': 'tuyết', 'uya': 'khuya', 'ât': 'đất', 'âu': 'cầu', 'ân': 'chân',
+      'âng': 'tầng', 'ăt': 'mặt', 'ăn': 'khăn', 'ăng': 'trăng', 'ăm': 'năm', 'em': 'xem', 'en': 'đen', 'im': 'tim',
+      'in': 'tin', 'om': 'xóm', 'on': 'con', 'un': 'bùn', 'ưa': 'mưa', 'ưng': 'rừng', 'ơi': 'chơi', 'ôi': 'tôi',
+      'ơn': 'sơn', 'am': 'cam', 'ap': 'cáp', 'at': 'hát', 'ay': 'tay', 'au': 'tàu', 'êu': 'kêu', 'êm': 'đêm',
+      'ên': 'đến', 'ênh': 'bệnh', 'êch': 'ếch', 'oa': 'hoa', 'oan': 'toán', 'oang': 'thoáng', 'uôi': 'suối',
+      'uôn': 'muốn', 'uc': 'cúc', 'ung': 'đúng', 'uy': 'quy', 'ui': 'túi', 'ươu': 'rượu', 'ươp': 'mướp',
+      'ich': 'thích', 'ach': 'sách', 'ôn': 'thôn', 'ia': 'mía', 'ut': 'bút', 'it': 'thịt', 'ươm': 'bướm',
+      'iêm': 'kiếm', 'ac': 'bác', 'ôm': 'tôm', 'ưc': 'mực', 'âp': 'tập', 'ao': 'sao', 'ăc': 'bắc', 'ăp': 'bắp',
+      'âc': 'bậc', 'yêu': 'yêu', 'uâng': 'bâng', 'ec': 'két', 'eo': 'mèo', 'ep': 'đẹp', 'et': 'sét', 'êp': 'bếp',
+      'iêc': 'việc', 'iêp': 'tiếp', 'iêt': 'viết', 'iu': 'dịu', 'iêu': 'kiệu', 'ip': 'kịp', 'inh': 'xinh',
+      'oc': 'học', 'oe': 'loé', 'oi': 'nói', 'ong': 'lòng', 'op': 'họp', 'ot': 'gọt', 'oăn': 'xoăn', 'oăng': 'khoăng',
+      'ơm': 'cơm', 'ôc': 'gốc', 'ông': 'sông', 'ôp': 'hộp', 'ôt': 'cột', 'ơp': 'chớp', 'ơt': 'bớt', 'oen': 'hoen',
+      'oac': 'khoác', 'oach': 'hoạch', 'oam': 'ngoàm', 'oanh': 'doanh', 'oap': 'ngoáp', 'uêch': 'khuếch',
+      'oay': 'xoay', 'oeo': 'ngoéo', 'oem': 'ngoem', 'oet': 'khoét', 'ooc': 'moóc', 'oong': 'boong', 'oăc': 'ngoắc',
+      'oăm': 'khoằm', 'oăt': 'thoắt', 'iê': 'kia', 'eng': 'keng', 'yêt': 'yết', 'ua': 'mua', 'uât': 'xuất',
+      'uê': 'huế', 'âm': 'tâm', 'um': 'chùm', 'uân': 'xuân', 'uôt': 'chuột', 'up': 'búp', 'ynh': 'huynh',
+      'ưi': 'gửi', 'y': 'mỹ', 'ưn': 'mưng', 'ươc': 'nước', 'ươi': 'cười', 'ươn': 'lườn', 'ươt': 'ướt',
+      'ưt': 'đứt', 'ưu': 'lưu', 'ưm': 'tươm', 'yêm': 'yếm', 'yê': 'yên', 'oat': 'thoát', 'uôm': 'nhuộm',
+      'oai': 'khoai', 'oă': 'hoặc', 'ây': 'cây', 'uênh': 'huênh', 'uych': 'huých', 'uyn': 'buýt', 'uynh': 'quýnh',
+      'uyp': 'tuýp', 'uyt': 'huýt', 'uyu': 'khuỷu', 'yn': 'kin', 'yên': 'yên', 'yt': 'mít', 'yêng': 'kiểng',
+      'uơ': 'thuở', 'uây': 'khuấy', 'êt': 'tết', 'ai': 'tai', 'ă': 'bắt', 'â': 'ấm', 'ươ': 'lướt'
     };
 
     // Hàm lấy danh sách toàn bộ 169 vần không trùng lặp
@@ -2645,12 +2692,28 @@
       }
 
       if (floorTitle) {
-        floorTitle.textContent = `${item.floor} (${item.isShift ? '⇧ Shift' : 'Thường'})`;
+        let systemName = 'Telex';
+        if (item.floor === 'B1') systemName = 'Telex';
+        else if (item.floor === 'B2') systemName = 'TELEX HOA';
+        else if (item.floor === 'B3') systemName = 'VNI';
+        floorTitle.textContent = `${item.floor} (${systemName})${item.isShift ? ' ⇧' : ''}`;
       }
 
       if (exSpan) {
-        const ex = RHYME_EXAMPLES[item.lower] || `${item.rhyme}..`;
-        exSpan.textContent = ex;
+        const word = RHYME_SAMPLE_WORD[item.lower] || (RHYME_EXAMPLES[item.lower] ? RHYME_EXAMPLES[item.lower].split(',')[0].trim() : item.rhyme);
+        let b60Code = '';
+        try {
+          const timeCode = encodeWord(word);
+          b60Code = timeToBase60(timeCode);
+        } catch (e) {
+          b60Code = '';
+        }
+
+        if (b60Code) {
+          exSpan.innerHTML = `<span class="mag-sample-word">${word}</span> <span style="color:#64748b; font-style:normal;">➔</span> <span class="mag-b60-code">${b60Code}</span>`;
+        } else {
+          exSpan.textContent = word;
+        }
       }
 
       if (anomalyTag) {
