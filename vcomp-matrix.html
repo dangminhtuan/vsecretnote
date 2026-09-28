@@ -1293,19 +1293,23 @@
       .square-cell.smart-target-active {
         transform: scale(1.02);
       }
-      .magnifier-nav-box {
+      .magnifier-nav-wrapper {
         width: 100%;
-        max-width: 320px;
+        display: flex;
+        transition: all 0.25s ease;
+      }
+      .magnifier-nav-wrapper.hand-right {
+        justify-content: flex-end !important;
+      }
+      .magnifier-nav-wrapper.hand-left {
+        justify-content: flex-start !important;
+      }
+      .magnifier-nav-box {
+        width: 265px !important;
+        max-width: 78% !important;
+        flex: 0 0 auto !important;
         padding: 2px 4px;
         gap: 2px;
-      }
-      .magnifier-nav-box.hand-right {
-        margin-left: auto !important;
-        margin-right: 0 !important;
-      }
-      .magnifier-nav-box.hand-left {
-        margin-right: auto !important;
-        margin-left: 0 !important;
       }
       .nav-btn-up, .nav-btn-down {
         width: 65%;
@@ -1349,6 +1353,19 @@
     }
 
     /* Magnifier Card & 4-Direction Nav Pad (▲ ▼ ◀ ▶) */
+    .magnifier-nav-wrapper {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      transition: all 0.25s ease;
+    }
+    .magnifier-nav-wrapper.hand-right {
+      justify-content: flex-end;
+    }
+    .magnifier-nav-wrapper.hand-left {
+      justify-content: flex-start;
+    }
+
     .magnifier-nav-box {
       display: flex;
       flex-direction: column;
@@ -1360,20 +1377,10 @@
       border-radius: 8px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5), inset 0 0 10px rgba(0, 229, 255, 0.08);
       user-select: none;
-      min-width: 280px;
-      max-width: 440px;
-      flex: 1;
-      transition: all 0.2s ease;
-    }
-
-    /* Chế độ 1 tay: Lệch Phải vs Lệch Trái */
-    .magnifier-nav-box.hand-right {
-      margin-left: auto;
-      margin-right: 0;
-    }
-    .magnifier-nav-box.hand-left {
-      margin-right: auto;
-      margin-left: 0;
+      width: 275px;
+      max-width: 285px;
+      flex: 0 0 auto;
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .nav-top-bar {
@@ -1705,56 +1712,58 @@
       </div>
 
       <!-- Cụm Kính Lúp Phóng To & Bàn Phím Điều Hướng 4 Chiều (▲ ▼ ◀ ▶) -->
-      <div id="magnifierNavBox" class="magnifier-nav-box hand-right" style="display: none;">
-        <!-- Hàng Trên: Nút 1 Tay (👈/👉) + Nút Lên (▲) -->
-        <div class="nav-top-bar">
-          <button id="btnHandToggle" class="btn-hand-toggle" title="Chuyển chế độ 1 tay: Lệch Phải (👉) ⇄ Lệch Trái (👈)">
-            <span id="handIcon">👉</span> <span class="hand-label">Phải</span>
-          </button>
-          <button id="btnNavUp" class="nav-arrow-btn nav-btn-up" aria-label="Lên hàng trên" title="Lên hàng trên (▲ / W / Phím Mũi Tên Lên)">
-            <span class="nav-arrow-glyph">▲</span>
-          </button>
-          <span class="nav-top-spacer"></span>
-        </div>
-
-        <div class="magnifier-mid-row">
-          <!-- Nút Trái -->
-          <button id="btnNavLeft" class="nav-arrow-btn nav-btn-left" aria-label="Sang cột trước" title="Sang cột trước (◀ / A / Phím Mũi Tên Trái)">
-            <span class="nav-arrow-glyph">◀</span>
-          </button>
-
-          <!-- Thẻ Kính Lúp Phóng To (Magnifier Card) -->
-          <div id="magnifierCard" class="magnifier-card" title="Vuốt cảm ứng Trái/Phải/Lên/Xuống để duyệt vần">
-            <div class="mag-col-left">
-              <span id="magKeyBadge" class="mag-key-badge">s</span>
-              <div class="mag-rhyme-wrap">
-                <span id="magRhymeText" class="mag-rhyme-text">ương</span>
-                <span id="magFloorBadge" class="mag-floor-badge floor-b1">B1</span>
-              </div>
-            </div>
-            <div class="mag-col-right">
-              <div class="mag-meta-row">
-                <span id="magStt" class="mag-stt">#95</span>
-                <span id="magFloorTitle" class="mag-floor-title">Tầng 1 (B1)</span>
-                <span id="magAnomalyTag" class="anomaly-badge" style="display: none;">⚠️ Vần cụt</span>
-              </div>
-              <div class="mag-ex-row">
-                <span class="mag-lbl">VD:</span>
-                <span id="magExamples" class="mag-examples">đường, thương, lương</span>
-              </div>
-            </div>
+      <div id="magnifierNavWrapper" class="magnifier-nav-wrapper hand-right" style="display: none;">
+        <div id="magnifierNavBox" class="magnifier-nav-box hand-right">
+          <!-- Hàng Trên: Nút 1 Tay (👈/👉) + Nút Lên (▲) -->
+          <div class="nav-top-bar">
+            <button id="btnHandToggle" class="btn-hand-toggle" title="Chuyển chế độ 1 tay: Lệch Phải (👉) ⇄ Lệch Trái (👈)">
+              <span id="handIcon">👉</span> <span class="hand-label">Phải</span>
+            </button>
+            <button id="btnNavUp" class="nav-arrow-btn nav-btn-up" aria-label="Lên hàng trên" title="Lên hàng trên (▲ / W / Phím Mũi Tên Lên)">
+              <span class="nav-arrow-glyph">▲</span>
+            </button>
+            <span class="nav-top-spacer"></span>
           </div>
 
-          <!-- Nút Phải -->
-          <button id="btnNavRight" class="nav-arrow-btn nav-btn-right" aria-label="Sang cột sau" title="Sang cột sau (▶ / D / Phím Mũi Tên Phải)">
-            <span class="nav-arrow-glyph">▶</span>
+          <div class="magnifier-mid-row">
+            <!-- Nút Trái -->
+            <button id="btnNavLeft" class="nav-arrow-btn nav-btn-left" aria-label="Sang cột trước" title="Sang cột trước (◀ / A / Phím Mũi Tên Trái)">
+              <span class="nav-arrow-glyph">◀</span>
+            </button>
+
+            <!-- Thẻ Kính Lúp Phóng To (Magnifier Card) -->
+            <div id="magnifierCard" class="magnifier-card" title="Vuốt cảm ứng Trái/Phải/Lên/Xuống để duyệt vần">
+              <div class="mag-col-left">
+                <span id="magKeyBadge" class="mag-key-badge">s</span>
+                <div class="mag-rhyme-wrap">
+                  <span id="magRhymeText" class="mag-rhyme-text">ương</span>
+                  <span id="magFloorBadge" class="mag-floor-badge floor-b1">B1</span>
+                </div>
+              </div>
+              <div class="mag-col-right">
+                <div class="mag-meta-row">
+                  <span id="magStt" class="mag-stt">#95</span>
+                  <span id="magFloorTitle" class="mag-floor-title">Tầng 1 (B1)</span>
+                  <span id="magAnomalyTag" class="anomaly-badge" style="display: none;">⚠️ Vần cụt</span>
+                </div>
+                <div class="mag-ex-row">
+                  <span class="mag-lbl">VD:</span>
+                  <span id="magExamples" class="mag-examples">đường, thương, lương</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Nút Phải -->
+            <button id="btnNavRight" class="nav-arrow-btn nav-btn-right" aria-label="Sang cột sau" title="Sang cột sau (▶ / D / Phím Mũi Tên Phải)">
+              <span class="nav-arrow-glyph">▶</span>
+            </button>
+          </div>
+
+          <!-- Nút Xuống -->
+          <button id="btnNavDown" class="nav-arrow-btn nav-btn-down" aria-label="Xuống hàng dưới" title="Xuống hàng dưới (▼ / S / Phím Mũi Tên Xuống)">
+            <span class="nav-arrow-glyph">▼</span>
           </button>
         </div>
-
-        <!-- Nút Xuống -->
-        <button id="btnNavDown" class="nav-arrow-btn nav-btn-down" aria-label="Xuống hàng dưới" title="Xuống hàng dưới (▼ / S / Phím Mũi Tên Xuống)">
-          <span class="nav-arrow-glyph">▼</span>
-        </button>
       </div>
 
       <div class="filter-btn-group" id="filterBtnGroup" style="margin-left: auto;">
@@ -2592,7 +2601,9 @@
       if (!item) return;
       currentNavIndex = typeof index === 'number' ? index : currentNavIndex;
 
+      const wrapper = document.getElementById('magnifierNavWrapper');
       const box = document.getElementById('magnifierNavBox');
+      if (wrapper) wrapper.style.display = 'flex';
       if (box) box.style.display = 'flex';
 
       const keyBadge = document.getElementById('magKeyBadge');
@@ -2759,11 +2770,16 @@
       currentHandedness = mode;
       localStorage.setItem('vcomp_nav_handedness', mode);
 
+      const wrapper = document.getElementById('magnifierNavWrapper');
       const box = document.getElementById('magnifierNavBox');
       const btn = document.getElementById('btnHandToggle');
       const icon = document.getElementById('handIcon');
       const label = btn ? btn.querySelector('.hand-label') : null;
 
+      if (wrapper) {
+        wrapper.classList.remove('hand-right', 'hand-left');
+        wrapper.classList.add(`hand-${mode}`);
+      }
       if (box) {
         box.classList.remove('hand-right', 'hand-left');
         box.classList.add(`hand-${mode}`);
@@ -2798,12 +2814,14 @@
       const btnTable = document.getElementById('btnViewTable');
       const btnSquare = document.getElementById('btnViewSquare');
       const filterBar = document.getElementById('filterBar');
+      const magWrapper = document.getElementById('magnifierNavWrapper');
       const magBox = document.getElementById('magnifierNavBox');
 
       if (mode === 'square') {
         if (tableWrapper) tableWrapper.style.display = 'none';
         if (squareWrapper) squareWrapper.style.display = 'flex';
         if (filterBar) filterBar.classList.add('in-square-mode');
+        if (magWrapper) magWrapper.style.display = 'flex';
         if (magBox) magBox.style.display = 'flex';
         setHandedness(currentHandedness);
         if (btnTable) btnTable.classList.remove('active');
@@ -2821,6 +2839,7 @@
         if (squareWrapper) squareWrapper.style.display = 'none';
         if (tableWrapper) tableWrapper.style.display = 'block';
         if (filterBar) filterBar.classList.remove('in-square-mode');
+        if (magWrapper) magWrapper.style.display = 'none';
         if (magBox) magBox.style.display = 'none';
         if (btnSquare) btnSquare.classList.remove('active');
         if (btnTable) btnTable.classList.add('active');
