@@ -942,7 +942,7 @@
 
     .square-grid {
       display: grid;
-      grid-template-columns: repeat(13, 1fr);
+      grid-template-columns: repeat(13, minmax(0, 1fr));
       gap: 2px;
       width: 100%;
     }
@@ -1190,6 +1190,109 @@
     .vowel-single-glow .cell-line-rhyme {
       color: #fde047 !important;
       text-shadow: 0 0 6px rgba(253, 224, 71, 0.6);
+    }
+
+    .cell-rhyme-split-1 {
+      font-family: var(--font-ui);
+      font-weight: 800;
+      color: #93c5fd;
+      font-size: 8.5px;
+      margin-left: 1.5px;
+      line-height: 1;
+    }
+    .cell-rhyme-split-2 {
+      font-family: var(--font-ui);
+      font-weight: 800;
+      font-size: 9.5px;
+      line-height: 1;
+      letter-spacing: -0.3px;
+    }
+
+    /* Mobile Ultra-Compact Optimization (13 Columns No Scroll) */
+    @media (max-width: 600px) {
+      body {
+        padding: 3px 2px;
+      }
+      .container {
+        gap: 5px;
+      }
+      .square-matrix-wrapper,
+      .square-matrix-wrapper.is-mobile-compact {
+        padding: 3px 2px;
+        gap: 3px;
+      }
+      .square-filter-bar {
+        padding: 2px 3px;
+        gap: 2.5px;
+        font-size: 9px;
+      }
+      .filter-chip {
+        padding: 1px 3px;
+        font-size: 8.5px;
+        gap: 2px;
+      }
+      .filter-chip input[type="checkbox"] {
+        width: 10px;
+        height: 10px;
+      }
+      .smart-search-bar {
+        padding: 1px 3px;
+        gap: 2px;
+      }
+      .smart-target-badge, .btn-phoneme-toggle, .btn-smart-clear {
+        font-size: 8.5px;
+        padding: 1px 3px;
+      }
+      .legend-count {
+        font-size: 9.5px;
+        padding: 1px 4px;
+      }
+      .square-grid-container {
+        padding: 0;
+        overflow-x: hidden;
+      }
+      .square-grid {
+        gap: 1px;
+        grid-template-columns: repeat(13, minmax(0, 1fr));
+      }
+      .square-cell {
+        min-height: 29px;
+        padding: 1.5px 0px;
+        border-radius: 2px;
+        line-height: 1.05;
+        overflow: hidden;
+        min-width: 0;
+      }
+      .cell-line-meta {
+        font-size: 8px;
+        gap: 1px;
+        line-height: 1.05;
+        letter-spacing: -0.4px;
+      }
+      .meta-key {
+        font-size: 8.5px;
+      }
+      .cell-line-rhyme {
+        font-size: 8.5px;
+        gap: 0.5px;
+        line-height: 1.05;
+        margin-top: 0;
+      }
+      .cell-rhyme-inline {
+        font-size: 8.5px;
+        letter-spacing: -0.2px;
+      }
+      .cell-rhyme-split-1 {
+        font-size: 8px;
+        margin-left: 1px;
+      }
+      .cell-rhyme-split-2 {
+        font-size: 8.5px;
+        letter-spacing: -0.3px;
+      }
+      .square-cell.smart-target-active {
+        transform: scale(1.02);
+      }
     }
 
     /* Footer */
@@ -1889,6 +1992,13 @@
       grid.innerHTML = '';
       hideCellTooltip();
 
+      const isMobile = window.innerWidth <= 600 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const squareWrapper = document.getElementById('squareWrapper');
+      if (squareWrapper) {
+        if (isMobile) squareWrapper.classList.add('is-mobile-compact');
+        else squareWrapper.classList.remove('is-mobile-compact');
+      }
+
       const query = document.getElementById('searchInput').value.toLowerCase().trim();
       const allList = getAllRhymesList();
       let visibleCount = 0;
@@ -2006,7 +2116,40 @@
         let line1Html = '';
         let line2Html = '';
 
-        if (isLongRhyme) {
+        if (isMobile) {
+          // Mobile ultra-compact mode: Bỏ hoàn toàn #STT và chữ B, ngắt dòng thông minh để 13 cột vừa khít
+          let topContent = '';
+          let bottomContent = '';
+
+          if (item.rhyme.length >= 3) {
+            // Vần 3-4 ký tự: Dòng 1: [Phím] [Ký tự đầu vần] (vd: s ư, a y, h i)
+            //                Dòng 2: [Phần còn lại của vần] (vd: ơng, ết, êu)
+            const firstCh = item.rhyme.charAt(0);
+            const restCh = item.rhyme.slice(1);
+            topContent = `
+              <span class="meta-key ${isUpper ? 'is-upper' : ''}">${item.key}</span>
+              <span class="cell-rhyme-split-1">${firstCh}</span>
+            `;
+            bottomContent = `
+              <span class="cell-rhyme-split-2">${restCh}</span>
+              ${item.anomaly ? `<span class="anomaly-badge ${item.anomaly.danger ? 'danger' : ''}" style="font-size:5.5px; vertical-align:super;">⚠️</span>` : ''}
+            `;
+          } else {
+            // Vần 1-2 ký tự (vd: n / oc, a / a)
+            // Dòng 1: [Phím]
+            // Dòng 2: [Vần]
+            topContent = `
+              <span class="meta-key ${isUpper ? 'is-upper' : ''}">${item.key}</span>
+            `;
+            bottomContent = `
+              <span class="cell-rhyme-inline">${item.rhyme}</span>
+              ${item.anomaly ? `<span class="anomaly-badge ${item.anomaly.danger ? 'danger' : ''}" style="font-size:5.5px; vertical-align:super;">⚠️</span>` : ''}
+            `;
+          }
+
+          line1Html = `<div class="cell-line-meta">${isSmartTarget ? '🎯 ' : ''}${topContent}</div>`;
+          line2Html = `<div class="cell-line-rhyme ${item.color}">${bottomContent}</div>`;
+        } else if (isLongRhyme) {
           // Trường hợp vần quá dài: bỏ cả '#' và 'B' đi để gọn hơn (vd: 95 1 s / ương)
           line1Html = `
             <div class="cell-line-meta">
@@ -2155,6 +2298,12 @@
       renderMatrix();
       renderSquareGrid();
     };
+
+    window.addEventListener('resize', () => {
+      if (currentViewMode === 'square') {
+        renderSquareGrid();
+      }
+    });
 
     // Khởi tạo chế độ xem mặc định từ localStorage
     switchViewMode(currentViewMode);
