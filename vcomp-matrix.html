@@ -1295,9 +1295,17 @@
       }
       .magnifier-nav-box {
         width: 100%;
-        max-width: 100%;
-        padding: 2px;
+        max-width: 320px;
+        padding: 2px 4px;
         gap: 2px;
+      }
+      .magnifier-nav-box.hand-right {
+        margin-left: auto !important;
+        margin-right: 0 !important;
+      }
+      .magnifier-nav-box.hand-left {
+        margin-right: auto !important;
+        margin-left: 0 !important;
       }
       .nav-btn-up, .nav-btn-down {
         width: 65%;
@@ -1355,6 +1363,56 @@
       min-width: 280px;
       max-width: 440px;
       flex: 1;
+      transition: all 0.2s ease;
+    }
+
+    /* Chế độ 1 tay: Lệch Phải vs Lệch Trái */
+    .magnifier-nav-box.hand-right {
+      margin-left: auto;
+      margin-right: 0;
+    }
+    .magnifier-nav-box.hand-left {
+      margin-right: auto;
+      margin-left: 0;
+    }
+
+    .nav-top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      gap: 4px;
+    }
+
+    .btn-hand-toggle {
+      background: #182435;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 9.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      white-space: nowrap;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      height: 20px;
+    }
+    .btn-hand-toggle:hover {
+      border-color: var(--neon-cyan);
+      color: #fff;
+      background: rgba(0, 229, 255, 0.15);
+    }
+    .btn-hand-toggle:active {
+      transform: scale(0.94);
+    }
+
+    .nav-top-spacer {
+      width: 46px;
+      flex-shrink: 0;
     }
 
     .magnifier-mid-row {
@@ -1647,11 +1705,17 @@
       </div>
 
       <!-- Cụm Kính Lúp Phóng To & Bàn Phím Điều Hướng 4 Chiều (▲ ▼ ◀ ▶) -->
-      <div id="magnifierNavBox" class="magnifier-nav-box" style="display: none;">
-        <!-- Nút Lên -->
-        <button id="btnNavUp" class="nav-arrow-btn nav-btn-up" aria-label="Lên hàng trên" title="Lên hàng trên (▲ / W / Phím Mũi Tên Lên)">
-          <span class="nav-arrow-glyph">▲</span>
-        </button>
+      <div id="magnifierNavBox" class="magnifier-nav-box hand-right" style="display: none;">
+        <!-- Hàng Trên: Nút 1 Tay (👈/👉) + Nút Lên (▲) -->
+        <div class="nav-top-bar">
+          <button id="btnHandToggle" class="btn-hand-toggle" title="Chuyển chế độ 1 tay: Lệch Phải (👉) ⇄ Lệch Trái (👈)">
+            <span id="handIcon">👉</span> <span class="hand-label">Phải</span>
+          </button>
+          <button id="btnNavUp" class="nav-arrow-btn nav-btn-up" aria-label="Lên hàng trên" title="Lên hàng trên (▲ / W / Phím Mũi Tên Lên)">
+            <span class="nav-arrow-glyph">▲</span>
+          </button>
+          <span class="nav-top-spacer"></span>
+        </div>
 
         <div class="magnifier-mid-row">
           <!-- Nút Trái -->
@@ -2688,6 +2752,40 @@
       }, { passive: true });
     }
 
+    // === CÔNG THÁI HỌC 1 TAY (ONE-HANDED MODE: PHẢI / TRÁI) ===
+    let currentHandedness = localStorage.getItem('vcomp_nav_handedness') || 'right';
+
+    function setHandedness(mode) {
+      currentHandedness = mode;
+      localStorage.setItem('vcomp_nav_handedness', mode);
+
+      const box = document.getElementById('magnifierNavBox');
+      const btn = document.getElementById('btnHandToggle');
+      const icon = document.getElementById('handIcon');
+      const label = btn ? btn.querySelector('.hand-label') : null;
+
+      if (box) {
+        box.classList.remove('hand-right', 'hand-left');
+        box.classList.add(`hand-${mode}`);
+      }
+
+      if (icon) {
+        icon.textContent = mode === 'right' ? '👉' : '👈';
+      }
+      if (label) {
+        label.textContent = mode === 'right' ? 'Phải' : 'Trái';
+      }
+    }
+
+    const btnHandToggle = document.getElementById('btnHandToggle');
+    if (btnHandToggle) {
+      btnHandToggle.onclick = (e) => {
+        e.stopPropagation();
+        const nextMode = currentHandedness === 'right' ? 'left' : 'right';
+        setHandedness(nextMode);
+      };
+    }
+
     // Chuyển đổi giữa 2 chế độ xem: Bảng 7 Cột vs Ma Trận Vuông 13x13
     let currentViewMode = localStorage.getItem('vcomp_matrix_view_mode') || 'table';
 
@@ -2707,6 +2805,7 @@
         if (squareWrapper) squareWrapper.style.display = 'flex';
         if (filterBar) filterBar.classList.add('in-square-mode');
         if (magBox) magBox.style.display = 'flex';
+        setHandedness(currentHandedness);
         if (btnTable) btnTable.classList.remove('active');
         if (btnSquare) btnSquare.classList.add('active');
         renderSquareGrid();
