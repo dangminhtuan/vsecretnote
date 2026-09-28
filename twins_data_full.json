@@ -27,6 +27,15 @@
     "mnemonic": "Khởi đầu bằng R, kết thúc bằng cặp đôi zZ (trong)"
   },
   {
+    "word": "để",
+    "code": "drr",
+    "pattern": "tail",
+    "patternName": "Lặp Đuôi",
+    "rep": "r + r",
+    "group": "Lặp đuôi rr",
+    "mnemonic": "Khởi đầu bằng d, kết thúc bằng cặp đôi rr (để)"
+  },
+  {
     "word": "nhiều",
     "code": "HhF",
     "pattern": "head",
@@ -46,12 +55,21 @@
   },
   {
     "word": "trên",
-    "code": "Rrz",
+    "code": "RrZ",
     "pattern": "head",
     "patternName": "Lặp Đầu",
     "rep": "R + r",
     "group": "Lặp đầu Rr",
-    "mnemonic": "Nhịp đôi mở đầu Rr, chuyển vần sang z (trên)"
+    "mnemonic": "Nhịp đôi mở đầu Rr, chuyển vần sang Z (trên)"
+  },
+  {
+    "word": "thể",
+    "code": "Trr",
+    "pattern": "tail",
+    "patternName": "Lặp Đuôi",
+    "rep": "r + r",
+    "group": "Lặp đuôi rr",
+    "mnemonic": "Khởi đầu bằng T, kết thúc bằng cặp đôi rr (thể)"
   },
   {
     "word": "anh",
@@ -64,12 +82,12 @@
   },
   {
     "word": "số",
-    "code": "s0S",
+    "code": "sqs",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "s ... S",
-    "group": "Kẹp s...S",
-    "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần 0 (số)"
+    "rep": "s ... s",
+    "group": "Kẹp s...s",
+    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần q (số)"
   },
   {
     "word": "việt",
@@ -109,12 +127,12 @@
   },
   {
     "word": "em",
-    "code": "zYz",
+    "code": "zeZ",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "z ... z",
-    "group": "Kẹp z...z",
-    "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần Y (em)"
+    "rep": "z ... Z",
+    "group": "Kẹp z...Z",
+    "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần e (em)"
   },
   {
     "word": "tác",
@@ -160,6 +178,15 @@
     "rep": "D + d",
     "group": "Lặp đầu Dd",
     "mnemonic": "Nhịp đôi mở đầu Dd, chuyển vần sang X (diễn)"
+  },
+  {
+    "word": "yêu",
+    "code": "zYz",
+    "pattern": "sandwich",
+    "patternName": "Kẹp Sandwich",
+    "rep": "z ... z",
+    "group": "Kẹp z...z",
+    "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần Y (yêu)"
   },
   {
     "word": "pháp",
@@ -280,12 +307,12 @@
   },
   {
     "word": "sát",
-    "code": "sqs",
+    "code": "sQs",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
     "rep": "s ... s",
     "group": "Kẹp s...s",
-    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần q (sát)"
+    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần Q (sát)"
   },
   {
     "word": "trở",
@@ -459,6 +486,15 @@
     "mnemonic": "Nhịp đôi mở đầu vv, chuyển vần sang 2 (vùng)"
   },
   {
+    "word": "kể",
+    "code": "krr",
+    "pattern": "tail",
+    "patternName": "Lặp Đuôi",
+    "rep": "r + r",
+    "group": "Lặp đuôi rr",
+    "mnemonic": "Khởi đầu bằng k, kết thúc bằng cặp đôi rr (kể)"
+  },
+  {
     "word": "tàu",
     "code": "ttf",
     "pattern": "head",
@@ -567,15 +603,6 @@
     "mnemonic": "Khởi đầu bằng m, kết thúc bằng cặp đôi zZ (mong)"
   },
   {
-    "word": "âm",
-    "code": "zDz",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "z ... z",
-    "group": "Kẹp z...z",
-    "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần D (âm)"
-  },
-  {
     "word": "phù",
     "code": "fuf",
     "pattern": "sandwich",
@@ -595,12 +622,12 @@
   },
   {
     "word": "ô",
-    "code": "z0Z",
+    "code": "zqz",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "z ... Z",
-    "group": "Kẹp z...Z",
-    "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần 0 (ô)"
+    "rep": "z ... z",
+    "group": "Kẹp z...z",
+    "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần q (ô)"
   },
   {
     "word": "sớm",
@@ -637,15 +664,6 @@
     "rep": "K + k",
     "group": "Lặp đầu Kk",
     "mnemonic": "Nhịp đôi mở đầu Kk, chuyển vần sang s (khán)"
-  },
-  {
-    "word": "soát",
-    "code": "sBS",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "s ... S",
-    "group": "Kẹp s...S",
-    "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần B (soát)"
   },
   {
     "word": "nhiệt",
@@ -855,15 +873,6 @@
     "mnemonic": "Nhịp đôi mở đầu hH, chuyển vần sang 0 (hy)"
   },
   {
-    "word": "bây",
-    "code": "bBz",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "b + B",
-    "group": "Lặp đầu bB",
-    "mnemonic": "Nhịp đôi mở đầu bB, chuyển vần sang z (bây)"
-  },
-  {
     "word": "kháng",
     "code": "KKs",
     "pattern": "head",
@@ -907,15 +916,6 @@
     "rep": "j + j",
     "group": "Lặp đuôi jj",
     "mnemonic": "Khởi đầu bằng R, kết thúc bằng cặp đôi jj (trạm)"
-  },
-  {
-    "word": "đâm",
-    "code": "dDz",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "d + D",
-    "group": "Lặp đầu dD",
-    "mnemonic": "Nhịp đôi mở đầu dD, chuyển vần sang z (đâm)"
   },
   {
     "word": "hiếu",
@@ -990,13 +990,22 @@
     "mnemonic": "Khởi đầu bằng r, kết thúc bằng cặp đôi Ss (rác)"
   },
   {
+    "word": "sứ",
+    "code": "sws",
+    "pattern": "sandwich",
+    "patternName": "Kẹp Sandwich",
+    "rep": "s ... s",
+    "group": "Kẹp s...s",
+    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần w (sứ)"
+  },
+  {
     "word": "in",
-    "code": "zKZ",
+    "code": "ziZ",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
     "rep": "z ... Z",
     "group": "Kẹp z...Z",
-    "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần K (in)"
+    "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần i (in)"
   },
   {
     "word": "ôm",
@@ -1015,33 +1024,6 @@
     "rep": "d + d",
     "group": "Lặp đầu dd",
     "mnemonic": "Nhịp đôi mở đầu dd, chuyển vần sang R (điển)"
-  },
-  {
-    "word": "kín",
-    "code": "kKS",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "k + K",
-    "group": "Lặp đầu kK",
-    "mnemonic": "Nhịp đôi mở đầu kK, chuyển vần sang S (kín)"
-  },
-  {
-    "word": "dâm",
-    "code": "DDz",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "D + D",
-    "group": "Lặp đầu DD",
-    "mnemonic": "Nhịp đôi mở đầu DD, chuyển vần sang z (dâm)"
-  },
-  {
-    "word": "ngừng",
-    "code": "Nnf",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "N + n",
-    "group": "Lặp đầu Nn",
-    "mnemonic": "Nhịp đôi mở đầu Nn, chuyển vần sang f (ngừng)"
   },
   {
     "word": "rẻ",
@@ -1098,15 +1080,6 @@
     "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần 0 (sắm)"
   },
   {
-    "word": "yến",
-    "code": "z11",
-    "pattern": "tail",
-    "patternName": "Lặp Đuôi",
-    "rep": "1 + 1",
-    "group": "Lặp đuôi 11",
-    "mnemonic": "Khởi đầu bằng z, kết thúc bằng cặp đôi 11 (yến)"
-  },
-  {
     "word": "chùa",
     "code": "Cc2",
     "pattern": "head",
@@ -1141,15 +1114,6 @@
     "rep": "z ... Z",
     "group": "Kẹp z...Z",
     "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần s (oan)"
-  },
-  {
-    "word": "thoải",
-    "code": "TrR",
-    "pattern": "tail",
-    "patternName": "Lặp Đuôi",
-    "rep": "r + R",
-    "group": "Lặp đuôi rR",
-    "mnemonic": "Khởi đầu bằng T, kết thúc bằng cặp đôi rR (thoải)"
   },
   {
     "word": "u",
@@ -1213,15 +1177,6 @@
     "rep": "s ... S",
     "group": "Kẹp s...S",
     "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần H (sót)"
-  },
-  {
-    "word": "đậm",
-    "code": "dDj",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "d + D",
-    "group": "Lặp đầu dD",
-    "mnemonic": "Nhịp đôi mở đầu dD, chuyển vần sang j (đậm)"
   },
   {
     "word": "hong",
@@ -1296,15 +1251,6 @@
     "mnemonic": "Nhịp đôi mở đầu ll, chuyển vần sang z (liêm)"
   },
   {
-    "word": "chim",
-    "code": "QQz",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "Q + Q",
-    "group": "Lặp đầu QQ",
-    "mnemonic": "Nhịp đôi mở đầu QQ, chuyển vần sang z (chim)"
-  },
-  {
     "word": "giận",
     "code": "j7j",
     "pattern": "sandwich",
@@ -1312,15 +1258,6 @@
     "rep": "j ... j",
     "group": "Kẹp j...j",
     "mnemonic": "Kẹp đối xứng hai đầu j...j ôm vần 7 (giận)"
-  },
-  {
-    "word": "chìm",
-    "code": "QQf",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "Q + Q",
-    "group": "Lặp đầu QQ",
-    "mnemonic": "Nhịp đôi mở đầu QQ, chuyển vần sang f (chìm)"
   },
   {
     "word": "sánh",
@@ -1440,6 +1377,15 @@
     "mnemonic": "Nhịp đôi mở đầu sS, chuyển vần sang Z (son)"
   },
   {
+    "word": "bể",
+    "code": "brr",
+    "pattern": "tail",
+    "patternName": "Lặp Đuôi",
+    "rep": "r + r",
+    "group": "Lặp đuôi rr",
+    "mnemonic": "Khởi đầu bằng b, kết thúc bằng cặp đôi rr (bể)"
+  },
+  {
     "word": "khang",
     "code": "KKz",
     "pattern": "head",
@@ -1476,15 +1422,6 @@
     "mnemonic": "Kẹp đối xứng hai đầu r...r ôm vần u (rủ)"
   },
   {
-    "word": "im",
-    "code": "zQz",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "z ... z",
-    "group": "Kẹp z...z",
-    "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần Q (im)"
-  },
-  {
     "word": "chúa",
     "code": "Cc1",
     "pattern": "head",
@@ -1504,21 +1441,12 @@
   },
   {
     "word": "o",
-    "code": "zoZ",
+    "code": "zoz",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "z ... Z",
-    "group": "Kẹp z...Z",
-    "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần o (o)"
-  },
-  {
-    "word": "quyến",
-    "code": "q11",
-    "pattern": "tail",
-    "patternName": "Lặp Đuôi",
-    "rep": "1 + 1",
-    "group": "Lặp đuôi 11",
-    "mnemonic": "Khởi đầu bằng q, kết thúc bằng cặp đôi 11 (quyến)"
+    "rep": "z ... z",
+    "group": "Kẹp z...z",
+    "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần o (o)"
   },
   {
     "word": "ốm",
@@ -1528,15 +1456,6 @@
     "rep": "z + z",
     "group": "Lặp đầu zz",
     "mnemonic": "Nhịp đôi mở đầu zz, chuyển vần sang s (ốm)"
-  },
-  {
-    "word": "đầm",
-    "code": "dDf",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "d + D",
-    "group": "Lặp đầu dD",
-    "mnemonic": "Nhịp đôi mở đầu dD, chuyển vần sang f (đầm)"
   },
   {
     "word": "dở",
@@ -1566,15 +1485,6 @@
     "mnemonic": "Nhịp đôi mở đầu ss, chuyển vần sang z (sương)"
   },
   {
-    "word": "lộn",
-    "code": "LLj",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "L + L",
-    "group": "Lặp đầu LL",
-    "mnemonic": "Nhịp đôi mở đầu LL, chuyển vần sang j (lộn)"
-  },
-  {
     "word": "ơi",
     "code": "zxZ",
     "pattern": "sandwich",
@@ -1602,22 +1512,13 @@
     "mnemonic": "Khởi đầu bằng d, kết thúc bằng cặp đôi jj (đạm)"
   },
   {
-    "word": "ưa",
-    "code": "zz0",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "z + z",
-    "group": "Lặp đầu zz",
-    "mnemonic": "Nhịp đôi mở đầu zz, chuyển vần sang 0 (ưa)"
-  },
-  {
     "word": "rể",
-    "code": "rEr",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "r ... r",
-    "group": "Kẹp r...r",
-    "mnemonic": "Kẹp đối xứng hai đầu r...r ôm vần E (rể)"
+    "code": "rrr",
+    "pattern": "triple",
+    "patternName": "Tam Hoa (Triple 3x)",
+    "rep": "r × 3",
+    "group": "Tam hoa rrr",
+    "mnemonic": "Ba ký tự đồng nhất r × 3 (rể)"
   },
   {
     "word": "ngón",
@@ -1710,6 +1611,15 @@
     "mnemonic": "Khởi đầu bằng k, kết thúc bằng cặp đôi Jj (kẹo)"
   },
   {
+    "word": "trễ",
+    "code": "Rrx",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "R + r",
+    "group": "Lặp đầu Rr",
+    "mnemonic": "Nhịp đôi mở đầu Rr, chuyển vần sang x (trễ)"
+  },
+  {
     "word": "cong",
     "code": "czZ",
     "pattern": "tail",
@@ -1726,24 +1636,6 @@
     "rep": "m + m",
     "group": "Lặp đầu mm",
     "mnemonic": "Nhịp đôi mở đầu mm, chuyển vần sang 4 (muỗi)"
-  },
-  {
-    "word": "ngưng",
-    "code": "Nnz",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "N + n",
-    "group": "Lặp đầu Nn",
-    "mnemonic": "Nhịp đôi mở đầu Nn, chuyển vần sang z (ngưng)"
-  },
-  {
-    "word": "bấy",
-    "code": "bBs",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "b + B",
-    "group": "Lặp đầu bB",
-    "mnemonic": "Nhịp đôi mở đầu bB, chuyển vần sang s (bấy)"
   },
   {
     "word": "huân",
@@ -1792,21 +1684,21 @@
   },
   {
     "word": "quát",
-    "code": "qqs",
+    "code": "qQs",
     "pattern": "head",
     "patternName": "Lặp Đầu",
-    "rep": "q + q",
-    "group": "Lặp đầu qq",
-    "mnemonic": "Nhịp đôi mở đầu qq, chuyển vần sang s (quát)"
+    "rep": "q + Q",
+    "group": "Lặp đầu qQ",
+    "mnemonic": "Nhịp đôi mở đầu qQ, chuyển vần sang s (quát)"
   },
   {
     "word": "ê",
-    "code": "zEz",
+    "code": "zrz",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
     "rep": "z ... z",
     "group": "Kẹp z...z",
-    "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần E (ê)"
+    "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần r (ê)"
   },
   {
     "word": "sáp",
@@ -1854,15 +1746,6 @@
     "mnemonic": "Khởi đầu bằng m, kết thúc bằng cặp đôi Ss (mác)"
   },
   {
-    "word": "bẫy",
-    "code": "bBx",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "b + B",
-    "group": "Lặp đầu bB",
-    "mnemonic": "Nhịp đôi mở đầu bB, chuyển vần sang x (bẫy)"
-  },
-  {
     "word": "dong",
     "code": "DzZ",
     "pattern": "tail",
@@ -1897,6 +1780,15 @@
     "rep": "g + G",
     "group": "Lặp đầu gG",
     "mnemonic": "Nhịp đôi mở đầu gG, chuyển vần sang z (gai)"
+  },
+  {
+    "word": "ủi",
+    "code": "zz3",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "z + z",
+    "group": "Lặp đầu zz",
+    "mnemonic": "Nhịp đôi mở đầu zz, chuyển vần sang 3 (ủi)"
   },
   {
     "word": "nghiệt",
@@ -1954,12 +1846,12 @@
   },
   {
     "word": "quạt",
-    "code": "qqj",
+    "code": "qQj",
     "pattern": "head",
     "patternName": "Lặp Đầu",
-    "rep": "q + q",
-    "group": "Lặp đầu qq",
-    "mnemonic": "Nhịp đôi mở đầu qq, chuyển vần sang j (quạt)"
+    "rep": "q + Q",
+    "group": "Lặp đầu qQ",
+    "mnemonic": "Nhịp đôi mở đầu qQ, chuyển vần sang j (quạt)"
   },
   {
     "word": "rốt",
@@ -2034,6 +1926,15 @@
     "mnemonic": "Nhịp đôi mở đầu CC, chuyển vần sang s (chích)"
   },
   {
+    "word": "rễ",
+    "code": "rrx",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "r + r",
+    "group": "Lặp đầu rr",
+    "mnemonic": "Nhịp đôi mở đầu rr, chuyển vần sang x (rễ)"
+  },
+  {
     "word": "nhuộm",
     "code": "H55",
     "pattern": "tail",
@@ -2070,15 +1971,6 @@
     "mnemonic": "Nhịp đôi mở đầu Hh, chuyển vần sang X (nhiễu)"
   },
   {
-    "word": "oai",
-    "code": "zrZ",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "z ... Z",
-    "group": "Kẹp z...Z",
-    "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần r (oai)"
-  },
-  {
     "word": "cuộn",
     "code": "cC5",
     "pattern": "head",
@@ -2088,22 +1980,22 @@
     "mnemonic": "Nhịp đôi mở đầu cC, chuyển vần sang 5 (cuộn)"
   },
   {
-    "word": "ưng",
-    "code": "znz",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "z ... z",
-    "group": "Kẹp z...z",
-    "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần n (ưng)"
+    "word": "nể",
+    "code": "nrr",
+    "pattern": "tail",
+    "patternName": "Lặp Đuôi",
+    "rep": "r + r",
+    "group": "Lặp đuôi rr",
+    "mnemonic": "Khởi đầu bằng n, kết thúc bằng cặp đôi rr (nể)"
   },
   {
-    "word": "dầm",
-    "code": "DDf",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "D + D",
-    "group": "Lặp đầu DD",
-    "mnemonic": "Nhịp đôi mở đầu DD, chuyển vần sang f (dầm)"
+    "word": "ưng",
+    "code": "zwZ",
+    "pattern": "sandwich",
+    "patternName": "Kẹp Sandwich",
+    "rep": "z ... Z",
+    "group": "Kẹp z...Z",
+    "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần w (ưng)"
   },
   {
     "word": "phàn",
@@ -2169,15 +2061,6 @@
     "mnemonic": "Khởi đầu bằng n, kết thúc bằng cặp đôi SS (nón)"
   },
   {
-    "word": "đấm",
-    "code": "dDs",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "d + D",
-    "group": "Lặp đầu dD",
-    "mnemonic": "Nhịp đôi mở đầu dD, chuyển vần sang s (đấm)"
-  },
-  {
     "word": "am",
     "code": "zjz",
     "pattern": "sandwich",
@@ -2185,6 +2068,15 @@
     "rep": "z ... z",
     "group": "Kẹp z...z",
     "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần j (am)"
+  },
+  {
+    "word": "ư",
+    "code": "zwz",
+    "pattern": "sandwich",
+    "patternName": "Kẹp Sandwich",
+    "rep": "z ... z",
+    "group": "Kẹp z...z",
+    "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần w (ư)"
   },
   {
     "word": "miệt",
@@ -2232,22 +2124,13 @@
     "mnemonic": "Kẹp đối xứng hai đầu f...f ôm vần a (phà)"
   },
   {
-    "word": "sấy",
-    "code": "sBs",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "s ... s",
-    "group": "Kẹp s...s",
-    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần B (sấy)"
-  },
-  {
     "word": "rổ",
-    "code": "r0R",
+    "code": "rqr",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "r ... R",
-    "group": "Kẹp r...R",
-    "mnemonic": "Kẹp đối xứng hai đầu r...R ôm vần 0 (rổ)"
+    "rep": "r ... r",
+    "group": "Kẹp r...r",
+    "mnemonic": "Kẹp đối xứng hai đầu r...r ôm vần q (rổ)"
   },
   {
     "word": "sắn",
@@ -2296,12 +2179,12 @@
   },
   {
     "word": "trổ",
-    "code": "R0R",
+    "code": "Rqr",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "R ... R",
-    "group": "Kẹp R...R",
-    "mnemonic": "Kẹp đối xứng hai đầu R...R ôm vần 0 (trổ)"
+    "rep": "R ... r",
+    "group": "Kẹp R...r",
+    "mnemonic": "Kẹp đối xứng hai đầu R...r ôm vần q (trổ)"
   },
   {
     "word": "ôi",
@@ -2313,15 +2196,6 @@
     "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần q (ôi)"
   },
   {
-    "word": "đẫm",
-    "code": "dDx",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "d + D",
-    "group": "Lặp đầu dD",
-    "mnemonic": "Nhịp đôi mở đầu dD, chuyển vần sang x (đẫm)"
-  },
-  {
     "word": "giặc",
     "code": "jxj",
     "pattern": "sandwich",
@@ -2331,6 +2205,15 @@
     "mnemonic": "Kẹp đối xứng hai đầu j...j ôm vần x (giặc)"
   },
   {
+    "word": "chát",
+    "code": "QQs",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "Q + Q",
+    "group": "Lặp đầu QQ",
+    "mnemonic": "Nhịp đôi mở đầu QQ, chuyển vần sang s (chát)"
+  },
+  {
     "word": "ia",
     "code": "zvz",
     "pattern": "sandwich",
@@ -2338,6 +2221,15 @@
     "rep": "z ... z",
     "group": "Kẹp z...z",
     "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần v (ia)"
+  },
+  {
+    "word": "trệ",
+    "code": "Rrj",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "R + r",
+    "group": "Lặp đầu Rr",
+    "mnemonic": "Nhịp đôi mở đầu Rr, chuyển vần sang j (trệ)"
   },
   {
     "word": "ơ",
@@ -2430,15 +2322,6 @@
     "mnemonic": "Khởi đầu bằng C, kết thúc bằng cặp đôi zz (chôm)"
   },
   {
-    "word": "bậy",
-    "code": "bBj",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "b + B",
-    "group": "Lặp đầu bB",
-    "mnemonic": "Nhịp đôi mở đầu bB, chuyển vần sang j (bậy)"
-  },
-  {
     "word": "hạm",
     "code": "hjj",
     "pattern": "tail",
@@ -2475,6 +2358,15 @@
     "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần a (sá)"
   },
   {
+    "word": "giấm",
+    "code": "jj1",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "j + j",
+    "group": "Lặp đầu jj",
+    "mnemonic": "Nhịp đôi mở đầu jj, chuyển vần sang 1 (giấm)"
+  },
+  {
     "word": "nhuần",
     "code": "Hh2",
     "pattern": "head",
@@ -2493,13 +2385,13 @@
     "mnemonic": "Nhịp đôi mở đầu vv, chuyển vần sang 5 (vụng)"
   },
   {
-    "word": "dẫm",
-    "code": "DDx",
+    "word": "rê",
+    "code": "rrz",
     "pattern": "head",
     "patternName": "Lặp Đầu",
-    "rep": "D + D",
-    "group": "Lặp đầu DD",
-    "mnemonic": "Nhịp đôi mở đầu DD, chuyển vần sang x (dẫm)"
+    "rep": "r + r",
+    "group": "Lặp đầu rr",
+    "mnemonic": "Nhịp đôi mở đầu rr, chuyển vần sang z (rê)"
   },
   {
     "word": "sạm",
@@ -2601,24 +2493,6 @@
     "mnemonic": "Khởi đầu bằng H, kết thúc bằng cặp đôi Ss (nhác)"
   },
   {
-    "word": "bẩy",
-    "code": "bBr",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "b + B",
-    "group": "Lặp đầu bB",
-    "mnemonic": "Nhịp đôi mở đầu bB, chuyển vần sang r (bẩy)"
-  },
-  {
-    "word": "bầy",
-    "code": "bBf",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "b + B",
-    "group": "Lặp đầu bB",
-    "mnemonic": "Nhịp đôi mở đầu bB, chuyển vần sang f (bầy)"
-  },
-  {
     "word": "nhấp",
     "code": "HHs",
     "pattern": "head",
@@ -2710,12 +2584,12 @@
   },
   {
     "word": "om",
-    "code": "zQZ",
+    "code": "zoZ",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
     "rep": "z ... Z",
     "group": "Kẹp z...Z",
-    "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần Q (om)"
+    "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần o (om)"
   },
   {
     "word": "mút",
@@ -2781,13 +2655,13 @@
     "mnemonic": "Khởi đầu bằng t, kết thúc bằng cặp đôi zZ (tong)"
   },
   {
-    "word": "phèn",
-    "code": "fof",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "f ... f",
-    "group": "Kẹp f...f",
-    "mnemonic": "Kẹp đối xứng hai đầu f...f ôm vần o (phèn)"
+    "word": "giẫm",
+    "code": "jj4",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "j + j",
+    "group": "Lặp đầu jj",
+    "mnemonic": "Nhịp đôi mở đầu jj, chuyển vần sang 4 (giẫm)"
   },
   {
     "word": "hót",
@@ -2835,22 +2709,13 @@
     "mnemonic": "Khởi đầu bằng r, kết thúc bằng cặp đôi zz (rôm)"
   },
   {
-    "word": "oải",
-    "code": "zrR",
-    "pattern": "tail",
-    "patternName": "Lặp Đuôi",
-    "rep": "r + R",
-    "group": "Lặp đuôi rR",
-    "mnemonic": "Khởi đầu bằng z, kết thúc bằng cặp đôi rR (oải)"
-  },
-  {
     "word": "sến",
-    "code": "srs",
+    "code": "srS",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "s ... s",
-    "group": "Kẹp s...s",
-    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần r (sến)"
+    "rep": "s ... S",
+    "group": "Kẹp s...S",
+    "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần r (sến)"
   },
   {
     "word": "chuồn",
@@ -2881,12 +2746,21 @@
   },
   {
     "word": "phìn",
-    "code": "fKF",
+    "code": "fiF",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
     "rep": "f ... F",
     "group": "Kẹp f...F",
-    "mnemonic": "Kẹp đối xứng hai đầu f...F ôm vần K (phìn)"
+    "mnemonic": "Kẹp đối xứng hai đầu f...F ôm vần i (phìn)"
+  },
+  {
+    "word": "un",
+    "code": "zuZ",
+    "pattern": "sandwich",
+    "patternName": "Kẹp Sandwich",
+    "rep": "z ... Z",
+    "group": "Kẹp z...Z",
+    "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần u (un)"
   },
   {
     "word": "lọi",
@@ -2896,24 +2770,6 @@
     "rep": "l + l",
     "group": "Lặp đầu ll",
     "mnemonic": "Nhịp đôi mở đầu ll, chuyển vần sang J (lọi)"
-  },
-  {
-    "word": "soái",
-    "code": "srS",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "s ... S",
-    "group": "Kẹp s...S",
-    "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần r (soái)"
-  },
-  {
-    "word": "rẩy",
-    "code": "rBr",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "r ... r",
-    "group": "Kẹp r...r",
-    "mnemonic": "Kẹp đối xứng hai đầu r...r ôm vần B (rẩy)"
   },
   {
     "word": "moóc",
@@ -2941,15 +2797,6 @@
     "rep": "d + d",
     "group": "Lặp đầu dd",
     "mnemonic": "Nhịp đôi mở đầu dd, chuyển vần sang f (đờ)"
-  },
-  {
-    "word": "dấm",
-    "code": "DDs",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "D + D",
-    "group": "Lặp đầu DD",
-    "mnemonic": "Nhịp đôi mở đầu DD, chuyển vần sang s (dấm)"
   },
   {
     "word": "bướng",
@@ -2997,15 +2844,6 @@
     "mnemonic": "Khởi đầu bằng C, kết thúc bằng cặp đôi zZ (chong)"
   },
   {
-    "word": "sấm",
-    "code": "sDs",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "s ... s",
-    "group": "Kẹp s...s",
-    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần D (sấm)"
-  },
-  {
     "word": "nhổn",
     "code": "Hhr",
     "pattern": "head",
@@ -3051,13 +2889,22 @@
     "mnemonic": "Nhịp đôi mở đầu mm, chuyển vần sang 5 (muội)"
   },
   {
+    "word": "trê",
+    "code": "Rrz",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "R + r",
+    "group": "Lặp đầu Rr",
+    "mnemonic": "Nhịp đôi mở đầu Rr, chuyển vần sang z (trê)"
+  },
+  {
     "word": "trỏ",
-    "code": "RoR",
+    "code": "Ror",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "R ... R",
-    "group": "Kẹp R...R",
-    "mnemonic": "Kẹp đối xứng hai đầu R...R ôm vần o (trỏ)"
+    "rep": "R ... r",
+    "group": "Kẹp R...r",
+    "mnemonic": "Kẹp đối xứng hai đầu R...r ôm vần o (trỏ)"
   },
   {
     "word": "ghẹo",
@@ -3067,6 +2914,15 @@
     "rep": "J + j",
     "group": "Lặp đuôi Jj",
     "mnemonic": "Khởi đầu bằng G, kết thúc bằng cặp đôi Jj (ghẹo)"
+  },
+  {
+    "word": "nít",
+    "code": "nns",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "n + n",
+    "group": "Lặp đầu nn",
+    "mnemonic": "Nhịp đôi mở đầu nn, chuyển vần sang s (nít)"
   },
   {
     "word": "đác",
@@ -3096,13 +2952,13 @@
     "mnemonic": "Nhịp đôi mở đầu TT, chuyển vần sang r (thảy)"
   },
   {
-    "word": "ứa",
-    "code": "zz1",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "z + z",
-    "group": "Lặp đầu zz",
-    "mnemonic": "Nhịp đôi mở đầu zz, chuyển vần sang 1 (ứa)"
+    "word": "phùn",
+    "code": "fuF",
+    "pattern": "sandwich",
+    "patternName": "Kẹp Sandwich",
+    "rep": "f ... F",
+    "group": "Kẹp f...F",
+    "mnemonic": "Kẹp đối xứng hai đầu f...F ôm vần u (phùn)"
   },
   {
     "word": "phàng",
@@ -3157,15 +3013,6 @@
     "rep": "s ... S",
     "group": "Kẹp s...S",
     "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần x (sới)"
-  },
-  {
-    "word": "en",
-    "code": "zoz",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "z ... z",
-    "group": "Kẹp z...z",
-    "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần o (en)"
   },
   {
     "word": "phiệt",
@@ -3294,15 +3141,6 @@
     "mnemonic": "Khởi đầu bằng v, kết thúc bằng cặp đôi SS (vón)"
   },
   {
-    "word": "đuốc",
-    "code": "dD1",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "d + D",
-    "group": "Lặp đầu dD",
-    "mnemonic": "Nhịp đôi mở đầu dD, chuyển vần sang 1 (đuốc)"
-  },
-  {
     "word": "phờ",
     "code": "fdf",
     "pattern": "sandwich",
@@ -3322,12 +3160,12 @@
   },
   {
     "word": "rên",
-    "code": "rrz",
+    "code": "rrZ",
     "pattern": "head",
     "patternName": "Lặp Đầu",
     "rep": "r + r",
     "group": "Lặp đầu rr",
-    "mnemonic": "Nhịp đôi mở đầu rr, chuyển vần sang z (rên)"
+    "mnemonic": "Nhịp đôi mở đầu rr, chuyển vần sang Z (rên)"
   },
   {
     "word": "rởm",
@@ -3357,6 +3195,15 @@
     "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần 2 (sắng)"
   },
   {
+    "word": "lể",
+    "code": "lrr",
+    "pattern": "tail",
+    "patternName": "Lặp Đuôi",
+    "rep": "r + r",
+    "group": "Lặp đuôi rr",
+    "mnemonic": "Khởi đầu bằng l, kết thúc bằng cặp đôi rr (lể)"
+  },
+  {
     "word": "quẹo",
     "code": "qJj",
     "pattern": "tail",
@@ -3364,24 +3211,6 @@
     "rep": "J + j",
     "group": "Lặp đuôi Jj",
     "mnemonic": "Khởi đầu bằng q, kết thúc bằng cặp đôi Jj (quẹo)"
-  },
-  {
-    "word": "yểu",
-    "code": "z33",
-    "pattern": "tail",
-    "patternName": "Lặp Đuôi",
-    "rep": "3 + 3",
-    "group": "Lặp đuôi 33",
-    "mnemonic": "Khởi đầu bằng z, kết thúc bằng cặp đôi 33 (yểu)"
-  },
-  {
-    "word": "khoải",
-    "code": "KrR",
-    "pattern": "tail",
-    "patternName": "Lặp Đuôi",
-    "rep": "r + R",
-    "group": "Lặp đuôi rR",
-    "mnemonic": "Khởi đầu bằng K, kết thúc bằng cặp đôi rR (khoải)"
   },
   {
     "word": "sám",
@@ -3438,6 +3267,15 @@
     "mnemonic": "Nhịp đôi mở đầu Hh, chuyển vần sang s (nhốn)"
   },
   {
+    "word": "tể",
+    "code": "trr",
+    "pattern": "tail",
+    "patternName": "Lặp Đuôi",
+    "rep": "r + r",
+    "group": "Lặp đuôi rr",
+    "mnemonic": "Khởi đầu bằng t, kết thúc bằng cặp đôi rr (tể)"
+  },
+  {
     "word": "pao",
     "code": "ppz",
     "pattern": "head",
@@ -3447,15 +3285,6 @@
     "mnemonic": "Nhịp đôi mở đầu pp, chuyển vần sang z (pao)"
   },
   {
-    "word": "nựng",
-    "code": "nnj",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "n + n",
-    "group": "Lặp đầu nn",
-    "mnemonic": "Nhịp đôi mở đầu nn, chuyển vần sang j (nựng)"
-  },
-  {
     "word": "oăm",
     "code": "zVZ",
     "pattern": "sandwich",
@@ -3463,6 +3292,15 @@
     "rep": "z ... Z",
     "group": "Kẹp z...Z",
     "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần V (oăm)"
+  },
+  {
+    "word": "trề",
+    "code": "Rrf",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "R + r",
+    "group": "Lặp đầu Rr",
+    "mnemonic": "Nhịp đôi mở đầu Rr, chuyển vần sang f (trề)"
   },
   {
     "word": "liềm",
@@ -3517,15 +3355,6 @@
     "rep": "s × 3",
     "group": "Tam hoa sss",
     "mnemonic": "Ba ký tự đồng nhất s × 3 (soán)"
-  },
-  {
-    "word": "dậm",
-    "code": "DDj",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "D + D",
-    "group": "Lặp đầu DD",
-    "mnemonic": "Nhịp đôi mở đầu DD, chuyển vần sang j (dậm)"
   },
   {
     "word": "giập",
@@ -3619,12 +3448,12 @@
   },
   {
     "word": "phò",
-    "code": "foF",
+    "code": "fof",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "f ... F",
-    "group": "Kẹp f...F",
-    "mnemonic": "Kẹp đối xứng hai đầu f...F ôm vần o (phò)"
+    "rep": "f ... f",
+    "group": "Kẹp f...f",
+    "mnemonic": "Kẹp đối xứng hai đầu f...f ôm vần o (phò)"
   },
   {
     "word": "ang",
@@ -3646,12 +3475,12 @@
   },
   {
     "word": "giậm",
-    "code": "jDj",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "j ... j",
-    "group": "Kẹp j...j",
-    "mnemonic": "Kẹp đối xứng hai đầu j...j ôm vần D (giậm)"
+    "code": "jj5",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "j + j",
+    "group": "Lặp đầu jj",
+    "mnemonic": "Nhịp đôi mở đầu jj, chuyển vần sang 5 (giậm)"
   },
   {
     "word": "ruồng",
@@ -3706,15 +3535,6 @@
     "rep": "Z + Z",
     "group": "Lặp đuôi ZZ",
     "mnemonic": "Khởi đầu bằng s, kết thúc bằng cặp đôi ZZ (seng)"
-  },
-  {
-    "word": "phầm",
-    "code": "fDf",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "f ... f",
-    "group": "Kẹp f...f",
-    "mnemonic": "Kẹp đối xứng hai đầu f...f ôm vần D (phầm)"
   },
   {
     "word": "loẹt",
@@ -3835,12 +3655,12 @@
   },
   {
     "word": "sém",
-    "code": "sYs",
+    "code": "seS",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "s ... s",
-    "group": "Kẹp s...s",
-    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần Y (sém)"
+    "rep": "s ... S",
+    "group": "Kẹp s...S",
+    "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần e (sém)"
   },
   {
     "word": "sác",
@@ -3870,6 +3690,15 @@
     "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần G (sái)"
   },
   {
+    "word": "nịt",
+    "code": "nnj",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "n + n",
+    "group": "Lặp đầu nn",
+    "mnemonic": "Nhịp đôi mở đầu nn, chuyển vần sang j (nịt)"
+  },
+  {
     "word": "ngoèo",
     "code": "NFF",
     "pattern": "tail",
@@ -3879,15 +3708,6 @@
     "mnemonic": "Khởi đầu bằng N, kết thúc bằng cặp đôi FF (ngoèo)"
   },
   {
-    "word": "kin",
-    "code": "kKZ",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "k + K",
-    "group": "Lặp đầu kK",
-    "mnemonic": "Nhịp đôi mở đầu kK, chuyển vần sang Z (kin)"
-  },
-  {
     "word": "xắc",
     "code": "xxs",
     "pattern": "head",
@@ -3895,6 +3715,15 @@
     "rep": "x + x",
     "group": "Lặp đầu xx",
     "mnemonic": "Nhịp đôi mở đầu xx, chuyển vần sang s (xắc)"
+  },
+  {
+    "word": "rủn",
+    "code": "ruR",
+    "pattern": "sandwich",
+    "patternName": "Kẹp Sandwich",
+    "rep": "r ... R",
+    "group": "Kẹp r...R",
+    "mnemonic": "Kẹp đối xứng hai đầu r...R ôm vần u (rủn)"
   },
   {
     "word": "páo",
@@ -3925,12 +3754,12 @@
   },
   {
     "word": "rền",
-    "code": "rrf",
+    "code": "rrF",
     "pattern": "head",
     "patternName": "Lặp Đầu",
     "rep": "r + r",
     "group": "Lặp đầu rr",
-    "mnemonic": "Nhịp đôi mở đầu rr, chuyển vần sang f (rền)"
+    "mnemonic": "Nhịp đôi mở đầu rr, chuyển vần sang F (rền)"
   },
   {
     "word": "sượng",
@@ -3940,15 +3769,6 @@
     "rep": "s + s",
     "group": "Lặp đầu ss",
     "mnemonic": "Nhịp đôi mở đầu ss, chuyển vần sang j (sượng)"
-  },
-  {
-    "word": "trẩy",
-    "code": "RBr",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "R ... r",
-    "group": "Kẹp R...r",
-    "mnemonic": "Kẹp đối xứng hai đầu R...r ôm vần B (trẩy)"
   },
   {
     "word": "rón",
@@ -4023,22 +3843,13 @@
     "mnemonic": "Ba ký tự đồng nhất s × 3 (són)"
   },
   {
-    "word": "đít",
-    "code": "dDS",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "d + D",
-    "group": "Lặp đầu dD",
-    "mnemonic": "Nhịp đôi mở đầu dD, chuyển vần sang S (đít)"
-  },
-  {
     "word": "sển",
-    "code": "srr",
+    "code": "srR",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
-    "rep": "r + r",
-    "group": "Lặp đuôi rr",
-    "mnemonic": "Khởi đầu bằng s, kết thúc bằng cặp đôi rr (sển)"
+    "rep": "r + R",
+    "group": "Lặp đuôi rR",
+    "mnemonic": "Khởi đầu bằng s, kết thúc bằng cặp đôi rR (sển)"
   },
   {
     "word": "bươm",
@@ -4078,12 +3889,12 @@
   },
   {
     "word": "sín",
-    "code": "sKS",
+    "code": "siS",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
     "rep": "s ... S",
     "group": "Kẹp s...S",
-    "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần K (sín)"
+    "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần i (sín)"
   },
   {
     "word": "buy",
@@ -4131,15 +3942,6 @@
     "mnemonic": "Nhịp đôi mở đầu hh, chuyển vần sang F (hiều)"
   },
   {
-    "word": "chím",
-    "code": "QQs",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "Q + Q",
-    "group": "Lặp đầu QQ",
-    "mnemonic": "Nhịp đôi mở đầu QQ, chuyển vần sang s (chím)"
-  },
-  {
     "word": "yêm",
     "code": "z00",
     "pattern": "tail",
@@ -4168,12 +3970,21 @@
   },
   {
     "word": "hển",
-    "code": "hrr",
+    "code": "hrR",
+    "pattern": "tail",
+    "patternName": "Lặp Đuôi",
+    "rep": "r + R",
+    "group": "Lặp đuôi rR",
+    "mnemonic": "Khởi đầu bằng h, kết thúc bằng cặp đôi rR (hển)"
+  },
+  {
+    "word": "vể",
+    "code": "vrr",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
     "rep": "r + r",
     "group": "Lặp đuôi rr",
-    "mnemonic": "Khởi đầu bằng h, kết thúc bằng cặp đôi rr (hển)"
+    "mnemonic": "Khởi đầu bằng v, kết thúc bằng cặp đôi rr (vể)"
   },
   {
     "word": "sốp",
@@ -4212,15 +4023,6 @@
     "mnemonic": "Kẹp đối xứng hai đầu r...r ôm vần J (rẻo)"
   },
   {
-    "word": "ngoải",
-    "code": "NrR",
-    "pattern": "tail",
-    "patternName": "Lặp Đuôi",
-    "rep": "r + R",
-    "group": "Lặp đuôi rR",
-    "mnemonic": "Khởi đầu bằng N, kết thúc bằng cặp đôi rR (ngoải)"
-  },
-  {
     "word": "muôi",
     "code": "mm0",
     "pattern": "head",
@@ -4230,13 +4032,22 @@
     "mnemonic": "Nhịp đôi mở đầu mm, chuyển vần sang 0 (muôi)"
   },
   {
+    "word": "ui",
+    "code": "zz0",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "z + z",
+    "group": "Lặp đầu zz",
+    "mnemonic": "Nhịp đôi mở đầu zz, chuyển vần sang 0 (ui)"
+  },
+  {
     "word": "phừng",
-    "code": "fnf",
+    "code": "fwF",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "f ... f",
-    "group": "Kẹp f...f",
-    "mnemonic": "Kẹp đối xứng hai đầu f...f ôm vần n (phừng)"
+    "rep": "f ... F",
+    "group": "Kẹp f...F",
+    "mnemonic": "Kẹp đối xứng hai đầu f...F ôm vần w (phừng)"
   },
   {
     "word": "hý",
@@ -4246,6 +4057,15 @@
     "rep": "h + H",
     "group": "Lặp đầu hH",
     "mnemonic": "Nhịp đôi mở đầu hH, chuyển vần sang 1 (hý)"
+  },
+  {
+    "word": "dể",
+    "code": "Drr",
+    "pattern": "tail",
+    "patternName": "Lặp Đuôi",
+    "rep": "r + r",
+    "group": "Lặp đuôi rr",
+    "mnemonic": "Khởi đầu bằng D, kết thúc bằng cặp đôi rr (dể)"
   },
   {
     "word": "giạ",
@@ -4285,12 +4105,12 @@
   },
   {
     "word": "sít",
-    "code": "sDS",
+    "code": "sns",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "s ... S",
-    "group": "Kẹp s...S",
-    "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần D (sít)"
+    "rep": "s ... s",
+    "group": "Kẹp s...s",
+    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần n (sít)"
   },
   {
     "word": "xởi",
@@ -4300,6 +4120,15 @@
     "rep": "x + x",
     "group": "Lặp đầu xx",
     "mnemonic": "Nhịp đôi mở đầu xx, chuyển vần sang R (xởi)"
+  },
+  {
+    "word": "rề",
+    "code": "rrf",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "r + r",
+    "group": "Lặp đầu rr",
+    "mnemonic": "Nhịp đôi mở đầu rr, chuyển vần sang f (rề)"
   },
   {
     "word": "khiu",
@@ -4374,22 +4203,13 @@
     "mnemonic": "Khởi đầu bằng t, kết thúc bằng cặp đôi JJ (toẹt)"
   },
   {
-    "word": "lổn",
-    "code": "LLr",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "L + L",
-    "group": "Lặp đầu LL",
-    "mnemonic": "Nhịp đôi mở đầu LL, chuyển vần sang r (lổn)"
-  },
-  {
     "word": "đển",
-    "code": "drr",
+    "code": "drR",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
-    "rep": "r + r",
-    "group": "Lặp đuôi rr",
-    "mnemonic": "Khởi đầu bằng d, kết thúc bằng cặp đôi rr (đển)"
+    "rep": "r + R",
+    "group": "Lặp đuôi rR",
+    "mnemonic": "Khởi đầu bằng d, kết thúc bằng cặp đôi rR (đển)"
   },
   {
     "word": "nhiểu",
@@ -4572,22 +4392,13 @@
     "mnemonic": "Khởi đầu bằng H, kết thúc bằng cặp đôi zZ (nhong)"
   },
   {
-    "word": "hoải",
-    "code": "hrR",
-    "pattern": "tail",
-    "patternName": "Lặp Đuôi",
-    "rep": "r + R",
-    "group": "Lặp đuôi rR",
-    "mnemonic": "Khởi đầu bằng h, kết thúc bằng cặp đôi rR (hoải)"
-  },
-  {
     "word": "só",
-    "code": "soS",
+    "code": "sos",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "s ... S",
-    "group": "Kẹp s...S",
-    "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần o (só)"
+    "rep": "s ... s",
+    "group": "Kẹp s...s",
+    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần o (só)"
   },
   {
     "word": "rạm",
@@ -4734,6 +4545,15 @@
     "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần b (oe)"
   },
   {
+    "word": "giâm",
+    "code": "jj0",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "j + j",
+    "group": "Lặp đầu jj",
+    "mnemonic": "Nhịp đôi mở đầu jj, chuyển vần sang 0 (giâm)"
+  },
+  {
     "word": "bôm",
     "code": "bzz",
     "pattern": "tail",
@@ -4752,6 +4572,15 @@
     "mnemonic": "Khởi đầu bằng t, kết thúc bằng cặp đôi ZZ (teng)"
   },
   {
+    "word": "rế",
+    "code": "rrs",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "r + r",
+    "group": "Lặp đầu rr",
+    "mnemonic": "Nhịp đôi mở đầu rr, chuyển vần sang s (rế)"
+  },
+  {
     "word": "cúa",
     "code": "cc1",
     "pattern": "head",
@@ -4761,22 +4590,13 @@
     "mnemonic": "Nhịp đôi mở đầu cc, chuyển vần sang 1 (cúa)"
   },
   {
-    "word": "khun",
-    "code": "KK0",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "K + K",
-    "group": "Lặp đầu KK",
-    "mnemonic": "Nhịp đôi mở đầu KK, chuyển vần sang 0 (khun)"
-  },
-  {
     "word": "ên",
-    "code": "zrz",
+    "code": "zrZ",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "z ... z",
-    "group": "Kẹp z...z",
-    "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần r (ên)"
+    "rep": "z ... Z",
+    "group": "Kẹp z...Z",
+    "mnemonic": "Kẹp đối xứng hai đầu z...Z ôm vần r (ên)"
   },
   {
     "word": "xoẹt",
@@ -4822,6 +4642,15 @@
     "rep": "j ... j",
     "group": "Kẹp j...j",
     "mnemonic": "Kẹp đối xứng hai đầu j...j ôm vần 5 (giậu)"
+  },
+  {
+    "word": "sún",
+    "code": "suS",
+    "pattern": "sandwich",
+    "patternName": "Kẹp Sandwich",
+    "rep": "s ... S",
+    "group": "Kẹp s...S",
+    "mnemonic": "Kẹp đối xứng hai đầu s...S ôm vần u (sún)"
   },
   {
     "word": "õng",
@@ -4870,21 +4699,12 @@
   },
   {
     "word": "rỏ",
-    "code": "roR",
+    "code": "ror",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "r ... R",
-    "group": "Kẹp r...R",
-    "mnemonic": "Kẹp đối xứng hai đầu r...R ôm vần o (rỏ)"
-  },
-  {
-    "word": "khin",
-    "code": "KKZ",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "K + K",
-    "group": "Lặp đầu KK",
-    "mnemonic": "Nhịp đôi mở đầu KK, chuyển vần sang Z (khin)"
+    "rep": "r ... r",
+    "group": "Kẹp r...r",
+    "mnemonic": "Kẹp đối xứng hai đầu r...r ôm vần o (rỏ)"
   },
   {
     "word": "sếnh",
@@ -4942,12 +4762,12 @@
   },
   {
     "word": "gịn",
-    "code": "jKJ",
+    "code": "jiJ",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
     "rep": "j ... J",
     "group": "Kẹp j...J",
-    "mnemonic": "Kẹp đối xứng hai đầu j...J ôm vần K (gịn)"
+    "mnemonic": "Kẹp đối xứng hai đầu j...J ôm vần i (gịn)"
   },
   {
     "word": "côm",
@@ -4957,15 +4777,6 @@
     "rep": "z + z",
     "group": "Lặp đuôi zz",
     "mnemonic": "Khởi đầu bằng c, kết thúc bằng cặp đôi zz (côm)"
-  },
-  {
-    "word": "ây",
-    "code": "zBz",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "z ... z",
-    "group": "Kẹp z...z",
-    "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần B (ây)"
   },
   {
     "word": "nác",
@@ -5047,15 +4858,6 @@
     "rep": "S + S",
     "group": "Lặp đuôi SS",
     "mnemonic": "Khởi đầu bằng z, kết thúc bằng cặp đôi SS (ón)"
-  },
-  {
-    "word": "lôn",
-    "code": "LLz",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "L + L",
-    "group": "Lặp đầu LL",
-    "mnemonic": "Nhịp đôi mở đầu LL, chuyển vần sang z (lôn)"
   },
   {
     "word": "thồng",
@@ -5166,15 +4968,6 @@
     "mnemonic": "Nhịp đôi mở đầu fF, chuyển vần sang s (phéc)"
   },
   {
-    "word": "khìn",
-    "code": "KKF",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "K + K",
-    "group": "Lặp đầu KK",
-    "mnemonic": "Nhịp đôi mở đầu KK, chuyển vần sang F (khìn)"
-  },
-  {
     "word": "khạng",
     "code": "KKj",
     "pattern": "head",
@@ -5200,6 +4993,15 @@
     "rep": "C + C",
     "group": "Lặp đầu CC",
     "mnemonic": "Nhịp đôi mở đầu CC, chuyển vần sang Z (choa)"
+  },
+  {
+    "word": "úi",
+    "code": "zz1",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "z + z",
+    "group": "Lặp đầu zz",
+    "mnemonic": "Nhịp đôi mở đầu zz, chuyển vần sang 1 (úi)"
   },
   {
     "word": "choá",
@@ -5256,15 +5058,6 @@
     "mnemonic": "Khởi đầu bằng h, kết thúc bằng cặp đôi SS (hón)"
   },
   {
-    "word": "giúi",
-    "code": "jj1",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "j + j",
-    "group": "Lặp đầu jj",
-    "mnemonic": "Nhịp đôi mở đầu jj, chuyển vần sang 1 (giúi)"
-  },
-  {
     "word": "trỉ",
     "code": "Rir",
     "pattern": "sandwich",
@@ -5272,6 +5065,15 @@
     "rep": "R ... r",
     "group": "Kẹp R...r",
     "mnemonic": "Kẹp đối xứng hai đầu R...r ôm vần i (trỉ)"
+  },
+  {
+    "word": "hể",
+    "code": "hrr",
+    "pattern": "tail",
+    "patternName": "Lặp Đuôi",
+    "rep": "r + r",
+    "group": "Lặp đuôi rr",
+    "mnemonic": "Khởi đầu bằng h, kết thúc bằng cặp đôi rr (hể)"
   },
   {
     "word": "chón",
@@ -5301,15 +5103,6 @@
     "mnemonic": "Kẹp đối xứng hai đầu f...F ôm vần x (phời)"
   },
   {
-    "word": "nưng",
-    "code": "nnz",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "n + n",
-    "group": "Lặp đầu nn",
-    "mnemonic": "Nhịp đôi mở đầu nn, chuyển vần sang z (nưng)"
-  },
-  {
     "word": "mịnh",
     "code": "mmJ",
     "pattern": "head",
@@ -5329,12 +5122,12 @@
   },
   {
     "word": "bển",
-    "code": "brr",
+    "code": "brR",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
-    "rep": "r + r",
-    "group": "Lặp đuôi rr",
-    "mnemonic": "Khởi đầu bằng b, kết thúc bằng cặp đôi rr (bển)"
+    "rep": "r + R",
+    "group": "Lặp đuôi rR",
+    "mnemonic": "Khởi đầu bằng b, kết thúc bằng cặp đôi rR (bển)"
   },
   {
     "word": "veng",
@@ -5356,7 +5149,7 @@
   },
   {
     "word": "trển",
-    "code": "Rrr",
+    "code": "RrR",
     "pattern": "triple",
     "patternName": "Tam Hoa (Triple 3x)",
     "rep": "R × 3",
@@ -5365,12 +5158,12 @@
   },
   {
     "word": "rửng",
-    "code": "rnr",
+    "code": "rwR",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "r ... r",
-    "group": "Kẹp r...r",
-    "mnemonic": "Kẹp đối xứng hai đầu r...r ôm vần n (rửng)"
+    "rep": "r ... R",
+    "group": "Kẹp r...R",
+    "mnemonic": "Kẹp đối xứng hai đầu r...R ôm vần w (rửng)"
   },
   {
     "word": "phè",
@@ -5443,15 +5236,6 @@
     "rep": "f + f",
     "group": "Lặp đầu ff",
     "mnemonic": "Nhịp đôi mở đầu ff, chuyển vần sang J (phộc)"
-  },
-  {
-    "word": "lốn",
-    "code": "LLs",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "L + L",
-    "group": "Lặp đầu LL",
-    "mnemonic": "Nhịp đôi mở đầu LL, chuyển vần sang s (lốn)"
   },
   {
     "word": "họt",
@@ -5553,15 +5337,6 @@
     "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần T (ay)"
   },
   {
-    "word": "sím",
-    "code": "sQs",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "s ... s",
-    "group": "Kẹp s...s",
-    "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần Q (sím)"
-  },
-  {
     "word": "pét",
     "code": "pPs",
     "pattern": "head",
@@ -5590,21 +5365,12 @@
   },
   {
     "word": "giạt",
-    "code": "jqj",
+    "code": "jQj",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
     "rep": "j ... j",
     "group": "Kẹp j...j",
-    "mnemonic": "Kẹp đối xứng hai đầu j...j ôm vần q (giạt)"
-  },
-  {
-    "word": "dít",
-    "code": "DDS",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "D + D",
-    "group": "Lặp đầu DD",
-    "mnemonic": "Nhịp đôi mở đầu DD, chuyển vần sang S (dít)"
+    "mnemonic": "Kẹp đối xứng hai đầu j...j ôm vần Q (giạt)"
   },
   {
     "word": "coa",
@@ -5733,15 +5499,6 @@
     "mnemonic": "Khởi đầu bằng r, kết thúc bằng cặp đôi jJ (riệt)"
   },
   {
-    "word": "nững",
-    "code": "nnx",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "n + n",
-    "group": "Lặp đầu nn",
-    "mnemonic": "Nhịp đôi mở đầu nn, chuyển vần sang x (nững)"
-  },
-  {
     "word": "huận",
     "code": "hh5",
     "pattern": "head",
@@ -5761,21 +5518,21 @@
   },
   {
     "word": "xững",
-    "code": "xnx",
+    "code": "xwX",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "x ... x",
-    "group": "Kẹp x...x",
-    "mnemonic": "Kẹp đối xứng hai đầu x...x ôm vần n (xững)"
+    "rep": "x ... X",
+    "group": "Kẹp x...X",
+    "mnemonic": "Kẹp đối xứng hai đầu x...X ôm vần w (xững)"
   },
   {
     "word": "trến",
-    "code": "Rrs",
+    "code": "RrS",
     "pattern": "head",
     "patternName": "Lặp Đầu",
     "rep": "R + r",
     "group": "Lặp đầu Rr",
-    "mnemonic": "Nhịp đôi mở đầu Rr, chuyển vần sang s (trến)"
+    "mnemonic": "Nhịp đôi mở đầu Rr, chuyển vần sang S (trến)"
   },
   {
     "word": "oem",
@@ -5842,21 +5599,21 @@
   },
   {
     "word": "rến",
-    "code": "rrs",
+    "code": "rrS",
     "pattern": "head",
     "patternName": "Lặp Đầu",
     "rep": "r + r",
     "group": "Lặp đầu rr",
-    "mnemonic": "Nhịp đôi mở đầu rr, chuyển vần sang s (rến)"
+    "mnemonic": "Nhịp đôi mở đầu rr, chuyển vần sang S (rến)"
   },
   {
     "word": "phồ",
-    "code": "f0F",
+    "code": "fqf",
     "pattern": "sandwich",
     "patternName": "Kẹp Sandwich",
-    "rep": "f ... F",
-    "group": "Kẹp f...F",
-    "mnemonic": "Kẹp đối xứng hai đầu f...F ôm vần 0 (phồ)"
+    "rep": "f ... f",
+    "group": "Kẹp f...f",
+    "mnemonic": "Kẹp đối xứng hai đầu f...f ôm vần q (phồ)"
   },
   {
     "word": "khôm",
@@ -5878,21 +5635,12 @@
   },
   {
     "word": "nghển",
-    "code": "Wrr",
+    "code": "WrR",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
-    "rep": "r + r",
-    "group": "Lặp đuôi rr",
-    "mnemonic": "Khởi đầu bằng W, kết thúc bằng cặp đôi rr (nghển)"
-  },
-  {
-    "word": "đẩm",
-    "code": "dDr",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "d + D",
-    "group": "Lặp đầu dD",
-    "mnemonic": "Nhịp đôi mở đầu dD, chuyển vần sang r (đẩm)"
+    "rep": "r + R",
+    "group": "Lặp đuôi rR",
+    "mnemonic": "Khởi đầu bằng W, kết thúc bằng cặp đôi rR (nghển)"
   },
   {
     "word": "choã",
@@ -5914,12 +5662,12 @@
   },
   {
     "word": "trể",
-    "code": "REr",
-    "pattern": "sandwich",
-    "patternName": "Kẹp Sandwich",
-    "rep": "R ... r",
-    "group": "Kẹp R...r",
-    "mnemonic": "Kẹp đối xứng hai đầu R...r ôm vần E (trể)"
+    "code": "Rrr",
+    "pattern": "triple",
+    "patternName": "Tam Hoa (Triple 3x)",
+    "rep": "R × 3",
+    "group": "Tam hoa RRR",
+    "mnemonic": "Ba ký tự đồng nhất R × 3 (trể)"
   },
   {
     "word": "soàn",
@@ -5958,13 +5706,22 @@
     "mnemonic": "Kẹp đối xứng hai đầu f...F ôm vần g (phiềng)"
   },
   {
-    "word": "nừng",
-    "code": "nnf",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "n + n",
-    "group": "Lặp đầu nn",
-    "mnemonic": "Nhịp đôi mở đầu nn, chuyển vần sang f (nừng)"
+    "word": "nhể",
+    "code": "Hrr",
+    "pattern": "tail",
+    "patternName": "Lặp Đuôi",
+    "rep": "r + r",
+    "group": "Lặp đuôi rr",
+    "mnemonic": "Khởi đầu bằng H, kết thúc bằng cặp đôi rr (nhể)"
+  },
+  {
+    "word": "nghể",
+    "code": "Wrr",
+    "pattern": "tail",
+    "patternName": "Lặp Đuôi",
+    "rep": "r + r",
+    "group": "Lặp đuôi rr",
+    "mnemonic": "Khởi đầu bằng W, kết thúc bằng cặp đôi rr (nghể)"
   },
   {
     "word": "mụt",
@@ -6021,6 +5778,15 @@
     "mnemonic": "Nhịp đôi mở đầu Cc, chuyển vần sang 3 (chủa)"
   },
   {
+    "word": "chể",
+    "code": "Crr",
+    "pattern": "tail",
+    "patternName": "Lặp Đuôi",
+    "rep": "r + r",
+    "group": "Lặp đuôi rr",
+    "mnemonic": "Khởi đầu bằng C, kết thúc bằng cặp đôi rr (chể)"
+  },
+  {
     "word": "âng",
     "code": "z8z",
     "pattern": "sandwich",
@@ -6028,15 +5794,6 @@
     "rep": "z ... z",
     "group": "Kẹp z...z",
     "mnemonic": "Kẹp đối xứng hai đầu z...z ôm vần 8 (âng)"
-  },
-  {
-    "word": "ừa",
-    "code": "zz2",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "z + z",
-    "group": "Lặp đầu zz",
-    "mnemonic": "Nhịp đôi mở đầu zz, chuyển vần sang 2 (ừa)"
   },
   {
     "word": "triểu",
@@ -6093,6 +5850,15 @@
     "mnemonic": "Kẹp đối xứng hai đầu s...s ôm vần c (sết)"
   },
   {
+    "word": "quố",
+    "code": "qqs",
+    "pattern": "head",
+    "patternName": "Lặp Đầu",
+    "rep": "q + q",
+    "group": "Lặp đầu qq",
+    "mnemonic": "Nhịp đôi mở đầu qq, chuyển vần sang s (quố)"
+  },
+  {
     "word": "phươn",
     "code": "ff0",
     "pattern": "head",
@@ -6130,12 +5896,12 @@
   },
   {
     "word": "ển",
-    "code": "zrr",
+    "code": "zrR",
     "pattern": "tail",
     "patternName": "Lặp Đuôi",
-    "rep": "r + r",
-    "group": "Lặp đuôi rr",
-    "mnemonic": "Khởi đầu bằng z, kết thúc bằng cặp đôi rr (ển)"
+    "rep": "r + R",
+    "group": "Lặp đuôi rR",
+    "mnemonic": "Khởi đầu bằng z, kết thúc bằng cặp đôi rR (ển)"
   },
   {
     "word": "đớ",
@@ -6147,15 +5913,6 @@
     "mnemonic": "Nhịp đôi mở đầu dd, chuyển vần sang s (đớ)"
   },
   {
-    "word": "lồn",
-    "code": "LLf",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "L + L",
-    "group": "Lặp đầu LL",
-    "mnemonic": "Nhịp đôi mở đầu LL, chuyển vần sang f (lồn)"
-  },
-  {
     "word": "chịch",
     "code": "CCj",
     "pattern": "head",
@@ -6163,14 +5920,5 @@
     "rep": "C + C",
     "group": "Lặp đầu CC",
     "mnemonic": "Nhịp đôi mở đầu CC, chuyển vần sang j (chịch)"
-  },
-  {
-    "word": "nứng",
-    "code": "nns",
-    "pattern": "head",
-    "patternName": "Lặp Đầu",
-    "rep": "n + n",
-    "group": "Lặp đầu nn",
-    "mnemonic": "Nhịp đôi mở đầu nn, chuyển vần sang s (nứng)"
   }
 ]

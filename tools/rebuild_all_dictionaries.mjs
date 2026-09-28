@@ -44,7 +44,7 @@ const RULE_STORIES = {
   'v': 'Cùng san CHIA cho KỊP tới VÙNG quê, bắt con ẾCH dưới hố sâu hoắm rồi hái chùm QUÝT!',
   'w': 'Gõ chữ QU tốc ký liền tay, lập chiến công THÀNH công vang dội sáng HOẰNG soi dòng sông NƯỚC!',
   'x': 'Từ miền BẮC vào chung sống VỚI nhau đừng ngập NGỪM, suốt ĐÊM thoăn THOẮT dạy chim YỂNG hót!',
-  'y': 'Nhận mệnh LỆNH chạy máy GIÊ thóc tại vùng ĐẮK Lắk, gửi EM nụ cười hoem OEM cùng người HUYNH đài!',
+  'y': 'Nhận mệnh LỆNH chạy máy GIÊ thóc tại vùng ĐẮK Lắk, gửi trọn tình YÊU cùng nụ cười hoem OEM cho người HUYNH đài!',
   'z': 'Mới HÔM nào ở TRONG nhà mà CHƯA nấu nướng, nay đỏ lửa góc BẾP cầm chiếc XẺNG xúc đống than QUN!',
   '0': 'Trải qua bao NĂM tháng CÔ gái mặc áo YẾM, chăm lo việc ĂN uống sống HƠN người trong bình YÊN! (Nhánh 0)',
   '1': 'Trải qua bao NĂM tháng CÔ gái mặc áo YẾM, chăm lo việc ĂN uống sống HƠN người trong bình YÊN! (Nhánh 1)',

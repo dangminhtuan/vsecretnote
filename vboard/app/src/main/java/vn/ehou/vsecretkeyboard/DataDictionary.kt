@@ -19,7 +19,7 @@ object DataDictionary {
     val RHYMES_BASE = arrayOf(
         "êt", "ơ", "ach", "ai", "am", "an", "ang", "ôn", "ia", "-", "ut", "ich", "ê", "ương", "it", "ươm", "iêm", "at", "ac", "ôm",
         "ưc", "âp", "-", "anh", "ao", "ap", "ô", "au", "ay", "ă", "ăc", "ăm", "ăn", "ăng", "ăp", "ăt", "âu", "âc", "ân", "âng",
-        "ât", "â", "yêu", "uâng", "ec", "-", "o", "eo", "ep", "et", "êu", "êch", "êm", "ênh", "êp", "a", "e", "i", "u", "ư"
+        "ât", "â", "-", "uâng", "ec", "yêu", "o", "eo", "ep", "et", "êu", "êch", "êm", "ênh", "êp", "a", "e", "i", "u", "ư"
     )
 
     // RHYMES_EXTRA_1: 60 vần Bảng 2 (i/o/ô/ơ + lấp đầy phím thường)

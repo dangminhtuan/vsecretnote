@@ -289,18 +289,18 @@ export const MNEMONIC_DATA = [
     lowerIdx: 53,
     upperIdx: 45,
     lowerPhrase: 'lệnh ➔ giê ➔ đắk',
-    upperPhrase: 'em ➔ oem ➔ huynh',
+    upperPhrase: 'yêu ➔ oem ➔ huynh',
     lowerRhymes: ["ênh","iê","ăk"],
-    upperRhymes: ["em","oem","uynh"],
+    upperRhymes: ["yêu","oem","uynh"],
     samples: [
       { word: 'lệnh', code: 'lyj' },
       { word: 'giê', code: 'jyZ' },
       { word: 'đắk', code: 'dy1' },
-      { word: 'em', code: 'zYz' },
+      { word: 'yêu', code: 'zYz' },
       { word: 'oem', code: 'zYZ' },
       { word: 'huynh', code: 'hY0' }
     ],
-    story: 'Nhận mệnh <em>lệnh</em> chạy máy <em>giê</em> thóc tại vùng <em>Đắk</em> Lắk, gửi <em>em</em> nụ cười hoem <em>oem</em> cùng người <em>huynh</em> đài!'
+    story: 'Nhận mệnh <em>lệnh</em> chạy máy <em>giê</em> thóc tại vùng <em>Đắk</em> Lắk, gửi trọn tình <em>yêu</em> cùng nụ cười hoem <em>oem</em> cho người <em>huynh</em> đài!'
   },
   {
     category: 'alpha',

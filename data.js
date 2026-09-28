@@ -12,12 +12,12 @@ export const CONSONANTS_EXTRA = [
   'p', 'ph', 'qu', 't', 'th', 'tr', 'x', null
 ];
 
-// === VẦN (171 VẦN CHUẨN VCOMP BASE60 - 0 TRÙNG LẶP - QUY TỤ TOÀN BỘ NGUYÊN ÂM ĐƠN VỀ B1 BÀN PHÍM CHỮ) ===
+// === VẦN (169 VẦN CHUẨN VCOMP BASE60 13² - 0 TRÙNG LẶP - QUY TỤ TOÀN BỘ NGUYÊN ÂM ĐƠN VỀ B1 BÀN PHÍM CHỮ) ===
 // RHYMES_BASE: 60 vần Bảng 1 (Toàn bộ 11 nguyên âm đơn a, ă, â, e, ê, i, o, ô, ơ, u, ư quy tụ về B1 bàn phím chữ)
 export const RHYMES_BASE = [
   'êt', 'ơ', 'ach', 'ai', 'am', 'an', 'ang', 'ôn', 'ia', '-', 'ut', 'ich', 'ê', 'ương', 'it', 'ươm', 'iêm', 'at', 'ac', 'ôm',
   'ưc', 'âp', '-', 'anh', 'ao', 'ap', 'ô', 'au', 'ay', 'ă', 'ăc', 'ăm', 'ăn', 'ăng', 'ăp', 'ăt', 'âu', 'âc', 'ân', 'âng',
-  'ât', 'â', 'yêu', 'uâng', 'ec', '-', 'o', 'eo', 'ep', 'et', 'êu', 'êch', 'êm', 'ênh', 'êp', 'a', 'e', 'i', 'u', 'ư'
+  'ât', 'â', '-', 'uâng', 'ec', 'yêu', 'o', 'eo', 'ep', 'et', 'êu', 'êch', 'êm', 'ênh', 'êp', 'a', 'e', 'i', 'u', 'ư'
 ];
 
 // RHYMES_EXTRA_1: 60 vần Bảng 2 (i/o/ô/ơ + lấp đầy phím thường)

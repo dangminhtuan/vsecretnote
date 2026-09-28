@@ -3144,8 +3144,8 @@
     import { RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2, BASE60_MAPPING } from './data.js';
  
     // === BẢNG VẦN LÕI BASE60 (HỖ TRỢ TÙY BIẾN HOÁN ĐỔI TẦNG B1/B2/B3) ===
-    // Mặc định lõi VCOMP Base60 đã đồng bộ 100% với bàn phím (36/36 Khớp, 0 trùng lặp, đủ 171 vần)
-    const DEFAULT_CUSTOM_RHYMES_BASE = ["êt","ơ","ach","ai","am","an","ang","ôn","ia","-","ut","ich","ê","ương","it","ươm","iêm","at","ac","ôm","ưc","âp","-","anh","ao","ap","ô","au","ay","ă","ăc","ăm","ăn","ăng","ăp","ăt","âu","âc","ân","âng","ât","â","yêu","uâng","ec","-","o","eo","ep","et","êu","êch","êm","ênh","êp","a","e","i","u","ư"];
+    // Mặc định lõi VCOMP Base60 đã đồng bộ 100% với bàn phím (36/36 Khớp, 0 trùng lặp, đủ 169 vần 13²)
+    const DEFAULT_CUSTOM_RHYMES_BASE = ["êt","ơ","ach","ai","am","an","ang","ôn","ia","-","ut","ich","ê","ương","it","ươm","iêm","at","ac","ôm","ưc","âp","-","anh","ao","ap","ô","au","ay","ă","ăc","ăm","ăn","ăng","ăp","ăt","âu","âc","ân","âng","ât","â","-","uâng","ec","yêu","o","eo","ep","et","êu","êch","êm","ênh","êp","a","e","i","u","ư"];
     const DEFAULT_CUSTOM_RHYMES_EXTRA_1 = ["iêc","iên","iêng","iêp","iêt","iu","-","iêu","ip","-","inh","oa","ên","oan","oc","oe","oi","-","on","ong","op","ot","oăn","oăng","ơm","ôc","ôi","ông","ôp","ôt","ơi","-","ơn","ơp","ơt","oen","oac","oach","oam","oang","oanh","oap","uêch","oay","oeo","oem","om","oet","ooc","oong","oăc","oăm","oăt","iê","eng","yêt","em","in","un","ưng"];
     const DEFAULT_CUSTOM_RHYMES_EXTRA_2 = ["ua","uât","uc","uê","âm","um","-","uân","ung","-","uôi","uôn","uông","uôt","up","uy","uyên","uyêt","ynh","ui","ưi","y","ưn","ươc","ươi","ươn","ươp","ươt","ưt","ưu","ưm","yêm","yê","oat","-","ươu","uôm","ươ","oai","oă","ây","uênh","-","uych","uyn","uynh","uyp","uyt","uyu","yn","yên","yt","yêng","uya","uơ","uây","en","im","uôc","ưa"];
 
@@ -3155,12 +3155,12 @@
 
     try {
       const dedupVer = localStorage.getItem('vcomp_base60_dedup_ver');
-      if (dedupVer !== 'v8_vcomp_q_o_r_e') {
-        // Khôi phục 100% bảng chuẩn VCOMP Base60 Toàn Bộ Nguyên Âm Đơn ở B1 Bàn Phím Chữ (0 trùng lặp, đủ 171 vần)
+      if (dedupVer !== 'v9_vcomp_yeu_to_y') {
+        // Khôi phục 100% bảng chuẩn VCOMP Base60 Toàn Bộ Nguyên Âm Đơn ở B1 Bàn Phím Chữ (0 trùng lặp, đủ 169 vần 13²)
         localStorage.setItem('vcomp_custom_rhymes_base', JSON.stringify(DEFAULT_CUSTOM_RHYMES_BASE));
         localStorage.setItem('vcomp_custom_rhymes_extra_1', JSON.stringify(DEFAULT_CUSTOM_RHYMES_EXTRA_1));
         localStorage.setItem('vcomp_custom_rhymes_extra_2', JSON.stringify(DEFAULT_CUSTOM_RHYMES_EXTRA_2));
-        localStorage.setItem('vcomp_base60_dedup_ver', 'v8_vcomp_q_o_r_e');
+        localStorage.setItem('vcomp_base60_dedup_ver', 'v9_vcomp_yeu_to_y');
       } else {
         const sBase = localStorage.getItem('vcomp_custom_rhymes_base');
         const sEx1 = localStorage.getItem('vcomp_custom_rhymes_extra_1');

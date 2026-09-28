@@ -7,7 +7,7 @@ import java.util.Locale
  * RhymeTutorEngine: Động cơ "Vừa tìm vừa gõ & Học thuộc vị trí vần trên phím vi mạch"
  *
  * Chức năng:
- * 1. Ánh xạ toàn bộ 171+ vần tiếng Việt chuẩn vào các phím vi mạch trên bàn phím (đồng bộ 100% với Base60 & ChipKeyConfig).
+ * 1. Ánh xạ toàn bộ 169 vần tiếng Việt chuẩn (13²) vào các phím vi mạch trên bàn phím (đồng bộ 100% với Base60 & ChipKeyConfig).
  * 2. Phân tích từ đang gõ theo thời gian thực: Tách phụ âm đầu và tiền tố vần (rhymePrefix).
  * 3. Tìm kiếm và chỉ điểm các phím chứa vần khớp để bật đèn viền sáng trực tiếp trên bàn phím.
  * 4. Hỗ trợ quẹt 5 hướng (hoặc chạm thanh Bằng) để hoàn tất từ và thay thế sạch sẽ phần vần đang gõ dở.
@@ -69,7 +69,7 @@ object RhymeTutorEngine {
             }
         }
 
-        // 2. Nạp từ Base60 Mapping (toàn bộ 171 vần B1, B2, B3)
+        // 2. Nạp từ Base60 Mapping (toàn bộ 169 vần B1, B2, B3 - 13²)
         // Ký tự thường (lowChar) và ký tự hoa (upChar) đều thuộc cùng 1 phím vật lý
         for (i in DataDictionary.BASE60_MAPPING.indices) {
             val baseChar = DataDictionary.BASE60_MAPPING[i]

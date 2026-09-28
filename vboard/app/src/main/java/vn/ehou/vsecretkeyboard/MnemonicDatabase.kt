@@ -134,10 +134,10 @@ object MnemonicDatabase {
         // 15. Y / y
         MnemonicItem(
             category = "alpha", lower = 'y', upper = 'Y', lowerIdx = 53, upperIdx = 45,
-            lowerPhrase = "lệnh ➔ giê ➔ đắk", upperPhrase = "em ➔ oem ➔ huynh",
-            lowerRhymes = listOf("ênh", "iê", "ăk"), upperRhymes = listOf("em", "oem", "uynh"),
-            samples = listOf(MnemonicSample("lệnh", "lyj"), MnemonicSample("giê", "jyZ"), MnemonicSample("đắk", "dy1"), MnemonicSample("em", "zYz"), MnemonicSample("oem", "zYZ"), MnemonicSample("huynh", "hY0")),
-            story = "Nhận mệnh lệnh chạy máy giê thóc tại vùng Đắk Lắk, gửi em nụ cười hoem oem cùng người huynh đài!"
+            lowerPhrase = "lệnh ➔ giê ➔ đắk", upperPhrase = "yêu ➔ oem ➔ huynh",
+            lowerRhymes = listOf("ênh", "iê", "ăk"), upperRhymes = listOf("yêu", "oem", "uynh"),
+            samples = listOf(MnemonicSample("lệnh", "lyj"), MnemonicSample("giê", "jyZ"), MnemonicSample("đắk", "dy1"), MnemonicSample("yêu", "zYz"), MnemonicSample("oem", "zYZ"), MnemonicSample("huynh", "hY0")),
+            story = "Nhận mệnh lệnh chạy máy giê thóc tại vùng Đắk Lắk, gửi trọn tình yêu cùng nụ cười hoem oem cho người huynh đài!"
         ),
         // 16. W / w
         MnemonicItem(

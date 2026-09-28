@@ -24,7 +24,7 @@ u	21 [U/u] Gió mùa THU lời ru RU êm đềm võng ĐU đưa, tấm gương �
 v	22 [V/v] Cùng san CHIA cho KỊP tới VÙNG quê, bắt con ẾCH dưới hố sâu hoắm rồi hái chùm QUÝT!		
 w	23 [W/w] Gõ chữ QU tốc ký liền tay, lập chiến công THÀNH công vang dội sáng HOẰNG soi dòng sông NƯỚC!		
 x	24 [X/x] Từ miền BẮC vào chung sống VỚI nhau đừng ngập NGỪM, suốt ĐÊM thoăn THOẮT dạy chim YỂNG hót!		
-y	25 [Y/y] Nhận mệnh LỆNH chạy máy GIÊ thóc tại vùng ĐẮK Lắk, gửi EM nụ cười hoem OEM cùng người HUYNH đài!		
+y	25 [Y/y] Nhận mệnh LỆNH chạy máy GIÊ thóc tại vùng ĐẮK Lắk, gửi trọn tình YÊU cùng nụ cười hoem OEM cho người HUYNH đài!		
 z	26 [Z/z] Mới HÔM nào ở TRONG nhà mà CHƯA nấu nướng, nay đỏ lửa góc BẾP cầm chiếc XẺNG xúc đống than QUN!		
 0	27 [Số 0] Trải qua bao NĂM tháng CÔ gái mặc áo YẾM, chăm lo việc ĂN uống sống HƠN người trong bình YÊN! (Nhánh 0)		
 1	28 [Số 1] Trải qua bao NĂM tháng CÔ gái mặc áo YẾM, chăm lo việc ĂN uống sống HƠN người trong bình YÊN! (Nhánh 1)		

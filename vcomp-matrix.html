@@ -1707,7 +1707,7 @@
         <div class="brand-icon">⚡</div>
         <div class="brand-text">
           <h1>VCOMP Matrix & Rhyme Audit Dashboard</h1>
-          <p>Sắp Xếp Chuẩn A-Z (26 Chữ Cái + 10 Số) • Đếm Liên Tục #1..#171 • Soi Chi Tiết Vần Cụt & Slot Trống</p>
+          <p>Sắp Xếp Chuẩn A-Z (26 Chữ Cái + 10 Số) • Đếm Liên Tục #1..#169 (13²) • Soi Chi Tiết Vần Cụt & Slot Trống</p>
         </div>
       </div>
       <div class="header-nav">
@@ -1720,8 +1720,8 @@
     <div class="stats-grid">
       <div class="stat-card green">
         <span class="stat-label">Tổng Vần Khả Dụng</span>
-        <span class="stat-value" id="statTotalRhymes">169 / 171</span>
-        <span class="stat-sub">Đã tống khứ rác ăk, đếm liên tục</span>
+        <span class="stat-value" id="statTotalRhymes">169 / 169</span>
+        <span class="stat-sub">Ma trận vuông 13², đếm liên tục</span>
       </div>
       <div class="stat-card">
         <span class="stat-label">Trùng Lặp (Duplicates)</span>
@@ -1958,7 +1958,7 @@
 
     <!-- Footer -->
     <footer>
-      VCOMP Matrix Dashboard • 171 Vần Tiếng Việt Độc Nhất • Đếm Liên Tục #1..#171 • Sắp Xếp A-Z Khoa Học
+      VCOMP Matrix Dashboard • 169 Vần Tiếng Việt Độc Nhất (13²) • Đếm Liên Tục #1..#169 • Sắp Xếp A-Z Khoa Học
     </footer>
 
   </div>
@@ -1992,7 +1992,7 @@
       });
     });
 
-    document.getElementById('statTotalRhymes').textContent = `${totalNonEmpty} / 171`;
+    document.getElementById('statTotalRhymes').textContent = `${totalNonEmpty} / 169`;
 
     // 2. Định nghĩa danh sách phím theo 2 chế độ: A-Z và Keyboard Layout
     const KEYS_AZ = [
@@ -2079,7 +2079,7 @@
       { key: 'm', shift: 'M', type: 'alpha' }
     ];
 
-    // Tạo bản đồ số thứ tự liên tục 1..171 theo thứ tự bảng A-Z
+    // Tạo bản đồ số thứ tự liên tục 1..169 theo thứ tự bảng A-Z
     const rhymeOrderMap = {};
     let runningOrder = 1;
 
