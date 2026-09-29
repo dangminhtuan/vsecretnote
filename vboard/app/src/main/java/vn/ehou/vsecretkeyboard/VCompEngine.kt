@@ -101,18 +101,31 @@ object VCompEngine {
     }
 
     private fun applyTone(rhyme: String, tone: Int): String {
-        if (tone == 0 || rhyme.isEmpty()) return rhyme
+        if (tone == 0 || rhyme.isEmpty() || tone !in 0..5) return rhyme
         val marks = arrayOf("", "\u0301", "\u0300", "\u0309", "\u0303", "\u0323")
         val m = marks[tone]
 
+        if (rhyme.startsWith("ưa")) {
+            return Normalizer.normalize("ư$m" + rhyme.substring(1), Normalizer.Form.NFC)
+        }
+        if (rhyme.startsWith("ươ")) {
+            return Normalizer.normalize("ươ$m" + rhyme.substring(2), Normalizer.Form.NFC)
+        }
+        if (rhyme.startsWith("uô")) {
+            return Normalizer.normalize("uô$m" + rhyme.substring(2), Normalizer.Form.NFC)
+        }
+        if (rhyme.startsWith("iê")) {
+            return Normalizer.normalize("iê$m" + rhyme.substring(2), Normalizer.Form.NFC)
+        }
+
         for (v in VOWEL_PRIORITY) {
-            if (rhyme.contains(v)) {
-                val idx = rhyme.indexOf(v)
+            val idx = rhyme.indexOf(v)
+            if (idx != -1) {
                 val combined = rhyme.substring(0, idx + 1) + m + rhyme.substring(idx + 1)
                 return Normalizer.normalize(combined, Normalizer.Form.NFC)
             }
         }
-        return rhyme + m
+        return Normalizer.normalize(rhyme + m, Normalizer.Form.NFC)
     }
 
     fun encodeWord(wordInput: String, bypassShortcut: Boolean = false): String {

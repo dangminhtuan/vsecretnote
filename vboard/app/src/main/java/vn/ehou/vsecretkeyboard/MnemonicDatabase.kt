@@ -230,10 +230,10 @@ object MnemonicDatabase {
         // 27. 3 / 2
         MnemonicItem(
             category = "number", lower = '2', upper = '3', lowerIdx = 33, upperIdx = 34,
-            lowerPhrase = "tăng ➔ hợp ➔ quyết", upperPhrase = "gặp ➔ bớt ➔ yêu",
-            lowerRhymes = listOf("ăng", "ơp", "yêt"), upperRhymes = listOf("ăp", "ơt", "yêu"),
-            samples = listOf(MnemonicSample("tăng", "t2z"), MnemonicSample("hợp", "h2J"), MnemonicSample("quyết", "q21"), MnemonicSample("gặp", "g3j"), MnemonicSample("bớt", "b3S"), MnemonicSample("yêu", "z30")),
-            story = "Năng suất gia tăng kết hợp lòng kiên quyết, lúc hội gặp hãy bớt lo âu để trọn vẹn tình yêu!"
+            lowerPhrase = "tăng ➔ hợp ➔ quyết", upperPhrase = "gặp ➔ bớt",
+            lowerRhymes = listOf("ăng", "ơp", "yêt"), upperRhymes = listOf("ăp", "ơt", ""),
+            samples = listOf(MnemonicSample("tăng", "t2z"), MnemonicSample("hợp", "h2J"), MnemonicSample("quyết", "q21"), MnemonicSample("gặp", "g3j"), MnemonicSample("bớt", "b3S")),
+            story = "Năng suất gia tăng kết hợp lòng kiên quyết, lúc hội gặp hãy bớt lo âu!"
         ),
         // 28. 5 / 4
         MnemonicItem(

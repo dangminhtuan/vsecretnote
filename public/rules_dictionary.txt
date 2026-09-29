@@ -28,8 +28,8 @@ y	25 [Y/y] Nhận mệnh LỆNH chạy máy GIÊ thóc tại vùng ĐẮK Lắk,
 z	26 [Z/z] Mới HÔM nào ở TRONG nhà mà CHƯA nấu nướng, nay đỏ lửa góc BẾP cầm chiếc XẺNG xúc đống than QUN!		
 0	27 [Số 0] Trải qua bao NĂM tháng CÔ gái mặc áo YẾM, chăm lo việc ĂN uống sống HƠN người trong bình YÊN! (Nhánh 0)		
 1	28 [Số 1] Trải qua bao NĂM tháng CÔ gái mặc áo YẾM, chăm lo việc ĂN uống sống HƠN người trong bình YÊN! (Nhánh 1)		
-2	29 [Số 2] Năng suất gia TĂNG kết HỢP lòng kiên QUYẾT, lúc hội GẶP hãy BỚT lo âu để trọn vẹn tình YÊU! (Nhánh 2)		
-3	30 [Số 3] Năng suất gia TĂNG kết HỢP lòng kiên QUYẾT, lúc hội GẶP hãy BỚT lo âu để trọn vẹn tình YÊU! (Nhánh 3)		
+2	29 [Số 2] Năng suất gia TĂNG kết HỢP lòng kiên QUYẾT, lúc hội GẶP hãy BỚT lo âu! (Nhánh 2)		
+3	30 [Số 3] Năng suất gia TĂNG kết HỢP lòng kiên QUYẾT, lúc hội GẶP hãy BỚT lo âu! (Nhánh 3)		
 4	31 [Số 4] Nước mắt ướt MẶT làm HOEN chén ly RƯỢU, bước qua chiếc CẦU vai KHOÁC túi giong cánh BUỒM ra khơi! (Nhánh 4)		
 5	32 [Số 5] Nước mắt ướt MẶT làm HOEN chén ly RƯỢU, bước qua chiếc CẦU vai KHOÁC túi giong cánh BUỒM ra khơi! (Nhánh 5)		
 6	33 [Số 6] Tỉnh cơn mê GIẤC hoàn thành kế HOẠCH nhớ THUỞ xưa, bao lớp tiền NHÂN há miệng NGOẠM mồi lòng bâng KHUÂNG! (Nhánh 6)		

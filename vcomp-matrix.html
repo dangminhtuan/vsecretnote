@@ -1437,8 +1437,72 @@
       transform: scale(0.94);
     }
 
+    .nav-top-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    .btn-exit-sentence {
+      background: rgba(239, 68, 68, 0.18);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 9.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      white-space: nowrap;
+      transition: all 0.15s;
+      height: 20px;
+    }
+    .btn-exit-sentence:hover {
+      background: rgba(239, 68, 68, 0.35);
+      color: #fff;
+      border-color: #ef4444;
+      box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+    }
+    .btn-exit-sentence:active {
+      transform: scale(0.93);
+    }
+
+    .mag-sentence-badge {
+      background: linear-gradient(90deg, rgba(234, 179, 8, 0.25), rgba(0, 229, 255, 0.25));
+      border: 1px solid var(--neon-amber);
+      color: #fef08a;
+      border-radius: 3px;
+      padding: 0 5px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+      display: inline-block;
+    }
+
+    .square-cell.sentence-active {
+      border: 2px solid var(--neon-cyan) !important;
+      box-shadow: 0 0 14px rgba(0, 229, 255, 0.9), inset 0 0 8px rgba(0, 229, 255, 0.6) !important;
+      z-index: 8;
+      animation: sentencePulse 1.2s infinite alternate ease-in-out;
+    }
+
+    .square-cell.sentence-member {
+      border: 1.5px solid var(--neon-amber) !important;
+      box-shadow: 0 0 8px rgba(255, 184, 0, 0.5), inset 0 0 4px rgba(255, 184, 0, 0.3) !important;
+      opacity: 1 !important;
+    }
+
+    @keyframes sentencePulse {
+      0% { transform: scale(1); box-shadow: 0 0 8px rgba(0, 229, 255, 0.7); }
+      100% { transform: scale(1.05); box-shadow: 0 0 16px rgba(0, 229, 255, 1); }
+    }
+
     .nav-top-spacer {
-      width: 46px;
+      width: 10px;
       flex-shrink: 0;
     }
 
@@ -1634,8 +1698,9 @@
     }
 
     .mag-floor-title {
-      font-weight: 600;
-      color: #cbd5e1;
+      font-weight: 800;
+      color: #c084fc;
+      font-size: 11px;
     }
 
     .mag-ex-row {
@@ -1745,7 +1810,7 @@
       <div class="proposal-title">⚡ Đã Hoàn Tất Quy Tụ Toàn Bộ 9 Nguyên Âm Đơn Độc Lập về Phím Thường B1:</div>
       <ol class="proposal-list">
         <li><b>100% 9 Nguyên âm đơn ở Phím Thường (B1):</b> <code>a, e, i, o, u, ư</code>, <code>ơ</code> (phím d), <b><code>ô</code> (phím q)</b>, <b><code>ê</code> (phím r ngay cạnh e)</b>. Gõ 100% từ nguyên âm đơn không cần Shift!</li>
-        <li><b>Đồng nhất hệ dấu thanh Telex cho mọi nguyên âm đơn:</b> Ngang=<code>z</code>, Sắc=<code>s</code>, Huyền=<code>f</code>, Hỏi=<code>r</code>, Ngã=<code>x</code>, Nặng=<code>j</code> (vd: cô=<code>cqz</code>, mê=<code>mrz</code>, như=<code>nhwf</code>, tử=<code>twr</code>/<code>tw3</code>).</li>
+        <li><b>Đồng nhất hệ dấu thanh Telex cho mọi nguyên âm đơn:</b> Ngang=<code>z</code>, Sắc=<code>s</code>, Huyền=<code>f</code>, Hỏi=<code>r</code>, Ngã=<code>x</code>, Nặng=<code>j</code> (vd: cô=<code>cqz</code>, mê=<code>mrz</code>, như=<code>nhwf</code>, từ=<code>twf</code>).</li>
         <li><b>Giải phóng hoàn toàn hàng phím số (0-9):</b> Số 0 và 3 không còn giữ nguyên âm đơn; toàn bộ từ vựng cơ bản được gõ 100% trên hàng chữ cái.</li>
         <li><b>Lấp đầy 100% 26 phím thường (a-z):</b> Không còn một slot trống nào; các vần cực thông dụng (<code>uôc, uya, âm, in, im, un, em, en, om, ưa, ưng</code>) nằm gọn gàng trên phím thường.</li>
       </ol>
@@ -1760,14 +1825,13 @@
       <div class="sandbox-form">
         <!-- Encoder Box -->
         <div class="box-field">
-          <label>Nhập từ tiếng Việt (vd: tử, như, tiến, tiên, biển, việt, nam):</label>
+          <label>Nhập từ hoặc câu tiếng Việt (vd: anh yêu em, hôn tình nhân):</label>
           <div class="box-input-group">
-            <input type="text" id="liveInputViet" class="box-input" placeholder="Gõ từ... (vd: tử)" value="tử">
+            <input type="text" id="liveInputViet" class="box-input" placeholder="Gõ từ hoặc câu... (vd: anh yêu em)" value="anh yêu em">
           </div>
           <div class="box-result-wrapper">
             <div class="box-result" id="liveResultViet">
-              <span class="result-badge badge-b60">tw3</span>
-              <span class="badge-details">[t] + [w: vần 'ư' (B3)] + [3: hỏi]</span>
+              <span class="result-badge badge-b60" style="white-space: normal; line-height: 1.5; font-size: 13px;">zWz zYz zeZ</span>
             </div>
             <button id="btnLocateViet" class="btn-locate" title="Cuộn màn hình đến dòng phím trên bảng ma trận">📍 Soi trên bảng</button>
           </div>
@@ -1775,14 +1839,13 @@
 
         <!-- Decoder Box -->
         <div class="box-field">
-          <label>Nhập mã Base60 3 ký tự (vd: tw3, Hw0, tU1, tdZ, tdS):</label>
+          <label>Nhập mã Base60 (vd: hhz tmF H7z, zWz zYz zeZ):</label>
           <div class="box-input-group">
-            <input type="text" id="liveInputBase60" class="box-input" placeholder="Mã Base60... (vd: tw3)" value="tw3">
+            <input type="text" id="liveInputBase60" class="box-input" placeholder="Mã Base60... (vd: hhz tmF H7z)" value="hhz tmF H7z">
           </div>
           <div class="box-result-wrapper">
             <div class="box-result" id="liveResultBase60">
-              <span class="result-badge badge-b60" style="background: rgba(0, 229, 255, 0.15); border-color: var(--neon-cyan); color: var(--neon-cyan);">tử</span>
-              <span class="badge-details">Thời gian: 035933</span>
+              <span class="result-badge badge-b60" style="background: rgba(0, 229, 255, 0.15); border-color: var(--neon-cyan); color: var(--neon-cyan); white-space: normal; line-height: 1.5; font-size: 13px;">hôn tình nhân</span>
             </div>
             <button id="btnLocateBase60" class="btn-locate" title="Cuộn màn hình đến dòng phím trên bảng ma trận">📍 Soi trên bảng</button>
           </div>
@@ -1810,7 +1873,10 @@
             <button id="btnNavUp" class="nav-arrow-btn nav-btn-up" aria-label="Lên hàng trên" title="Lên hàng trên (▲ / W / Phím Mũi Tên Lên)">
               <span class="nav-arrow-glyph">▲</span>
             </button>
-            <span class="nav-top-spacer"></span>
+            <div class="nav-top-actions">
+              <button id="btnExitSentence" class="btn-exit-sentence" style="display: none;" title="Thoát duyệt câu, quay lại duyệt tự do 169 vần">✕ Câu</button>
+              <span class="nav-top-spacer"></span>
+            </div>
           </div>
 
           <div class="magnifier-mid-row">
@@ -1830,8 +1896,9 @@
               </div>
               <div class="mag-col-right">
                 <div class="mag-meta-row">
+                  <span id="magSentenceBadge" class="mag-sentence-badge" style="display: none;">[1/3] "anh"</span>
                   <span id="magStt" class="mag-stt">#95</span>
-                  <span id="magFloorTitle" class="mag-floor-title">B1 (Telex)</span>
+                  <span id="magFloorTitle" class="mag-floor-title" style="display: none;"></span>
                   <span id="magAnomalyTag" class="anomaly-badge" style="display: none;">⚠️ Vần cụt</span>
                 </div>
                 <div class="mag-ex-row">
@@ -2144,8 +2211,11 @@
           if (!hasEmptyLower) return;
         }
 
-        // Search query
-        if (query) {
+        // Search query & Sentence Mode in Table
+        if (activeSentenceMode && activeSentenceWords.length > 0) {
+          const hasMember = activeSentenceWords.some(w => allRhymesOnKey.some(r => r && r.toLowerCase() === w.rhyme));
+          if (!hasMember) return;
+        } else if (query) {
           const matchKey = item.key.toLowerCase().includes(query) || item.shift.toLowerCase().includes(query);
           const matchRhyme = allRhymesOnKey.some(r => r.toLowerCase().includes(query));
           if (!matchKey && !matchRhyme) return;
@@ -2153,6 +2223,12 @@
 
         const tr = document.createElement('tr');
         tr.id = `row_key_${item.key}`;
+
+        if (activeSentenceMode && activeSentenceWords.length > 0) {
+          const curWord = activeSentenceWords[activeSentenceIndex];
+          const hasCurrent = allRhymesOnKey.some(r => r && r.toLowerCase() === curWord.rhyme);
+          if (hasCurrent) tr.classList.add('highlighted');
+        }
 
         // Cột phím gốc
         tr.innerHTML = `
@@ -2548,18 +2624,24 @@
         if (currentFilter === 'anomalies' && !isAnomaly) isFilterVisible = false;
         if (currentFilter === 'empty_slots') isFilterVisible = false;
 
-        // 6. Tìm kiếm văn bản
-        if (query) {
+        // 6. Tìm kiếm văn bản (chỉ áp dụng khi không duyệt theo câu)
+        if (query && !activeSentenceMode) {
           const matchRhyme = item.lower.includes(query);
           const matchKey = item.key.toLowerCase().includes(query);
           if (!matchRhyme && !matchKey) isFilterVisible = false;
         }
 
-        // 7. Lọc thông minh khi click vào ô (Smart Rhyme Cross-Search)
+        // 7. Lọc thông minh khi click vào ô hoặc duyệt theo câu (Sentence Mode)
         let isSmartTarget = false;
         let isSmartRelated = false;
+        let isSentenceMember = false;
+        let isSentenceActive = false;
 
-        if (activeSmartSearchRhyme) {
+        if (activeSentenceMode && activeSentenceWords.length > 0) {
+          const curWord = activeSentenceWords[activeSentenceIndex];
+          isSentenceActive = (curWord && item.lower === curWord.rhyme);
+          isSentenceMember = activeSentenceWords.some(w => w.rhyme === item.lower);
+        } else if (activeSmartSearchRhyme) {
           if (item.lower === activeSmartSearchRhyme) {
             isSmartTarget = true;
           } else {
@@ -2568,7 +2650,9 @@
           }
         }
 
-        if (isFilterVisible && (!activeSmartSearchRhyme || isSmartTarget || isSmartRelated)) {
+        if (activeSentenceMode) {
+          if (isSentenceMember) visibleCount++;
+        } else if (isFilterVisible && (!activeSmartSearchRhyme || isSmartTarget || isSmartRelated)) {
           visibleCount++;
         }
 
@@ -2581,7 +2665,15 @@
         if (isSameRow) cellClass += ' crosshair-row-active';
         if (isSameCol) cellClass += ' crosshair-col-active';
 
-        if (!isFilterVisible) {
+        if (activeSentenceMode && activeSentenceWords.length > 0) {
+          if (isSentenceActive) {
+            cellClass += ' sentence-active smart-target-active crosshair-row-active crosshair-col-active';
+          } else if (isSentenceMember) {
+            cellClass += ' sentence-member smart-related-active';
+          } else {
+            cellClass += ' dimmed';
+          }
+        } else if (!isFilterVisible) {
           cellClass += ' filter-hidden';
         } else if (activeSmartSearchRhyme) {
           if (isSmartTarget) {
@@ -2730,23 +2822,142 @@
     // === CỤM PHÓNG TO & ĐIỀU HƯỚNG 4 CHIỀU (MAGNIFIER & 4-WAY D-PAD) ===
     let currentNavIndex = -1; // 0..168
 
-    function updateMagnifier(item, index) {
-      if (!item) return;
-      currentNavIndex = typeof index === 'number' ? index : currentNavIndex;
+    // === CHẾ ĐỘ DUYỆT VẦN THEO CÂU (SENTENCE RHYME SCOPE NAVIGATION) ===
+    let activeSentenceMode = false;
+    let activeSentenceWords = [];
+    let activeSentenceIndex = 0;
+    let activeSentenceSource = '';
+    let currentSentenceViet = [];
+    let currentSentenceBase60 = [];
+
+    function buildSentenceItemsFromText(text) {
+      if (!text || !text.trim()) return [];
+      const words = text.trim().split(/\s+/).filter(Boolean);
+      const allList = getAllRhymesList();
+      const items = [];
+      for (const rawW of words) {
+        const w = rawW.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '').toLowerCase();
+        if (!w) continue;
+        let b60 = '';
+        let time = '';
+        try {
+          time = encodeWord(w);
+          b60 = timeToBase60(time);
+        } catch (_) {}
+        const ph = extractPhonetics(w);
+        const cleanRhyme = (ph.rhyme || '').toLowerCase();
+        const found = allList.find(x => x.lower === cleanRhyme);
+        items.push({
+          word: rawW,
+          rhyme: cleanRhyme,
+          consonant: ph.consonant,
+          tone: ph.tone,
+          b60: b60,
+          time: time,
+          matrixItem: found || null
+        });
+      }
+      return items;
+    }
+
+    function activateSentenceNavigation(sentenceItems, sourceLabel) {
+      if (!sentenceItems || sentenceItems.length === 0) return;
+      const validItems = sentenceItems.filter(s => s.rhyme);
+      if (validItems.length === 0) return;
+
+      activeSentenceMode = true;
+      activeSentenceSource = sourceLabel;
+      activeSentenceWords = validItems;
+      activeSentenceIndex = 0;
 
       const wrapper = document.getElementById('magnifierNavWrapper');
-      const box = document.getElementById('magnifierNavBox');
       if (wrapper) wrapper.style.display = 'flex';
-      if (box) box.style.display = 'flex';
 
+      const exitBtn = document.getElementById('btnExitSentence');
+      if (exitBtn) exitBtn.style.display = 'inline-flex';
+
+      focusSentenceItem(0);
+    }
+
+    function exitSentenceNavigation() {
+      activeSentenceMode = false;
+      activeSentenceWords = [];
+      activeSentenceIndex = 0;
+      activeSentenceSource = '';
+
+      const exitBtn = document.getElementById('btnExitSentence');
+      if (exitBtn) exitBtn.style.display = 'none';
+
+      const magSentenceBadge = document.getElementById('magSentenceBadge');
+      if (magSentenceBadge) magSentenceBadge.style.display = 'none';
+
+      const allList = getAllRhymesList();
+      if (allList && allList[currentNavIndex]) {
+        updateMagnifier(allList[currentNavIndex], currentNavIndex);
+      }
+
+      renderMatrix();
+      renderSquareGrid();
+    }
+
+    function focusSentenceItem(index) {
+      if (!activeSentenceWords || activeSentenceWords.length === 0) return;
+      if (index < 0) index = (index % activeSentenceWords.length + activeSentenceWords.length) % activeSentenceWords.length;
+      if (index >= activeSentenceWords.length) index = index % activeSentenceWords.length;
+
+      activeSentenceIndex = index;
+      const current = activeSentenceWords[index];
+
+      activeSmartSearchRhyme = current.rhyme;
+      const allList = getAllRhymesList();
+      const cellIdx = allList.findIndex(x => x.lower === current.rhyme);
+      if (cellIdx !== -1) {
+        currentNavIndex = cellIdx;
+      }
+
+      updateMagnifierForSentence(current, index, activeSentenceWords.length);
+
+      if (currentViewMode === 'square') {
+        renderSquareGrid();
+        const cell = document.getElementById(`square_cell_rhyme_${current.rhyme}`);
+        if (cell) {
+          cell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      } else {
+        renderMatrix();
+        if (current.matrixItem) {
+          const row = document.getElementById(`row_key_${current.matrixItem.key}`);
+          if (row) {
+            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          }
+        }
+      }
+    }
+
+    function updateMagnifierForSentence(current, index, total) {
+      const card = document.getElementById('magnifierCard');
       const keyBadge = document.getElementById('magKeyBadge');
       const rhymeText = document.getElementById('magRhymeText');
       const floorBadge = document.getElementById('magFloorBadge');
       const stt = document.getElementById('magStt');
       const floorTitle = document.getElementById('magFloorTitle');
       const exSpan = document.getElementById('magExamples');
-      const card = document.getElementById('magnifierCard');
       const anomalyTag = document.getElementById('magAnomalyTag');
+      const sentenceBadge = document.getElementById('magSentenceBadge');
+
+      const item = current.matrixItem || {
+        key: current.b60.length >= 2 ? current.b60[1] : '?',
+        lower: current.rhyme,
+        rhyme: current.rhyme,
+        floor: 'B1',
+        isShift: false,
+        order: currentNavIndex + 1
+      };
+
+      if (sentenceBadge) {
+        sentenceBadge.style.display = 'inline-block';
+        sentenceBadge.textContent = `[${index + 1}/${total}] "${current.word}"`;
+      }
 
       if (keyBadge) {
         keyBadge.textContent = item.key;
@@ -2778,11 +2989,78 @@
       }
 
       if (floorTitle) {
-        let systemName = 'Telex';
-        if (item.floor === 'B1') systemName = 'Telex';
-        else if (item.floor === 'B2') systemName = 'TELEX HOA';
-        else if (item.floor === 'B3') systemName = 'VNI';
-        floorTitle.textContent = `${item.floor} (${systemName})${item.isShift ? ' ⇧' : ''}`;
+        floorTitle.textContent = item.isShift ? '⇧' : '';
+        floorTitle.style.display = item.isShift ? 'inline-block' : 'none';
+      }
+
+      if (exSpan) {
+        exSpan.innerHTML = `<span class="mag-sample-word">${current.word}</span> <span style="color:#64748b; font-style:normal;">➔</span> <span class="mag-b60-code">${current.b60}</span>`;
+      }
+
+      if (anomalyTag) {
+        anomalyTag.style.display = 'none';
+      }
+
+      if (card) {
+        card.style.borderColor = 'var(--neon-cyan)';
+      }
+    }
+
+    function updateMagnifier(item, index) {
+      if (!item) return;
+      currentNavIndex = typeof index === 'number' ? index : currentNavIndex;
+
+      const wrapper = document.getElementById('magnifierNavWrapper');
+      const box = document.getElementById('magnifierNavBox');
+      if (wrapper) wrapper.style.display = 'flex';
+      if (box) box.style.display = 'flex';
+
+      const keyBadge = document.getElementById('magKeyBadge');
+      const rhymeText = document.getElementById('magRhymeText');
+      const floorBadge = document.getElementById('magFloorBadge');
+      const stt = document.getElementById('magStt');
+      const floorTitle = document.getElementById('magFloorTitle');
+      const exSpan = document.getElementById('magExamples');
+      const card = document.getElementById('magnifierCard');
+      const anomalyTag = document.getElementById('magAnomalyTag');
+      const sentenceBadge = document.getElementById('magSentenceBadge');
+
+      if (sentenceBadge && !activeSentenceMode) {
+        sentenceBadge.style.display = 'none';
+      }
+
+      if (keyBadge) {
+        keyBadge.textContent = item.key;
+        if (item.isShift) keyBadge.classList.add('is-upper');
+        else keyBadge.classList.remove('is-upper');
+      }
+
+      if (rhymeText) {
+        rhymeText.textContent = item.rhyme;
+        if (item.floor === 'B1') {
+          rhymeText.style.color = 'var(--neon-green)';
+          rhymeText.style.textShadow = '0 0 10px rgba(0, 255, 136, 0.5)';
+        } else if (item.floor === 'B2') {
+          rhymeText.style.color = 'var(--neon-cyan)';
+          rhymeText.style.textShadow = '0 0 10px rgba(0, 229, 255, 0.5)';
+        } else {
+          rhymeText.style.color = 'var(--neon-amber)';
+          rhymeText.style.textShadow = '0 0 10px rgba(255, 184, 0, 0.5)';
+        }
+      }
+
+      if (floorBadge) {
+        floorBadge.textContent = item.floor;
+        floorBadge.className = `mag-floor-badge floor-${item.floor.toLowerCase()}`;
+      }
+
+      if (stt) {
+        stt.textContent = `#${item.order}`;
+      }
+
+      if (floorTitle) {
+        floorTitle.textContent = item.isShift ? '⇧' : '';
+        floorTitle.style.display = item.isShift ? 'inline-block' : 'none';
       }
 
       if (exSpan) {
@@ -2842,6 +3120,11 @@
 
     // Duyệt thông minh tuần tự từ trái qua phải, từ trên xuống dưới lần lượt qua tất cả các ô
     function navigateStep(deltaStep) {
+      if (activeSentenceMode && activeSentenceWords.length > 0) {
+        focusSentenceItem(activeSentenceIndex + deltaStep);
+        return;
+      }
+
       const allList = getAllRhymesList();
       if (!allList || allList.length === 0) return;
 
@@ -2857,6 +3140,11 @@
 
     // Nhảy hàng lên/xuống (±13 ô) để đổi xuất phát điểm nhanh chóng
     function navigateRow(deltaRow) {
+      if (activeSentenceMode && activeSentenceWords.length > 0) {
+        focusSentenceItem(activeSentenceIndex + deltaRow);
+        return;
+      }
+
       const allList = getAllRhymesList();
       if (!allList || allList.length === 0) return;
 
@@ -3078,9 +3366,21 @@
       };
     });
 
-    document.getElementById('searchInput').oninput = () => {
-      renderMatrix();
-      renderSquareGrid();
+    document.getElementById('searchInput').oninput = (e) => {
+      const query = e.target.value.trim();
+      const words = query.split(/\s+/).filter(Boolean);
+
+      if (words.length > 1) {
+        const sentenceItems = buildSentenceItemsFromText(query);
+        activateSentenceNavigation(sentenceItems, 'Tìm kiếm');
+      } else {
+        if (activeSentenceMode && activeSentenceSource === 'Tìm kiếm') {
+          exitSentenceNavigation();
+        } else {
+          renderMatrix();
+          renderSquareGrid();
+        }
+      }
     };
 
     window.addEventListener('resize', () => {
@@ -3100,72 +3400,96 @@
     let currentTargetRhymeViet = null;
 
     function updateLiveEncoder(word) {
-      if (!word) {
-        liveResultViet.innerHTML = '<span style="color: var(--text-muted);">Nhập từ để kiểm tra...</span>';
+      if (!word || !word.trim()) {
+        liveResultViet.innerHTML = '<span style="color: var(--text-muted);">Nhập từ hoặc câu để kiểm tra...</span>';
         currentTargetKeyViet = null;
         currentTargetRhymeViet = null;
+        currentSentenceViet = [];
         return;
       }
       try {
-        const timeCode = encodeWord(word.trim());
-        const b60 = timeToBase60(timeCode);
-        
-        let details = `Mã: ${timeCode}`;
-        if (b60.length === 3) {
-          const c1 = b60[0], c2 = b60[1], c3 = b60[2];
-          details = `[${c1}] + [${c2}] + [${c3}]`;
+        const rawWords = word.trim().split(/\s+/).filter(Boolean);
+        const sentenceItems = [];
+        const b60List = [];
+        const allList = getAllRhymesList();
+
+        for (const rawW of rawWords) {
+          const w = rawW.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, '').toLowerCase();
+          if (!w) continue;
+          let timeCode = '';
+          let b60 = '';
+          try {
+            timeCode = encodeWord(w);
+            b60 = timeToBase60(timeCode);
+          } catch (_) {}
+          const ph = extractPhonetics(w);
+          const cleanRhyme = (ph.rhyme || '').toLowerCase();
+          const found = allList.find(x => x.lower === cleanRhyme);
+          b60List.push(b60);
+          sentenceItems.push({
+            word: rawW,
+            rhyme: cleanRhyme,
+            consonant: ph.consonant,
+            tone: ph.tone,
+            b60: b60,
+            time: timeCode,
+            matrixItem: found || null
+          });
         }
 
-        liveResultViet.innerHTML = `
-          <span class="result-badge badge-b60">${b60}</span>
-          <span class="badge-details">${details} (TG: ${timeCode})</span>
-        `;
+        currentSentenceViet = sentenceItems;
+        const fullB60 = b60List.join(' ');
 
-        if (timeCode && timeCode.length === 6) {
-          const mm = parseInt(timeCode.slice(2, 4), 10);
-          const ss = parseInt(timeCode.slice(4, 6), 10);
-          const floorIdx = Math.floor(ss / 20);
-          if (floorIdx === 0) currentTargetRhymeViet = RHYMES_BASE[mm];
-          else if (floorIdx === 1) currentTargetRhymeViet = RHYMES_EXTRA_1[mm];
-          else if (floorIdx === 2) currentTargetRhymeViet = RHYMES_EXTRA_2[mm];
-        }
-
-        if (b60.length >= 2) {
-          currentTargetKeyViet = b60[1].toLowerCase();
+        if (sentenceItems.length === 1) {
+          currentTargetKeyViet = b60List[0].length >= 2 ? b60List[0][1].toLowerCase() : null;
+          currentTargetRhymeViet = sentenceItems[0].rhyme;
+          liveResultViet.innerHTML = `<span class="result-badge badge-b60">${fullB60}</span>`;
         } else {
           currentTargetKeyViet = null;
+          currentTargetRhymeViet = null;
+          liveResultViet.innerHTML = `<span class="result-badge badge-b60" style="white-space: normal; line-height: 1.5; font-size: 13px;">${fullB60}</span>`;
         }
       } catch (err) {
         liveResultViet.innerHTML = `<span style="color: var(--neon-red);">Lỗi: ${err.message}</span>`;
         currentTargetKeyViet = null;
         currentTargetRhymeViet = null;
+        currentSentenceViet = [];
       }
     }
 
     liveInputViet.oninput = (e) => updateLiveEncoder(e.target.value);
     updateLiveEncoder(liveInputViet.value);
 
-    // Bấm nút mới cuộn màn hình và highlight
-    btnLocateViet.onclick = () => {
+    function locateSingleRhyme(targetRhyme, targetKey) {
       if (currentViewMode === 'square') {
-        if (!currentTargetRhymeViet) return;
+        if (!targetRhyme) return;
         document.querySelectorAll('.square-cell').forEach(c => c.classList.remove('pulse-highlight', 'active-cell'));
-        const cell = document.getElementById(`square_cell_rhyme_${currentTargetRhymeViet.toLowerCase()}`);
+        const cell = document.getElementById(`square_cell_rhyme_${targetRhyme.toLowerCase()}`);
         if (cell) {
           cell.classList.add('pulse-highlight', 'active-cell');
           cell.scrollIntoView({ behavior: 'smooth', block: 'center' });
           const allList = getAllRhymesList();
-          const found = allList.find(x => x.lower === currentTargetRhymeViet.toLowerCase());
+          const found = allList.find(x => x.lower === targetRhyme.toLowerCase());
           if (found) inspectRhyme(found);
         }
       } else {
-        if (!currentTargetKeyViet) return;
+        if (!targetKey) return;
         document.querySelectorAll('.matrix-table tr').forEach(r => r.classList.remove('highlighted'));
-        const targetRow = document.getElementById(`row_key_${currentTargetKeyViet}`);
+        const targetRow = document.getElementById(`row_key_${targetKey}`);
         if (targetRow) {
           targetRow.classList.add('highlighted');
           targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
+      }
+    }
+
+    // Bấm nút mới cuộn màn hình và highlight (hoặc kích hoạt duyệt theo câu)
+    btnLocateViet.onclick = () => {
+      if (currentSentenceViet && currentSentenceViet.length > 1) {
+        activateSentenceNavigation(currentSentenceViet, 'Tiếng Việt');
+      } else if (currentSentenceViet && currentSentenceViet.length === 1) {
+        exitSentenceNavigation();
+        locateSingleRhyme(currentSentenceViet[0].rhyme, currentTargetKeyViet);
       }
     };
 
@@ -3177,38 +3501,71 @@
     let currentTargetRhymeBase60 = null;
 
     function updateLiveDecoder(b60) {
-      if (!b60) {
+      if (!b60 || !b60.trim()) {
         liveResultBase60.innerHTML = '<span style="color: var(--text-muted);">Nhập mã Base60...</span>';
         currentTargetKeyBase60 = null;
         currentTargetRhymeBase60 = null;
+        currentSentenceBase60 = [];
         return;
       }
       try {
-        const time = base60ToTime(b60.trim());
-        const decoded = decodeWord(time);
-        liveResultBase60.innerHTML = `
-          <span class="result-badge badge-b60" style="background: rgba(0, 229, 255, 0.15); border-color: var(--neon-cyan); color: var(--neon-cyan);">${decoded}</span>
-          <span class="badge-details">TG: ${time} ➔ Chuẩn xác 100%</span>
-        `;
-
-        if (time && time.length === 6) {
-          const mm = parseInt(time.slice(2, 4), 10);
-          const ss = parseInt(time.slice(4, 6), 10);
-          const floorIdx = Math.floor(ss / 20);
-          if (floorIdx === 0) currentTargetRhymeBase60 = RHYMES_BASE[mm];
-          else if (floorIdx === 1) currentTargetRhymeBase60 = RHYMES_EXTRA_1[mm];
-          else if (floorIdx === 2) currentTargetRhymeBase60 = RHYMES_EXTRA_2[mm];
+        const raw = b60.trim();
+        let tokens = [];
+        if (raw.includes(' ')) {
+          tokens = raw.split(/\s+/).filter(Boolean);
+        } else if (raw.length > 3 && raw.length % 3 === 0 && !/\d{6}/.test(raw)) {
+          tokens = raw.match(/.{1,3}/g) || [raw];
+        } else {
+          tokens = [raw];
         }
 
-        if (b60.length >= 2) {
-          currentTargetKeyBase60 = b60[1].toLowerCase();
+        const sentenceItems = [];
+        const decodedList = [];
+        const allList = getAllRhymesList();
+
+        for (const token of tokens) {
+          let time = '';
+          let decoded = '';
+          try {
+            time = base60ToTime(token);
+            decoded = decodeWord(time);
+          } catch (_) {}
+          const ph = extractPhonetics(decoded);
+          const cleanRhyme = (ph.rhyme || '').toLowerCase();
+          const found = allList.find(x => x.lower === cleanRhyme);
+          decodedList.push(decoded);
+          sentenceItems.push({
+            word: decoded,
+            rhyme: cleanRhyme,
+            consonant: ph.consonant,
+            tone: ph.tone,
+            b60: token,
+            time: time,
+            matrixItem: found || null
+          });
+        }
+
+        currentSentenceBase60 = sentenceItems;
+        const fullDecoded = decodedList.join(' ');
+
+        if (tokens.length === 1) {
+          currentTargetKeyBase60 = tokens[0].length >= 2 ? tokens[0][1].toLowerCase() : null;
+          currentTargetRhymeBase60 = sentenceItems[0].rhyme;
+          liveResultBase60.innerHTML = `
+            <span class="result-badge badge-b60" style="background: rgba(0, 229, 255, 0.15); border-color: var(--neon-cyan); color: var(--neon-cyan);">${fullDecoded}</span>
+          `;
         } else {
           currentTargetKeyBase60 = null;
+          currentTargetRhymeBase60 = null;
+          liveResultBase60.innerHTML = `
+            <span class="result-badge badge-b60" style="background: rgba(0, 229, 255, 0.15); border-color: var(--neon-cyan); color: var(--neon-cyan); white-space: normal; line-height: 1.5; font-size: 13px;">${fullDecoded}</span>
+          `;
         }
       } catch (err) {
         liveResultBase60.innerHTML = `<span style="color: var(--neon-red);">Lỗi: ${err.message}</span>`;
         currentTargetKeyBase60 = null;
         currentTargetRhymeBase60 = null;
+        currentSentenceBase60 = [];
       }
     }
 
@@ -3216,27 +3573,21 @@
     updateLiveDecoder(liveInputBase60.value);
 
     btnLocateBase60.onclick = () => {
-      if (currentViewMode === 'square') {
-        if (!currentTargetRhymeBase60) return;
-        document.querySelectorAll('.square-cell').forEach(c => c.classList.remove('pulse-highlight', 'active-cell'));
-        const cell = document.getElementById(`square_cell_rhyme_${currentTargetRhymeBase60.toLowerCase()}`);
-        if (cell) {
-          cell.classList.add('pulse-highlight', 'active-cell');
-          cell.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          const allList = getAllRhymesList();
-          const found = allList.find(x => x.lower === currentTargetRhymeBase60.toLowerCase());
-          if (found) inspectRhyme(found);
-        }
-      } else {
-        if (!currentTargetKeyBase60) return;
-        document.querySelectorAll('.matrix-table tr').forEach(r => r.classList.remove('highlighted'));
-        const targetRow = document.getElementById(`row_key_${currentTargetKeyBase60}`);
-        if (targetRow) {
-          targetRow.classList.add('highlighted');
-          targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
+      if (currentSentenceBase60 && currentSentenceBase60.length > 1) {
+        activateSentenceNavigation(currentSentenceBase60, 'Base60');
+      } else if (currentSentenceBase60 && currentSentenceBase60.length === 1) {
+        exitSentenceNavigation();
+        locateSingleRhyme(currentSentenceBase60[0].rhyme, currentTargetKeyBase60);
       }
     };
+
+    const btnExitSentence = document.getElementById('btnExitSentence');
+    if (btnExitSentence) {
+      btnExitSentence.onclick = (e) => {
+        e.stopPropagation();
+        exitSentenceNavigation();
+      };
+    }
 
   </script>
 </body>
