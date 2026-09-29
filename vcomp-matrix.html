@@ -1506,6 +1506,288 @@
       }
     }
 
+    /* === BẢN ĐỒ CẤU THÀNH 1 TỪ (SINGLE WORD CONSTITUENT MAP: PA + VẦN + DẤU) === */
+    .square-cell.word-map-consonant {
+      border: 2px solid var(--neon-green) !important;
+      box-shadow: 0 0 16px var(--neon-green), inset 0 0 6px rgba(0, 255, 136, 0.4) !important;
+      background: rgba(0, 255, 136, 0.22) !important;
+      opacity: 1 !important;
+      z-index: 10 !important;
+      position: relative;
+    }
+    .square-cell.word-map-rhyme {
+      border: 2.5px solid var(--neon-cyan) !important;
+      box-shadow: 0 0 20px var(--neon-cyan), inset 0 0 8px rgba(0, 229, 255, 0.5) !important;
+      background: rgba(0, 229, 255, 0.25) !important;
+      opacity: 1 !important;
+      z-index: 12 !important;
+      position: relative;
+    }
+    .square-cell.word-map-tone {
+      border: 2px solid var(--neon-amber) !important;
+      box-shadow: 0 0 16px var(--neon-amber), inset 0 0 6px rgba(255, 184, 0, 0.4) !important;
+      background: rgba(255, 184, 0, 0.22) !important;
+      opacity: 1 !important;
+      z-index: 10 !important;
+      position: relative;
+    }
+    .square-cell.word-map-multi {
+      border: 2.5px solid #fff !important;
+      box-shadow: 0 0 20px var(--neon-cyan), 0 0 14px var(--neon-green), inset 0 0 8px rgba(0, 255, 136, 0.4) !important;
+      background: linear-gradient(135deg, rgba(0, 255, 136, 0.25), rgba(0, 229, 255, 0.25)) !important;
+      opacity: 1 !important;
+      z-index: 14 !important;
+      position: relative;
+    }
+
+    .word-map-badge {
+      position: absolute;
+      top: -5px;
+      right: -3px;
+      font-size: 7.5px;
+      font-weight: 900;
+      padding: 0.5px 3.5px;
+      border-radius: 3px;
+      line-height: 1.1;
+      letter-spacing: -0.2px;
+      z-index: 20;
+      pointer-events: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.8);
+      white-space: nowrap;
+    }
+    .word-map-badge.badge-cons {
+      background: #00ff88;
+      color: #000;
+      border: 1px solid #fff;
+    }
+    .word-map-badge.badge-rhyme {
+      background: #00e5ff;
+      color: #000;
+      border: 1px solid #fff;
+    }
+    .word-map-badge.badge-tone {
+      background: #ffb800;
+      color: #000;
+      border: 1px solid #fff;
+    }
+    .word-map-badge.badge-multi {
+      background: linear-gradient(90deg, #00ff88, #00e5ff);
+      color: #000;
+      border: 1px solid #fff;
+    }
+
+    .btn-exit-wordmap {
+      background: rgba(0, 229, 255, 0.18);
+      border: 1px solid rgba(0, 229, 255, 0.45);
+      color: #67e8f9;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 9.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      white-space: nowrap;
+      transition: all 0.15s;
+      height: 20px;
+    }
+    .btn-exit-wordmap:hover {
+      background: rgba(0, 229, 255, 0.35);
+      color: #fff;
+      border-color: var(--neon-cyan);
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+    }
+    .btn-swipe-mode {
+      background: #141f2e;
+      border: 1.5px solid #2d425c;
+      color: #94a3b8;
+      border-radius: 5px;
+      padding: 2px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+      user-select: none;
+      white-space: nowrap;
+      height: 22px;
+    }
+    .btn-swipe-mode:hover {
+      border-color: var(--neon-cyan);
+      color: #fff;
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+    }
+    .btn-swipe-mode.active {
+      background: rgba(0, 229, 255, 0.22);
+      border-color: var(--neon-cyan);
+      color: #fff;
+      box-shadow: 0 0 12px rgba(0, 229, 255, 0.7);
+      animation: pulseSwipeBtn 1.5s infinite alternate ease-in-out;
+    }
+    @keyframes pulseSwipeBtn {
+      0% { box-shadow: 0 0 6px var(--neon-cyan); }
+      100% { box-shadow: 0 0 16px var(--neon-cyan), inset 0 0 8px rgba(0, 229, 255, 0.3); }
+    }
+
+    .swipe-hud {
+      background: linear-gradient(135deg, rgba(16, 26, 40, 0.96) 0%, rgba(13, 20, 31, 0.98) 100%);
+      border: 1.5px solid var(--neon-cyan);
+      border-radius: 8px;
+      padding: 6px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6), 0 0 15px rgba(0, 229, 255, 0.2);
+      backdrop-filter: blur(8px);
+      user-select: none;
+      transition: all 0.2s ease;
+      margin-top: 2px;
+    }
+    .swipe-hud-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+    }
+    .swipe-hud-title {
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--neon-cyan);
+      letter-spacing: 0.5px;
+    }
+    .btn-close-hud {
+      background: transparent;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 0 4px;
+      transition: color 0.15s;
+    }
+    .btn-close-hud:hover {
+      color: #ff3b30;
+    }
+    .swipe-hud-body {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .swipe-hud-steps {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .swipe-step {
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid #334155;
+      color: #94a3b8;
+      transition: all 0.15s ease;
+    }
+    .swipe-step.active-1 {
+      border-color: var(--neon-green);
+      background: rgba(0, 255, 136, 0.2);
+      color: #fff;
+      box-shadow: 0 0 8px rgba(0, 255, 136, 0.5);
+    }
+    .swipe-step.active-2 {
+      border-color: var(--neon-cyan);
+      background: rgba(0, 229, 255, 0.2);
+      color: #fff;
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+    }
+    .swipe-step.active-3 {
+      border-color: var(--neon-amber);
+      background: rgba(255, 184, 0, 0.2);
+      color: #fff;
+      box-shadow: 0 0 8px rgba(255, 184, 0, 0.5);
+    }
+    .swipe-step-arrow {
+      color: #475569;
+      font-size: 10px;
+    }
+
+    .swipe-hud-result {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0, 229, 255, 0.12);
+      border: 1.5px solid var(--neon-cyan);
+      border-radius: 6px;
+      padding: 2px 10px;
+      box-shadow: 0 0 12px rgba(0, 229, 255, 0.4);
+      animation: popResult 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    @keyframes popResult {
+      0% { transform: scale(0.85); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .hud-word-viet {
+      font-size: 16px;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 0 0 10px var(--neon-green);
+    }
+    .hud-sep {
+      color: #64748b;
+      font-size: 12px;
+    }
+    .hud-b60-badge {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--neon-cyan);
+      background: #0f172a;
+      border: 1px solid var(--neon-cyan);
+      padding: 1px 6px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+
+    .swipe-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 25;
+    }
+
+    .square-cell.swipe-target-1 {
+      border: 2px solid var(--neon-green) !important;
+      box-shadow: 0 0 14px var(--neon-green), inset 0 0 6px var(--neon-green) !important;
+      z-index: 15 !important;
+      background: rgba(0, 255, 136, 0.28) !important;
+    }
+    .square-cell.swipe-target-2 {
+      border: 2px solid var(--neon-cyan) !important;
+      box-shadow: 0 0 14px var(--neon-cyan), inset 0 0 6px var(--neon-cyan) !important;
+      z-index: 15 !important;
+      background: rgba(0, 229, 255, 0.28) !important;
+    }
+    .square-cell.swipe-target-3 {
+      border: 2px solid var(--neon-amber) !important;
+      box-shadow: 0 0 14px var(--neon-amber), inset 0 0 6px var(--neon-amber) !important;
+      z-index: 15 !important;
+      background: rgba(255, 184, 0, 0.28) !important;
+    }
+
+    .square-grid-container.swipe-mode-enabled {
+      touch-action: none !important;
+      cursor: crosshair !important;
+      user-select: none !important;
+    }
+
     .nav-top-spacer {
       width: 10px;
       flex-shrink: 0;
@@ -1880,6 +2162,7 @@
             </button>
             <div class="nav-top-actions">
               <button id="btnExitSentence" class="btn-exit-sentence" style="display: none;" title="Thoát duyệt câu, quay lại duyệt tự do 169 vần">✕ Câu</button>
+              <button id="btnExitWordMap" class="btn-exit-wordmap" style="display: none;" title="Thoát bản đồ từ, quay lại duyệt tự do 169 vần">✕ Từ</button>
               <span class="nav-top-spacer"></span>
             </div>
           </div>
@@ -1902,6 +2185,7 @@
               <div class="mag-col-right">
                 <div class="mag-meta-row">
                   <span id="magSentenceBadge" class="mag-sentence-badge" style="display: none;">[1/3] "anh"</span>
+                  <span id="magWordMapBadge" class="mag-sentence-badge" style="display: none; background: rgba(0, 229, 255, 0.2); border-color: var(--neon-cyan); color: #67e8f9;">[Từ]</span>
                   <span id="magStt" class="mag-stt">#95</span>
                   <span id="magFloorTitle" class="mag-floor-title" style="display: none;"></span>
                   <span id="magAnomalyTag" class="anomaly-badge" style="display: none;">⚠️ Vần cụt</span>
@@ -2015,11 +2299,40 @@
           <button id="btnSmartSearchClear" class="btn-smart-clear" title="Bỏ lọc">✕</button>
         </div>
 
+        <!-- Nút Bật/Tắt Chế Độ Quẹt 3 Phím -->
+        <button id="btnToggleSwipeMode" class="btn-swipe-mode" title="Bật/Tắt chế độ quẹt 3 phím: Phụ âm ➔ Vần ➔ Dấu thanh">
+          <span class="swipe-icon">🎮</span>
+          <span id="swipeBtnText" class="swipe-btn-text">Quẹt 3 Phím</span>
+        </button>
+
         <span class="legend-count" id="squareVisibleCount">169 / 169 ô</span>
       </div>
 
+      <!-- Floating Swipe HUD (Hiển thị tiến trình & kết quả quẹt 3 phím) -->
+      <div id="swipeHud" class="swipe-hud" style="display: none;">
+        <div class="swipe-hud-header">
+          <span class="swipe-hud-title">⚡ QUẸT 3 PHÍM: [1] Phụ âm ➔ [2] Vần ➔ [3] Dấu thanh</span>
+          <button id="btnCloseSwipeHud" class="btn-close-hud" title="Tắt thanh thông tin">✕</button>
+        </div>
+        <div class="swipe-hud-body">
+          <div class="swipe-hud-steps" id="swipeHudSteps">
+            <span class="swipe-step step-1" id="swipeStep1">① Phụ âm: ...</span>
+            <span class="swipe-step-arrow">➔</span>
+            <span class="swipe-step step-2" id="swipeStep2">② Vần: ...</span>
+            <span class="swipe-step-arrow">➔</span>
+            <span class="swipe-step step-3" id="swipeStep3">③ Dấu: ...</span>
+          </div>
+          <div class="swipe-hud-result" id="swipeHudResult" style="display: none;">
+            <span class="hud-word-viet" id="hudWordViet">móng</span>
+            <span class="hud-sep">➔</span>
+            <span class="hud-b60-badge" id="hudB60Badge">dSi</span>
+          </div>
+        </div>
+      </div>
+
       <!-- 13x13 Grid Container -->
-      <div class="square-grid-container">
+      <div class="square-grid-container" id="squareGridContainer">
+        <canvas id="swipeCanvas" class="swipe-canvas"></canvas>
         <div class="square-grid" id="squareGrid">
           <!-- Rendered dynamically via JavaScript -->
         </div>
@@ -2037,7 +2350,7 @@
 
   <script type="module">
     import { BASE60_MAPPING, RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2 } from './data.js';
-    import { encodeWord, decodeWord, timeToBase60, base60ToTime, extractPhonetics } from './vcomp.js';
+    import { encodeWord, decodeWord, timeToBase60, base60ToTime, extractPhonetics, applyTone } from './vcomp.js';
 
     // Danh sách các vần cụt / bất thường cần đánh dấu cảnh báo
     const ANOMALY_RHYMES = {
@@ -2216,8 +2529,15 @@
           if (!hasEmptyLower) return;
         }
 
-        // Search query & Sentence Mode in Table
-        if (activeSentenceMode && activeSentenceWords.length > 0) {
+        // Search query & Sentence Mode & Word Map in Table
+        if (activeWordMap) {
+          const k1 = activeWordMap.consKey;
+          const k2 = activeWordMap.rhymeKey;
+          const k3 = activeWordMap.toneKey;
+          const matchesKey = [k1, k2, k3].some(k => k && (k === item.key || k === item.shift || k.toLowerCase() === item.key.toLowerCase()));
+          const matchesRhyme = allRhymesOnKey.some(r => r && r.toLowerCase() === activeWordMap.rhyme);
+          if (!matchesKey && !matchesRhyme) return;
+        } else if (activeSentenceMode && activeSentenceWords.length > 0) {
           const hasMember = activeSentenceWords.some(w => allRhymesOnKey.some(r => r && r.toLowerCase() === w.rhyme));
           if (!hasMember) return;
         } else if (query) {
@@ -2229,7 +2549,9 @@
         const tr = document.createElement('tr');
         tr.id = `row_key_${item.key}`;
 
-        if (activeSentenceMode && activeSentenceWords.length > 0) {
+        if (activeWordMap) {
+          tr.classList.add('highlighted');
+        } else if (activeSentenceMode && activeSentenceWords.length > 0) {
           const curWord = activeSentenceWords[activeSentenceIndex];
           const hasCurrent = allRhymesOnKey.some(r => r && r.toLowerCase() === curWord.rhyme);
           if (hasCurrent) tr.classList.add('highlighted');
@@ -2655,7 +2977,37 @@
           }
         }
 
-        if (activeSentenceMode) {
+        let mapRoles = [];
+        let mapBadgeHtml = '';
+        if (activeWordMap) {
+          if (index === activeWordMap.consIdx) {
+            mapRoles.push({
+              type: 'cons',
+              label: `① PA: ${activeWordMap.consonant || 'Không'}`
+            });
+          }
+          if (index === activeWordMap.rhymeIdx) {
+            mapRoles.push({
+              type: 'rhyme',
+              label: `② Vần: ${activeWordMap.rhyme}`
+            });
+          } else if (index === activeWordMap.rhymeKeyIdx && activeWordMap.rhymeIdx !== activeWordMap.rhymeKeyIdx) {
+            mapRoles.push({
+              type: 'rhyme',
+              label: `② Phím: ${activeWordMap.rhymeKey}`
+            });
+          }
+          if (index === activeWordMap.toneIdx) {
+            mapRoles.push({
+              type: 'tone',
+              label: `③ Dấu: ${activeWordMap.toneName}`
+            });
+          }
+        }
+
+        if (activeWordMap) {
+          if (mapRoles.length > 0) visibleCount++;
+        } else if (activeSentenceMode) {
           if (isSentenceMember) visibleCount++;
         } else if (isFilterVisible && (!activeSmartSearchRhyme || isSmartTarget || isSmartRelated)) {
           visibleCount++;
@@ -2670,7 +3022,27 @@
         if (isSameRow) cellClass += ' crosshair-row-active';
         if (isSameCol) cellClass += ' crosshair-col-active';
 
-        if (activeSentenceMode && activeSentenceWords.length > 0) {
+        if (activeWordMap) {
+          if (mapRoles.length === 0) {
+            cellClass += ' dimmed';
+          } else if (mapRoles.length === 1) {
+            const r = mapRoles[0];
+            if (r.type === 'cons') {
+              cellClass += ' word-map-consonant';
+              mapBadgeHtml = `<span class="word-map-badge badge-cons">${r.label}</span>`;
+            } else if (r.type === 'rhyme') {
+              cellClass += ' word-map-rhyme';
+              mapBadgeHtml = `<span class="word-map-badge badge-rhyme">${r.label}</span>`;
+            } else if (r.type === 'tone') {
+              cellClass += ' word-map-tone';
+              mapBadgeHtml = `<span class="word-map-badge badge-tone">${r.label}</span>`;
+            }
+          } else {
+            cellClass += ' word-map-multi';
+            const shortLabels = mapRoles.map(r => r.label.replace('PA: ', '').replace('Vần: ', '').replace('Dấu: ', ''));
+            mapBadgeHtml = `<span class="word-map-badge badge-multi">${shortLabels.join(' • ')}</span>`;
+          }
+        } else if (activeSentenceMode && activeSentenceWords.length > 0) {
           if (isSentenceActive) {
             cellClass += ' sentence-active smart-target-active crosshair-row-active crosshair-col-active';
           } else if (isSentenceMember) {
@@ -2770,7 +3142,7 @@
           `;
         }
 
-        cell.innerHTML = line1Html + line2Html;
+        cell.innerHTML = line1Html + line2Html + mapBadgeHtml;
 
         // Hover: Giải thích lý do hiện lên khi đang ở chế độ lọc thông minh (chỉ hiển thị qua Tooltip popup để không làm giật giao diện)
         cell.onmouseenter = (e) => {
@@ -2802,6 +3174,10 @@
 
         // Click ô: Tìm kiếm thông minh các vần liên quan & Phóng to
         cell.onclick = () => {
+          if (activeSwipeMode) return;
+          if (activeWordMap) {
+            exitWordMap();
+          }
           if (activeSmartSearchRhyme === item.lower) {
             clearSmartSearch();
           } else {
@@ -2826,6 +3202,205 @@
 
     // === CỤM PHÓNG TO & ĐIỀU HƯỚNG 4 CHIỀU (MAGNIFIER & 4-WAY D-PAD) ===
     let currentNavIndex = -1; // 0..168
+
+    // === BẢN ĐỒ CẤU THÀNH 1 TỪ (SINGLE WORD CONSTITUENT MAP: PA + VẦN + DẤU) ===
+    let activeWordMap = null;
+
+    function findCellForKey(keyChar) {
+      if (!keyChar) return -1;
+      const allList = getAllRhymesList();
+      let idx = allList.findIndex(x => x.key === keyChar && x.floor === 'B1');
+      if (idx !== -1) return idx;
+      idx = allList.findIndex(x => x.key === keyChar);
+      if (idx !== -1) return idx;
+      idx = allList.findIndex(x => x.key.toLowerCase() === keyChar.toLowerCase() && x.floor === 'B1');
+      if (idx !== -1) return idx;
+      return allList.findIndex(x => x.key.toLowerCase() === keyChar.toLowerCase());
+    }
+
+    function findCellForRhyme(rhymeLower) {
+      if (!rhymeLower) return -1;
+      const allList = getAllRhymesList();
+      return allList.findIndex(x => x.lower === rhymeLower.toLowerCase().trim());
+    }
+
+    function createWordMapData(wordItem) {
+      if (!wordItem) return null;
+      const rawWord = wordItem.word || '';
+      const rhyme = (wordItem.rhyme || '').toLowerCase();
+      const consonant = wordItem.consonant || '';
+      const tone = typeof wordItem.tone === 'number' ? wordItem.tone : 0;
+      const b60 = wordItem.b60 || '';
+
+      if (!b60 || b60.length < 3) return null;
+
+      const consKey = b60[0];
+      const rhymeKey = b60[1];
+      const toneKey = b60[2];
+
+      const toneNames = ['Ngang', 'Sắc', 'Huyền', 'Hỏi', 'Ngã', 'Nặng'];
+      const toneName = toneNames[tone] || 'Ngang';
+
+      const rhymeIdx = findCellForRhyme(rhyme);
+      const consIdx = findCellForKey(consKey);
+      const toneIdx = findCellForKey(toneKey);
+      const rhymeKeyIdx = findCellForKey(rhymeKey);
+
+      return {
+        word: rawWord,
+        rhyme: rhyme,
+        consonant: consonant,
+        tone: tone,
+        toneName: toneName,
+        b60: b60,
+        consKey: consKey,
+        rhymeKey: rhymeKey,
+        toneKey: toneKey,
+        rhymeIdx: rhymeIdx,
+        consIdx: consIdx,
+        toneIdx: toneIdx,
+        rhymeKeyIdx: rhymeKeyIdx
+      };
+    }
+
+    function activateWordMap(wordItem) {
+      const mapData = createWordMapData(wordItem);
+      if (!mapData) return;
+
+      activeWordMap = mapData;
+      activeSentenceMode = false;
+      activeSmartSearchRhyme = null;
+
+      const wrapper = document.getElementById('magnifierNavWrapper');
+      if (wrapper) wrapper.style.display = 'flex';
+
+      const exitSentenceBtn = document.getElementById('btnExitSentence');
+      if (exitSentenceBtn) exitSentenceBtn.style.display = 'none';
+
+      const exitWordMapBtn = document.getElementById('btnExitWordMap');
+      if (exitWordMapBtn) exitWordMapBtn.style.display = 'inline-flex';
+
+      const sentenceBadge = document.getElementById('magSentenceBadge');
+      if (sentenceBadge) sentenceBadge.style.display = 'none';
+
+      updateMagnifierForWordMap(mapData);
+
+      if (currentViewMode === 'square') {
+        renderSquareGrid();
+        const targetIdx = mapData.rhymeIdx !== -1 ? mapData.rhymeIdx : mapData.consIdx;
+        if (targetIdx !== -1) {
+          const allList = getAllRhymesList();
+          const targetItem = allList[targetIdx];
+          if (targetItem) {
+            const cell = document.getElementById(`square_cell_rhyme_${targetItem.lower}`);
+            if (cell) {
+              cell.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }
+        }
+      } else {
+        renderMatrix();
+        const row = document.getElementById(`row_key_${mapData.rhymeKey}`);
+        if (row) {
+          row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+    }
+
+    function exitWordMap() {
+      if (!activeWordMap) return;
+      activeWordMap = null;
+
+      const exitBtn = document.getElementById('btnExitWordMap');
+      if (exitBtn) exitBtn.style.display = 'none';
+
+      const badge = document.getElementById('magWordMapBadge');
+      if (badge) badge.style.display = 'none';
+
+      const allList = getAllRhymesList();
+      if (allList && allList[currentNavIndex]) {
+        updateMagnifier(allList[currentNavIndex], currentNavIndex);
+      }
+
+      renderSquareGrid();
+      renderMatrix();
+    }
+
+    function updateMagnifierForWordMap(map) {
+      const card = document.getElementById('magnifierCard');
+      const keyBadge = document.getElementById('magKeyBadge');
+      const rhymeText = document.getElementById('magRhymeText');
+      const floorBadge = document.getElementById('magFloorBadge');
+      const stt = document.getElementById('magStt');
+      const floorTitle = document.getElementById('magFloorTitle');
+      const exSpan = document.getElementById('magExamples');
+      const anomalyTag = document.getElementById('magAnomalyTag');
+      const sentenceBadge = document.getElementById('magSentenceBadge');
+      const wordMapBadge = document.getElementById('magWordMapBadge');
+
+      if (sentenceBadge) sentenceBadge.style.display = 'none';
+
+      if (wordMapBadge) {
+        wordMapBadge.style.display = 'inline-block';
+        wordMapBadge.textContent = `[Từ] "${map.word}" (${map.b60})`;
+      }
+
+      const allList = getAllRhymesList();
+      const rhymeItem = map.rhymeIdx !== -1 ? allList[map.rhymeIdx] : null;
+
+      if (keyBadge) {
+        keyBadge.textContent = map.rhymeKey;
+      }
+
+      if (rhymeText) {
+        rhymeText.textContent = map.rhyme;
+        rhymeText.style.color = 'var(--neon-cyan)';
+        rhymeText.style.textShadow = '0 0 10px rgba(0, 229, 255, 0.5)';
+      }
+
+      if (floorBadge) {
+        floorBadge.textContent = rhymeItem ? rhymeItem.floor : 'B1';
+        floorBadge.className = `mag-floor-badge floor-${(rhymeItem ? rhymeItem.floor : 'B1').toLowerCase()}`;
+      }
+
+      if (stt) {
+        stt.textContent = rhymeItem ? `#${rhymeItem.order}` : '';
+      }
+
+      if (floorTitle) {
+        floorTitle.style.display = 'none';
+      }
+
+      if (exSpan) {
+        const paDesc = map.consonant ? map.consonant : '—';
+        exSpan.innerHTML = `
+          <span class="mag-sample-word" style="color:var(--neon-cyan);">${map.word}</span>
+          <span style="color:#64748b; font-style:normal;">➔</span>
+          <span class="mag-b60-code" style="letter-spacing:1px;">${map.b60}</span>
+          <span style="font-size:11px; margin-left:6px; color:#94a3b8;">
+            (<b style="color:var(--neon-green)">① PA:</b> ${paDesc} [${map.consKey}] • 
+             <b style="color:var(--neon-cyan)">② Vần:</b> ${map.rhyme} [${map.rhymeKey}] • 
+             <b style="color:var(--neon-amber)">③ Dấu:</b> ${map.toneName} [${map.toneKey}])
+          </span>
+        `;
+      }
+
+      if (anomalyTag) {
+        anomalyTag.style.display = 'none';
+      }
+
+      if (card) {
+        card.style.borderColor = 'var(--neon-cyan)';
+      }
+    }
+
+    const btnExitWordMap = document.getElementById('btnExitWordMap');
+    if (btnExitWordMap) {
+      btnExitWordMap.onclick = (e) => {
+        e.stopPropagation();
+        exitWordMap();
+      };
+    }
 
     // === CHẾ ĐỘ DUYỆT VẦN THEO CÂU (SENTENCE RHYME SCOPE NAVIGATION) ===
     let activeSentenceMode = false;
@@ -3130,6 +3705,22 @@
         return;
       }
 
+      if (activeWordMap) {
+        const constituentIndices = [activeWordMap.consIdx, activeWordMap.rhymeIdx, activeWordMap.toneIdx].filter(i => i !== -1);
+        if (constituentIndices.length > 0) {
+          let pos = constituentIndices.indexOf(currentNavIndex);
+          if (pos === -1) pos = 0;
+          let nextPos = (pos + deltaStep + constituentIndices.length) % constituentIndices.length;
+          currentNavIndex = constituentIndices[nextPos];
+          const allList = getAllRhymesList();
+          if (allList[currentNavIndex]) {
+            const cell = document.getElementById(`square_cell_rhyme_${allList[currentNavIndex].lower}`);
+            if (cell) cell.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          return;
+        }
+      }
+
       const allList = getAllRhymesList();
       if (!allList || allList.length === 0) return;
 
@@ -3147,6 +3738,11 @@
     function navigateRow(deltaRow) {
       if (activeSentenceMode && activeSentenceWords.length > 0) {
         focusSentenceItem(activeSentenceIndex + deltaRow);
+        return;
+      }
+
+      if (activeWordMap) {
+        navigateStep(deltaRow);
         return;
       }
 
@@ -3186,6 +3782,17 @@
 
     // Điều hướng bằng phím mũi tên máy tính & phím WASD
     window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (activeWordMap) {
+          exitWordMap();
+        } else if (activeSentenceMode) {
+          exitSentenceNavigation();
+        } else if (activeSmartSearchRhyme) {
+          clearSmartSearch();
+        }
+        return;
+      }
+
       if (['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
       if (currentViewMode !== 'square') return;
 
@@ -3371,14 +3978,17 @@
       };
     });
 
-    document.getElementById('searchInput').oninput = (e) => {
+    const searchInputEl = document.getElementById('searchInput');
+    searchInputEl.oninput = (e) => {
       const query = e.target.value.trim();
       const words = query.split(/\s+/).filter(Boolean);
 
       if (words.length > 1) {
+        if (activeWordMap) exitWordMap();
         const sentenceItems = buildSentenceItemsFromText(query);
         activateSentenceNavigation(sentenceItems, 'Tìm kiếm');
       } else {
+        if (activeWordMap) exitWordMap();
         if (activeSentenceMode && activeSentenceSource === 'Tìm kiếm') {
           exitSentenceNavigation();
         } else {
@@ -3387,6 +3997,20 @@
         }
       }
     };
+
+    searchInputEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const query = searchInputEl.value.trim();
+        const words = query.split(/\s+/).filter(Boolean);
+        if (words.length === 1) {
+          const sentenceItems = buildSentenceItemsFromText(query);
+          if (sentenceItems.length === 1 && sentenceItems[0].b60 && sentenceItems[0].b60.length >= 3) {
+            e.preventDefault();
+            activateWordMap(sentenceItems[0]);
+          }
+        }
+      }
+    });
 
     window.addEventListener('resize', () => {
       if (currentViewMode === 'square') {
@@ -3488,15 +4112,25 @@
       }
     }
 
-    // Bấm nút mới cuộn màn hình và highlight (hoặc kích hoạt duyệt theo câu)
+    // Bấm nút mới cuộn màn hình và highlight (hoặc kích hoạt duyệt theo câu / bản đồ từ)
     btnLocateViet.onclick = () => {
       if (currentSentenceViet && currentSentenceViet.length > 1) {
+        exitWordMap();
         activateSentenceNavigation(currentSentenceViet, 'Tiếng Việt');
       } else if (currentSentenceViet && currentSentenceViet.length === 1) {
         exitSentenceNavigation();
-        locateSingleRhyme(currentSentenceViet[0].rhyme, currentTargetKeyViet);
+        activateWordMap(currentSentenceViet[0]);
       }
     };
+
+    if (liveInputViet) {
+      liveInputViet.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          btnLocateViet.click();
+        }
+      });
+    }
 
     // 5. Live Decoder Sandbox
     const liveInputBase60 = document.getElementById('liveInputBase60');
@@ -3579,12 +4213,521 @@
 
     btnLocateBase60.onclick = () => {
       if (currentSentenceBase60 && currentSentenceBase60.length > 1) {
+        exitWordMap();
         activateSentenceNavigation(currentSentenceBase60, 'Base60');
       } else if (currentSentenceBase60 && currentSentenceBase60.length === 1) {
         exitSentenceNavigation();
-        locateSingleRhyme(currentSentenceBase60[0].rhyme, currentTargetKeyBase60);
+        activateWordMap(currentSentenceBase60[0]);
       }
     };
+
+    if (liveInputBase60) {
+      liveInputBase60.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          btnLocateBase60.click();
+        }
+      });
+    }
+
+    // =========================================================================
+    // === CHẾ ĐỘ QUẸT 3 PHÍM TRÊN MA TRẬN (3-KEY SWIPE GESTURE ENGINE) ========
+    // =========================================================================
+    const KEY_TO_CONSONANT = {
+      'b': 'b', 'c': 'c', 'd': 'd', 'D': 'đ', 'đ': 'đ',
+      'g': 'g', 'G': 'ng', 'h': 'h', 'H': 'ngh',
+      'j': 'gi', 'k': 'k', 'K': 'kh', 'l': 'l', 'L': 'l',
+      'm': 'm', 'n': 'n', 'N': 'nh', 'p': 'p', 'P': 'ph',
+      'q': 'qu', 'Q': 'ch', 'r': 'r', 'R': 'tr',
+      's': 's', 'S': 's', 't': 't', 'T': 'th',
+      'v': 'v', 'x': 'x', 'C': 'ch', 'f': 'ph',
+      'a': '', 'A': '', 'e': '', 'E': '', 'i': '', 'I': '',
+      'o': '', 'O': '', 'u': '', 'U': '', 'w': '', 'W': 'ngh',
+      'y': '', 'Y': '', 'z': '', 'Z': '',
+      '0': '', '1': '', '2': '', '3': '', '4': '',
+      '5': '', '6': '', '7': '', '8': '', '9': ''
+    };
+
+    const KEY_TO_TONE = {
+      's': { tone: 1, name: 'Sắc' },
+      'S': { tone: 1, name: 'Sắc' },
+      '1': { tone: 1, name: 'Sắc' },
+      'f': { tone: 2, name: 'Huyền' },
+      'F': { tone: 2, name: 'Huyền' },
+      '2': { tone: 2, name: 'Huyền' },
+      'r': { tone: 3, name: 'Hỏi' },
+      'R': { tone: 3, name: 'Hỏi' },
+      '3': { tone: 3, name: 'Hỏi' },
+      'x': { tone: 4, name: 'Ngã' },
+      'X': { tone: 4, name: 'Ngã' },
+      '4': { tone: 4, name: 'Ngã' },
+      'j': { tone: 5, name: 'Nặng' },
+      'J': { tone: 5, name: 'Nặng' },
+      '5': { tone: 5, name: 'Nặng' },
+      'z': { tone: 0, name: 'Ngang' },
+      'Z': { tone: 0, name: 'Ngang' },
+      '0': { tone: 0, name: 'Ngang' }
+    };
+
+    function assembleSwipeWord(consonant, rhyme, tone) {
+      let prefix = consonant !== undefined && consonant !== null ? consonant : '';
+      let r = rhyme || '';
+
+      if (prefix === 'gi' && r) {
+        if (r.startsWith('iê')) {
+          r = r.substring(1);
+        } else if (r.startsWith('i')) {
+          prefix = 'g';
+        }
+      } else if (prefix === 'qu' && r) {
+        if (r.startsWith('u')) {
+          r = r.substring(1);
+        }
+      } else if (prefix === 'c' && /^[eêi]/i.test(r)) {
+        prefix = 'k';
+      } else if (prefix === 'k' && !/^[eêi]/i.test(r)) {
+        prefix = 'c';
+      } else if (prefix === 'g' && /^[eêi]/i.test(r)) {
+        prefix = 'gh';
+      } else if (prefix === 'ng' && /^[eêi]/i.test(r)) {
+        prefix = 'ngh';
+      }
+
+      const tonedRhyme = applyTone(r, tone);
+      return prefix + tonedRhyme;
+    }
+
+    let activeSwipeMode = localStorage.getItem('vcomp_swipe_mode') === 'true';
+    let isSwiping = false;
+    let swipePoints = [];
+    let visitedCells = [];
+    let swipeCell1 = null;
+    let swipeCell2 = null;
+    let swipeCell3 = null;
+    let swipeFadeAnimId = null;
+    let swipeTrailAlpha = 1.0;
+    let clearHighlightTimeout = null;
+
+    const btnToggleSwipeMode = document.getElementById('btnToggleSwipeMode');
+    const swipeBtnText = document.getElementById('swipeBtnText');
+    const swipeHud = document.getElementById('swipeHud');
+    const btnCloseSwipeHud = document.getElementById('btnCloseSwipeHud');
+    const swipeStep1 = document.getElementById('swipeStep1');
+    const swipeStep2 = document.getElementById('swipeStep2');
+    const swipeStep3 = document.getElementById('swipeStep3');
+    const swipeHudResult = document.getElementById('swipeHudResult');
+    const hudWordViet = document.getElementById('hudWordViet');
+    const hudB60Badge = document.getElementById('hudB60Badge');
+    const squareGridContainer = document.getElementById('squareGridContainer');
+    const swipeCanvas = document.getElementById('swipeCanvas');
+    const swipeCtx = swipeCanvas ? swipeCanvas.getContext('2d') : null;
+
+    function resizeSwipeCanvas() {
+      if (!swipeCanvas || !squareGridContainer) return;
+      const rect = squareGridContainer.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      swipeCanvas.width = rect.width * dpr;
+      swipeCanvas.height = rect.height * dpr;
+      swipeCanvas.style.width = `${rect.width}px`;
+      swipeCanvas.style.height = `${rect.height}px`;
+      if (swipeCtx) {
+        swipeCtx.scale(dpr, dpr);
+      }
+    }
+
+    window.addEventListener('resize', () => {
+      if (activeSwipeMode) resizeSwipeCanvas();
+    });
+
+    function setSwipeMode(enabled) {
+      activeSwipeMode = enabled;
+      localStorage.setItem('vcomp_swipe_mode', enabled ? 'true' : 'false');
+
+      if (btnToggleSwipeMode) {
+        if (enabled) {
+          btnToggleSwipeMode.classList.add('active');
+          if (swipeBtnText) swipeBtnText.textContent = 'Quẹt 3 Phím: BẬT';
+        } else {
+          btnToggleSwipeMode.classList.remove('active');
+          if (swipeBtnText) swipeBtnText.textContent = 'Quẹt 3 Phím';
+        }
+      }
+
+      if (squareGridContainer) {
+        if (enabled) {
+          squareGridContainer.classList.add('swipe-mode-enabled');
+          resizeSwipeCanvas();
+        } else {
+          squareGridContainer.classList.remove('swipe-mode-enabled');
+        }
+      }
+
+      if (swipeHud) {
+        swipeHud.style.display = enabled ? 'flex' : 'none';
+        if (enabled) {
+          resetSwipeHudDisplay();
+        }
+      }
+
+      if (!enabled) {
+        clearSwipeHighlights();
+        clearCanvas();
+      }
+    }
+
+    if (btnToggleSwipeMode) {
+      btnToggleSwipeMode.onclick = (e) => {
+        e.stopPropagation();
+        setSwipeMode(!activeSwipeMode);
+      };
+    }
+
+    if (btnCloseSwipeHud) {
+      btnCloseSwipeHud.onclick = (e) => {
+        e.stopPropagation();
+        setSwipeMode(false);
+      };
+    }
+
+    // Khởi tạo trạng thái ban đầu
+    setSwipeMode(activeSwipeMode);
+
+    function resetSwipeHudDisplay() {
+      if (swipeStep1) {
+        swipeStep1.textContent = '① Chạm Ô 1: Phụ âm';
+        swipeStep1.className = 'swipe-step active-1';
+      }
+      if (swipeStep2) {
+        swipeStep2.textContent = '② Lướt Ô 2: Vần';
+        swipeStep2.className = 'swipe-step';
+      }
+      if (swipeStep3) {
+        swipeStep3.textContent = '③ Lướt Ô 3: Dấu';
+        swipeStep3.className = 'swipe-step';
+      }
+      if (swipeHudResult) swipeHudResult.style.display = 'none';
+    }
+
+    function clearSwipeHighlights() {
+      document.querySelectorAll('.square-cell').forEach(c => {
+        c.classList.remove('swipe-target-1', 'swipe-target-2', 'swipe-target-3', 'swipe-trail-active');
+      });
+    }
+
+    function clearCanvas() {
+      if (!swipeCtx || !swipeCanvas) return;
+      const rect = squareGridContainer ? squareGridContainer.getBoundingClientRect() : { width: swipeCanvas.width, height: swipeCanvas.height };
+      swipeCtx.clearRect(0, 0, rect.width, rect.height);
+    }
+
+    function drawSwipeTrail(alpha = 1.0) {
+      if (!swipeCtx || swipePoints.length < 2) return;
+      const rect = squareGridContainer.getBoundingClientRect();
+      swipeCtx.clearRect(0, 0, rect.width, rect.height);
+
+      swipeCtx.save();
+      swipeCtx.globalAlpha = alpha;
+
+      // Vẽ vệt phát sáng laser neon
+      const grad = swipeCtx.createLinearGradient(
+        swipePoints[0].x, swipePoints[0].y,
+        swipePoints[swipePoints.length - 1].x, swipePoints[swipePoints.length - 1].y
+      );
+      grad.addColorStop(0, '#00ff88');
+      grad.addColorStop(0.5, '#00e5ff');
+      grad.addColorStop(1, '#ffb800');
+
+      // Outer glow
+      swipeCtx.shadowColor = '#00e5ff';
+      swipeCtx.shadowBlur = 14;
+      swipeCtx.strokeStyle = grad;
+      swipeCtx.lineWidth = 5;
+      swipeCtx.lineCap = 'round';
+      swipeCtx.lineJoin = 'round';
+
+      swipeCtx.beginPath();
+      swipeCtx.moveTo(swipePoints[0].x, swipePoints[0].y);
+      for (let i = 1; i < swipePoints.length; i++) {
+        swipeCtx.lineTo(swipePoints[i].x, swipePoints[i].y);
+      }
+      swipeCtx.stroke();
+
+      // Inner white core
+      swipeCtx.shadowBlur = 0;
+      swipeCtx.strokeStyle = 'rgba(255, 255, 255, 0.85)';
+      swipeCtx.lineWidth = 2;
+      swipeCtx.stroke();
+
+      // Đánh dấu các chặng mốc 1, 2, 3 bằng các vòng tròn neon
+      const drawCheckpoint = (cell, color, label) => {
+        if (!cell) return;
+        const cRect = cell.getBoundingClientRect();
+        const cx = cRect.left - rect.left + cRect.width / 2;
+        const cy = cRect.top - rect.top + cRect.height / 2;
+
+        swipeCtx.beginPath();
+        swipeCtx.arc(cx, cy, 10, 0, Math.PI * 2);
+        swipeCtx.fillStyle = color;
+        swipeCtx.shadowColor = color;
+        swipeCtx.shadowBlur = 10;
+        swipeCtx.fill();
+
+        swipeCtx.font = 'bold 10px Inter, sans-serif';
+        swipeCtx.fillStyle = '#000';
+        swipeCtx.textAlign = 'center';
+        swipeCtx.textBaseline = 'middle';
+        swipeCtx.shadowBlur = 0;
+        swipeCtx.fillText(label, cx, cy);
+      };
+
+      drawCheckpoint(swipeCell1, '#00ff88', '1');
+      drawCheckpoint(swipeCell2, '#00e5ff', '2');
+      drawCheckpoint(swipeCell3, '#ffb800', '3');
+
+      swipeCtx.restore();
+    }
+
+    // Thuật toán tìm điểm bẻ góc (Vertex / Apex) xa nhất so với đoạn thẳng P0 -> Pn
+    function findApexCell(cellList, p0, pn) {
+      if (cellList.length <= 2) return cellList[1] || null;
+
+      const containerRect = squareGridContainer.getBoundingClientRect();
+      const x0 = p0.x;
+      const y0 = p0.y;
+      const xn = pn.x;
+      const yn = pn.y;
+
+      const dx = xn - x0;
+      const dy = yn - y0;
+      const lineLen = Math.hypot(dx, dy);
+
+      if (lineLen < 15) {
+        return cellList[Math.floor(cellList.length / 2)];
+      }
+
+      let maxDist = -1;
+      let apexCell = cellList[1];
+
+      for (let i = 1; i < cellList.length - 1; i++) {
+        const cRect = cellList[i].getBoundingClientRect();
+        const cx = cRect.left - containerRect.left + cRect.width / 2;
+        const cy = cRect.top - containerRect.top + cRect.height / 2;
+
+        // Khoảng cách vuông góc từ (cx, cy) đến đoạn thẳng P0 -> Pn
+        const dist = Math.abs(dy * cx - dx * cy + xn * y0 - yn * x0) / lineLen;
+        if (dist > maxDist) {
+          maxDist = dist;
+          apexCell = cellList[i];
+        }
+      }
+
+      return apexCell;
+    }
+
+    function getCellFromPoint(clientX, clientY) {
+      const el = document.elementFromPoint(clientX, clientY);
+      return el ? el.closest('.square-cell') : null;
+    }
+
+    if (squareGridContainer) {
+      // 1. Pointer Down (Bắt đầu vuốt - Chặng 1: Phụ âm)
+      squareGridContainer.addEventListener('pointerdown', (e) => {
+        if (!activeSwipeMode) return;
+
+        const cell = getCellFromPoint(e.clientX, e.clientY);
+        if (!cell) return;
+
+        e.preventDefault();
+        isSwiping = true;
+        squareGridContainer.setPointerCapture(e.pointerId);
+
+        if (clearHighlightTimeout) clearTimeout(clearHighlightTimeout);
+        if (swipeFadeAnimId) cancelAnimationFrame(swipeFadeAnimId);
+        swipeTrailAlpha = 1.0;
+
+        clearSwipeHighlights();
+        clearCanvas();
+        resizeSwipeCanvas();
+
+        const rect = squareGridContainer.getBoundingClientRect();
+        const pt = { x: e.clientX - rect.left, y: e.clientY - rect.top, time: Date.now() };
+
+        swipePoints = [pt];
+        visitedCells = [cell];
+        swipeCell1 = cell;
+        swipeCell2 = null;
+        swipeCell3 = null;
+
+        cell.classList.add('swipe-target-1');
+
+        const key = cell.dataset.key;
+        const cons = KEY_TO_CONSONANT[key] !== undefined ? KEY_TO_CONSONANT[key] : key;
+
+        if (swipeStep1) {
+          swipeStep1.textContent = `① PA: [ ${cons || '∅'} ]`;
+          swipeStep1.className = 'swipe-step active-1';
+        }
+        if (swipeStep2) {
+          swipeStep2.textContent = '② Lướt Ô 2: Vần...';
+          swipeStep2.className = 'swipe-step';
+        }
+        if (swipeStep3) {
+          swipeStep3.textContent = '③ Lướt Ô 3: Dấu...';
+          swipeStep3.className = 'swipe-step';
+        }
+        if (swipeHudResult) swipeHudResult.style.display = 'none';
+        if (swipeHud) swipeHud.style.display = 'flex';
+      });
+
+      // 2. Pointer Move (Đang vuốt lướt trên lưới)
+      squareGridContainer.addEventListener('pointermove', (e) => {
+        if (!activeSwipeMode || !isSwiping) return;
+
+        e.preventDefault();
+        const rect = squareGridContainer.getBoundingClientRect();
+        const pt = { x: e.clientX - rect.left, y: e.clientY - rect.top, time: Date.now() };
+        swipePoints.push(pt);
+
+        const currentCell = getCellFromPoint(e.clientX, e.clientY);
+        if (currentCell) {
+          if (visitedCells.length === 0 || visitedCells[visitedCells.length - 1] !== currentCell) {
+            visitedCells.push(currentCell);
+            currentCell.classList.add('swipe-trail-active');
+          }
+        }
+
+        // Tách 3 chặng từ chuỗi các ô đã đi qua
+        if (visitedCells.length >= 2) {
+          const p0 = swipePoints[0];
+          const pn = pt;
+
+          if (visitedCells.length === 2) {
+            swipeCell2 = visitedCells[1];
+            swipeCell3 = null;
+          } else {
+            // visitedCells >= 3: Ô góc uốn là Ô 2 (Vần), Ô hiện tại dưới ngón tay là Ô 3 (Dấu)
+            swipeCell2 = findApexCell(visitedCells, p0, pn);
+            swipeCell3 = visitedCells[visitedCells.length - 1];
+            if (swipeCell3 === swipeCell2) {
+              swipeCell3 = null;
+            }
+          }
+
+          // Cập nhật lớp highlight
+          document.querySelectorAll('.square-cell').forEach(c => {
+            c.classList.remove('swipe-target-1', 'swipe-target-2', 'swipe-target-3');
+          });
+          if (swipeCell1) swipeCell1.classList.add('swipe-target-1');
+          if (swipeCell2) swipeCell2.classList.add('swipe-target-2');
+          if (swipeCell3) swipeCell3.classList.add('swipe-target-3');
+
+          // Cập nhật HUD thời gian thực
+          if (swipeCell2 && swipeStep2) {
+            swipeStep2.textContent = `② Vần: [ ${swipeCell2.dataset.rhyme} ]`;
+            swipeStep2.className = 'swipe-step active-2';
+          }
+
+          if (swipeCell3 && swipeStep3) {
+            const toneObj = KEY_TO_TONE[swipeCell3.dataset.key] || { tone: 0, name: 'Ngang' };
+            swipeStep3.textContent = `③ Dấu: [ ${swipeCell3.dataset.key} - ${toneObj.name} ]`;
+            swipeStep3.className = 'swipe-step active-3';
+
+            // Preview trước kết quả
+            const consKey = swipeCell1.dataset.key;
+            const cons = KEY_TO_CONSONANT[consKey] !== undefined ? KEY_TO_CONSONANT[consKey] : consKey;
+            const rhyme = swipeCell2.dataset.rhyme;
+            const previewWord = assembleSwipeWord(cons, rhyme, toneObj.tone);
+            let previewB60 = '';
+            try {
+              previewB60 = timeToBase60(encodeWord(previewWord));
+            } catch (_) {}
+
+            if (previewWord && previewB60 && hudWordViet && hudB60Badge && swipeHudResult) {
+              hudWordViet.textContent = previewWord;
+              hudB60Badge.textContent = previewB60;
+              swipeHudResult.style.display = 'inline-flex';
+            }
+          }
+        }
+
+        drawSwipeTrail(1.0);
+      });
+
+      // 3. Pointer Up (Nhấc tay - Chốt kết quả vuốt)
+      const finishSwipe = (e) => {
+        if (!activeSwipeMode || !isSwiping) return;
+        isSwiping = false;
+
+        try {
+          squareGridContainer.releasePointerCapture(e.pointerId);
+        } catch (_) {}
+
+        if (!swipeCell1 || (!swipeCell2 && visitedCells.length < 2)) {
+          // Chưa vuốt qua đủ 2 ô
+          clearSwipeHighlights();
+          clearCanvas();
+          return;
+        }
+
+        if (!swipeCell2 && visitedCells.length >= 2) {
+          swipeCell2 = visitedCells[1];
+        }
+
+        // Xác định Ô 3 nếu chưa có
+        if (!swipeCell3 && visitedCells.length >= 3) {
+          swipeCell3 = visitedCells[visitedCells.length - 1];
+          if (swipeCell3 === swipeCell2) swipeCell3 = null;
+        }
+
+        const consKey = swipeCell1.dataset.key;
+        const cons = KEY_TO_CONSONANT[consKey] !== undefined ? KEY_TO_CONSONANT[consKey] : consKey;
+        const rhyme = swipeCell2.dataset.rhyme;
+        const toneObj = swipeCell3 ? (KEY_TO_TONE[swipeCell3.dataset.key] || { tone: 0, name: 'Ngang' }) : { tone: 0, name: 'Ngang' };
+
+        const finalWord = assembleSwipeWord(cons, rhyme, toneObj.tone);
+        let finalB60 = '';
+        try {
+          finalB60 = timeToBase60(encodeWord(finalWord));
+        } catch (_) {}
+
+        // Hiển thị kết quả rực rỡ trên HUD
+        if (hudWordViet) hudWordViet.textContent = finalWord;
+        if (hudB60Badge) hudB60Badge.textContent = finalB60;
+        if (swipeHudResult) swipeHudResult.style.display = 'inline-flex';
+
+        if (swipeStep1) swipeStep1.textContent = `① PA: [ ${cons || '∅'} ]`;
+        if (swipeStep2) swipeStep2.textContent = `② Vần: [ ${rhyme} ]`;
+        if (swipeStep3) swipeStep3.textContent = `③ Dấu: [ ${swipeCell3 ? swipeCell3.dataset.key : 'z'} - ${toneObj.name} ]`;
+
+        // Tự động đẩy kết quả vào Sandbox
+        const liveInput = document.getElementById('liveInputViet');
+        if (liveInput) {
+          liveInput.value = finalWord;
+          updateLiveEncoder(finalWord);
+        }
+
+        // Hiệu ứng tia sáng mờ dần (Smooth Laser Fade-out)
+        swipeTrailAlpha = 1.0;
+        const fadeStep = () => {
+          swipeTrailAlpha *= 0.90;
+          if (swipeTrailAlpha > 0.03) {
+            drawSwipeTrail(swipeTrailAlpha);
+            swipeFadeAnimId = requestAnimationFrame(fadeStep);
+          } else {
+            clearCanvas();
+          }
+        };
+        swipeFadeAnimId = requestAnimationFrame(fadeStep);
+
+        // Tự động gỡ highlight sau 3.5 giây
+        clearHighlightTimeout = setTimeout(() => {
+          clearSwipeHighlights();
+        }, 3500);
+      };
+
+      squareGridContainer.addEventListener('pointerup', finishSwipe);
+      squareGridContainer.addEventListener('pointercancel', finishSwipe);
+    }
 
     const btnExitSentence = document.getElementById('btnExitSentence');
     if (btnExitSentence) {
@@ -3593,7 +4736,6 @@
         exitSentenceNavigation();
       };
     }
-
   </script>
 </body>
 </html>
