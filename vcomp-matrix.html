@@ -955,8 +955,8 @@
 
     .square-grid-container {
       width: 100%;
-      overflow-x: hidden;
-      padding: 0;
+      overflow: hidden;
+      padding: 2px 0;
       position: relative;
     }
 
@@ -1043,7 +1043,6 @@
       background: linear-gradient(135deg, rgba(0, 255, 136, 0.45), rgba(0, 229, 255, 0.45)) !important;
       box-shadow: 0 0 0 2px #fff, 0 0 16px var(--neon-green), 0 0 32px var(--neon-cyan) !important;
       z-index: 10 !important;
-      transform: scale(1.06);
       animation: beaconPulse 1.2s infinite alternate ease-in-out;
     }
     .square-cell.smart-target-active .cell-line-rhyme {
@@ -1060,11 +1059,11 @@
     @keyframes beaconPulse {
       0% {
         box-shadow: 0 0 0 1.5px #fff, 0 0 14px var(--neon-green), 0 0 24px rgba(0, 229, 255, 0.6);
-        transform: scale(1.04);
+        filter: brightness(1);
       }
       100% {
         box-shadow: 0 0 0 2.5px #fff, 0 0 25px var(--neon-green), 0 0 45px rgba(0, 255, 136, 0.95);
-        transform: scale(1.08);
+        filter: brightness(1.15);
       }
     }
 
@@ -1269,7 +1268,7 @@
       }
       .square-grid-container {
         padding: 0;
-        overflow-x: hidden;
+        overflow: hidden;
       }
       .square-grid {
         gap: 1px;
@@ -1497,8 +1496,14 @@
     }
 
     @keyframes sentencePulse {
-      0% { transform: scale(1); box-shadow: 0 0 8px rgba(0, 229, 255, 0.7); }
-      100% { transform: scale(1.05); box-shadow: 0 0 16px rgba(0, 229, 255, 1); }
+      0% {
+        box-shadow: 0 0 8px rgba(0, 229, 255, 0.7), inset 0 0 4px rgba(0, 229, 255, 0.4);
+        filter: brightness(1);
+      }
+      100% {
+        box-shadow: 0 0 18px rgba(0, 229, 255, 1), inset 0 0 8px rgba(0, 229, 255, 0.8);
+        filter: brightness(1.15);
+      }
     }
 
     .nav-top-spacer {
