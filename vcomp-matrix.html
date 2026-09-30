@@ -1142,7 +1142,9 @@
       white-space: nowrap;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: space-between;
+      padding: 0 2px;
+      box-sizing: border-box;
       gap: 2px;
       width: 100%;
       letter-spacing: -0.3px;
@@ -1287,6 +1289,8 @@
         gap: 1px;
         line-height: 1.05;
         letter-spacing: -0.4px;
+        justify-content: center !important;
+        padding: 0 !important;
       }
       .meta-key {
         font-size: 8.5px;
@@ -2047,12 +2051,439 @@
       color: var(--text-muted);
       padding: 10px;
     }
+
+    /* ========================================================================= */
+    /* === BỘ GIAO DIỆN IN ẤN ĐEN TRẮNG CHUYÊN NGHIỆP (MONOCHROME PRINT CSS) === */
+    /* ========================================================================= */
+    .print-only-header {
+      display: none;
+    }
+
+    .btn-print-trigger {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(255, 255, 255, 0.22);
+      color: #e2e8f0;
+      border-radius: 5px;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      height: 22px;
+      user-select: none;
+    }
+    .btn-print-trigger:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      border-color: #ffffff;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.35);
+    }
+    .btn-print-trigger:active {
+      transform: scale(0.95);
+    }
+
+    @media print {
+      @page {
+        size: A4 auto;
+        margin: 6mm 6mm 6mm 6mm;
+      }
+
+      *, *::before, *::after {
+        background: transparent !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+        filter: none !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      html, body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+
+      .container {
+        max-width: 100% !important;
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        gap: 0 !important;
+      }
+
+      /* Ẩn toàn bộ các thành phần tương tác màn hình & rườm rà */
+      header,
+      footer,
+      .stats-grid,
+      .proposal-banner,
+      .sandbox-panel,
+      .filter-bar,
+      .view-mode-bar,
+      .square-filter-bar,
+      .swipe-hud,
+      .swipe-touch-pad,
+      .square-cell-tooltip,
+      #magnifierNavWrapper,
+      .btn-exit-wordmap,
+      .btn-exit-sentence,
+      .btn-swipe-mode,
+      .btn-print-trigger {
+        display: none !important;
+      }
+
+      /* Tiêu đề in trang trọng */
+      .print-only-header {
+        display: block !important;
+        text-align: center;
+        margin-bottom: 5px;
+        padding-bottom: 4px;
+        border-bottom: 1.5px solid #000000;
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+      .print-brand-title {
+        font-size: 13pt;
+        font-weight: 900;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        color: #000000 !important;
+        line-height: 1.2;
+      }
+      .print-brand-sub {
+        font-size: 8pt;
+        color: #333333 !important;
+        margin-top: 1.5px;
+        font-weight: 600;
+      }
+      .print-meta-line {
+        font-size: 7.5pt;
+        color: #555555 !important;
+        margin-top: 2px;
+        font-style: italic;
+      }
+
+      /* ======================================================= */
+      /* PHÂN ĐỊNH RÕ RÀNG: CHỈ IN DUY NHẤT 1 BỐ CỤC ĐANG XEM */
+      /* ======================================================= */
+      body.print-view-square .table-wrapper,
+      body[data-view-mode="square"] .table-wrapper,
+      .table-wrapper[style*="display: none"] {
+        display: none !important;
+      }
+      body.print-view-square .square-matrix-wrapper,
+      body[data-view-mode="square"] .square-matrix-wrapper {
+        display: block !important;
+      }
+
+      body.print-view-table .square-matrix-wrapper,
+      body[data-view-mode="table"] .square-matrix-wrapper,
+      .square-matrix-wrapper[style*="display: none"] {
+        display: none !important;
+      }
+      body.print-view-table .table-wrapper,
+      body[data-view-mode="table"] .table-wrapper {
+        display: block !important;
+      }
+
+      /* Ma Trận Vuông 13x13: Căn chỉnh vừa khít trọn 1 trang A4 duy nhất */
+      .square-matrix-wrapper {
+        background: #ffffff !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        max-width: 196mm !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .square-matrix-header {
+        display: none !important;
+      }
+
+      .square-grid-container {
+        border: 1.5px solid #000000 !important;
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow: visible !important;
+        box-shadow: none !important;
+      }
+
+      .square-grid {
+        display: grid !important;
+        grid-template-columns: repeat(13, 1fr) !important;
+        gap: 0 !important;
+        width: 100% !important;
+        border: none !important;
+        background: #000000 !important;
+      }
+
+      .square-cell {
+        background: #ffffff !important;
+        border: 0.5px solid #000000 !important;
+        color: #000000 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        padding: 1.5px 1px !important;
+        min-height: 0 !important;
+        height: auto !important;
+        aspect-ratio: 1.05 / 1 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        box-sizing: border-box !important;
+      }
+
+      .cell-line-meta {
+        font-size: 6pt !important;
+        color: #222222 !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        width: 100% !important;
+        padding: 0 1.5px !important;
+        box-sizing: border-box !important;
+        font-family: monospace !important;
+        font-weight: 700 !important;
+        line-height: 1 !important;
+      }
+
+      .meta-stt {
+        font-size: 5.5pt !important;
+        color: #555555 !important;
+        font-weight: normal !important;
+      }
+
+      .meta-floor {
+        font-size: 5.5pt !important;
+        font-weight: 800 !important;
+        color: #000000 !important;
+      }
+      .meta-floor.b2 {
+        text-decoration: underline !important;
+      }
+      .meta-floor.b3 {
+        font-style: italic !important;
+      }
+
+      .meta-key {
+        font-size: 7pt !important;
+        font-weight: 900 !important;
+        color: #000000 !important;
+      }
+      .meta-key.is-upper {
+        text-decoration: underline !important;
+      }
+
+      .cell-line-rhyme {
+        font-size: 9.5pt !important;
+        font-weight: 900 !important;
+        color: #000000 !important;
+        line-height: 1 !important;
+        margin: auto 0 !important;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+      }
+
+      .cell-key-inline,
+      .square-cell.cell-shift-border .cell-key-inline,
+      .cell-key-inline.is-upper {
+        display: inline-block !important;
+        font-family: monospace !important;
+        font-size: 8.5pt !important;
+        font-weight: 900 !important;
+        color: #000000 !important;
+      }
+      .cell-key-inline.is-upper,
+      .square-cell.cell-shift-border .cell-key-inline {
+        text-decoration: underline !important;
+        text-underline-offset: 1.5px !important;
+        color: #000000 !important;
+      }
+
+      .meta-key,
+      .square-cell.cell-shift-border .meta-key,
+      .meta-key.is-upper {
+        font-size: 7pt !important;
+        font-weight: 900 !important;
+        color: #000000 !important;
+      }
+
+      .cell-rhyme-inline {
+        font-size: 9.5pt !important;
+        font-weight: 900 !important;
+        color: #000000 !important;
+        letter-spacing: -0.2px !important;
+      }
+
+      .cell-rhyme-split-1,
+      .cell-rhyme-split-2 {
+        font-size: 9pt !important;
+        font-weight: 900 !important;
+        color: #000000 !important;
+      }
+
+      /* Nguyên âm đơn B1: Nền xám nhạt để dễ tra cứu */
+      .square-cell.vowel-single-glow {
+        background: #f1f5f9 !important;
+        border: 1px solid #000000 !important;
+      }
+      .square-cell.vowel-single-glow .cell-line-rhyme {
+        color: #000000 !important;
+      }
+
+      /* Phím Shift viết hoa: Viền nét đứt đen rõ nét, nền trắng tinh, chữ đen tuyền */
+      .square-cell.cell-shift-border {
+        background: #ffffff !important;
+        border-style: dashed !important;
+        border-color: #000000 !important;
+        border-width: 0.8px !important;
+      }
+
+      /* Khi đang tra từ (Word Map) in: làm mờ nhẹ các ô khác, tô đậm phím tra */
+      .square-cell.dimmed {
+        opacity: 0.28 !important;
+        border-color: #cccccc !important;
+      }
+      .square-cell.dimmed .cell-line-rhyme {
+        color: #777777 !important;
+      }
+
+      .square-cell.word-map-consonant,
+      .square-cell.word-map-rhyme,
+      .square-cell.word-map-tone,
+      .square-cell.word-map-multi {
+        border: 2px solid #000000 !important;
+        background: #f8fafc !important;
+        opacity: 1 !important;
+        position: relative !important;
+      }
+
+      .word-map-badge {
+        display: inline-block !important;
+        position: absolute !important;
+        top: -4px !important;
+        right: -2px !important;
+        font-size: 6pt !important;
+        font-weight: 900 !important;
+        padding: 0 2px !important;
+        background: #000000 !important;
+        color: #ffffff !important;
+        border: 0.5px solid #000000 !important;
+        border-radius: 2px !important;
+        box-shadow: none !important;
+      }
+
+      /* Bảng 7 Cột khi In */
+      .table-wrapper {
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .matrix-table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        border: 1.5px solid #000000 !important;
+        font-size: 8pt !important;
+      }
+
+      .matrix-table th {
+        background: #e2e8f0 !important;
+        color: #000000 !important;
+        border: 1px solid #000000 !important;
+        padding: 4px 2px !important;
+        font-weight: 800 !important;
+        text-align: center !important;
+        font-size: 8pt !important;
+      }
+
+      .matrix-table td {
+        background: #ffffff !important;
+        color: #000000 !important;
+        border: 0.5px solid #666666 !important;
+        padding: 3px 2px !important;
+        text-align: center !important;
+      }
+
+      .matrix-table tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .matrix-table .td-key {
+        background: #f8fafc !important;
+        font-weight: 900 !important;
+        border-right: 1.5px solid #000000 !important;
+      }
+
+      .matrix-table .cell-divider {
+        border-left: 1.5px solid #000000 !important;
+      }
+
+      .key-primary {
+        font-size: 10pt !important;
+        font-weight: 900 !important;
+        color: #000000 !important;
+      }
+      .key-shift {
+        font-size: 8pt !important;
+        color: #444444 !important;
+      }
+
+      .word-cons {
+        color: #555555 !important;
+      }
+      .word-rhyme {
+        color: #000000 !important;
+        font-weight: 900 !important;
+      }
+      .badge-order {
+        color: #777777 !important;
+        font-size: 6.5pt !important;
+      }
+      .badge-b60 {
+        color: #333333 !important;
+        font-size: 6.5pt !important;
+        font-family: monospace !important;
+      }
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
     
+    <!-- Dedicated Print Header (Tự động xuất hiện khi in Ctrl+P) -->
+    <div class="print-only-header">
+      <div class="print-brand-title">BẢNG MA TRẬN 169 VẦN TIẾNG VIỆT — VCOMP BASE60 (13²)</div>
+      <div class="print-brand-sub">Hệ Thống Mã Hóa Âm Vị & Phím Tắt ViScript • 9 Nguyên Âm Đơn Tầng B1 • Chuẩn Phụ Âm & Dấu Thanh Telex</div>
+      <div class="print-meta-line">
+        <span id="printCurrentViewMode">Bố cục: Ma Trận Vuông 13×13 (169 ô)</span> • 
+        <span>Khổ in: A4 Đen Trắng</span> • 
+        <span id="printTimestamp"></span>
+      </div>
+    </div>
+
     <!-- Header -->
     <header>
       <div class="brand-group">
@@ -2230,6 +2661,10 @@
         <button class="view-mode-btn" id="btnViewSquare" data-view="square">
           <span class="btn-icon">⏹️</span>
           <span>Ma Trận Vuông 13×13 (169 Vần Siêu Bao Quát)</span>
+        </button>
+        <button class="view-mode-btn btn-print-trigger" id="btnPrintPage" title="In bản giấy A4 đen trắng hoặc Lưu thành file PDF (Ctrl + P)">
+          <span class="btn-icon">🖨️</span>
+          <span>In Đen Trắng (Ctrl+P)</span>
         </button>
       </div>
       <div class="view-mode-hint" id="viewModeHint">
@@ -3110,23 +3545,12 @@
 
           line1Html = `<div class="cell-line-meta">${isSmartTarget ? '🎯 ' : ''}${topContent}</div>`;
           line2Html = `<div class="cell-line-rhyme ${item.color}">${bottomContent}</div>`;
-        } else if (isLongRhyme) {
-          // Trường hợp vần quá dài: bỏ cả '#' và 'B' đi để gọn hơn (vd: 95 1 s / ương)
-          line1Html = `
-            <div class="cell-line-meta">
-              <span class="meta-stt">${isSmartTarget ? '🎯 ' : ''}${item.order}</span>
-              <span class="meta-floor ${floorLower}">${floorNum}</span>
-              <span class="meta-key ${isUpper ? 'is-upper' : ''}">${item.key}</span>
-            </div>
-          `;
-          line2Html = `
-            <div class="cell-line-rhyme ${item.color}">
-              <span class="cell-rhyme-inline">${item.rhyme}</span>
-              ${item.anomaly ? `<span class="anomaly-badge ${item.anomaly.danger ? 'danger' : ''}" style="font-size:6px; vertical-align:super;">⚠️</span>` : ''}
-            </div>
-          `;
         } else {
-          // Trường hợp vần ngắn: Dòng 1: #STT BTầng (vd: #2 B2) / Dòng 2: Phím Vần (vd: a yết)
+          // Desktop / Tablet / In ấn:
+          // Dòng 1: [ #STT ] [ Tầng ] phân bổ 2 góc (Trái - Phải) cực kỳ gọn gàng
+          // Dòng 2: Cặp đôi vàng [ Phím ] [ Vần ] to, rõ, hiển thị rõ ràng quan hệ "phím nào gõ ra vần nào" (vd: s ương, a yết, b oe)
+          // Ngoại lệ: Nếu phím trùng vần (nguyên âm đơn a, e, i, o, u), chỉ hiện 1 chữ duy nhất để không bao giờ bị lặp 'a a'
+          const isSelfVowel = item.key.toLowerCase() === item.rhyme.toLowerCase();
           line1Html = `
             <div class="cell-line-meta">
               <span class="meta-stt">${isSmartTarget ? '🎯 ' : ''}#${item.order}</span>
@@ -3135,7 +3559,7 @@
           `;
           line2Html = `
             <div class="cell-line-rhyme ${item.color}">
-              <span class="cell-key-inline ${isUpper ? 'is-upper' : ''}">${item.key}</span>
+              ${!isSelfVowel ? `<span class="cell-key-inline ${isUpper ? 'is-upper' : ''}">${item.key}</span>` : ''}
               <span class="cell-rhyme-inline">${item.rhyme}</span>
               ${item.anomaly ? `<span class="anomaly-badge ${item.anomaly.danger ? 'danger' : ''}" style="font-size:6px; vertical-align:super;">⚠️</span>` : ''}
             </div>
@@ -3906,6 +4330,9 @@
     function switchViewMode(mode) {
       currentViewMode = mode;
       localStorage.setItem('vcomp_matrix_view_mode', mode);
+      document.body.dataset.viewMode = mode;
+      document.body.classList.remove('print-view-square', 'print-view-table');
+      document.body.classList.add(mode === 'square' ? 'print-view-square' : 'print-view-table');
 
       const tableWrapper = document.getElementById('tableWrapper');
       const squareWrapper = document.getElementById('squareWrapper');
@@ -3947,6 +4374,29 @@
 
     document.getElementById('btnViewTable').onclick = () => switchViewMode('table');
     document.getElementById('btnViewSquare').onclick = () => switchViewMode('square');
+
+    const btnPrintPage = document.getElementById('btnPrintPage');
+    if (btnPrintPage) {
+      btnPrintPage.onclick = () => window.print();
+    }
+
+    window.addEventListener('beforeprint', () => {
+      document.body.dataset.viewMode = currentViewMode;
+      document.body.classList.remove('print-view-square', 'print-view-table');
+      document.body.classList.add(currentViewMode === 'square' ? 'print-view-square' : 'print-view-table');
+
+      const printModeEl = document.getElementById('printCurrentViewMode');
+      if (printModeEl) {
+        printModeEl.textContent = currentViewMode === 'square' 
+          ? 'Bố cục: Ma Trận Vuông 13×13 (169 ô)' 
+          : 'Bố cục: Bảng Chi Tiết 7 Cột';
+      }
+      const printTimeEl = document.getElementById('printTimestamp');
+      if (printTimeEl) {
+        const now = new Date();
+        printTimeEl.textContent = `In lúc: ${now.toLocaleTimeString('vi-VN')} ngày ${now.toLocaleDateString('vi-VN')}`;
+      }
+    });
 
     // 3. Switch Sort & Filter Events
     const btnSortAZ = document.getElementById('btnSortAZ');
