@@ -533,10 +533,15 @@
       position: absolute;
       top: 1px;
       left: 3px;
-      font-size: 7.5px;
-      color: #58a6ff;
+      font-size: 8px;
+      color: var(--glow-b2);
       font-weight: 700;
       font-family: var(--font-mono);
+    }
+    .top-hex-bar .grid-key.flank-key .key-sub {
+      color: #58a6ff !important;
+      font-size: 8px;
+      font-weight: 700;
     }
     .top-hex-bar .grid-key .key-sub {
       position: absolute;
@@ -1708,13 +1713,13 @@
     ];
 
     const TOP_BAR_36L = [
-      { id: 'hex_0_0', char: 'a', shift: 'A', tl: 'HEX', type: 'hex', r: -1, c: 0 },
-      { id: 'hex_0_1', char: 'b', shift: 'B', tl: 'HEX', type: 'hex', r: -1, c: 1 },
-      { id: 'hex_0_2', char: 'c', shift: 'C', tl: 'HEX', type: 'hex', r: -1, c: 2 },
-      { id: 'hex_0_3', char: 'd', shift: 'D', tl: 'HEX', type: 'hex', r: -1, c: 3 },
-      { id: 'hex_0_4', char: 'e', shift: 'E', tl: 'HEX', type: 'hex', r: -1, c: 4 },
-      { id: 'hex_0_5', char: 'f', shift: 'F', tl: 'HEX', type: 'hex', r: -1, c: 5 },
-      { id: 'top_mid_36l', char: '36L', sub: 'Trái', type: 'flank', span: 2, r: -1, c: 6 },
+      { id: 'hex_0_0', char: 'a', shift: 'A', tl: 'a', type: 'hex', r: -1, c: 0 },
+      { id: 'hex_0_1', char: 'b', shift: 'B', tl: 'uy', type: 'hex', r: -1, c: 1 },
+      { id: 'hex_0_2', char: 'c', shift: 'C', tl: 'Ch', type: 'hex', r: -1, c: 2 },
+      { id: 'hex_0_3', char: 'd', shift: 'D', tl: 'đ', type: 'hex', r: -1, c: 3 },
+      { id: 'hex_0_4', char: 'e', shift: 'E', tl: 'êu', type: 'hex', r: -1, c: 4 },
+      { id: 'hex_0_5', char: 'f', shift: 'F', tl: 'ươn', type: 'hex', r: -1, c: 5 },
+      { id: 'top_mid_36l', char: '36L', sub: '❖ Mode', type: 'flank', span: 2, r: -1, c: 6 },
       { id: 'top_0_8', char: '<', shift: '{', sub: '{', type: 'fn', r: -1, c: 8 },
       { id: 'top_0_9', char: '%', shift: '^', sub: '^', type: 'fn', r: -1, c: 9 },
       { id: 'top_0_10', char: '$', shift: '₫', sub: '₫', type: 'fn', r: -1, c: 10 },
@@ -1801,13 +1806,13 @@
       { id: 'top_0_1', char: '$', shift: '₫', sub: '₫', type: 'fn', r: -1, c: 1 },
       { id: 'top_0_2', char: '%', shift: '^', sub: '^', type: 'fn', r: -1, c: 2 },
       { id: 'top_0_3', char: '<', shift: '{', sub: '{', type: 'fn', r: -1, c: 3 },
-      { id: 'top_mid_36r', char: '36R', sub: 'Phải', type: 'flank', span: 2, r: -1, c: 4 },
-      { id: 'hex_0_6', char: 'a', shift: 'A', tl: 'HEX', type: 'hex', r: -1, c: 6 },
-      { id: 'hex_0_7', char: 'b', shift: 'B', tl: 'HEX', type: 'hex', r: -1, c: 7 },
-      { id: 'hex_0_8', char: 'c', shift: 'C', tl: 'HEX', type: 'hex', r: -1, c: 8 },
-      { id: 'hex_0_9', char: 'd', shift: 'D', tl: 'HEX', type: 'hex', r: -1, c: 9 },
-      { id: 'hex_0_10', char: 'e', shift: 'E', tl: 'HEX', type: 'hex', r: -1, c: 10 },
-      { id: 'hex_0_11', char: 'f', shift: 'F', tl: 'HEX', type: 'hex', r: -1, c: 11 }
+      { id: 'top_mid_36r', char: '36R', sub: '❖ Mode', type: 'flank', span: 2, r: -1, c: 4 },
+      { id: 'hex_0_6', char: 'a', shift: 'A', tl: 'a', type: 'hex', r: -1, c: 6 },
+      { id: 'hex_0_7', char: 'b', shift: 'B', tl: 'uy', type: 'hex', r: -1, c: 7 },
+      { id: 'hex_0_8', char: 'c', shift: 'C', tl: 'Ch', type: 'hex', r: -1, c: 8 },
+      { id: 'hex_0_9', char: 'd', shift: 'D', tl: 'đ', type: 'hex', r: -1, c: 9 },
+      { id: 'hex_0_10', char: 'e', shift: 'E', tl: 'êu', type: 'hex', r: -1, c: 10 },
+      { id: 'hex_0_11', char: 'f', shift: 'F', tl: 'ươn', type: 'hex', r: -1, c: 11 }
     ];
 
     function createBlankRow(r, count = 12) {
