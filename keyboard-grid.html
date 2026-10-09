@@ -421,9 +421,255 @@
       padding: 4px 8px;
       border-radius: 4px;
     }
-    .btn-hide-kb:hover {
-      background: var(--bg-key-hover);
+    /* Mode Switcher Bar */
+    .mode-switcher-bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 6px;
+      background: #0d1117;
+      border-radius: 6px;
+      margin-bottom: 4px;
+    }
+    .mode-switcher-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #8b949e;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-right: 4px;
+    }
+    .btn-mode-toggle {
+      background: #161b22;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-mode-toggle:hover {
+      background: #21262d;
+      border-color: #58a6ff;
       color: #fff;
+    }
+    .btn-mode-toggle.active {
+      background: #1f6feb;
+      border-color: #58a6ff;
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 0 8px rgba(31, 111, 235, 0.4);
+    }
+
+    .top-hex-bar {
+      display: flex;
+      gap: 4px;
+      width: 100%;
+      height: 44px;
+      flex-shrink: 0;
+    }
+    .top-hex-bar .grid-key {
+      flex: 1;
+      height: 44px;
+      background: #151a23;
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+      transition: all 0.12s;
+    }
+    .top-hex-bar .grid-key.span-2 {
+      flex: 2 !important;
+    }
+    .top-hex-bar .grid-key.hex-key {
+      background: #14201c;
+      border: 1.5px solid #235438;
+    }
+    .top-hex-bar .grid-key.hex-key:hover {
+      background: #1c322b;
+      border-color: #3fb950;
+    }
+    .top-hex-bar .grid-key.hex-key .key-char {
+      color: #7ee787 !important;
+      font-weight: 800;
+      font-size: 15px;
+    }
+    .top-hex-bar .grid-key.flank-key {
+      background: #111a26;
+      border-color: #21364d;
+    }
+    .top-hex-bar .grid-key.flank-key:hover {
+      background: #19273b;
+      border-color: #58a6ff;
+    }
+    .top-hex-bar .grid-key.flank-key .key-char {
+      color: #58a6ff !important;
+      font-weight: 800;
+      font-size: 13.5px;
+    }
+    .top-hex-bar .grid-key.fn-key {
+      background: #181d24;
+      border-color: #262c36;
+    }
+    .top-hex-bar .grid-key.fn-key:hover {
+      background: #252b36;
+      border-color: #58a6ff;
+    }
+    .top-hex-bar .grid-key.fn-key .key-char {
+      color: #8b949e !important;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .top-hex-bar .grid-key .key-tl {
+      position: absolute;
+      top: 1px;
+      left: 3px;
+      font-size: 7.5px;
+      color: #58a6ff;
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+    .top-hex-bar .grid-key .key-sub {
+      position: absolute;
+      bottom: 1px;
+      right: 3px;
+      font-size: 7.5px;
+      color: #8b949e;
+    }
+    .suggestion-bar.layout-36l .suggestion-chips,
+    .suggestion-bar.layout-36r .suggestion-chips {
+      display: none !important;
+    }
+    .suggestion-bar.layout-36l .btn-hide-kb,
+    .suggestion-bar.layout-36r .btn-hide-kb {
+      display: none !important;
+    }
+    .suggestion-bar.layout-36l .top-hex-bar,
+    .suggestion-bar.layout-36r .top-hex-bar {
+      width: 100% !important;
+      gap: 4px;
+    }
+
+    .grid-key.digit-key {
+      background: #1f232b !important;
+      border-color: #384355 !important;
+    }
+    .grid-key.digit-key .key-char {
+      color: #f2cc60 !important;
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    /* SPLIT KEYBOARD WITH VERTICAL SUGGESTIONS (36L / 36R) */
+    .split-keyboard-layout {
+      display: flex;
+      gap: 4px;
+      width: 100%;
+    }
+    .split-pane.pane-typing {
+      flex: 6;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .split-pane.pane-functions {
+      flex: 4;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .split-pane.pane-suggestions {
+      flex: 2;
+      height: 256px;
+      max-height: 256px;
+      background: #0d1219;
+      border: 1.5px solid #233144;
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 3px 2px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: #384b66 transparent;
+      touch-action: pan-y;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.6);
+      user-select: none;
+    }
+    .split-pane.pane-suggestions::-webkit-scrollbar {
+      width: 4px;
+    }
+    .split-pane.pane-suggestions::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.2);
+    }
+    .split-pane.pane-suggestions::-webkit-scrollbar-thumb {
+      background: #384b66;
+      border-radius: 2px;
+    }
+    .v-sug-header {
+      font-size: 8.5px;
+      font-weight: 800;
+      color: #58a6ff;
+      text-align: center;
+      padding: 2px 0 3px;
+      border-bottom: 1px solid rgba(88, 166, 255, 0.25);
+      margin-bottom: 1px;
+      letter-spacing: 0.3px;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .vertical-sug-chip {
+      min-height: 44px;
+      background: #151c27;
+      border: 1px solid #263345;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 2px;
+      cursor: pointer;
+      transition: all 0.12s ease;
+      user-select: none;
+      flex-shrink: 0;
+    }
+    .vertical-sug-chip:hover, .vertical-sug-chip:active {
+      background: #1c2738;
+      border-color: #58a6ff;
+      transform: scale(0.98);
+    }
+    .vertical-sug-chip.primary {
+      background: linear-gradient(135deg, #162a3f 0%, #153825 100%);
+      border-color: #58a6ff;
+      box-shadow: 0 0 8px rgba(88, 166, 255, 0.35);
+    }
+    .vertical-sug-chip .v-chip-word {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #f0f6fc;
+      line-height: 1.1;
+      text-align: center;
+      word-break: break-all;
+    }
+    .vertical-sug-chip.primary .v-chip-word {
+      color: #7ee787;
+      font-weight: 800;
+    }
+    .vertical-sug-chip .v-chip-codes {
+      font-size: 7.5px;
+      color: #8b949e;
+      margin-top: 1px;
+      line-height: 1;
     }
 
     /* KEYBOARD WRAPPER & GRID */
@@ -491,8 +737,84 @@
       transition: background-color 0.12s, border-color 0.12s;
     }
 
-    .grid-key.span-3 {
-      flex: 3;
+    .grid-key.span-2 { flex: 2; }
+    .grid-key.span-3 { flex: 3; }
+    .grid-key.span-4 { flex: 4; }
+    .grid-key.span-5 { flex: 5; }
+    .grid-key.span-6 { flex: 6; }
+
+    .grid-key.blank-key {
+      background: #0f131a !important;
+      border-color: #171d27 !important;
+      opacity: 0.22;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .grid-key.mode_choice-key {
+      background: #141f2e !important;
+      cursor: pointer;
+      transition: all 0.16s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+    }
+    .grid-key.mode_choice-key:hover {
+      transform: translateY(-2px) scale(1.02);
+    }
+    .grid-key.mode_choice-key.choice-36l {
+      border: 2px solid #58a6ff !important;
+      box-shadow: 0 0 22px rgba(88, 166, 255, 0.45) !important;
+      background: linear-gradient(135deg, #112238 0%, #17355c 100%) !important;
+    }
+    .grid-key.mode_choice-key.choice-36l .key-char {
+      color: #58a6ff !important;
+      font-size: 20px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0.5px;
+    }
+    .grid-key.mode_choice-key.choice-36l .key-sub {
+      color: #a5d6ff !important;
+      font-size: 9.5px !important;
+      font-weight: 700 !important;
+    }
+    .grid-key.mode_choice-key.choice-36r {
+      border: 2px solid #f2cc60 !important;
+      box-shadow: 0 0 22px rgba(242, 204, 96, 0.45) !important;
+      background: linear-gradient(135deg, #2b2513 0%, #3d3419 100%) !important;
+    }
+    .grid-key.mode_choice-key.choice-36r .key-char {
+      color: #f2cc60 !important;
+      font-size: 20px !important;
+      font-weight: 900 !important;
+      letter-spacing: 0.5px;
+    }
+    .grid-key.mode_choice-key.choice-36r .key-sub {
+      color: #fae4a7 !important;
+      font-size: 9.5px !important;
+      font-weight: 700 !important;
+    }
+    .grid-key.mode_choice-key.choice-std {
+      border: 2px solid #7ee787 !important;
+      box-shadow: 0 0 16px rgba(126, 231, 135, 0.35) !important;
+      background: linear-gradient(135deg, #11261b 0%, #193d2a 100%) !important;
+    }
+    .grid-key.mode_choice-key.choice-std .key-char {
+      color: #7ee787 !important;
+      font-size: 15px !important;
+      font-weight: 800 !important;
+    }
+    .grid-key.mode_choice-key.choice-std .key-sub {
+      color: #aff5b4 !important;
+      font-size: 9px !important;
+    }
+    .grid-key.mode_choice-key.choice-close {
+      border: 1.5px solid #ff7b72 !important;
+      box-shadow: 0 0 12px rgba(255, 123, 114, 0.3) !important;
+      background: #23161c !important;
+    }
+    .grid-key.mode_choice-key.choice-close .key-char {
+      color: #ff7b72 !important;
+      font-size: 13px !important;
+      font-weight: 700 !important;
     }
 
     .key-char {
@@ -902,19 +1224,29 @@
       <div class="output-display" id="outputBox"></div>
     </div>
 
-    <!-- 2. BÀN PHÍM LƯỚI GRID (NẰM NGAY TRÊN ĐẦU, CHẠM LÀ GÕ NGAY LẬP TỨC!) -->
-    <div class="keyboard-wrapper" id="keyboardWrapper">
-      <!-- Generated by JavaScript to guarantee exact grid rows & coordinates -->
+    <!-- 2. Mode Switcher Bar -->
+    <div class="mode-switcher-bar">
+      <span class="mode-switcher-label">Chế độ:</span>
+      <button class="btn-mode-toggle active" id="btnMode_normal" onclick="setKeyboardMode('normal')">Chuẩn 5x12</button>
+      <button class="btn-mode-toggle" id="btnMode_36L" onclick="setKeyboardMode('36L')">36L (1 Tay Trái + Hexa)</button>
+      <button class="btn-mode-toggle" id="btnMode_36R" onclick="setKeyboardMode('36R')">36R (1 Tay Phải + Hexa)</button>
+      <button class="btn-mode-toggle" id="btnMode_mode_select" onclick="setKeyboardMode('mode_select')">❖ Tầng Chọn Mode</button>
     </div>
 
-    <!-- 3. Suggestion Bar (Toàn bộ chiều rộng dành cho Gợi Ý Thông Minh) -->
-    <div class="suggestion-bar">
+    <!-- 3. Suggestion Bar (Hàng trên cùng của bàn phím: Gợi ý + 6 phím Hexa) -->
+    <div class="suggestion-bar" id="suggestionBar">
+      <div class="top-hex-bar" id="topHexBar" style="display: none;"></div>
       <div class="suggestion-chips" id="suggestionChips">
         <div class="sug-chip primary" onclick="pickSuggestion('toán')">toán</div>
         <div class="sug-chip" onclick="pickSuggestion('kêu')">kêu</div>
         <div class="sug-chip" onclick="pickSuggestion('vươn')">vươn</div>
       </div>
       <button class="btn-hide-kb" title="Ẩn/Hiện bàn phím" onclick="toggleKeyboardVisibility()">⌵</button>
+    </div>
+
+    <!-- 4. BÀN PHÍM LƯỚI GRID -->
+    <div class="keyboard-wrapper" id="keyboardWrapper">
+      <!-- Generated by JavaScript to guarantee exact grid rows & coordinates -->
     </div>
 
     <!-- 4. Live VComp Inspector Banner (ĐƯA XUỐNG DƯỚI BÀN PHÍM) -->
@@ -1220,9 +1552,9 @@
     };
 
     // ========================================================
-    // 3. GRID LAYOUT 12 CỘT (CỘT TRÁI + 10 CHỮ/SỐ + CỘT PHẢI)
+    // 3. GRID LAYOUTS: NORMAL (5x12), 36L (1 TAY TRÁI), 36R (1 TAY PHẢI)
     // ========================================================
-    const GRID_ROWS = [
+    const GRID_ROWS_NORMAL = [
       // HÀNG 0: [ : ] + 1..0 (10 phím số) + [ 000 ]
       [
         { id: 'k_0_0', char: ':', shift: '[', sub: '[', type: 'flank', r: 0, c: 0 },
@@ -1283,7 +1615,6 @@
         { id: 'k_3_10', char: '.', shift: '\'', sub: '\'', type: 'fn', r: 3, c: 10 },
         { id: 'k_3_11', char: '↵', sub: 'Go', type: 'action', r: 3, c: 11 }
       ],
-      // HÀNG 4: [ ?123 ] + ( ) " [ SPACE 3 CỘT ] ? + - = >
       // HÀNG 4: [ ?123 ] [ ( ] [ ) ] [ ‹ ] [ Space ] [ › ] [ , ] [ ? ] [ + ] [ - ] [ " ] [ ↵ ]
       [
         { id: 'k_4_0', char: '?123', sub: 'Sym', type: 'fn', r: 4, c: 0 },
@@ -1301,18 +1632,272 @@
       ]
     ];
 
-    // Build Key Matrix index by (r, c) and ID
-    const MATRIX_MAP = {};
-    const MATRIX_MAP_BY_ID = {};
-    const MATRIX_MAP_BY_CHAR = {};
-    GRID_ROWS.forEach(row => {
-      row.forEach(key => {
-        MATRIX_MAP[`${key.r}_${key.c}`] = key;
-        MATRIX_MAP_BY_ID[key.id] = key;
-        if (key.char) MATRIX_MAP_BY_CHAR[key.char.toLowerCase()] = key;
-        if (key.shift) MATRIX_MAP_BY_CHAR[key.shift] = key;
+    const PANE_TYPING_36L = [
+      [
+        { id: 'l_0_0', char: 'g', shift: 'G', r: 0, c: 0 },
+        { id: 'l_0_1', char: 'h', shift: 'H', r: 0, c: 1 },
+        { id: 'l_0_2', char: 'i', shift: 'I', r: 0, c: 2 },
+        { id: 'l_0_3', char: 'j', shift: 'J', r: 0, c: 3 },
+        { id: 'l_0_4', char: 'k', shift: 'K', r: 0, c: 4 },
+        { id: 'l_0_5', char: 'l', shift: 'L', r: 0, c: 5 }
+      ],
+      [
+        { id: 'l_1_0', char: '7', shift: '&', sub: '&', type: 'digit', r: 1, c: 0 },
+        { id: 'l_1_1', char: '8', shift: '*', sub: '*', type: 'digit', r: 1, c: 1 },
+        { id: 'l_1_2', char: '9', shift: '(', sub: '(', type: 'digit', r: 1, c: 2 },
+        { id: 'l_1_3', char: 'm', shift: 'M', r: 1, c: 3 },
+        { id: 'l_1_4', char: 'n', shift: 'N', r: 1, c: 4 },
+        { id: 'l_1_5', char: 'o', shift: 'O', r: 1, c: 5 }
+      ],
+      [
+        { id: 'l_2_0', char: '4', shift: '$', sub: '$', type: 'digit', r: 2, c: 0 },
+        { id: 'l_2_1', char: '5', shift: '%', sub: '%', type: 'digit', r: 2, c: 1 },
+        { id: 'l_2_2', char: '6', shift: '^', sub: '^', type: 'digit', r: 2, c: 2 },
+        { id: 'l_2_3', char: 'p', shift: 'P', r: 2, c: 3 },
+        { id: 'l_2_4', char: 'q', shift: 'Q', r: 2, c: 4 },
+        { id: 'l_2_5', char: 'r', shift: 'R', r: 2, c: 5 }
+      ],
+      [
+        { id: 'l_3_0', char: '1', shift: '!', sub: '!', type: 'digit', r: 3, c: 0 },
+        { id: 'l_3_1', char: '2', shift: '@', sub: '@', type: 'digit', r: 3, c: 1 },
+        { id: 'l_3_2', char: '3', shift: '#', sub: '#', type: 'digit', r: 3, c: 2 },
+        { id: 'l_3_3', char: 's', shift: 'S', r: 3, c: 3 },
+        { id: 'l_3_4', char: 't', shift: 'T', r: 3, c: 4 },
+        { id: 'l_3_5', char: 'u', shift: 'U', r: 3, c: 5 }
+      ],
+      [
+        { id: 'l_4_0', char: '0', shift: ')', sub: ')', type: 'digit', r: 4, c: 0 },
+        { id: 'l_4_1', char: 'v', shift: 'V', r: 4, c: 1 },
+        { id: 'l_4_2', char: 'w', shift: 'W', r: 4, c: 2 },
+        { id: 'l_4_3', char: 'x', shift: 'X', r: 4, c: 3 },
+        { id: 'l_4_4', char: 'y', shift: 'Y', r: 4, c: 4 },
+        { id: 'l_4_5', char: 'z', shift: 'Z', r: 4, c: 5 }
+      ]
+    ];
+
+    const PANE_FUNCS_36L = [
+      [
+        { id: 'f_0_0', char: '-', shift: '_', sub: '_', type: 'fn', r: 0, c: 8 },
+        { id: 'f_0_1', char: '+', shift: '*', sub: '*', type: 'fn', r: 0, c: 9 },
+        { id: 'f_0_2', char: '=', shift: '~', sub: '~', type: 'fn', r: 0, c: 10 },
+        { id: 'f_0_3', char: '>', shift: '}', sub: '}', type: 'fn', r: 0, c: 11 }
+      ],
+      [
+        { id: 'f_1_0', char: ';', shift: '|', sub: '|', type: 'fn', r: 1, c: 8 },
+        { id: 'f_1_1', char: ':', shift: '[', sub: '[', type: 'fn', r: 1, c: 9 },
+        { id: 'f_1_2', char: '"', shift: '`', sub: '`', type: 'fn', r: 1, c: 10 },
+        { id: 'f_1_3', char: '⌫', sub: 'Del', type: 'bksp', r: 1, c: 11 }
+      ],
+      [
+        { id: 'f_2_0', char: '(', shift: '<', sub: '<', type: 'fn', r: 2, c: 8 },
+        { id: 'f_2_1', char: ')', shift: '>', sub: '>', type: 'fn', r: 2, c: 9 },
+        { id: 'f_2_2', char: '/', shift: '?', sub: '?', type: 'fn', r: 2, c: 10 },
+        { id: 'f_2_3', char: '🔍', sub: 'Soi', type: 'flank', r: 2, c: 11 }
+      ],
+      [
+        { id: 'f_3_0', char: '⇧', sub: 'Shift', type: 'shift', r: 3, c: 8 },
+        { id: 'f_3_1', char: ',', shift: '…', sub: '…', type: 'fn', r: 3, c: 9 },
+        { id: 'f_3_2', char: '.', shift: '\'', sub: '\'', type: 'fn', r: 3, c: 10 },
+        { id: 'f_3_3', char: '↵', sub: 'Go', type: 'action', r: 3, c: 11 }
+      ],
+      [
+        { id: 'f_4_0', char: '?123', sub: 'Sym', type: 'fn', r: 4, c: 8 },
+        { id: 'f_4_1', char: 'Space', sub: 'VN', type: 'space', span: 2, r: 4, c: 9 },
+        { id: 'f_4_3', char: '❖', sub: 'Mode', type: 'mode', r: 4, c: 11 }
+      ]
+    ];
+
+    const TOP_BAR_36L = [
+      { id: 'hex_0_0', char: 'a', shift: 'A', tl: 'HEX', type: 'hex', r: -1, c: 0 },
+      { id: 'hex_0_1', char: 'b', shift: 'B', tl: 'HEX', type: 'hex', r: -1, c: 1 },
+      { id: 'hex_0_2', char: 'c', shift: 'C', tl: 'HEX', type: 'hex', r: -1, c: 2 },
+      { id: 'hex_0_3', char: 'd', shift: 'D', tl: 'HEX', type: 'hex', r: -1, c: 3 },
+      { id: 'hex_0_4', char: 'e', shift: 'E', tl: 'HEX', type: 'hex', r: -1, c: 4 },
+      { id: 'hex_0_5', char: 'f', shift: 'F', tl: 'HEX', type: 'hex', r: -1, c: 5 },
+      { id: 'top_mid_36l', char: '36L', sub: 'Trái', type: 'flank', span: 2, r: -1, c: 6 },
+      { id: 'top_0_8', char: '<', shift: '{', sub: '{', type: 'fn', r: -1, c: 8 },
+      { id: 'top_0_9', char: '%', shift: '^', sub: '^', type: 'fn', r: -1, c: 9 },
+      { id: 'top_0_10', char: '$', shift: '₫', sub: '₫', type: 'fn', r: -1, c: 10 },
+      { id: 'top_0_11', char: '000', shift: '000', sub: '000', type: 'flank', r: -1, c: 11 }
+    ];
+
+    const PANE_TYPING_36R = [
+      [
+        { id: 'r_0_6', char: 'g', shift: 'G', r: 0, c: 6 },
+        { id: 'r_0_7', char: 'h', shift: 'H', r: 0, c: 7 },
+        { id: 'r_0_8', char: 'i', shift: 'I', r: 0, c: 8 },
+        { id: 'r_0_9', char: 'j', shift: 'J', r: 0, c: 9 },
+        { id: 'r_0_10', char: 'k', shift: 'K', r: 0, c: 10 },
+        { id: 'r_0_11', char: 'l', shift: 'L', r: 0, c: 11 }
+      ],
+      [
+        { id: 'r_1_6', char: 'm', shift: 'M', r: 1, c: 6 },
+        { id: 'r_1_7', char: 'n', shift: 'N', r: 1, c: 7 },
+        { id: 'r_1_8', char: 'o', shift: 'O', r: 1, c: 8 },
+        { id: 'r_1_9', char: '7', shift: '&', sub: '&', type: 'digit', r: 1, c: 9 },
+        { id: 'r_1_10', char: '8', shift: '*', sub: '*', type: 'digit', r: 1, c: 10 },
+        { id: 'r_1_11', char: '9', shift: '(', sub: '(', type: 'digit', r: 1, c: 11 }
+      ],
+      [
+        { id: 'r_2_6', char: 'p', shift: 'P', r: 2, c: 6 },
+        { id: 'r_2_7', char: 'q', shift: 'Q', r: 2, c: 7 },
+        { id: 'r_2_8', char: 'r', shift: 'R', r: 2, c: 8 },
+        { id: 'r_2_9', char: '4', shift: '$', sub: '$', type: 'digit', r: 2, c: 9 },
+        { id: 'r_2_10', char: '5', shift: '%', sub: '%', type: 'digit', r: 2, c: 10 },
+        { id: 'r_2_11', char: '6', shift: '^', sub: '^', type: 'digit', r: 2, c: 11 }
+      ],
+      [
+        { id: 'r_3_6', char: 's', shift: 'S', r: 3, c: 6 },
+        { id: 'r_3_7', char: 't', shift: 'T', r: 3, c: 7 },
+        { id: 'r_3_8', char: 'u', shift: 'U', r: 3, c: 8 },
+        { id: 'r_3_9', char: '1', shift: '!', sub: '!', type: 'digit', r: 3, c: 9 },
+        { id: 'r_3_10', char: '2', shift: '@', sub: '@', type: 'digit', r: 3, c: 10 },
+        { id: 'r_3_11', char: '3', shift: '#', sub: '#', type: 'digit', r: 3, c: 11 }
+      ],
+      [
+        { id: 'r_4_6', char: 'v', shift: 'V', r: 4, c: 6 },
+        { id: 'r_4_7', char: 'w', shift: 'W', r: 4, c: 7 },
+        { id: 'r_4_8', char: 'x', shift: 'X', r: 4, c: 8 },
+        { id: 'r_4_9', char: 'y', shift: 'Y', r: 4, c: 9 },
+        { id: 'r_4_10', char: 'z', shift: 'Z', r: 4, c: 10 },
+        { id: 'r_4_11', char: '0', shift: ')', sub: ')', type: 'digit', r: 4, c: 11 }
+      ]
+    ];
+
+    const PANE_FUNCS_36R = [
+      [
+        { id: 'fr_0_0', char: '-', shift: '_', sub: '_', type: 'fn', r: 0, c: 0 },
+        { id: 'fr_0_1', char: '+', shift: '*', sub: '*', type: 'fn', r: 0, c: 1 },
+        { id: 'fr_0_2', char: '=', shift: '~', sub: '~', type: 'fn', r: 0, c: 2 },
+        { id: 'fr_0_3', char: '>', shift: '}', sub: '}', type: 'fn', r: 0, c: 3 }
+      ],
+      [
+        { id: 'fr_1_0', char: '⌫', sub: 'Del', type: 'bksp', r: 1, c: 0 },
+        { id: 'fr_1_1', char: '"', shift: '`', sub: '`', type: 'fn', r: 1, c: 1 },
+        { id: 'fr_1_2', char: ':', shift: '[', sub: '[', type: 'fn', r: 1, c: 2 },
+        { id: 'fr_1_3', char: ';', shift: '|', sub: '|', type: 'fn', r: 1, c: 3 }
+      ],
+      [
+        { id: 'fr_2_0', char: '🔍', sub: 'Soi', type: 'flank', r: 2, c: 0 },
+        { id: 'fr_2_1', char: '/', shift: '?', sub: '?', type: 'fn', r: 2, c: 1 },
+        { id: 'fr_2_2', char: '(', shift: '<', sub: '<', type: 'fn', r: 2, c: 2 },
+        { id: 'fr_2_3', char: ')', shift: '>', sub: '>', type: 'fn', r: 2, c: 3 }
+      ],
+      [
+        { id: 'fr_3_0', char: '↵', sub: 'Go', type: 'action', r: 3, c: 0 },
+        { id: 'fr_3_1', char: '.', shift: '\'', sub: '\'', type: 'fn', r: 3, c: 1 },
+        { id: 'fr_3_2', char: ',', shift: '…', sub: '…', type: 'fn', r: 3, c: 2 },
+        { id: 'fr_3_3', char: '⇧', sub: 'Shift', type: 'shift', r: 3, c: 3 }
+      ],
+      [
+        { id: 'fr_4_0', char: '❖', sub: 'Mode', type: 'mode', r: 4, c: 0 },
+        { id: 'fr_4_1', char: 'Space', sub: 'VN', type: 'space', span: 2, r: 4, c: 1 },
+        { id: 'fr_4_3', char: '?123', sub: 'Sym', type: 'fn', r: 4, c: 3 }
+      ]
+    ];
+
+    const TOP_BAR_36R = [
+      { id: 'top_0_0', char: '000', shift: '000', sub: '000', type: 'flank', r: -1, c: 0 },
+      { id: 'top_0_1', char: '$', shift: '₫', sub: '₫', type: 'fn', r: -1, c: 1 },
+      { id: 'top_0_2', char: '%', shift: '^', sub: '^', type: 'fn', r: -1, c: 2 },
+      { id: 'top_0_3', char: '<', shift: '{', sub: '{', type: 'fn', r: -1, c: 3 },
+      { id: 'top_mid_36r', char: '36R', sub: 'Phải', type: 'flank', span: 2, r: -1, c: 4 },
+      { id: 'hex_0_6', char: 'a', shift: 'A', tl: 'HEX', type: 'hex', r: -1, c: 6 },
+      { id: 'hex_0_7', char: 'b', shift: 'B', tl: 'HEX', type: 'hex', r: -1, c: 7 },
+      { id: 'hex_0_8', char: 'c', shift: 'C', tl: 'HEX', type: 'hex', r: -1, c: 8 },
+      { id: 'hex_0_9', char: 'd', shift: 'D', tl: 'HEX', type: 'hex', r: -1, c: 9 },
+      { id: 'hex_0_10', char: 'e', shift: 'E', tl: 'HEX', type: 'hex', r: -1, c: 10 },
+      { id: 'hex_0_11', char: 'f', shift: 'F', tl: 'HEX', type: 'hex', r: -1, c: 11 }
+    ];
+
+    function createBlankRow(r, count = 12) {
+      const row = [];
+      for (let c = 0; c < count; c++) {
+        row.push({ id: `blank_${r}_${c}`, char: '', type: 'blank', r, c });
+      }
+      return row;
+    }
+
+    const GRID_ROWS_MODE_SELECT = [
+      // HÀNG 0: Trắng trơn 12 phím
+      createBlankRow(0),
+      // HÀNG 1: Phím ❖ (ở vị trí cũ bên trái q) + 11 phím trắng trơn
+      [
+        { id: 'ms_1_0', char: '❖', sub: 'Đóng', type: 'mode', r: 1, c: 0 },
+        ...createBlankRow(1, 11).map((k, idx) => ({ ...k, c: idx + 1, id: `blank_1_${idx + 1}` }))
+      ],
+      // HÀNG 2: [ 1 blank ] + [ 👈 36L (span-4) ] + [ Chuẩn (span-2) ] + [ 36R 👉 (span-4) ] + [ 1 blank ]
+      [
+        { id: 'blank_2_0', char: '', type: 'blank', r: 2, c: 0 },
+        { id: 'ms_select_36l', char: '👈 36L', sub: '1 Tay Trái + Hex', type: 'mode_choice', choice: '36L', span: 4, r: 2, c: 1 },
+        { id: 'ms_select_std', char: 'Chuẩn', sub: '5x12 Gốc', type: 'mode_choice', choice: 'normal', span: 2, r: 2, c: 5 },
+        { id: 'ms_select_36r', char: '36R 👉', sub: '1 Tay Phải + Hex', type: 'mode_choice', choice: '36R', span: 4, r: 2, c: 7 },
+        { id: 'blank_2_11', char: '', type: 'blank', r: 2, c: 11 }
+      ],
+      // HÀNG 3: Trắng trơn 12 phím
+      createBlankRow(3),
+      // HÀNG 4: [ 5 blank ] + [ ✕ Đóng (span-2) ] + [ 5 blank ]
+      [
+        ...createBlankRow(4, 5).map((k, idx) => ({ ...k, c: idx, id: `blank_4_${idx}` })),
+        { id: 'ms_close', char: '✕ Đóng', sub: 'Thoát', type: 'mode_choice', choice: 'close', span: 2, r: 4, c: 5 },
+        ...createBlankRow(4, 5).map((k, idx) => ({ ...k, c: idx + 7, id: `blank_4_${idx + 7}` }))
+      ]
+    ];
+
+    let currentKeyboardMode = 'normal'; // 'normal', '36L', '36R', 'mode_select'
+    let previousKeyboardMode = 'normal';
+
+    function getActiveGridRows() {
+      if (currentKeyboardMode === 'mode_select') return GRID_ROWS_MODE_SELECT;
+      if (currentKeyboardMode === '36L') {
+        const rows = [];
+        for (let r = 0; r < 5; r++) {
+          rows.push([...PANE_TYPING_36L[r], ...PANE_FUNCS_36L[r]]);
+        }
+        return rows;
+      }
+      if (currentKeyboardMode === '36R') {
+        const rows = [];
+        for (let r = 0; r < 5; r++) {
+          rows.push([...PANE_FUNCS_36R[r], ...PANE_TYPING_36R[r]]);
+        }
+        return rows;
+      }
+      return GRID_ROWS_NORMAL;
+    }
+
+    function getActiveHexKeys() {
+      if (currentKeyboardMode === '36L') return TOP_BAR_36L;
+      if (currentKeyboardMode === '36R') return TOP_BAR_36R;
+      return [];
+    }
+
+    let MATRIX_MAP = {};
+    let MATRIX_MAP_BY_ID = {};
+    let MATRIX_MAP_BY_CHAR = {};
+
+    function rebuildMatrixMap(rows, hexKeys = []) {
+      MATRIX_MAP = {};
+      MATRIX_MAP_BY_ID = {};
+      MATRIX_MAP_BY_CHAR = {};
+      rows.forEach(row => {
+        row.forEach(key => {
+          MATRIX_MAP[`${key.r}_${key.c}`] = key;
+          MATRIX_MAP_BY_ID[key.id] = key;
+          if (key.char) MATRIX_MAP_BY_CHAR[key.char.toLowerCase()] = key;
+          if (key.shift) MATRIX_MAP_BY_CHAR[key.shift] = key;
+        });
       });
-    });
+      if (hexKeys && hexKeys.length > 0) {
+        hexKeys.forEach(key => {
+          MATRIX_MAP[`${key.r}_${key.c}`] = key;
+          MATRIX_MAP_BY_ID[key.id] = key;
+          if (key.char) MATRIX_MAP_BY_CHAR[key.char.toLowerCase()] = key;
+          if (key.shift) MATRIX_MAP_BY_CHAR[key.shift] = key;
+        });
+      }
+    }
+    rebuildMatrixMap(GRID_ROWS_NORMAL);
 
     function getKeyAtPoint(x, y) {
       if (x === undefined || y === undefined) return null;
@@ -1916,9 +2501,56 @@
       return `<span class="chip-code-tag" title="vV1: ${escapeHtml(vV1)}">${vHtml}</span> <span class="chip-code-tag" title="a1: ${escapeHtml(a1)}">${aHtml}</span>`;
     }
 
+    function renderCandidateChips(candidates) {
+      suggestionChips.innerHTML = '';
+
+      const vPane = document.getElementById('verticalSuggestionPane');
+      if (vPane) {
+        vPane.innerHTML = '';
+        const header = document.createElement('div');
+        header.className = 'v-sug-header';
+        header.textContent = '💡 Gợi ý ▲▼';
+        vPane.appendChild(header);
+      }
+
+      if (!candidates || candidates.length === 0) return;
+
+      // 1. Horizontal suggestion chips (tối đa 10)
+      candidates.slice(0, 10).forEach(item => {
+        const chip = document.createElement('div');
+        chip.className = `sug-chip ${item.isPrimary ? 'primary' : ''}`;
+        chip.dataset.word = item.word;
+        chip.innerHTML = `
+          <span class="chip-word">${escapeHtml(item.word)}</span>
+          ${item.codesHtml ? `<span class="chip-codes">${item.codesHtml}</span>` : ''}
+        `;
+        if (item.title) chip.title = item.title;
+        chip.onclick = () => window.pickSuggestion(item.word);
+        suggestionChips.appendChild(chip);
+      });
+
+      // 2. Vertical suggestion pane (tối đa 25 từ để vuốt cuộn ngón tay)
+      if (vPane) {
+        candidates.slice(0, 25).forEach(item => {
+          const vChip = document.createElement('div');
+          vChip.className = `vertical-sug-chip ${item.isPrimary ? 'primary' : ''}`;
+          vChip.dataset.word = item.word;
+          vChip.innerHTML = `
+            <span class="v-chip-word">${escapeHtml(item.word)}</span>
+            ${item.codesHtml ? `<span class="v-chip-codes">${item.codesHtml}</span>` : ''}
+          `;
+          if (item.title) vChip.title = item.title;
+          vChip.onclick = (e) => {
+            e.stopPropagation();
+            window.pickSuggestion(item.word);
+          };
+          vPane.appendChild(vChip);
+        });
+      }
+    }
+
     function analyzeSuggestions() {
       const target = composingBuffer ? composingBuffer.toLowerCase() : '';
-      suggestionChips.innerHTML = '';
 
       // 1. TRƯỜNG HỢP VỪA NỔ TỪ TỐC KÝ XONG:
       // Hiển thị ngay các biến thể anh em để người dùng bấm sửa trực tiếp
@@ -1927,39 +2559,30 @@
         const altVariants = variants.filter(v => v.word !== lastAutoCommittedWord);
 
         if (altVariants.length > 0) {
-          altVariants.forEach((v, idx) => {
-            const codes = getWordCodes(v.word);
-            const chip = document.createElement('div');
-            chip.className = `sug-chip ${idx === 0 ? 'primary' : ''}`;
-            chip.dataset.word = v.word;
-            chip.innerHTML = `
-              <span class="chip-word">${escapeHtml(v.word)}</span>
-              <span class="chip-codes">${renderChipCodesHtml(codes)}</span>
-            `;
-            chip.title = `Bấm để đổi '${lastAutoCommittedWord}' thành '${v.word}'`;
-            chip.onclick = () => window.pickSuggestion(v.word);
-            suggestionChips.appendChild(chip);
-          });
+          const candidates = altVariants.map((v, idx) => ({
+            word: v.word,
+            codesHtml: renderChipCodesHtml(getWordCodes(v.word)),
+            isPrimary: idx === 0,
+            title: `Bấm để đổi '${lastAutoCommittedWord}' thành '${v.word}'`
+          }));
+          renderCandidateChips(candidates);
           return;
         }
       }
 
-      // 2. TRƯỜNG HỢP BUFFER TRỐNG: Hiển thị các từ mẫu tiêu biểu kèm mã vV1, a1
+      // 2. TRƯỜNG HỢP BUFFER TRỐNG: Hiển thị các từ mẫu tiêu biểu kèm mã vV1, a1 (20 từ)
       if (!target) {
-        const defaultWords = ['mong', 'thết', 'chàng', 'toán', 'đi', 'việt', 'người', 'thương'];
-        defaultWords.forEach(w => {
-          const codes = getWordCodes(w);
-          const chip = document.createElement('div');
-          chip.className = 'sug-chip';
-          chip.dataset.word = w;
-          chip.innerHTML = `
-            <span class="chip-word">${escapeHtml(w)}</span>
-            <span class="chip-codes">${renderChipCodesHtml(codes)}</span>
-          `;
-          chip.title = getWordAnatomy(w);
-          chip.onclick = () => window.pickSuggestion(w);
-          suggestionChips.appendChild(chip);
-        });
+        const defaultWords = [
+          'mong', 'thết', 'chàng', 'toán', 'đi', 'việt', 'người', 'thương',
+          'bạn', 'mới', 'tiền', 'biết', 'làm', 'cho', 'sẽ', 'như', 'được', 'yêu', 'năm', 'giờ'
+        ];
+        const candidates = defaultWords.map((w, idx) => ({
+          word: w,
+          codesHtml: renderChipCodesHtml(getWordCodes(w)),
+          isPrimary: idx === 0,
+          title: getWordAnatomy(w)
+        }));
+        renderCandidateChips(candidates);
         return;
       }
 
@@ -1985,7 +2608,7 @@
       });
 
       // Nếu số lượng ít, sinh thêm biến thể 6 thanh từ extractPhonetics
-      if (combined.length < 6) {
+      if (combined.length < 8) {
         try {
           const { consonant, rhyme } = extractPhonetics(target);
           if (rhyme) {
@@ -2010,30 +2633,23 @@
 
       // 4. NẾU KHÔNG CÓ BẤT KỲ GỢI Ý NÀO: Hiển thị từ thô đang gõ
       if (combined.length === 0) {
-        const chip = document.createElement('div');
-        chip.className = 'sug-chip primary';
-        chip.dataset.word = target;
-        chip.innerHTML = `<span class="chip-word">${escapeHtml(target)}</span>`;
-        chip.onclick = () => window.pickSuggestion(target);
-        suggestionChips.appendChild(chip);
+        renderCandidateChips([{
+          word: target,
+          codesHtml: '',
+          isPrimary: true,
+          title: `Từ thô: ${target}`
+        }]);
         return;
       }
 
-      // Hiển thị tối đa 10 chip gợi ý với định dạng siêu gọn: từ + mã vV1 + mã a1 (ký tự trùng màu trắng)
-      combined.slice(0, 10).forEach((w, idx) => {
-        const codes = getWordCodes(w);
-        const anatomy = getWordAnatomy(w);
-        const chip = document.createElement('div');
-        chip.className = `sug-chip ${idx === 0 ? 'primary' : ''}`;
-        chip.dataset.word = w;
-        chip.innerHTML = `
-          <span class="chip-word">${escapeHtml(w)}</span>
-          <span class="chip-codes">${renderChipCodesHtml(codes)}</span>
-        `;
-        chip.title = anatomy;
-        chip.onclick = () => window.pickSuggestion(w);
-        suggestionChips.appendChild(chip);
-      });
+      // Hiển thị danh sách gợi ý với định dạng siêu gọn: từ + mã vV1 + mã a1
+      const candidates = combined.map((w, idx) => ({
+        word: w,
+        codesHtml: renderChipCodesHtml(getWordCodes(w)),
+        isPrimary: idx === 0,
+        title: getWordAnatomy(w)
+      }));
+      renderCandidateChips(candidates);
     }
 
     // ========================================================
@@ -2675,6 +3291,78 @@
     // ========================================================
     // 7. RENDER BÀN PHÍM & LƯU 8 HƯỚNG BỀN VỮNG
     // ========================================================
+    const VCOMP_TL_MAP = {
+      'q': 'Qu', 'w': 'ư', 'e': 'êu', 'r': 'Tr', 't': 'Th', 'y': 'yêu', 'u': 'u', 'i': 'i', 'o': 'o', 'p': 'Ph',
+      'a': 'a', 's': 'ương', 'd': 'đ', 'f': 'ươn', 'g': 'Gh', 'h': 'Nh', 'j': 'eo', 'k': 'Kh', 'l': 'oi',
+      'z': 'ưa', 'x': 'ơi', 'c': 'Ch', 'v': 'ia', 'b': 'uy', 'n': 'Ng', 'm': 'uôi'
+    };
+
+    function createKeyElement(k, isShifted) {
+      const keyEl = document.createElement('div');
+      let shiftClass = '';
+      if (k.type === 'shift') {
+        if (isCaps) shiftClass = ' active caps';
+        else if (isShift) shiftClass = ' active';
+      }
+
+      let groupClass = '';
+      const lowChar = (k.char || '').toLowerCase();
+      if (k.type === 'digit') {
+        groupClass = ' digit-key key-group-digit';
+      } else if (!k.type || k.type === 'letter') {
+        if (['b', 'k', 'v', 'l', 'q', 'd'].includes(lowChar)) {
+          groupClass = ' key-group-tone-b2';
+        } else if (['f', 'j', 'z', 's', 'x'].includes(lowChar)) {
+          groupClass = ' key-group-tone-telex';
+        } else if (['t', 'c', 'n', 'p', 'g', 'r', 'h'].includes(lowChar)) {
+          groupClass = ' key-group-cons';
+        } else if (['a', 'e', 'i', 'o', 'u', 'y', 'w'].includes(lowChar)) {
+          groupClass = ' key-group-vowel-letter';
+        }
+      } else if (k.r === 0 && /^[0-5]$/.test(k.char)) {
+        groupClass = ' key-group-tone-vni';
+      } else if (k.type === 'mode_choice') {
+        if (k.choice === '36L') groupClass = ' choice-36l';
+        else if (k.choice === '36R') groupClass = ' choice-36r';
+        else if (k.choice === 'normal') groupClass = ' choice-std';
+        else if (k.choice === 'close') groupClass = ' choice-close';
+      }
+
+      keyEl.className = `grid-key ${k.type ? k.type + '-key' : ''} ${k.span ? 'span-' + k.span : ''}${shiftClass}${groupClass}`;
+      keyEl.id = k.id;
+      keyEl.dataset.keyChar = k.char;
+      keyEl.dataset.r = k.r;
+      keyEl.dataset.c = k.c;
+
+      let displayChar = k.char;
+      let displaySub = k.sub || '';
+
+      if (isShifted) {
+        if (k.shift) {
+          displayChar = k.shift;
+          displaySub = k.char;
+        } else if (k.char.length === 1 && !k.type) {
+          displayChar = k.char.toUpperCase();
+          displaySub = k.char;
+        }
+      } else {
+        displayChar = k.char;
+        displaySub = k.sub || k.shift || '';
+      }
+
+      const displayTl = k.tl || (lowChar && VCOMP_TL_MAP[lowChar]) || '';
+
+      keyEl.innerHTML = `
+        ${displayTl ? `<span class="key-tl">${displayTl}</span>` : ''}
+        <span class="key-char">${displayChar}</span>
+        ${displaySub ? `<span class="key-sub">${displaySub}</span>` : ''}
+        <span class="bloom-badge" id="badge_${k.id}"></span>
+      `;
+
+      setupKeyEvents(keyEl, k);
+      return keyEl;
+    }
+
     function renderKeyboard() {
       keyboardWrapper.innerHTML = '';
       const isShifted = isShift || isCaps;
@@ -2686,72 +3374,76 @@
       keyboardWrapper.appendChild(canvasEl);
       initSwipeCanvas();
 
-      GRID_ROWS.forEach((rowDef) => {
-        const rowEl = document.createElement('div');
-        rowEl.className = 'grid-row';
-        rowDef.forEach(k => {
-          const keyEl = document.createElement('div');
-          
-          let shiftClass = '';
-          if (k.type === 'shift') {
-            if (isCaps) shiftClass = ' active caps';
-            else if (isShift) shiftClass = ' active';
-          }
+      if (currentKeyboardMode === '36L' || currentKeyboardMode === '36R') {
+        const is36L = currentKeyboardMode === '36L';
+        const typingRows = is36L ? PANE_TYPING_36L : PANE_TYPING_36R;
+        const funcRows = is36L ? PANE_FUNCS_36L : PANE_FUNCS_36R;
+        const topKeys = is36L ? TOP_BAR_36L : TOP_BAR_36R;
 
-          // Phân loại nhóm chức năng thị giác & hình học công thái học
-          let groupClass = '';
-          const lowChar = (k.char || '').toLowerCase();
-          
-          if (!k.type || k.type === 'letter') {
-            if (['b', 'k', 'v', 'l', 'q', 'd'].includes(lowChar)) {
-              groupClass = ' key-group-tone-b2';
-            } else if (['f', 'j', 'z', 's', 'x'].includes(lowChar)) {
-              groupClass = ' key-group-tone-telex';
-            } else if (['t', 'c', 'n', 'p', 'g', 'r', 'h'].includes(lowChar)) {
-              groupClass = ' key-group-cons';
-            } else if (['a', 'e', 'i', 'o', 'u', 'y', 'w'].includes(lowChar)) {
-              groupClass = ' key-group-vowel-letter';
-            }
-          } else if (k.r === 0 && /^[0-5]$/.test(k.char)) {
-            groupClass = ' key-group-tone-vni';
-          }
+        const allRows = [];
+        for (let r = 0; r < 5; r++) {
+          allRows.push([...typingRows[r], ...funcRows[r]]);
+        }
+        rebuildMatrixMap(allRows, topKeys);
 
-          keyEl.className = `grid-key ${k.type ? k.type + '-key' : ''} ${k.span ? 'span-' + k.span : ''}${shiftClass}${groupClass}`;
-          keyEl.id = k.id;
-          keyEl.dataset.keyChar = k.char;
-          keyEl.dataset.r = k.r;
-          keyEl.dataset.c = k.c;
+        const splitWrap = document.createElement('div');
+        splitWrap.className = `split-keyboard-layout layout-${currentKeyboardMode.toLowerCase()}`;
 
-          let displayChar = k.char;
-          let displaySub = k.sub || '';
-
-          if (isShifted) {
-            if (k.shift) {
-              displayChar = k.shift;
-              displaySub = k.char;
-            } else if (k.char.length === 1 && !k.type) {
-              displayChar = k.char.toUpperCase();
-              displaySub = k.char;
-            }
-          } else {
-            displayChar = k.char;
-            displaySub = k.sub || k.shift || '';
-          }
-
-          keyEl.innerHTML = `
-            ${k.tl ? `<span class="key-tl">${k.tl}</span>` : ''}
-            <span class="key-char">${displayChar}</span>
-            ${displaySub ? `<span class="key-sub">${displaySub}</span>` : ''}
-            <span class="bloom-badge" id="badge_${k.id}"></span>
-          `;
-
-          setupKeyEvents(keyEl, k);
-          rowEl.appendChild(keyEl);
+        // 1. Typing Pane (6 cột)
+        const typingPane = document.createElement('div');
+        typingPane.className = 'split-pane pane-typing';
+        typingRows.forEach(rowDef => {
+          const rowEl = document.createElement('div');
+          rowEl.className = 'grid-row';
+          rowDef.forEach(k => rowEl.appendChild(createKeyElement(k, isShifted)));
+          typingPane.appendChild(rowEl);
         });
-        keyboardWrapper.appendChild(rowEl);
-      });
+
+        // 2. Vertical Suggestion Pane (2 cột ở giữa)
+        const sugPane = document.createElement('div');
+        sugPane.className = 'split-pane pane-suggestions';
+        sugPane.id = 'verticalSuggestionPane';
+        const sugHeader = document.createElement('div');
+        sugHeader.className = 'v-sug-header';
+        sugHeader.textContent = '💡 Gợi ý ▲▼';
+        sugPane.appendChild(sugHeader);
+
+        // 3. Functions Pane (4 cột)
+        const funcPane = document.createElement('div');
+        funcPane.className = 'split-pane pane-functions';
+        funcRows.forEach(rowDef => {
+          const rowEl = document.createElement('div');
+          rowEl.className = 'grid-row';
+          rowDef.forEach(k => rowEl.appendChild(createKeyElement(k, isShifted)));
+          funcPane.appendChild(rowEl);
+        });
+
+        if (is36L) {
+          splitWrap.appendChild(typingPane);
+          splitWrap.appendChild(sugPane);
+          splitWrap.appendChild(funcPane);
+        } else {
+          splitWrap.appendChild(funcPane);
+          splitWrap.appendChild(sugPane);
+          splitWrap.appendChild(typingPane);
+        }
+
+        keyboardWrapper.appendChild(splitWrap);
+      } else {
+        const activeRows = getActiveGridRows();
+        const activeHex = getActiveHexKeys();
+        rebuildMatrixMap(activeRows, activeHex);
+
+        activeRows.forEach(rowDef => {
+          const rowEl = document.createElement('div');
+          rowEl.className = 'grid-row';
+          rowDef.forEach(k => rowEl.appendChild(createKeyElement(k, isShifted)));
+          keyboardWrapper.appendChild(rowEl);
+        });
+      }
 
       requestAnimationFrame(resizeSwipeCanvas);
+      analyzeSuggestions();
     }
 
     const audioCtx = (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext || window.webkitAudioContext)() : null;
@@ -2880,9 +3572,18 @@
     let gestureStartY = 0;
     let gestureKeyDef = null;
     let currentHoveredDir = null;
+    let lastActionTimestamp = 0;
+
+    function safeHandleKeyAction(k) {
+      const now = Date.now();
+      if (now - lastActionTimestamp < 60) return;
+      lastActionTimestamp = now;
+      handleKeyAction(k);
+    }
 
     function setupKeyEvents(keyEl, k) {
       keyEl.addEventListener('pointerdown', (e) => {
+        if (k.type === 'blank') return;
         e.preventDefault();
         clearTeachingHighlight();
         activePointerId = e.pointerId;
@@ -3028,11 +3729,11 @@
                 handleKeyTap(badgeText);
               }
             } else {
-              handleKeyAction(currentK);
+              safeHandleKeyAction(currentK);
             }
           } else {
             // 4. Chạm nhấc tay tại chỗ (Tap thường)
-            handleKeyAction(currentK);
+            safeHandleKeyAction(currentK);
           }
         } catch (err) {
           console.error('Lỗi khi xử lý pointerup:', err);
@@ -3045,6 +3746,12 @@
           activePointerId = null;
           gestureKeyDef = null;
           currentHoveredDir = null;
+        }
+      });
+
+      keyEl.addEventListener('click', (e) => {
+        if (k.type === 'mode' || k.type === 'mode_choice') {
+          safeHandleKeyAction(k);
         }
       });
 
@@ -3072,7 +3779,7 @@
       } else if (k.type === 'space') {
         if (composingBuffer) {
           // Tự động chốt gợi ý hàng đầu (Primary suggestion) khi bấm Space!
-          const primaryChip = suggestionChips.querySelector('.sug-chip.primary');
+          const primaryChip = document.querySelector('.vertical-sug-chip.primary') || suggestionChips.querySelector('.sug-chip.primary');
           if (primaryChip && primaryChip.dataset.word) {
             window.pickSuggestion(primaryChip.dataset.word);
             return;
@@ -3083,8 +3790,16 @@
           updateDisplay();
         }
         statLastAction.textContent = 'Space / Đệm khoảng trắng';
-      } else if (k.type === 'mode') {
-        statLastAction.textContent = '❖ Chuyển Tầng Mode (Hex / Con trỏ)';
+      } else if (k.type === 'mode' || k.char === '❖' || k.id === 'top_mid_36l' || k.id === 'top_mid_36r') {
+        playClickSound(700, 0.04);
+        toggleKeyboardMode();
+      } else if (k.type === 'mode_choice') {
+        playClickSound(800, 0.04);
+        if (k.choice === 'close') {
+          setKeyboardMode(previousKeyboardMode || 'normal');
+        } else {
+          setKeyboardMode(k.choice);
+        }
       } else if (k.type === 'vowel') {
         statLastAction.textContent = 'ớ Chuyển Tầng Vowel (Nguyên âm)';
       } else if (k.char === '‹') {
@@ -3121,6 +3836,7 @@
         isShift = true;
       }
       renderKeyboard();
+      renderTopHexBar();
     }
 
     function toggleKeyboardVisibility() {
@@ -3131,6 +3847,72 @@
         kw.style.display = 'none';
       }
     }
+
+    function setKeyboardMode(mode) {
+      if (mode !== 'mode_select') {
+        previousKeyboardMode = mode;
+      }
+      currentKeyboardMode = mode;
+      document.querySelectorAll('.btn-mode-toggle').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`btnMode_${mode}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      renderKeyboard();
+      renderTopHexBar();
+      const modeNames = {
+        'normal': 'Chuẩn 5x12',
+        '36L': '36L (1 Tay Trái + Hexa)',
+        '36R': '36R (1 Tay Phải + Hexa)',
+        'mode_select': 'Tầng Chọn Chế Độ (Bấm 36L hoặc 36R)'
+      };
+      statLastAction.textContent = `Chế độ: ${modeNames[mode] || mode}`;
+    }
+
+    function toggleKeyboardMode() {
+      if (currentKeyboardMode === 'mode_select') {
+        setKeyboardMode(previousKeyboardMode || 'normal');
+      } else {
+        setKeyboardMode('mode_select');
+      }
+    }
+
+    function renderTopHexBar() {
+      const topHexBar = document.getElementById('topHexBar');
+      const sugChips = document.getElementById('suggestionChips');
+      const sugBar = document.getElementById('suggestionBar');
+      if (!topHexBar || !sugChips || !sugBar) return;
+
+      topHexBar.innerHTML = '';
+
+      if (currentKeyboardMode === 'normal' || currentKeyboardMode === 'mode_select') {
+        topHexBar.style.display = 'none';
+        sugChips.style.display = 'flex';
+        sugChips.style.width = '100%';
+        sugBar.classList.remove('layout-36l', 'layout-36r');
+        return;
+      }
+
+      topHexBar.style.display = 'flex';
+
+      const barKeys = currentKeyboardMode === '36L' ? TOP_BAR_36L : TOP_BAR_36R;
+
+      if (currentKeyboardMode === '36L') {
+        sugBar.classList.add('layout-36l');
+        sugBar.classList.remove('layout-36r');
+      } else {
+        sugBar.classList.add('layout-36r');
+        sugBar.classList.remove('layout-36l');
+      }
+
+      const isShifted = isShift || isCaps;
+      barKeys.forEach(k => {
+        const keyEl = createKeyElement(k, isShifted);
+        topHexBar.appendChild(keyEl);
+      });
+    }
+
+    window.setKeyboardMode = setKeyboardMode;
+    window.toggleKeyboardMode = toggleKeyboardMode;
 
     // Gắn vào window để gọi từ inline HTML
     window.pickSuggestion = function(word) {
@@ -3222,6 +4004,7 @@
 
     // Khởi tạo
     renderKeyboard();
+    renderTopHexBar();
     updateDisplay();
   </script>
 </body>
