@@ -894,7 +894,7 @@
       <div class="output-header-mini">
         <span class="output-title">📝 Gõ VComp</span>
         <div class="output-actions-mini">
-          <a href="vcomp-audit.html" class="btn-mini" style="color: #fff; background: #1f6feb; border-color: #388bfd; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-weight: 700;" title="Mở bảng tra 169 vần & phím VComp">📊 169 Vần ➔</a>
+          <a href="vcomp-169-rhymes.html" class="btn-mini" style="color: #fff; background: #1f6feb; border-color: #388bfd; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-weight: 700;" title="Mở bảng tra 169 vần & phím VComp">📊 169 Vần ➔</a>
           <button class="btn-mini" id="btnCopyText" title="Sao chép văn bản">📋 Copy</button>
           <button class="btn-mini" id="btnClearTextMini" title="Xóa nội dung">🧹 Xóa</button>
         </div>
@@ -2970,7 +2970,18 @@
         try {
           // 1. CỬ CHỈ VUỐT HÌNH HỌC (3 PHÍM HOẶC VUỐT CONG 2 PHÍM VẦN+DẤU)
           if (isMultiKeyGlide && dist > 20 && glidePoints.length >= 2) {
-            const resolved = resolveSwipeGesture(glidePoints, currentK, composingBuffer);
+            let resolved = resolveSwipeGesture(glidePoints, currentK, composingBuffer);
+            if (!resolved || !resolved.word) {
+              const letterChars = glideKeys.map(k => k.char).filter(c => c && c.length === 1 && /^[a-zA-Z]$/.test(c)).join('').toLowerCase();
+              if (letterChars.length >= 4 && VIETNAMESE_LEXICON_MAP[letterChars]) {
+                const words = VIETNAMESE_LEXICON_MAP[letterChars];
+                if (words && words.length > 0) {
+                  const bestWord = typeof words[0] === 'string' ? words[0] : words[0].word;
+                  resolved = { word: bestWord, desc: 'Lướt từ tiếng Việt', system: 'lexicon', code: letterChars };
+                }
+              }
+            }
+
             if (resolved && resolved.word) {
               playClickSound(1050, 0.06);
               commitWord(resolved.word);

@@ -62,7 +62,9 @@ export default defineConfig({
         subtitle: resolve(import.meta.dirname, 'subtitle.html'),
         keyboard_vcomp_chip: resolve(import.meta.dirname, 'keyboard-vcomp-chip.html'),
         keyboard_grid: resolve(import.meta.dirname, 'keyboard-grid.html'),
-        vcomp_matrix: resolve(import.meta.dirname, 'vcomp-matrix.html')
+        vcomp_matrix: resolve(import.meta.dirname, 'vcomp-matrix.html'),
+        vcomp_169_rhymes: resolve(import.meta.dirname, 'vcomp-169-rhymes.html'),
+        vcomp_audit: resolve(import.meta.dirname, 'vcomp-audit.html')
       }
     }
   }
