@@ -61,6 +61,7 @@ export default defineConfig({
         viscript_encoder: resolve(import.meta.dirname, 'viscript-encoder.html'),
         subtitle: resolve(import.meta.dirname, 'subtitle.html'),
         keyboard_vcomp_chip: resolve(import.meta.dirname, 'keyboard-vcomp-chip.html'),
+        keyboard_grid: resolve(import.meta.dirname, 'keyboard-grid.html'),
         vcomp_matrix: resolve(import.meta.dirname, 'vcomp-matrix.html')
       }
     }

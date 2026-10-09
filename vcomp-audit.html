@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VComp Atlas & Thống Kê 169 Vần (13²)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-body: #0d1117;
+      --bg-card: #161b22;
+      --bg-card-hover: #1f242c;
+      --bg-header: #0f141c;
+      --bg-key: #21262d;
+      --border-dark: #30363d;
+      --border-focus: #58a6ff;
+
+      /* Mã Màu Học Tập VComp Chuẩn */
+      --glow-b1: #58a6ff;     /* Bảng 1: Dấu Telex zfsrxj (Xanh Lam) */
+      --glow-b2: #f2cc60;     /* Bảng 2: Dấu bkvlqd (Vàng) */
+      --glow-b3: #3fb950;     /* Bảng 3: Dấu VNI 012345 (Lục) */
+      --glow-cons: #bc8cff;   /* Phụ âm ghép: Th, Tr, Ch... (Tím) */
+      --glow-cyan: #58a6ff;
+      --glow-red: #f85149;
+
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --text-sub: #7ee787;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1100px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Header Bar Tinh Gọn */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-header);
+      padding: 8px 14px;
+      border: 1px solid var(--border-dark);
+      border-radius: 10px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .title-group h1 {
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      letter-spacing: -0.2px;
+    }
+
+    .badge-top {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 10px;
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--glow-b1);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+
+    .btn-link-sim {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #1f6feb;
+      color: #fff;
+      text-decoration: none;
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      transition: all 0.15s;
+      border: 1px solid #388bfd;
+      white-space: nowrap;
+    }
+    .btn-link-sim:hover {
+      background: #388bfd;
+      box-shadow: 0 0 10px rgba(56, 139, 253, 0.5);
+    }
+
+    /* Metrics Grid (4 thẻ ngắn gọn) */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 8px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+    }
+    .metric-card.b1::before { background: var(--glow-b1); }
+    .metric-card.b2::before { background: var(--glow-b2); }
+    .metric-card.b3::before { background: var(--glow-b3); }
+    .metric-card.cons::before { background: var(--glow-cons); }
+
+    .metric-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .metric-value {
+      font-size: 18px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #fff;
+    }
+
+    .metric-sub {
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
+    /* Controls: Search, Tabs, Filters */
+    .control-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 10px;
+      padding: 10px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .tabs-row {
+      display: flex;
+      gap: 6px;
+      border-bottom: 1px solid var(--border-dark);
+      padding-bottom: 8px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: var(--bg-key);
+      border: 1px solid var(--border-dark);
+      color: var(--text-muted);
+      padding: 5px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      background: #30363d;
+      color: #fff;
+    }
+    .tab-btn.active {
+      background: #1f6feb;
+      border-color: #58a6ff;
+      color: #fff;
+    }
+
+    .filters-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      background: #0f141c;
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      padding: 6px 10px 6px 28px;
+      font-size: 12px;
+      color: #fff;
+      font-family: var(--font-sans);
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: var(--border-focus);
+    }
+    .search-icon {
+      position: absolute;
+      left: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .filter-chips {
+      display: flex;
+      gap: 4px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      background: var(--bg-key);
+      border: 1px solid var(--border-dark);
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-chip:hover {
+      color: #fff;
+      border-color: #8b949e;
+    }
+    .filter-chip.active {
+      background: #238636;
+      border-color: #2ea043;
+      color: #fff;
+    }
+
+    /* Content Area & Compact Table */
+    .content-area {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table.audit-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    table.audit-table th {
+      background: #0f141c;
+      padding: 7px 8px;
+      font-size: 10.5px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-dark);
+      white-space: nowrap;
+    }
+
+    table.audit-table td {
+      padding: 6px 8px;
+      border-bottom: 1px solid #21262d;
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    table.audit-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Badges & Tags Siêu Gọn */
+    .badge-b1 {
+      display: inline-block;
+      font-size: 10.5px;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--glow-b1);
+      border: 1px solid rgba(88, 166, 255, 0.35);
+      font-family: var(--font-mono);
+      font-weight: 600;
+      margin-right: 2px;
+    }
+    .badge-b2 {
+      display: inline-block;
+      font-size: 10.5px;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      background: rgba(242, 204, 96, 0.15);
+      color: var(--glow-b2);
+      border: 1px solid rgba(242, 204, 96, 0.35);
+      font-family: var(--font-mono);
+      font-weight: 600;
+      margin-right: 2px;
+    }
+    .badge-b3 {
+      display: inline-block;
+      font-size: 10.5px;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--glow-b3);
+      border: 1px solid rgba(63, 185, 80, 0.35);
+      font-family: var(--font-mono);
+      font-weight: 600;
+      margin-right: 2px;
+    }
+
+    .badge-cons {
+      display: inline-block;
+      font-size: 10.5px;
+      padding: 1.5px 6px;
+      border-radius: 4px;
+      background: rgba(188, 140, 255, 0.18);
+      color: var(--glow-cons);
+      border: 1px solid rgba(188, 140, 255, 0.4);
+      font-family: var(--font-mono);
+      font-weight: 800;
+      cursor: help;
+    }
+
+    .badge-tone {
+      display: inline-block;
+      font-size: 12.5px;
+      padding: 1.5px 6px;
+      border-radius: 4px;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      cursor: help;
+    }
+    .badge-tone.b1 {
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--glow-b1);
+      border: 1px solid rgba(88, 166, 255, 0.35);
+    }
+    .badge-tone.b2 {
+      background: rgba(242, 204, 96, 0.15);
+      color: var(--glow-b2);
+      border: 1px solid rgba(242, 204, 96, 0.35);
+    }
+    .badge-tone.b3 {
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--glow-b3);
+      border: 1px solid rgba(63, 185, 80, 0.35);
+    }
+
+    .b60-glyph {
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: 3px;
+      background: #0f141c;
+      border: 1px solid var(--border-dark);
+      display: inline-block;
+    }
+    .b60-glyph.is-upper {
+      color: #fff;
+      font-style: italic;
+      border-color: var(--glow-b2);
+    }
+
+    /* Cards Grid (Tab 3) */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 8px;
+      padding: 10px;
+    }
+    .key-card {
+      background: #0f141c;
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .kc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #21262d;
+      padding-bottom: 4px;
+    }
+    .kc-key {
+      font-size: 15px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #fff;
+    }
+    .kc-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+    }
+    .kc-lbl {
+      color: var(--text-muted);
+      width: 46px;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 4px; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Top Header Bar (1 Link Duy Nhất) -->
+    <div class="header-bar">
+      <div class="title-group">
+        <h1>
+          <span>📊 VComp Atlas (169 Vần)</span>
+          <span class="badge-top">13² = 169</span>
+        </h1>
+      </div>
+      <div>
+        <a href="keyboard-grid.html" class="btn-link-sim">⌨️ Bàn Phím ➔</a>
+      </div>
+    </div>
+
+    <!-- Metrics Cards (4 Thẻ Ngắn Gọn) -->
+    <div class="metrics-grid">
+      <div class="metric-card b1">
+        <span class="metric-label">169 Vần (13²)</span>
+        <span class="metric-value">169</span>
+        <span class="metric-sub">57 B1 | 56 B2 | 56 B3</span>
+      </div>
+      <div class="metric-card b3">
+        <span class="metric-label">Độ Phủ Base60</span>
+        <span class="metric-value">100%</span>
+        <span class="metric-sub">169/169 Vần Đã Gán</span>
+      </div>
+      <div class="metric-card b2">
+        <span class="metric-label">Quy Tắc 6 Vần/Phím</span>
+        <span class="metric-value">26 phím</span>
+        <span class="metric-sub">3 Thường + 3 Hoa</span>
+      </div>
+      <div class="metric-card cons">
+        <span class="metric-label">18 Dấu Thanh</span>
+        <span class="metric-value">= / \ ? ~ .</span>
+        <span class="metric-sub">B1 Telex | B2 bkvlqd | B3 Số</span>
+      </div>
+    </div>
+
+    <!-- Control Panel -->
+    <div class="control-panel">
+      <!-- Tabs Row -->
+      <div class="tabs-row">
+        <button class="tab-btn active" id="tabBtnKeys" onclick="switchTab('keys')">
+          <span>⌨️ Bảng Phím & 6 Vần</span>
+        </button>
+        <button class="tab-btn" id="tabBtnRhymes" onclick="switchTab('rhymes')">
+          <span>📚 169 Vần Chuẩn (13² Registry)</span>
+        </button>
+        <button class="tab-btn" id="tabBtnCards" onclick="switchTab('cards')">
+          <span>🧩 Thẻ Chi Tiết Phím</span>
+        </button>
+      </div>
+
+      <!-- Filters & Search Row -->
+      <div class="filters-row">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="Tìm phím (s, t, w), vần (-ương), âm (Th), dấu (=, /, ~)...">
+        </div>
+
+        <div class="filter-chips">
+          <button class="filter-chip active" data-filter="all" onclick="setFilter('all')">Tất Cả</button>
+          <button class="filter-chip" data-filter="letters" onclick="setFilter('letters')">🔤 26 Chữ Cái</button>
+          <button class="filter-chip" data-filter="digits" onclick="setFilter('digits')">🔢 10 Số (0..9)</button>
+          <button class="filter-chip" data-filter="clusters" onclick="setFilter('clusters')">🟣 Phụ Âm Ghép</button>
+          <button class="filter-chip" data-filter="tones" onclick="setFilter('tones')">🎯 18 Phím Dấu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Content Area -->
+    <div class="content-area" id="contentContainer">
+      <!-- Rendered by JavaScript -->
+    </div>
+
+  </div>
+
+  <script type="module">
+    import {
+      RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2,
+      BASE60_MAPPING, CONSONANTS_BASE, CONSONANTS_EXTRA
+    } from './data.js';
+
+    // 1. DATA 18 PHÍM DẤU (Ký hiệu ngắn: = / \ ? ~ .)
+    const TONE_SYMBOLS = ['=', '/', '\\', '?', '~', '.'];
+    const TONE_NAMES = ['Bằng (=)', 'Sắc (/)', 'Huyền (\\)', 'Hỏi (?)', 'Ngã (~)', 'Nặng (.)'];
+
+    const TONE_KEYS = {
+      'z': { table: 'B1 (Telex)', tone: 0, sym: '=' },
+      's': { table: 'B1 (Telex)', tone: 1, sym: '/' },
+      'f': { table: 'B1 (Telex)', tone: 2, sym: '\\' },
+      'r': { table: 'B1 (Telex)', tone: 3, sym: '?' },
+      'x': { table: 'B1 (Telex)', tone: 4, sym: '~' },
+      'j': { table: 'B1 (Telex)', tone: 5, sym: '.' },
+
+      'b': { table: 'B2 (bkvlqd)', tone: 0, sym: '=' },
+      'k': { table: 'B2 (bkvlqd)', tone: 1, sym: '/' },
+      'v': { table: 'B2 (bkvlqd)', tone: 2, sym: '\\' },
+      'l': { table: 'B2 (bkvlqd)', tone: 3, sym: '?' },
+      'q': { table: 'B2 (bkvlqd)', tone: 4, sym: '~' },
+      'd': { table: 'B2 (bkvlqd)', tone: 5, sym: '.' },
+
+      '0': { table: 'B3 (Số VNI)', tone: 0, sym: '=' },
+      '1': { table: 'B3 (Số VNI)', tone: 1, sym: '/' },
+      '2': { table: 'B3 (Số VNI)', tone: 2, sym: '\\' },
+      '3': { table: 'B3 (Số VNI)', tone: 3, sym: '?' },
+      '4': { table: 'B3 (Số VNI)', tone: 4, sym: '~' },
+      '5': { table: 'B3 (Số VNI)', tone: 5, sym: '.' }
+    };
+
+    // 2. DATA 11 PHỤ ÂM GHÉP (Hiển thị ngắn gọn, hover xem Base60)
+    const CONS_CLUSTERS = {
+      't': { b60: 'T (hoa)', name: 'Th' },
+      'r': { b60: 'R (hoa)', name: 'Tr' },
+      'c': { b60: 'C (hoa)', name: 'Ch' },
+      'k': { b60: 'K (hoa)', name: 'Kh' },
+      'g': { b60: 'G (hoa)', name: 'Gh' },
+      'n': { b60: 'N (hoa)', name: 'Ng' },
+      'h': { b60: 'H (hoa)', name: 'Nh' },
+      'p': { b60: 'f (thường)', name: 'Ph' },
+      'q': { b60: 'q (thường)', name: 'Qu' },
+      'd': { b60: 'D (hoa)', name: 'Đ' },
+      'l': { b60: 'L (hoa)', name: 'L' }
+    };
+
+    // 3. TỪ ĐIỂN VÍ DỤ GHÉP VẦN
+    const SAMPLE_WORDS = {
+      's': 'sướng [sss]', 't': 'toán, tiết', 'r': 'rượu, ra', 'w': 'rừng, hương',
+      'c': 'cao, con', 'n': 'ngủ, nơi', 'h': 'nhà, học', 'k': 'khi, kêu',
+      'a': 'anh, áo', 'e': 'em, én', 'u': 'uống, uy', 'o': 'ong, oa', 'i': 'in, im',
+      'm': 'mẹ, mua', 'b': 'bố, bạn', 'd': 'đi, da', 'g': 'gà, ghẹ', 'l': 'lớn, lá',
+      'p': 'phố, pin', 'q': 'qua, quê', 'v': 'vui, vào', 'x': 'xanh, xe', 'y': 'yêu, ý',
+      'z': 'ôm, ong', 'j': 'âm, eo', 'f': 'ap, ôc'
+    };
+
+    // 4. DANH SÁCH 26 PHÍM CHỮ + 10 PHÍM SỐ
+    const ALL_KEYS = [
+      'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p',
+      'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l',
+      'z', 'x', 'c', 'v', 'b', 'n', 'm',
+      '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'
+    ];
+
+    // Build data structure cho 169 vần
+    const ALL_169_RHYMES = [];
+    let stt = 1;
+    function registerTable(rhymes, tableNum, tableName, badgeClass) {
+      rhymes.forEach((r, idx) => {
+        if (r && r !== '-' && r !== 'null') {
+          const b60 = BASE60_MAPPING[idx];
+          const isUpper = /^[A-Z]$/.test(b60);
+          const isDigit = /^[0-9]$/.test(b60);
+          
+          let mappedKey = b60.toLowerCase();
+          let keyDesc = isDigit ? `Phím số ${b60}` : (isUpper ? `Phím ${b60.toLowerCase()} (Hoa)` : `Phím ${b60} (Thường)`);
+
+          ALL_169_RHYMES.push({
+            stt: stt++,
+            rhyme: r,
+            tableNum,
+            tableName,
+            badgeClass,
+            mm: idx,
+            b60,
+            isUpper,
+            isDigit,
+            mappedKey,
+            keyDesc,
+            sample: (r === 'ương' ? 'sướng' : r === 'oan' ? 'toán' : r === 'êu' ? 'kêu' : ('t' + r))
+          });
+        }
+      });
+    }
+
+    registerTable(RHYMES_BASE, 1, 'B1 (Telex)', 'badge-b1');
+    registerTable(RHYMES_EXTRA_1, 2, 'B2 (bkvlqd)', 'badge-b2');
+    registerTable(RHYMES_EXTRA_2, 3, 'B3 (Số VNI)', 'badge-b3');
+
+    // ========================================================
+    // STATE & CONTROLS
+    // ========================================================
+    let currentTab = 'keys';
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    const contentContainer = document.getElementById('contentContainer');
+    const searchInput = document.getElementById('searchInput');
+
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.trim().toLowerCase();
+      renderActiveView();
+    });
+
+    window.switchTab = function(tabName) {
+      currentTab = tabName;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      if (tabName === 'keys') document.getElementById('tabBtnKeys').classList.add('active');
+      else if (tabName === 'rhymes') document.getElementById('tabBtnRhymes').classList.add('active');
+      else if (tabName === 'cards') document.getElementById('tabBtnCards').classList.add('active');
+      renderActiveView();
+    };
+
+    window.setFilter = function(filterVal) {
+      currentFilter = filterVal;
+      document.querySelectorAll('.filter-chip').forEach(c => {
+        c.classList.toggle('active', c.dataset.filter === filterVal);
+      });
+      renderActiveView();
+    };
+
+    window.renderActiveView = function() {
+      if (currentTab === 'keys') renderKeysView();
+      else if (currentTab === 'rhymes') renderRhymesView();
+      else if (currentTab === 'cards') renderCardsView();
+    };
+
+    // ========================================================
+    // TAB 1: BẢNG PHÍM & 6 VẦN (KEY MATRIX)
+    // ========================================================
+    function renderKeysView() {
+      let filtered = ALL_KEYS.filter(k => {
+        const isDigit = /^[0-9]$/.test(k);
+        const cluster = CONS_CLUSTERS[k];
+        const toneInfo = TONE_KEYS[k];
+
+        // Lọc theo search
+        if (searchQuery) {
+          const matchKey = k.toLowerCase().includes(searchQuery);
+          const matchCluster = cluster && cluster.name.toLowerCase().includes(searchQuery);
+          const matchTone = toneInfo && (toneInfo.sym.includes(searchQuery) || toneInfo.table.toLowerCase().includes(searchQuery));
+          
+          // Kiểm tra vần của phím
+          const lowIdx = BASE60_MAPPING.indexOf(k);
+          const upIdx = !isDigit ? BASE60_MAPPING.indexOf(k.toUpperCase()) : -1;
+          const rhymesOfKey = [
+            lowIdx !== -1 ? RHYMES_BASE[lowIdx] : '',
+            lowIdx !== -1 ? RHYMES_EXTRA_1[lowIdx] : '',
+            lowIdx !== -1 ? RHYMES_EXTRA_2[lowIdx] : '',
+            upIdx !== -1 ? RHYMES_BASE[upIdx] : '',
+            upIdx !== -1 ? RHYMES_EXTRA_1[upIdx] : '',
+            upIdx !== -1 ? RHYMES_EXTRA_2[upIdx] : ''
+          ].filter(Boolean);
+
+          const matchRhymes = rhymesOfKey.some(r => r.toLowerCase().includes(searchQuery));
+          if (!matchKey && !matchCluster && !matchTone && !matchRhymes) return false;
+        }
+
+        // Lọc theo filter chip
+        if (currentFilter === 'letters' && isDigit) return false;
+        if (currentFilter === 'digits' && !isDigit) return false;
+        if (currentFilter === 'clusters' && !cluster) return false;
+        if (currentFilter === 'tones' && !toneInfo) return false;
+        return true;
+      });
+
+      let html = `
+        <div class="table-responsive">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th style="width: 38px;">Phím</th>
+                <th style="width: 44px;">Âm</th>
+                <th style="width: 40px;" title="Dấu thanh: = / \\ ? ~ .">Dấu</th>
+                <th>3 Vần Thường (B1/B2/B3)</th>
+                <th>3 Vần Hoa (B1/B2/B3)</th>
+                <th>Ví Dụ</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      filtered.forEach(k => {
+        const isDigit = /^[0-9]$/.test(k);
+        const cluster = CONS_CLUSTERS[k];
+        const toneInfo = TONE_KEYS[k];
+
+        // 1. Phụ âm (bỏ chữ Base60: T (hoa) dài dòng, chỉ để tooltip)
+        let consHtml = `<span style="color:#484f58;">--</span>`;
+        if (cluster) {
+          consHtml = `<span class="badge-cons" title="Base60: ${cluster.b60}">${cluster.name}</span>`;
+        } else if (/^[bcdđghklmnpqrstvx]$/i.test(k)) {
+          consHtml = `<strong style="color:#c9d1d9;">${k}</strong>`;
+        }
+
+        // 2. Dấu thanh (ký hiệu ngắn: = / \ ? ~ .)
+        let toneHtml = `<span style="color:#484f58;">--</span>`;
+        if (toneInfo) {
+          const bClass = toneInfo.table.includes('B1') ? 'b1' : toneInfo.table.includes('B2') ? 'b2' : 'b3';
+          const tName = TONE_NAMES[toneInfo.tone];
+          toneHtml = `<span class="badge-tone ${bClass}" title="${toneInfo.table}: ${tName}">${toneInfo.sym}</span>`;
+        }
+
+        // 3. Vần Thường (B1 / B2 / B3)
+        const lowIdx = BASE60_MAPPING.indexOf(k);
+        let lowHtml = `<span style="color:#484f58;">--</span>`;
+        if (lowIdx !== -1) {
+          const r1 = RHYMES_BASE[lowIdx];
+          const r2 = RHYMES_EXTRA_1[lowIdx];
+          const r3 = RHYMES_EXTRA_2[lowIdx];
+          lowHtml = '';
+          if (r1 && r1 !== '-') lowHtml += `<span class="badge-b1" title="B1 [${k}]: -${r1}">-${r1}</span>`;
+          if (r2 && r2 !== '-') lowHtml += `<span class="badge-b2" title="B2 [${k}]: -${r2}">-${r2}</span>`;
+          if (r3 && r3 !== '-') lowHtml += `<span class="badge-b3" title="B3 [${k}]: -${r3}">-${r3}</span>`;
+          if (!lowHtml) lowHtml = `<span style="color:#484f58;">--</span>`;
+        }
+
+        // 4. Vần Hoa (B1 / B2 / B3)
+        const upIdx = !isDigit ? BASE60_MAPPING.indexOf(k.toUpperCase()) : -1;
+        let upHtml = `<span style="color:#484f58;">--</span>`;
+        if (upIdx !== -1) {
+          const r1 = RHYMES_BASE[upIdx];
+          const r2 = RHYMES_EXTRA_1[upIdx];
+          const r3 = RHYMES_EXTRA_2[upIdx];
+          upHtml = '';
+          if (r1 && r1 !== '-') upHtml += `<span class="badge-b1" style="font-style:italic;" title="B1 [${k.toUpperCase()}]: -${r1}">-${r1}</span>`;
+          if (r2 && r2 !== '-') upHtml += `<span class="badge-b2" style="font-style:italic;" title="B2 [${k.toUpperCase()}]: -${r2}">-${r2}</span>`;
+          if (r3 && r3 !== '-') upHtml += `<span class="badge-b3" style="font-style:italic;" title="B3 [${k.toUpperCase()}]: -${r3}">-${r3}</span>`;
+          if (!upHtml) upHtml = `<span style="color:#484f58;">--</span>`;
+        } else if (isDigit) {
+          upHtml = `<span style="color:#484f58; font-size:11px;">(Số chỉ 3 vần)</span>`;
+        }
+
+        // 5. Ví dụ
+        const sample = SAMPLE_WORDS[k] || (isDigit ? `Dấu ${toneInfo ? toneInfo.sym : k}` : `t${k}`);
+
+        html += `
+          <tr>
+            <td><strong style="font-size:14px; font-family:var(--font-mono); color:#fff;">${k}</strong></td>
+            <td>${consHtml}</td>
+            <td>${toneHtml}</td>
+            <td>${lowHtml}</td>
+            <td>${upHtml}</td>
+            <td style="font-size:11px; color:#c9d1d9;">${sample}</td>
+          </tr>
+        `;
+      });
+
+      html += `</tbody></table></div>`;
+      contentContainer.innerHTML = html;
+    }
+
+    // ========================================================
+    // TAB 2: 169 VẦN CHUẨN (13² REGISTRY)
+    // ========================================================
+    function renderRhymesView() {
+      let filtered = ALL_169_RHYMES.filter(r => {
+        if (searchQuery) {
+          const matchRhyme = r.rhyme.toLowerCase().includes(searchQuery);
+          const matchB60 = r.b60.toLowerCase().includes(searchQuery);
+          const matchKey = r.mappedKey.toLowerCase().includes(searchQuery);
+          if (!matchRhyme && !matchB60 && !matchKey) return false;
+        }
+        if (currentFilter === 'letters' && r.isDigit) return false;
+        if (currentFilter === 'digits' && !r.isDigit) return false;
+        return true;
+      });
+
+      let html = `
+        <div class="table-responsive">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th style="width: 35px;">STT</th>
+                <th>Vần</th>
+                <th>Bảng</th>
+                <th>MM</th>
+                <th>Mã Base60</th>
+                <th>Gán Trên Phím</th>
+                <th>Ví Dụ</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      filtered.forEach(r => {
+        const caseHtml = r.isDigit ? `<span style="color:var(--text-muted);">Số ${r.b60}</span>` :
+          (r.isUpper ? `<span style="color:var(--glow-b2); font-weight:700; font-style:italic;">Hoa (${r.b60})</span>` :
+          `<span style="color:var(--glow-b1);">Thường (${r.b60})</span>`);
+
+        html += `
+          <tr>
+            <td style="color:#8b949e; font-family:var(--font-mono); font-size:10.5px;">#${r.stt}</td>
+            <td><strong style="font-size:14px; color:#fff;">-${r.rhyme}</strong></td>
+            <td><span class="${r.badgeClass}">${r.tableNum === 1 ? 'B1' : r.tableNum === 2 ? 'B2' : 'B3'}</span></td>
+            <td style="font-family:var(--font-mono); color:#8b949e;">${r.mm}</td>
+            <td><span class="b60-glyph ${r.isUpper ? 'is-upper' : ''}">${r.b60}</span></td>
+            <td><strong>Phím [${r.mappedKey}]</strong> <span style="font-size:11px; color:#8b949e;">- ${caseHtml}</span></td>
+            <td style="font-size:11px; color:#c9d1d9;">${r.sample}</td>
+          </tr>
+        `;
+      });
+
+      html += `</tbody></table></div>`;
+      contentContainer.innerHTML = html;
+    }
+
+    // ========================================================
+    // TAB 3: THẺ CHI TIẾT TỪNG PHÍM (KEY CARDS ATLAS)
+    // ========================================================
+    function renderCardsView() {
+      let filtered = ALL_KEYS.filter(k => {
+        if (searchQuery) return k.toLowerCase().includes(searchQuery);
+        if (currentFilter === 'letters' && /^[0-9]$/.test(k)) return false;
+        if (currentFilter === 'digits' && !/^[0-9]$/.test(k)) return false;
+        return true;
+      });
+
+      let html = `<div class="cards-grid">`;
+
+      filtered.forEach(k => {
+        const isDigit = /^[0-9]$/.test(k);
+        const cluster = CONS_CLUSTERS[k];
+        const toneInfo = TONE_KEYS[k];
+
+        const lowIdx = BASE60_MAPPING.indexOf(k);
+        const upIdx = !isDigit ? BASE60_MAPPING.indexOf(k.toUpperCase()) : -1;
+
+        const r1_low = lowIdx !== -1 && RHYMES_BASE[lowIdx] !== '-' ? RHYMES_BASE[lowIdx] : null;
+        const r2_low = lowIdx !== -1 && RHYMES_EXTRA_1[lowIdx] !== '-' ? RHYMES_EXTRA_1[lowIdx] : null;
+        const r3_low = lowIdx !== -1 && RHYMES_EXTRA_2[lowIdx] !== '-' ? RHYMES_EXTRA_2[lowIdx] : null;
+
+        const r1_up = upIdx !== -1 && RHYMES_BASE[upIdx] !== '-' ? RHYMES_BASE[upIdx] : null;
+        const r2_up = upIdx !== -1 && RHYMES_EXTRA_1[upIdx] !== '-' ? RHYMES_EXTRA_1[upIdx] : null;
+        const r3_up = upIdx !== -1 && RHYMES_EXTRA_2[upIdx] !== '-' ? RHYMES_EXTRA_2[upIdx] : null;
+
+        let metaBadges = '';
+        if (cluster) metaBadges += `<span class="badge-cons" title="Base60: ${cluster.b60}">${cluster.name}</span> `;
+        if (toneInfo) {
+          const bClass = toneInfo.table.includes('B1') ? 'b1' : toneInfo.table.includes('B2') ? 'b2' : 'b3';
+          metaBadges += `<span class="badge-tone ${bClass}" title="${toneInfo.table}: ${TONE_NAMES[toneInfo.tone]}">${toneInfo.sym}</span>`;
+        }
+
+        html += `
+          <div class="key-card">
+            <div class="kc-header">
+              <span class="kc-key">${k.toUpperCase()} [${k}]</span>
+              <div>${metaBadges}</div>
+            </div>
+
+            <div class="kc-row">
+              <span class="kc-lbl">Thường:</span>
+              <div>
+                ${r1_low ? `<span class="badge-b1">-${r1_low}</span>` : ''}
+                ${r2_low ? `<span class="badge-b2">-${r2_low}</span>` : ''}
+                ${r3_low ? `<span class="badge-b3">-${r3_low}</span>` : ''}
+                ${(!r1_low && !r2_low && !r3_low) ? '<span style="color:#484f58;">--</span>' : ''}
+              </div>
+            </div>
+
+            ${!isDigit ? `
+            <div class="kc-row">
+              <span class="kc-lbl">Hoa:</span>
+              <div>
+                ${r1_up ? `<span class="badge-b1" style="font-style:italic;">-${r1_up}</span>` : ''}
+                ${r2_up ? `<span class="badge-b2" style="font-style:italic;">-${r2_up}</span>` : ''}
+                ${r3_up ? `<span class="badge-b3" style="font-style:italic;">-${r3_up}</span>` : ''}
+                ${(!r1_up && !r2_up && !r3_up) ? '<span style="color:#484f58;">--</span>' : ''}
+              </div>
+            </div>
+            ` : ''}
+          </div>
+        `;
+      });
+
+      html += `</div>`;
+      contentContainer.innerHTML = html;
+    }
+
+    // Khởi tạo
+    renderActiveView();
+  </script>
+</body>
+</html>

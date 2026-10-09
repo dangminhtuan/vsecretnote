@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng Kiểm Toán & Thống Kê 169 Vần (13²) & Phím VComp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-body: #0d1117;
+      --bg-card: #161b22;
+      --bg-card-hover: #1f242c;
+      --bg-header: #0f141c;
+      --bg-key: #21262d;
+      --border-dark: #30363d;
+      --border-focus: #58a6ff;
+
+      /* Mã Màu Học Tập VComp Chuẩn */
+      --glow-b1: #58a6ff;     /* Bảng 1: Dấu Telex zfsrxj */
+      --glow-b2: #f2cc60;     /* Bảng 2: Dấu yaeiou */
+      --glow-b3: #3fb950;     /* Bảng 3: Dấu VNI 012345 */
+      --glow-cons: #bc8cff;   /* Phụ âm ghép: th, ch, nh, ng... */
+      --glow-cyan: #58a6ff;
+      --glow-red: #f85149;
+
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --text-sub: #7ee787;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Header Bar */
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-header);
+      padding: 14px 20px;
+      border: 1px solid var(--border-dark);
+      border-radius: 12px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .title-group h1 {
+      font-size: 18px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      letter-spacing: -0.3px;
+    }
+
+    .title-group p {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .badge-top {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--glow-b1);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+
+    .btn-link-sim {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #1f6feb;
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12.5px;
+      font-weight: 700;
+      transition: all 0.15s;
+      border: 1px solid #388bfd;
+    }
+    .btn-link-sim:hover {
+      background: #388bfd;
+      box-shadow: 0 0 12px rgba(56, 139, 253, 0.5);
+    }
+    .btn-link-ip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(63, 185, 80, 0.12);
+      color: #7ee787;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 12px;
+      border: 1px solid rgba(63, 185, 80, 0.35);
+      transition: all 0.15s;
+    }
+    .btn-link-ip:hover {
+      background: rgba(63, 185, 80, 0.25);
+      border-color: #3fb950;
+      box-shadow: 0 0 10px rgba(63, 185, 80, 0.3);
+    }
+
+    /* Dashboard Metrics Cards (5 Cards) */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: var(--glow-cyan);
+    }
+    .metric-card.b1::before { background: var(--glow-b1); }
+    .metric-card.b2::before { background: var(--glow-b2); }
+    .metric-card.b3::before { background: var(--glow-b3); }
+    .metric-card.cons::before { background: var(--glow-cons); }
+    .metric-card.unassigned::before { background: var(--glow-red); }
+
+    .metric-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+    }
+
+    .metric-value {
+      font-size: 24px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+      color: #fff;
+    }
+
+    .metric-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Controls: Search, Tabs, Filters */
+    .control-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .tabs-row {
+      display: flex;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-dark);
+      padding-bottom: 10px;
+      overflow-x: auto;
+    }
+
+    .tab-btn {
+      background: var(--bg-key);
+      border: 1px solid var(--border-dark);
+      color: var(--text-muted);
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      background: #30363d;
+      color: #fff;
+    }
+    .tab-btn.active {
+      background: #1f6feb;
+      border-color: #58a6ff;
+      color: #fff;
+      box-shadow: 0 0 10px rgba(88, 166, 255, 0.4);
+    }
+
+    .filters-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 250px;
+      position: relative;
+    }
+    .search-input {
+      width: 100%;
+      background: #0f141c;
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 8px 12px 8px 34px;
+      font-size: 13px;
+      color: #fff;
+      font-family: var(--font-sans);
+      outline: none;
+      transition: border 0.15s;
+    }
+    .search-input:focus {
+      border-color: var(--border-focus);
+    }
+    .search-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .filter-chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip {
+      background: var(--bg-key);
+      border: 1px solid var(--border-dark);
+      color: var(--text-muted);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-chip:hover {
+      background: #30363d;
+      color: #fff;
+    }
+    .filter-chip.active {
+      background: #238636;
+      border-color: #3fb950;
+      color: #fff;
+    }
+
+    /* Sort Select */
+    .sort-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .sort-select {
+      background: #0f141c;
+      border: 1px solid var(--border-dark);
+      color: #fff;
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      outline: none;
+      font-weight: 600;
+    }
+
+    /* Table Card */
+    .content-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-dark);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+
+    table.audit-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+      text-align: left;
+    }
+
+    table.audit-table th {
+      background: #141c28;
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      border-bottom: 2px solid var(--border-dark);
+      white-space: nowrap;
+    }
+
+    table.audit-table td {
+      padding: 9px 14px;
+      border-bottom: 1px solid #21262d;
+      vertical-align: middle;
+    }
+
+    table.audit-table tbody tr:hover {
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Badges & Tags */
+    .badge-b1 {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--glow-b1);
+      border: 1px solid rgba(88, 166, 255, 0.35);
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+    .badge-b2 {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(242, 204, 96, 0.15);
+      color: var(--glow-b2);
+      border: 1px solid rgba(242, 204, 96, 0.35);
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+    .badge-b3 {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(63, 185, 80, 0.15);
+      color: var(--glow-b3);
+      border: 1px solid rgba(63, 185, 80, 0.35);
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+    .badge-cons {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(188, 140, 255, 0.15);
+      color: var(--glow-cons);
+      border: 1px solid rgba(188, 140, 255, 0.35);
+      font-family: var(--font-mono);
+      font-weight: 700;
+    }
+    .badge-unassigned {
+      display: inline-block;
+      font-size: 10.5px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(248, 81, 73, 0.12);
+      color: var(--glow-red);
+      border: 1px solid rgba(248, 81, 73, 0.3);
+      font-weight: 600;
+    }
+    .badge-assigned {
+      display: inline-block;
+      font-size: 10.5px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      background: rgba(63, 185, 80, 0.12);
+      color: var(--glow-b3);
+      border: 1px solid rgba(63, 185, 80, 0.3);
+      font-weight: 600;
+    }
+
+    /* Base60 typography */
+    .b60-glyph {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #0f141c;
+      border: 1px solid var(--border-dark);
+      display: inline-block;
+    }
+    .b60-glyph.is-upper {
+      color: #fff;
+      font-style: italic;
+      border-color: var(--glow-b2);
+      text-decoration: underline dotted;
+    }
+
+    /* Mini Compass 3x3 for keys */
+    .mini-compass {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      max-width: 220px;
+      background: #0f141c;
+      padding: 5px;
+      border-radius: 6px;
+      border: 1px solid var(--border-dark);
+    }
+    .mc-cell {
+      text-align: center;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      padding: 2px;
+      border-radius: 3px;
+      background: #161b22;
+      color: var(--text-muted);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .mc-center {
+      background: #1f6feb;
+      color: #fff;
+      font-weight: 700;
+      font-size: 11.5px;
+    }
+
+    /* Unassigned Rhymes Grid */
+    .unassigned-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 10px;
+      padding: 16px;
+    }
+    .unassigned-card {
+      background: #0f141c;
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      transition: all 0.15s;
+    }
+    .unassigned-card:hover {
+      border-color: var(--glow-b1);
+      transform: translateY(-2px);
+    }
+    .unassigned-rhyme {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .unassigned-meta {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Footer info */
+    .footer-bar {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      padding: 10px 0;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+      body { padding: 8px; }
+      .header-bar { flex-direction: column; align-items: flex-start; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .filters-row { flex-direction: column; align-items: stretch; }
+      .search-box { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- Top Header Bar -->
+    <div class="header-bar">
+      <div class="title-group">
+        <h1>
+          <span>📊 VComp Audit & Atlas</span>
+          <span class="badge-top">169 VẦN (13²)</span>
+        </h1>
+        <p>Kiểm toán & đối chiếu toàn diện: Phím nào ➔ Phụ âm gì ➔ Dấu gì ➔ Vần gì ➔ Độ phủ Base60</p>
+      </div>
+      <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+        <a href="http://192.168.1.124:5173/keyboard-grid.html" class="btn-link-ip" title="Mở trực tiếp qua Mobile IP trên điện thoại">📱 Mobile IP: 192.168.1.124:5173</a>
+        <a href="keyboard-grid.html" class="btn-link-sim">⌨️ Bàn Phím Lưới Gõ Thử ➔</a>
+      </div>
+    </div>
+
+    <!-- Metrics Cards Row (5 Cards) -->
+    <div class="metrics-grid">
+      <div class="metric-card b1">
+        <span class="metric-label">Chuẩn VComp 13²</span>
+        <span class="metric-value" id="cardTotalRhymes">169</span>
+        <span class="metric-sub">57 B1 | 56 B2 | 56 B3</span>
+      </div>
+      <div class="metric-card b3">
+        <span class="metric-label">Độ Phủ Bàn Phím</span>
+        <span class="metric-value" id="cardCoveredRhymes">--</span>
+        <span class="metric-sub" id="cardCoveredPercent">Đang tính...</span>
+      </div>
+      <div class="metric-card unassigned">
+        <span class="metric-label">Vần Chưa Gán</span>
+        <span class="metric-value" id="cardMissingRhymes">--</span>
+        <span class="metric-sub">Cần bổ sung vào phím trống</span>
+      </div>
+      <div class="metric-card b2">
+        <span class="metric-label">18 Phím Dấu</span>
+        <span class="metric-value">18 phím</span>
+        <span class="metric-sub">B1: zfsrxj | B2: yaeiou | B3: 0..5</span>
+      </div>
+      <div class="metric-card cons">
+        <span class="metric-label">Phụ Âm Ghép</span>
+        <span class="metric-value">11 cụm</span>
+        <span class="metric-sub">Th, Tr, Ch, Kh, Gh, Ng, Nh, Ph, Qu...</span>
+      </div>
+    </div>
+
+    <!-- Control Panel (Tabs, Search, Filters, Sort) -->
+    <div class="control-panel">
+      <!-- Tabs Row -->
+      <div class="tabs-row">
+        <button class="tab-btn active" id="tabBtnKeys" onclick="switchTab('keys')">
+          <span>⌨️ Bảng Phím (Key-by-Key Matrix)</span>
+        </button>
+        <button class="tab-btn" id="tabBtnRhymes" onclick="switchTab('rhymes')">
+          <span>📚 169 Vần Chuẩn (13² Registry)</span>
+        </button>
+        <button class="tab-btn" id="tabBtnUnassigned" onclick="switchTab('unassigned')">
+          <span>🧩 Kho Vần Chưa Gán (<span id="unassignedCountBadge">--</span>)</span>
+        </button>
+      </div>
+
+      <!-- Filters & Search Row -->
+      <div class="filters-row">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="searchInput" class="search-input" placeholder="Tìm theo phím, vần (-ương, -oan), phụ âm (Th, Tr), mã Base60...">
+        </div>
+
+        <div class="filter-chips">
+          <button class="filter-chip active" data-filter="all" onclick="setFilter('all')">Tất Cả</button>
+          <button class="filter-chip" data-filter="b1" onclick="setFilter('b1')">🔵 Bảng 1 (Telex)</button>
+          <button class="filter-chip" data-filter="b2" onclick="setFilter('b2')">🟡 Bảng 2 (yaeiou)</button>
+          <button class="filter-chip" data-filter="b3" onclick="setFilter('b3')">🟢 Bảng 3 (Số VNI)</button>
+          <button class="filter-chip" data-filter="assigned" onclick="setFilter('assigned')">✅ Đã Gán</button>
+          <button class="filter-chip" data-filter="unassigned" onclick="setFilter('unassigned')">⚠️ Chưa Gán</button>
+        </div>
+
+        <div class="sort-group">
+          <span>Sắp xếp:</span>
+          <select id="sortSelect" class="sort-select" onchange="renderActiveView()">
+            <option value="stt">Theo STT VComp (1 ➔ 169)</option>
+            <option value="name_asc">Theo Vần (A ➔ Z)</option>
+            <option value="table_asc">Theo Bảng (B1 ➔ B2 ➔ B3)</option>
+            <option value="status">Đã gán lên phím trước</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Content Area -->
+    <div class="content-card" id="contentContainer">
+      <!-- Injected by JavaScript -->
+    </div>
+
+    <!-- Footer Information -->
+    <div class="footer-bar">
+      ✨ <strong>VComp 13² Architecture:</strong> Mỗi âm tiết tiếng Việt được cấu tạo bởi <code>[Phụ âm đầu] + [Vần] + [Dấu thanh]</code> tương ứng mã Base60 <code>[HH][MM][SS]</code>.<br>
+      Quy tắc vàng: <code>s</code> (phụ âm) + <code>-ương</code> (vần B1 mã s) + <code>dấu sắc</code> (B1 mã s) = <strong>sss ➔ "sướng"</strong> | <code>t</code> + <code>Th</code> (mã T hoa) | <code>r</code> + <code>Tr</code> (mã R hoa).
+    </div>
+
+  </div>
+
+  <script type="module">
+    import {
+      RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2,
+      BASE60_MAPPING, CONSONANTS_BASE, CONSONANTS_EXTRA
+    } from './data.js';
+
+    import {
+      encodeWord, decodeWord, timeToBase60, base60ToTime,
+      TONE_TABLE_B1, TONE_TABLE_B2, TONE_TABLE_B3
+    } from './vcomp.js';
+
+    // 1. DATA 18 PHÍM DẤU CHUẨN
+    const TONE_KEYS = {
+      'z': { table: 'B1 (Telex)', tone: 0, name: 'Bằng' },
+      's': { table: 'B1 (Telex)', tone: 1, name: 'Sắc' },
+      'f': { table: 'B1 (Telex)', tone: 2, name: 'Huyền' },
+      'r': { table: 'B1 (Telex)', tone: 3, name: 'Hỏi' },
+      'x': { table: 'B1 (Telex)', tone: 4, name: 'Ngã' },
+      'j': { table: 'B1 (Telex)', tone: 5, name: 'Nặng' },
+
+      'y': { table: 'B2 (yaeiou)', tone: 0, name: 'Bằng' },
+      'a': { table: 'B2 (yaeiou)', tone: 1, name: 'Sắc' },
+      'e': { table: 'B2 (yaeiou)', tone: 2, name: 'Huyền' },
+      'i': { table: 'B2 (yaeiou)', tone: 3, name: 'Hỏi' },
+      'o': { table: 'B2 (yaeiou)', tone: 4, name: 'Ngã' },
+      'u': { table: 'B2 (yaeiou)', tone: 5, name: 'Nặng' },
+
+      '0': { table: 'B3 (Số VNI)', tone: 0, name: 'Bằng' },
+      '1': { table: 'B3 (Số VNI)', tone: 1, name: 'Sắc' },
+      '2': { table: 'B3 (Số VNI)', tone: 2, name: 'Huyền' },
+      '3': { table: 'B3 (Số VNI)', tone: 3, name: 'Hỏi' },
+      '4': { table: 'B3 (Số VNI)', tone: 4, name: 'Ngã' },
+      '5': { table: 'B3 (Số VNI)', tone: 5, name: 'Nặng' }
+    };
+
+    // 2. DATA 11 PHỤ ÂM GHÉP
+    const CONS_CLUSTERS = {
+      'th': { key: 't', b60: 'T (hoa)', name: 'Th' },
+      'tr': { key: 'r', b60: 'R (hoa)', name: 'Tr' },
+      'ch': { key: 'c', b60: 'C (hoa)', name: 'Ch' },
+      'kh': { key: 'k', b60: 'K (hoa)', name: 'Kh' },
+      'gh': { key: 'g', b60: 'G (hoa)', name: 'Gh' },
+      'ng': { key: 'n', b60: 'N (hoa)', name: 'Ng' },
+      'nh': { key: 'h', b60: 'H (hoa)', name: 'Nh' },
+      'ph': { key: 'p', b60: 'f (thường)', name: 'Ph' },
+      'qu': { key: 'q', b60: 'q (thường)', name: 'Qu' },
+      'gi': { key: 'g', b60: 'j (thường)', name: 'gi' },
+      'đ':  { key: 'd', b60: 'd (thường)', name: 'đ' }
+    };
+
+    // 3. TOÀN BỘ CẤU HÌNH 8 HƯỚNG BÀN PHÍM LƯỚI (TỪ KEYBOARD-GRID.HTML)
+    const KEY_NEIGHBORS = {
+      't': {
+        top_left: { rhyme: '-oan', word: 'toan' },
+        top: { rhyme: '-iên', word: 'tiên' },
+        top_right: { rhyme: '-iêt', word: 'tiêt' },
+        left: { rhyme: 'Th', word: 'th', type: 'cons' },
+        right: { rhyme: '-ay', word: 'tay' },
+        bottom_left: { rhyme: '-at', word: 'tat' },
+        bottom: { rhyme: '-ang', word: 'tang' },
+        bottom_right: { rhyme: '-an', word: 'tan' }
+      },
+      'c': {
+        top_left: { rhyme: '-oa', word: 'coa' },
+        top: { rhyme: '-anh', word: 'canh' },
+        top_right: { rhyme: '-uông', word: 'cuông' },
+        left: { rhyme: 'Ch', word: 'ch', type: 'cons' },
+        right: { rhyme: '-ao', word: 'cao' },
+        bottom_left: { rhyme: '-am', word: 'cam' },
+        bottom: { rhyme: '-on', word: 'con' },
+        bottom_right: { rhyme: '-ai', word: 'cai' }
+      },
+      'n': {
+        top_left: { rhyme: '-ơi', word: 'nơi' },
+        top: { rhyme: '-ăm', word: 'năm' },
+        top_right: { rhyme: '-iêu', word: 'niêu' },
+        left: { rhyme: 'Ng', word: 'ng', type: 'cons' },
+        right: { rhyme: '-ao', word: 'nao' },
+        bottom_left: { rhyme: '-an', word: 'nan' },
+        bottom: { rhyme: '-ang', word: 'nang' },
+        bottom_right: { rhyme: '-ay', word: 'nay' }
+      },
+      'd': {
+        top_left: { rhyme: '-ươc', word: 'được' },
+        top: { rhyme: '-âu', word: 'dâu' },
+        top_right: { rhyme: '-ân', word: 'dân' },
+        left: { rhyme: 'đ', word: 'đ', type: 'cons' },
+        right: { rhyme: '-i', word: 'di' },
+        bottom_left: { rhyme: '-ay', word: 'day' },
+        bottom: { rhyme: '-ông', word: 'dông' },
+        bottom_right: { rhyme: '-ang', word: 'dang' }
+      },
+      'k': {
+        top_left: { rhyme: '-ia', word: 'kia' },
+        top: { rhyme: '-iên', word: 'kiên' },
+        top_right: { rhyme: '-inh', word: 'kinh' },
+        left: { rhyme: 'Kh', word: 'kh', type: 'cons' },
+        right: { rhyme: '-eo', word: 'keo' },
+        bottom_left: { rhyme: '-im', word: 'kim' },
+        bottom: { rhyme: '-in', word: 'kin' },
+        bottom_right: { rhyme: '-em', word: 'kem' }
+      },
+      'g': {
+        top_left: { rhyme: '-ưa', word: 'gưa' },
+        top: { rhyme: '-iêp', word: 'giêp' },
+        top_right: { rhyme: '-ang', word: 'gang' },
+        left: { rhyme: 'Gh', word: 'gh', type: 'cons' },
+        right: { rhyme: 'gi', word: 'gi', type: 'cons' },
+        bottom_left: { rhyme: '-an', word: 'gan' },
+        bottom: { rhyme: '-ay', word: 'gay' },
+        bottom_right: { rhyme: '-ao', word: 'gao' }
+      },
+      'p': {
+        top_left: { rhyme: '-o', word: 'po' },
+        top: { rhyme: '-a', word: 'pa' },
+        top_right: { rhyme: '-i', word: 'pi' },
+        left: { rhyme: 'Ph', word: 'ph', type: 'cons' },
+        right: { rhyme: '-u', word: 'pu' },
+        bottom_left: { rhyme: '-ê', word: 'pê' },
+        bottom_right: { rhyme: '-en', word: 'pen' },
+        bottom: { rhyme: '-on', word: 'pon' }
+      },
+      'b': {
+        top_left: { rhyme: '-iêt', word: 'biết' },
+        top: { rhyme: '-ang', word: 'bang' },
+        top_right: { rhyme: '-uôi', word: 'buôi' },
+        left: { rhyme: '-ai', word: 'bai' },
+        right: { rhyme: '-ay', word: 'bay' },
+        bottom_left: { rhyme: '-an', word: 'ban' },
+        bottom: { rhyme: '-a', word: 'ba' },
+        bottom_right: { rhyme: '-ao', word: 'bao' }
+      },
+      'm': {
+        top_left: { rhyme: '-ua', word: 'mua' },
+        top: { rhyme: '-inh', word: 'minh' },
+        top_right: { rhyme: '-uôn', word: 'muôn' },
+        left: { rhyme: '-ơi', word: 'mơi' },
+        right: { rhyme: '-ay', word: 'may' },
+        bottom_left: { rhyme: '-ang', word: 'mang' },
+        bottom: { rhyme: '-a', word: 'ma' },
+        bottom_right: { rhyme: '-an', word: 'man' }
+      },
+      'h': {
+        top_left: { rhyme: '-oa', word: 'hoa' },
+        top: { rhyme: '-iêu', word: 'hiêu' },
+        top_right: { rhyme: '-ương', word: 'hương' },
+        left: { rhyme: 'Nh', word: 'nh', type: 'cons' },
+        right: { rhyme: '-ay', word: 'hay' },
+        bottom_left: { rhyme: '-ang', word: 'hang' },
+        bottom: { rhyme: '-a', word: 'ha' },
+        bottom_right: { rhyme: '-an', word: 'han' }
+      },
+      'l': {
+        top_left: { rhyme: '-oan', word: 'loan' },
+        top: { rhyme: '-iên', word: 'liên' },
+        top_right: { rhyme: '-ươn', word: 'lươn' },
+        left: { rhyme: '-ai', word: 'lai' },
+        right: { rhyme: '-ay', word: 'lay' },
+        bottom_left: { rhyme: '-ang', word: 'lang' },
+        bottom: { rhyme: '-a', word: 'la' },
+        bottom_right: { rhyme: '-an', word: 'lan' }
+      },
+      'v': {
+        top_left: { rhyme: '-iên', word: 'viên' },
+        top: { rhyme: '-ươn', word: 'vươn' },
+        top_right: { rhyme: '-ang', word: 'vang' },
+        left: { rhyme: '-ay', word: 'vay' },
+        right: { rhyme: '-i', word: 'vi' },
+        bottom_left: { rhyme: '-a', word: 'va' },
+        bottom: { rhyme: '-an', word: 'van' },
+        bottom_right: { rhyme: '-ao', word: 'vao' }
+      },
+      'y': {
+        top_left: { rhyme: '-yêu', word: 'yêu' },
+        top: { rhyme: '-yêm', word: 'yêm' },
+        top_right: { rhyme: '-yêt', word: 'yêt' },
+        left: { rhyme: '-ya', word: 'ya' },
+        right: { rhyme: '-yu', word: 'yu' },
+        bottom_left: { rhyme: '-yên', word: 'yên' },
+        bottom: { rhyme: '-yê', word: 'yê' },
+        bottom_right: { rhyme: '-yêp', word: 'yêp' }
+      },
+      'e': {
+        top_left: { rhyme: '-en', word: 'en' },
+        top: { rhyme: '-em', word: 'em' },
+        top_right: { rhyme: '-et', word: 'et' },
+        left: { rhyme: '-ec', word: 'ec' },
+        right: { rhyme: '-êu', word: 'êu' },
+        bottom_left: { rhyme: '-eo', word: 'eo' },
+        bottom: { rhyme: '-ep', word: 'ep' },
+        bottom_right: { rhyme: '-ech', word: 'ech' }
+      },
+      'a': {
+        top_left: { rhyme: '-ai', word: 'ai' },
+        top: { rhyme: '-an', word: 'an' },
+        top_right: { rhyme: '-ang', word: 'ang' },
+        left: { rhyme: '-at', word: 'at' },
+        right: { rhyme: '-ac', word: 'ac' },
+        bottom_left: { rhyme: '-am', word: 'am' },
+        bottom: { rhyme: '-ap', word: 'ap' },
+        bottom_right: { rhyme: '-ao', word: 'ao' }
+      },
+      'i': {
+        top_left: { rhyme: '-in', word: 'in' },
+        top: { rhyme: '-im', word: 'im' },
+        top_right: { rhyme: '-it', word: 'it' },
+        left: { rhyme: '-ich', word: 'ich' },
+        right: { rhyme: '-inh', word: 'inh' },
+        bottom_left: { rhyme: '-iu', word: 'iu' },
+        bottom: { rhyme: '-ip', word: 'ip' },
+        bottom_right: { rhyme: '-ia', word: 'ia' }
+      },
+      'o': {
+        top_left: { rhyme: '-oan', word: 'oan' },
+        top: { rhyme: '-oang', word: 'oang' },
+        top_right: { rhyme: '-oat', word: 'oat' },
+        left: { rhyme: '-oa', word: 'oa' },
+        right: { rhyme: '-oi', word: 'oi' },
+        bottom_left: { rhyme: '-ong', word: 'ong' },
+        bottom: { rhyme: '-oc', word: 'oc' },
+        bottom_right: { rhyme: '-om', word: 'om' }
+      },
+      'u': {
+        top_left: { rhyme: '-ua', word: 'ua' },
+        top: { rhyme: '-uô', word: 'uô' },
+        top_right: { rhyme: '-uơ', word: 'uơ' },
+        left: { rhyme: '-ui', word: 'ui' },
+        right: { rhyme: '-uy', word: 'uy' },
+        bottom_left: { rhyme: '-ung', word: 'ung' },
+        bottom: { rhyme: '-uc', word: 'uc' },
+        bottom_right: { rhyme: '-ut', word: 'ut' }
+      },
+      'w': {
+        top_left: { rhyme: '-ươu', word: 'rượu' },
+        top: { rhyme: '-ương', word: 'hương' },
+        top_right: { rhyme: '-ươn', word: 'vươn' },
+        left: { rhyme: '-ưa', word: 'mưa' },
+        right: { rhyme: '-ưu', word: 'lưu' },
+        bottom_left: { rhyme: '-ươi', word: 'tươi' },
+        bottom: { rhyme: '-ư', word: 'từ' },
+        bottom_right: { rhyme: '-ưng', word: 'rừng' }
+      },
+      'q': {
+        top_left: { rhyme: '-uyên', word: 'khuyên' },
+        top: { rhyme: '-ua', word: 'qua' },
+        top_right: { rhyme: '-uê', word: 'quê' },
+        left: { rhyme: '-uyêt', word: 'quyết' },
+        right: { rhyme: 'Qu', word: 'qu', type: 'cons' },
+        bottom_left: { rhyme: '-uy', word: 'quy' },
+        bottom: { rhyme: '-a', word: 'quá' },
+        bottom_right: { rhyme: '-an', word: 'quan' }
+      },
+      's': {
+        top_left: { rhyme: '-ôi', word: 'sôi' },
+        top: { rhyme: '-ư', word: 'sư' },
+        top_right: { rhyme: '-e', word: 'se' },
+        left: { rhyme: '-a', word: 'sa' },
+        right: { rhyme: '-ương', word: 'sương' },
+        bottom_left: { rhyme: '-i', word: 'si' },
+        bottom: { rhyme: '-u', word: 'su' },
+        bottom_right: { rhyme: '-on', word: 'son' }
+      },
+      'f': {
+        top_left: { rhyme: '-an', word: 'fan' },
+        top: { rhyme: '-i', word: 'fi' },
+        top_right: { rhyme: '-o', word: 'fo' },
+        left: { rhyme: '-u', word: 'fu' },
+        right: { rhyme: '-e', word: 'fe' },
+        bottom_left: { rhyme: '-ay', word: 'fay' },
+        bottom: { rhyme: '-at', word: 'fat' },
+        bottom_right: { rhyme: '-am', word: 'fam' }
+      },
+      'r': {
+        top_left: { rhyme: '-a', word: 'ra' },
+        top: { rhyme: '-i', word: 'ri' },
+        top_right: { rhyme: '-u', word: 'ru' },
+        left: { rhyme: 'Tr', word: 'tr', type: 'cons' },
+        right: { rhyme: '-e', word: 're' },
+        bottom_left: { rhyme: '-ay', word: 'ray' },
+        bottom: { rhyme: '-ang', word: 'rang' },
+        bottom_right: { rhyme: '-on', word: 'ron' }
+      },
+      'x': {
+        top_left: { rhyme: '-a', word: 'xa' },
+        top: { rhyme: '-e', word: 'xe' },
+        top_right: { rhyme: '-i', word: 'xi' },
+        left: { rhyme: '-o', word: 'xo' },
+        right: { rhyme: '-u', word: 'xu' },
+        bottom_left: { rhyme: '-ay', word: 'xay' },
+        bottom: { rhyme: '-ang', word: 'xang' },
+        bottom_right: { rhyme: '-an', word: 'xan' }
+      },
+      'j': {
+        top_left: { rhyme: '-a', word: 'ja' },
+        top: { rhyme: '-i', word: 'ji' },
+        top_right: { rhyme: '-u', word: 'ju' },
+        left: { rhyme: '-o', word: 'jo' },
+        right: { rhyme: '-e', word: 'je' },
+        bottom_left: { rhyme: '-ay', word: 'jay' },
+        bottom: { rhyme: '-an', word: 'jan' },
+        bottom_right: { rhyme: '-ang', word: 'jang' }
+      },
+      'z': {
+        top_left: { rhyme: '-a', word: 'za' },
+        top: { rhyme: '-i', word: 'zi' },
+        top_right: { rhyme: '-u', word: 'zu' },
+        left: { rhyme: '-o', word: 'zo' },
+        right: { rhyme: '-e', word: 'ze' },
+        bottom_left: { rhyme: '-ay', word: 'zay' },
+        bottom: { rhyme: '-an', word: 'zan' },
+        bottom_right: { rhyme: '-ang', word: 'zang' }
+      },
+      '0': {
+        left: { rhyme: '9', word: '0' },
+        right: { rhyme: '000', word: '0' },
+        bottom_left: { rhyme: '-o', word: 'o' },
+        bottom: { rhyme: '-ô', word: 'ô' },
+        bottom_right: { rhyme: '-p', word: 'p' }
+      },
+      '1': {
+        left: { rhyme: ':', word: '1' },
+        right: { rhyme: '2', word: '1' },
+        bottom_left: { rhyme: '❖', word: '1' },
+        bottom: { rhyme: '-q', word: 'q' },
+        bottom_right: { rhyme: '-w', word: 'w' }
+      },
+      '2': {
+        left: { rhyme: '1', word: '2' },
+        right: { rhyme: '3', word: '2' },
+        bottom_left: { rhyme: '-q', word: 'q' },
+        bottom: { rhyme: '-w', word: 'w' },
+        bottom_right: { rhyme: '-e', word: 'e' }
+      },
+      '3': {
+        left: { rhyme: '2', word: '3' },
+        right: { rhyme: '4', word: '3' },
+        bottom_left: { rhyme: '-w', word: 'w' },
+        bottom: { rhyme: '-e', word: 'e' },
+        bottom_right: { rhyme: '-r', word: 'r' }
+      },
+      '4': {
+        left: { rhyme: '3', word: '4' },
+        right: { rhyme: '5', word: '4' },
+        bottom_left: { rhyme: '-e', word: 'e' },
+        bottom: { rhyme: '-r', word: 'r' },
+        bottom_right: { rhyme: '-t', word: 't' }
+      },
+      '5': {
+        left: { rhyme: '4', word: '5' },
+        right: { rhyme: '6', word: '5' },
+        bottom_left: { rhyme: '-r', word: 'r' },
+        bottom: { rhyme: '-t', word: 't' },
+        bottom_right: { rhyme: '-y', word: 'y' }
+      }
+    };
+
+    // 4. DANH SÁCH TỪ ĐIỂN VÍ DỤ GHÉP VẦN
+    const SAMPLE_WORDS = {
+      'ương': 'sướng', 'oan': 'toán', 'êu': 'kêu', 'yêu': 'yêu', 'iên': 'tiền',
+      'iêt': 'chi tiết', 'ưa': 'mưa', 'ư': 'từ', 'a': 'cá', 'e': 'xe', 'i': 'đi',
+      'o': 'bò', 'u': 'bú', 'an': 'bàn', 'ang': 'sáng', 'anh': 'xanh', 'ơi': 'chơi',
+      'ôi': 'tôi', 'am': 'cam', 'at': 'hát', 'ay': 'tay', 'ao': 'sao', 'au': 'tàu',
+      'ươn': 'vươn', 'ươc': 'nước', 'ươi': 'tươi', 'ưng': 'rừng', 'ưu': 'lưu',
+      'ươu': 'rượu', 'uy': 'quy', 'uyên': 'khuyên', 'uyêt': 'quyết', 'oa': 'hoa'
+    };
+
+    // ========================================================
+    // XÂY DỰNG DATA 169 VẦN TOÀN DIỆN
+    // ========================================================
+    const ALL_169_RHYMES = [];
+    const KEYBOARD_ASSIGNMENT_MAP = new Map(); // rhymeClean -> Array<{ key, dir, word }>
+
+    // Quét toàn bộ KEY_NEIGHBORS để tìm vị trí vần trên bàn phím
+    Object.entries(KEY_NEIGHBORS).forEach(([key, dirs]) => {
+      Object.entries(dirs).forEach(([dir, item]) => {
+        if (item && item.rhyme && item.rhyme.startsWith('-')) {
+          const clean = item.rhyme.replace(/^-/, '').toLowerCase();
+          if (!KEYBOARD_ASSIGNMENT_MAP.has(clean)) {
+            KEYBOARD_ASSIGNMENT_MAP.set(clean, []);
+          }
+          KEYBOARD_ASSIGNMENT_MAP.get(clean).push({
+            key,
+            dir,
+            word: item.word || clean
+          });
+        }
+      });
+    });
+
+    let sttCounter = 1;
+    function registerTable(rhymeArray, tableNum, tableName, badgeClass) {
+      rhymeArray.forEach((r, idx) => {
+        if (r && r !== '-' && r !== 'null') {
+          const b60 = BASE60_MAPPING[idx];
+          const isUpper = /^[A-Z]$/.test(b60);
+          const assignments = KEYBOARD_ASSIGNMENT_MAP.get(r) || [];
+          
+          ALL_169_RHYMES.push({
+            stt: sttCounter++,
+            rhyme: r,
+            tableNum,
+            tableName,
+            badgeClass,
+            mm: idx,
+            b60,
+            isUpper,
+            assignments,
+            sample: SAMPLE_WORDS[r] || (r.length === 1 ? 't' + r : 'to' + r)
+          });
+        }
+      });
+    }
+
+    registerTable(RHYMES_BASE, 1, 'B1 (Telex)', 'badge-b1');
+    registerTable(RHYMES_EXTRA_1, 2, 'B2 (yaeiou)', 'badge-b2');
+    registerTable(RHYMES_EXTRA_2, 3, 'B3 (Số VNI)', 'badge-b3');
+
+    // Thống kê metrics
+    const totalRhymes = ALL_169_RHYMES.length;
+    const coveredRhymes = ALL_169_RHYMES.filter(r => r.assignments.length > 0).length;
+    const missingRhymes = totalRhymes - coveredRhymes;
+    const percentCovered = ((coveredRhymes / totalRhymes) * 100).toFixed(1);
+
+    document.getElementById('cardTotalRhymes').textContent = totalRhymes;
+    document.getElementById('cardCoveredRhymes').textContent = coveredRhymes;
+    document.getElementById('cardCoveredPercent').textContent = `${percentCovered}% độ phủ bàn phím`;
+    document.getElementById('cardMissingRhymes').textContent = missingRhymes;
+    document.getElementById('unassignedCountBadge').textContent = missingRhymes;
+
+    // ========================================================
+    // STATE & CONTROLS
+    // ========================================================
+    let currentTab = 'keys'; // 'keys' | 'rhymes' | 'unassigned'
+    let currentFilter = 'all';
+    let searchQuery = '';
+
+    const contentContainer = document.getElementById('contentContainer');
+    const searchInput = document.getElementById('searchInput');
+    const sortSelect = document.getElementById('sortSelect');
+
+    searchInput.addEventListener('input', (e) => {
+      searchQuery = e.target.value.trim().toLowerCase();
+      renderActiveView();
+    });
+
+    window.switchTab = function(tabName) {
+      currentTab = tabName;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      if (tabName === 'keys') document.getElementById('tabBtnKeys').classList.add('active');
+      else if (tabName === 'rhymes') document.getElementById('tabBtnRhymes').classList.add('active');
+      else if (tabName === 'unassigned') document.getElementById('tabBtnUnassigned').classList.add('active');
+      renderActiveView();
+    };
+
+    window.setFilter = function(filterVal) {
+      currentFilter = filterVal;
+      document.querySelectorAll('.filter-chip').forEach(c => {
+        c.classList.toggle('active', c.dataset.filter === filterVal);
+      });
+      renderActiveView();
+    };
+
+    window.renderActiveView = function() {
+      if (currentTab === 'keys') renderKeysView();
+      else if (currentTab === 'rhymes') renderRhymesView();
+      else if (currentTab === 'unassigned') renderUnassignedView();
+    };
+
+    // ========================================================
+    // TAB 1: BẢNG PHÍM (KEY-BY-KEY MATRIX)
+    // ========================================================
+    function renderKeysView() {
+      // Danh sách các phím chữ và số cần soi
+      const keysList = Object.keys(KEY_NEIGHBORS);
+
+      let filteredKeys = keysList.filter(k => {
+        const item = KEY_NEIGHBORS[k];
+        const toneInfo = TONE_KEYS[k];
+        const cluster = Object.values(CONS_CLUSTERS).find(c => c.key === k);
+
+        // Lọc theo search
+        if (searchQuery) {
+          const matchKey = k.toLowerCase().includes(searchQuery);
+          const matchCluster = cluster && cluster.name.toLowerCase().includes(searchQuery);
+          const matchTone = toneInfo && (toneInfo.name.toLowerCase().includes(searchQuery) || toneInfo.table.toLowerCase().includes(searchQuery));
+          const matchDirs = Object.values(item).some(d => d.rhyme && d.rhyme.toLowerCase().includes(searchQuery));
+          if (!matchKey && !matchCluster && !matchTone && !matchDirs) return false;
+        }
+
+        // Lọc theo filter chip
+        if (currentFilter === 'b1' && (!toneInfo || !toneInfo.table.includes('B1'))) return false;
+        if (currentFilter === 'b2' && (!toneInfo || !toneInfo.table.includes('B2'))) return false;
+        if (currentFilter === 'b3' && (!toneInfo || !toneInfo.table.includes('B3'))) return false;
+        return true;
+      });
+
+      let html = `
+        <div class="table-responsive">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th style="width: 50px;">Phím</th>
+                <th>Phụ Âm Gốc / Mở Rộng</th>
+                <th>Chức Năng Dấu Thanh</th>
+                <th>Vần Cốt Lõi (Base60)</th>
+                <th>8 Hướng Vuốt Chi Tiết</th>
+                <th>Ví Dụ Ghép Từ</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      filteredKeys.forEach(k => {
+        const item = KEY_NEIGHBORS[k];
+        const toneInfo = TONE_KEYS[k];
+        const cluster = Object.values(CONS_CLUSTERS).find(c => c.key === k);
+
+        // Phụ âm
+        let consHtml = `<span style="color:#8b949e;">--</span>`;
+        if (cluster) {
+          consHtml = `<span class="badge-cons">${cluster.name}</span> <span style="font-size:11px; color:#8b949e;">(Base60: <strong>${cluster.b60}</strong>)</span>`;
+        } else if (/^[bcdđghklmnpqrstvx]$/i.test(k)) {
+          consHtml = `<span style="font-weight:700;">${k}</span>`;
+        }
+
+        // Dấu thanh
+        let toneHtml = `<span style="color:#8b949e;">--</span>`;
+        if (toneInfo) {
+          const bClass = toneInfo.table.includes('B1') ? 'badge-b1' : toneInfo.table.includes('B2') ? 'badge-b2' : 'badge-b3';
+          toneHtml = `<span class="${bClass}">Dấu ${toneInfo.name}</span> <span style="font-size:11px; color:#8b949e;">(${toneInfo.table})</span>`;
+        }
+
+        // Vần cốt lõi
+        let coreRimeHtml = `<span style="color:#8b949e;">--</span>`;
+        if (k === 's') coreRimeHtml = `<span class="badge-b1">-ương</span> <span class="badge-b2">-oan</span>`;
+        else if (k === 'w') coreRimeHtml = `<span class="badge-b1">-ư</span>`;
+        else if (k === 'y') coreRimeHtml = `<span class="badge-b1" style="font-style:italic;">-YÊU</span>`;
+        else if (k === 'e') coreRimeHtml = `<span class="badge-b1" style="font-style:italic;">-ÊU</span>`;
+        else if (k === 'a') coreRimeHtml = `<span class="badge-b1">-a</span>`;
+        else if (k === 'o') coreRimeHtml = `<span class="badge-b1">-o</span>`;
+        else if (k === 'u') coreRimeHtml = `<span class="badge-b1">-u</span>`;
+        else if (k === 'i') coreRimeHtml = `<span class="badge-b1">-i</span>`;
+
+        // 8 hướng vuốt
+        const dirs = [
+          { code: 'top_left', label: '↖ TL' },
+          { code: 'top', label: '↑ T' },
+          { code: 'top_right', label: '↗ TR' },
+          { code: 'left', label: '← L' },
+          { code: 'right', label: '→ R' },
+          { code: 'bottom_left', label: '↙ BL' },
+          { code: 'bottom', label: '↓ B' },
+          { code: 'bottom_right', label: '↘ BR' }
+        ];
+
+        let compassHtml = `<div class="mini-compass">`;
+        dirs.forEach((d, i) => {
+          if (i === 4) {
+            compassHtml += `<div class="mc-cell mc-center">${k.toUpperCase()}</div>`;
+          }
+          const val = item[d.code] ? item[d.code].rhyme : '-';
+          compassHtml += `<div class="mc-cell" title="${d.label}: ${val}">${val}</div>`;
+        });
+        compassHtml += `</div>`;
+
+        // Ví dụ
+        let sample = '--';
+        if (k === 's') sample = `<code>sướng [sss]</code>, <code>sa</code>, <code>sư</code>`;
+        else if (k === 't') sample = `<code>tiết</code>, <code>toán</code>, <code>tay</code>, <code>Th</code>`;
+        else if (k === 'r') sample = `<code>ra</code>, <code>ri</code>, <code>Tr</code>`;
+        else if (k === 'w') sample = `<code>rượu</code>, <code>hương</code>, <code>vươn</code>`;
+        else if (k === 'c') sample = `<code>cao</code>, <code>con</code>, <code>Ch</code>`;
+
+        html += `
+          <tr>
+            <td><strong style="font-size:16px; font-family:var(--font-mono); color:#fff;">${k}</strong></td>
+            <td>${consHtml}</td>
+            <td>${toneHtml}</td>
+            <td>${coreRimeHtml}</td>
+            <td>${compassHtml}</td>
+            <td style="font-size:11.5px; color:#c9d1d9;">${sample}</td>
+          </tr>
+        `;
+      });
+
+      html += `</tbody></table></div>`;
+      contentContainer.innerHTML = html;
+    }
+
+    // ========================================================
+    // TAB 2: BẢNG 169 VẦN CHUẨN (13² REGISTRY)
+    // ========================================================
+    function renderRhymesView() {
+      let filtered = ALL_169_RHYMES.filter(r => {
+        // Lọc theo search
+        if (searchQuery) {
+          const matchRhyme = r.rhyme.toLowerCase().includes(searchQuery);
+          const matchB60 = r.b60.toLowerCase().includes(searchQuery);
+          const matchTable = r.tableName.toLowerCase().includes(searchQuery);
+          const matchAssigned = r.assignments.some(a => a.key.toLowerCase().includes(searchQuery));
+          if (!matchRhyme && !matchB60 && !matchTable && !matchAssigned) return false;
+        }
+
+        // Lọc theo filter chip
+        if (currentFilter === 'b1' && r.tableNum !== 1) return false;
+        if (currentFilter === 'b2' && r.tableNum !== 2) return false;
+        if (currentFilter === 'b3' && r.tableNum !== 3) return false;
+        if (currentFilter === 'assigned' && r.assignments.length === 0) return false;
+        if (currentFilter === 'unassigned' && r.assignments.length > 0) return false;
+        return true;
+      });
+
+      // Sắp xếp
+      const sortVal = sortSelect.value;
+      if (sortVal === 'name_asc') {
+        filtered.sort((a, b) => a.rhyme.localeCompare(b.rhyme));
+      } else if (sortVal === 'table_asc') {
+        filtered.sort((a, b) => a.tableNum - b.tableNum || a.mm - b.mm);
+      } else if (sortVal === 'status') {
+        filtered.sort((a, b) => b.assignments.length - a.assignments.length);
+      } else {
+        filtered.sort((a, b) => a.stt - b.stt);
+      }
+
+      let html = `
+        <div class="table-responsive">
+          <table class="audit-table">
+            <thead>
+              <tr>
+                <th style="width: 45px;">STT</th>
+                <th>Vần Tiếng Việt</th>
+                <th>Bảng VComp</th>
+                <th>Chỉ Số MM</th>
+                <th>Mã Base60</th>
+                <th>Kiểu Chữ Viết Tay</th>
+                <th>Trạng Thái Trên Bàn Phím</th>
+                <th>Từ Ví Dụ</th>
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      filtered.forEach(r => {
+        let assignHtml = '';
+        if (r.assignments.length > 0) {
+          const keysStr = r.assignments.map(a => `<strong>${a.key}</strong> (${a.dir})`).join(', ');
+          assignHtml = `<span class="badge-assigned">✅ Tại phím ${keysStr}</span>`;
+        } else {
+          assignHtml = `<span class="badge-unassigned">⚠️ Chưa gán</span>`;
+        }
+
+        const caseHtml = r.isUpper ? `<span style="color:var(--glow-b2); font-weight:700; font-style:italic;">IN HOA (${r.b60})</span>` : `<span style="color:var(--text-muted);">Thường (${r.b60})</span>`;
+
+        html += `
+          <tr>
+            <td style="color:#8b949e; font-family:var(--font-mono); font-size:11px;">#${r.stt}</td>
+            <td><strong style="font-size:15px; color:#fff;">-${r.rhyme}</strong></td>
+            <td><span class="${r.badgeClass}">${r.tableName}</span></td>
+            <td style="font-family:var(--font-mono); color:#8b949e;">MM=${r.mm}</td>
+            <td><span class="b60-glyph ${r.isUpper ? 'is-upper' : ''}">${r.b60}</span></td>
+            <td>${caseHtml}</td>
+            <td>${assignHtml}</td>
+            <td style="font-size:12px; color:#c9d1d9;">${r.sample}</td>
+          </tr>
+        `;
+      });
+
+      html += `</tbody></table></div>`;
+      contentContainer.innerHTML = html;
+    }
+
+    // ========================================================
+    // TAB 3: KHO VẦN CHƯA GÁN (UNASSIGNED RHYMES POOL)
+    // ========================================================
+    function renderUnassignedView() {
+      let missingList = ALL_169_RHYMES.filter(r => r.assignments.length === 0);
+
+      if (searchQuery) {
+        missingList = missingList.filter(r => r.rhyme.toLowerCase().includes(searchQuery) || r.b60.toLowerCase().includes(searchQuery));
+      }
+      if (currentFilter === 'b1') missingList = missingList.filter(r => r.tableNum === 1);
+      if (currentFilter === 'b2') missingList = missingList.filter(r => r.tableNum === 2);
+      if (currentFilter === 'b3') missingList = missingList.filter(r => r.tableNum === 3);
+
+      let html = `
+        <div style="padding: 14px 16px; border-bottom: 1px solid var(--border-dark); font-size: 13px; color: var(--text-muted); display:flex; justify-content:space-between; align-items:center;">
+          <span>Danh sách <strong>${missingList.length} vần</strong> chưa được bố trí vào 8 hướng của bất kỳ phím nào trên bàn phím lưới:</span>
+          <span class="badge-unassigned">${missingList.length} vần còn trống</span>
+        </div>
+        <div class="unassigned-grid">
+      `;
+
+      missingList.forEach(r => {
+        html += `
+          <div class="unassigned-card">
+            <div class="unassigned-rhyme">-${r.rhyme}</div>
+            <div class="unassigned-meta">
+              <span class="${r.badgeClass}">${r.tableNum === 1 ? 'B1' : r.tableNum === 2 ? 'B2' : 'B3'}</span>
+              <span class="b60-glyph ${r.isUpper ? 'is-upper' : ''}">${r.b60}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      html += `</div>`;
+      contentContainer.innerHTML = html;
+    }
+
+    // Khởi tạo hiển thị
+    renderActiveView();
+  </script>
+</body>
+</html>

@@ -207,7 +207,7 @@ export const BASE60_MM = BASE60_MAPPING;
 
 // 3 Bảng Dấu Chuẩn (18 ký tự)
 export const TONE_TABLE_B1 = ['z', 's', 'f', 'r', 'x', 'j']; // Bảng 1: Telex thường
-export const TONE_TABLE_B2 = ['Z', 'S', 'F', 'R', 'X', 'J']; // Bảng 2: Telex HOA
+export const TONE_TABLE_B2 = ['b', 'k', 'v', 'l', 'q', 'd']; // Bảng 2: 6 phụ âm bkvlqd không bao giờ đứng cuối (thay cho yaeiou)
 export const TONE_TABLE_B3 = ['0', '1', '2', '3', '4', '5']; // Bảng 3: VNI số
 
 export const BASE60_SS_TABLES = [
@@ -219,14 +219,14 @@ export const BASE60_SS_TABLES = [
 export const BASE60_SS = [
   // s2=0 (Bảng 1 + PA Cơ bản): Telex thường
   'z', 's', 'f', 'r', 'x', 'j',
-  // s2=1 (Bảng 2 + PA Cơ bản): Telex HOA
-  'Z', 'S', 'F', 'R', 'X', 'J',
+  // s2=1 (Bảng 2 + PA Cơ bản): 6 phụ âm bkvlqd (thay thế cho yaeiou)
+  'b', 'k', 'v', 'l', 'q', 'd',
   // s2=2 (Bảng 3 + PA Cơ bản): VNI số
   '0', '1', '2', '3', '4', '5',
   // s2=3 (Bảng 1 + PA Phụ): Telex thường
   'z', 's', 'f', 'r', 'x', 'j',
-  // s2=4 (Bảng 2 + PA Phụ): Telex HOA
-  'Z', 'S', 'F', 'R', 'X', 'J',
+  // s2=4 (Bảng 2 + PA Phụ): 6 phụ âm bkvlqd (thay thế cho yaeiou)
+  'b', 'k', 'v', 'l', 'q', 'd',
   // s2=5 (Bảng 3 + PA Phụ): VNI số
   '0', '1', '2', '3', '4', '5',
   // 36..59: English dictionary slots (24 chars)
@@ -267,8 +267,9 @@ export function base60ToTime(base60Str) {
     const c3 = base60Str[2];
 
     // 1. Kiểm tra từ điển tiếng Anh (ss >= 36)
+    const LEGACY_B2 = ['Z', 'S', 'F', 'R', 'X', 'J', 'y', 'a', 'e', 'i', 'o', 'u'];
     const engSsIdx = BASE60_SS.slice(36).indexOf(c3);
-    if (engSsIdx !== -1 && !TONE_TABLE_B1.includes(c3) && !TONE_TABLE_B2.includes(c3) && !TONE_TABLE_B3.includes(c3)) {
+    if (engSsIdx !== -1 && !TONE_TABLE_B1.includes(c3) && !TONE_TABLE_B2.includes(c3) && !LEGACY_B2.includes(c3) && !TONE_TABLE_B3.includes(c3)) {
       const ss = 36 + engSsIdx;
       const hh = BASE60_MAPPING.indexOf(c1);
       const mm = BASE60_MAPPING.indexOf(c2);
@@ -277,7 +278,7 @@ export function base60ToTime(base60Str) {
       }
     }
 
-    // 2. Giải mã tiếng Việt theo 3 Bảng Dấu (18 ký tự)
+    // 2. Giải mã tiếng Việt theo 3 Bảng Dấu (18 ký tự + tương thích ngược ZSFRXJ)
     let rhymeTable = -1;
     let s1 = -1;
 
@@ -287,6 +288,9 @@ export function base60ToTime(base60Str) {
     } else if (TONE_TABLE_B2.includes(c3)) {
       rhymeTable = 1;
       s1 = TONE_TABLE_B2.indexOf(c3);
+    } else if (LEGACY_B2.includes(c3)) {
+      rhymeTable = 1;
+      s1 = LEGACY_B2.indexOf(c3) % 6;
     } else if (TONE_TABLE_B3.includes(c3)) {
       rhymeTable = 2;
       s1 = TONE_TABLE_B3.indexOf(c3);

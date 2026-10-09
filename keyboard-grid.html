@@ -1,0 +1,3217 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bàn Phím Lưới Grid VComp - Mã Màu & Hình Dáng Học VComp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-body: #0d1117;
+      --bg-phone: #161b22;
+      --bg-header: #0f141c;
+      --bg-key: #21262d;
+      --bg-key-hover: #30363d;
+      --bg-key-special: #181d24;
+      --bg-key-action: #238636;
+      --bg-key-mode: #1f6feb;
+      --bg-key-vowel: #2ea043;
+      --bg-key-accent: #d29922;
+
+      /* Mã Màu Học Tập VComp (B1 Lam, B2 Vàng, B3 Lục, Phụ âm Tím) */
+      --glow-b1: #58a6ff;     /* Bảng 1: Dấu Telex zfsrxj */
+      --glow-b2: #f2cc60;     /* Bảng 2: Dấu bkvlqd */
+      --glow-b3: #3fb950;     /* Bảng 3: Dấu VNI 012345 */
+      --glow-cons: #bc8cff;   /* Phụ âm ghép: th, ch, nh, ng... */
+      --glow-cyan: #58a6ff;
+
+      --text-main: #f0f6fc;
+      --text-muted: #8b949e;
+      --text-sub: #7ee787;
+      --border-dark: #30363d;
+      --border-focus: #58a6ff;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'Fira Code', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+
+    body {
+      background: var(--bg-body);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 10px;
+      overflow-x: hidden;
+    }
+
+    /* Bottom Controls Bar (Đặt dưới bàn phím để không chiếm diện tích đỉnh) */
+    .bottom-controls {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-header);
+      padding: 8px 12px;
+      border-top: 1px solid var(--border-dark);
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .brand-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 12px;
+      background: rgba(88, 166, 255, 0.2);
+      color: var(--glow-cyan);
+      border: 1px solid rgba(88, 166, 255, 0.3);
+      font-family: var(--font-mono);
+      font-weight: 600;
+    }
+
+    .view-toggles {
+      display: flex;
+      gap: 6px;
+    }
+    .btn-toggle {
+      background: var(--bg-key);
+      border: 1px solid var(--border-dark);
+      color: var(--text-muted);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-toggle.active {
+      background: #1f6feb;
+      color: #fff;
+      border-color: #58a6ff;
+    }
+
+    /* Main Simulator Container */
+    .simulator-container {
+      width: 100%;
+      max-width: 820px;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-phone);
+      border: 1px solid var(--border-dark);
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.5);
+      overflow: hidden;
+      transition: max-width 0.3s;
+    }
+    .simulator-container.mobile-mode {
+      max-width: 480px;
+    }
+
+    /* Compact Output Editor Area */
+    .output-area {
+      padding: 8px 10px;
+      background: #0f141c;
+      border-bottom: 1px solid var(--border-dark);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    /* Top Navigation & Mobile IP Bar (Chuyển trang tức thì 1-click & Link IP) */
+    .top-nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #090d13;
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border-dark);
+      font-size: 11.5px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .nav-link-audit {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #1f6feb;
+      color: #fff;
+      text-decoration: none;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 11px;
+      transition: all 0.15s;
+      border: 1px solid #388bfd;
+    }
+    .nav-link-audit:hover {
+      background: #388bfd;
+      box-shadow: 0 0 10px rgba(56, 139, 253, 0.5);
+    }
+    .nav-link-ip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(63, 185, 80, 0.12);
+      color: #7ee787;
+      text-decoration: none;
+      padding: 3px 9px;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 11px;
+      border: 1px solid rgba(63, 185, 80, 0.3);
+      transition: all 0.15s;
+    }
+    .nav-link-ip:hover {
+      background: rgba(63, 185, 80, 0.25);
+      border-color: #3fb950;
+    }
+    .output-header-mini {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .output-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .output-actions-mini {
+      display: flex;
+      gap: 6px;
+    }
+    .btn-mini {
+      background: var(--bg-key);
+      border: 1px solid var(--border-dark);
+      color: var(--text-main);
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-mini:hover {
+      background: #30363d;
+      border-color: #58a6ff;
+    }
+    .output-display {
+      width: 100%;
+      min-height: 46px;
+      max-height: 80px;
+      overflow-y: auto;
+      background: #161b22;
+      border: 1px solid var(--border-dark);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 16.5px;
+      line-height: 1.45;
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      outline: none;
+      word-break: break-word;
+      user-select: text;
+      -webkit-user-select: text;
+      touch-action: manipulation;
+    }
+    .output-display:empty:before {
+      content: 'Chạm phím bên dưới để gõ (hoặc quan sát 8 hướng học VComp)...';
+      color: #484f58;
+      font-size: 12.5px;
+      font-style: italic;
+    }
+
+    /* Live Composing Syllable Highlight */
+    .composing-word {
+      color: var(--glow-cyan);
+      text-decoration: underline wavy var(--glow-cyan);
+      background: rgba(88, 166, 255, 0.16);
+      padding: 1px 4px;
+      border-radius: 4px;
+      font-weight: 700;
+      display: inline-block;
+      animation: pulseComposing 1.2s infinite alternate;
+    }
+    @keyframes pulseComposing {
+      0% { background: rgba(88, 166, 255, 0.12); }
+      100% { background: rgba(88, 166, 255, 0.28); }
+    }
+
+    /* Live VComp Inspector Banner (Dưới bàn phím) */
+    .vcomp-live-inspector {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #121822;
+      border: 1px solid rgba(88, 166, 255, 0.25);
+      border-radius: 6px;
+      padding: 6px 10px;
+      margin: 6px 10px 4px 10px;
+      font-size: 11.5px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .vcomp-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-main);
+    }
+    .vcomp-lbl {
+      color: var(--glow-b2);
+      font-weight: 700;
+      font-family: var(--font-mono);
+    }
+    .vcomp-code {
+      font-family: var(--font-mono);
+      color: var(--glow-b3);
+      font-weight: 700;
+      background: rgba(63, 185, 80, 0.15);
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid rgba(63, 185, 80, 0.3);
+    }
+
+    .editor-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0 10px 8px 10px;
+      padding: 4px 10px;
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      background: #0f141c;
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    /* Toolbar & Suggestion Bar (Dưới bàn phím) */
+    .suggestion-bar {
+      display: flex;
+      align-items: center;
+      padding: 6px 10px;
+      background: #0f141c;
+      border-top: 1px solid var(--border-dark);
+      border-bottom: 1px solid var(--border-dark);
+      min-height: 38px;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .suggestion-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tutor-indicator {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      background: rgba(88, 166, 255, 0.15);
+      border: 1px solid rgba(88, 166, 255, 0.4);
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--glow-cyan);
+      white-space: nowrap;
+    }
+    .tutor-indicator.pinned {
+      background: rgba(242, 204, 96, 0.2);
+      border-color: var(--glow-b2);
+      color: var(--glow-b2);
+    }
+
+    .suggestion-chips {
+      display: flex;
+      gap: 6px;
+      flex-grow: 1;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .suggestion-chips::-webkit-scrollbar {
+      display: none;
+    }
+    .sug-chip {
+      background: var(--bg-key);
+      border: 1px solid var(--border-dark);
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-size: 12.5px;
+      color: var(--text-main);
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .sug-chip:hover {
+      background: var(--bg-key-hover);
+      border-color: var(--border-focus);
+    }
+    .sug-chip.primary {
+      background: rgba(88, 166, 255, 0.18);
+      border-color: rgba(88, 166, 255, 0.6);
+      box-shadow: 0 0 10px rgba(88, 166, 255, 0.25);
+    }
+    .sug-chip .chip-word {
+      font-weight: 700;
+      color: #fff;
+    }
+    .sug-chip.primary .chip-word {
+      color: var(--glow-cyan);
+    }
+    .sug-chip .chip-codes {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .sug-chip .chip-code-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 0 1px;
+    }
+    .sug-chip .char-white {
+      color: #ffffff !important;
+      font-weight: 700;
+    }
+    .sug-chip .char-diff-vv1 {
+      color: #f2cc60 !important;
+      font-weight: 700;
+    }
+    .sug-chip .char-diff-a1 {
+      color: #7ee787 !important;
+      font-weight: 700;
+    }
+
+    .btn-hide-kb {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+    .btn-hide-kb:hover {
+      background: var(--bg-key-hover);
+      color: #fff;
+    }
+
+    /* KEYBOARD WRAPPER & GRID */
+    .keyboard-wrapper {
+      position: relative;
+      padding: 6px;
+      background: #141922;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      touch-action: none;
+    }
+
+    /* Canvas Overlay Cho Cử Chỉ Vuốt Tay / Continuous Glide */
+    .swipe-canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 50;
+    }
+
+    .grid-key.glide-active {
+      background: rgba(88, 166, 255, 0.35) !important;
+      border-color: #58a6ff !important;
+      box-shadow: 0 0 16px rgba(88, 166, 255, 0.85) !important;
+      transform: scale(0.95);
+      z-index: 35;
+    }
+    .grid-key.glide-active .key-char {
+      color: #fff !important;
+      text-shadow: 0 0 8px rgba(88, 166, 255, 0.9);
+    }
+
+    @keyframes pulseGlideCommit {
+      0% { box-shadow: 0 0 0 rgba(88, 166, 255, 0); }
+      50% { box-shadow: 0 0 16px rgba(88, 166, 255, 0.75); border-color: #58a6ff; }
+      100% { box-shadow: 0 0 0 rgba(88, 166, 255, 0); }
+    }
+    .glide-commit-flash {
+      animation: pulseGlideCommit 0.4s ease-out;
+    }
+
+    .grid-row {
+      display: flex;
+      gap: 4px;
+      width: 100%;
+    }
+
+    .grid-key {
+      flex: 1;
+      height: 48px;
+      background: var(--bg-key);
+      border: 1px solid var(--border-dark);
+      border-radius: 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      cursor: pointer;
+      touch-action: none;
+      transition: background-color 0.12s, border-color 0.12s;
+    }
+
+    .grid-key.span-3 {
+      flex: 3;
+    }
+
+    .key-char {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      pointer-events: none;
+      line-height: 1;
+    }
+    .key-tl {
+      position: absolute;
+      top: 2px;
+      left: 3px;
+      font-size: 8px;
+      font-weight: 600;
+      color: var(--glow-b2);
+      font-family: var(--font-mono);
+      pointer-events: none;
+    }
+    .key-sub {
+      position: absolute;
+      bottom: 2px;
+      right: 3px;
+      font-size: 8.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      pointer-events: none;
+    }
+
+    /* Key Variants */
+    .flank-key {
+      background: #151a23;
+      border-color: #262c36;
+    }
+    .mode-key {
+      background: #1a273b;
+      border-color: #28446b;
+      color: var(--glow-cyan);
+    }
+    .vowel-key {
+      background: #193222;
+      border-color: #255a36;
+      color: var(--glow-b3);
+    }
+    .shift-key {
+      background: #1a2332;
+      border-color: #273b57;
+    }
+    .shift-key.active {
+      background: #1f6feb;
+      border-color: #58a6ff;
+      box-shadow: 0 0 10px rgba(88, 166, 255, 0.5);
+    }
+    .shift-key.active.caps {
+      background: #238636;
+      border-color: #3fb950;
+      box-shadow: 0 0 10px rgba(63, 185, 80, 0.5);
+    }
+    .bksp-key {
+      background: #2a1b22;
+      border-color: #4c2835;
+      color: #ff7b72;
+    }
+    .action-key {
+      background: #1b382b;
+      border-color: #238636;
+      color: #3fb950;
+    }
+    .space-key {
+      background: #181f2a;
+      border-color: #2c3a4f;
+    }
+
+    /* ========================================================
+       PHÂN LOẠI MÀU & HÌNH HỌC CÔNG THÁI HỌC (DIRECTIONAL AFFORDANCE)
+       ======================================================== */
+    /* 1. Nhóm Dấu BKVLQD: Vàng Gold, vát nhọn sang phải + khấc mũi tên phải */
+    .grid-key.key-group-tone-b2 {
+      background: linear-gradient(90deg, rgba(242, 204, 96, 0.06) 0%, rgba(242, 204, 96, 0.18) 100%);
+      border-color: rgba(242, 204, 96, 0.35);
+      border-right: 2.5px solid var(--glow-b2);
+      border-radius: 9px 3px 3px 9px;
+      box-shadow: inset -2px 0 6px rgba(242, 204, 96, 0.12);
+    }
+    .grid-key.key-group-tone-b2 .key-char {
+      color: #ffe699;
+    }
+    .grid-key.key-group-tone-b2::after {
+      content: '›';
+      position: absolute;
+      right: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--glow-b2);
+      opacity: 0.75;
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    /* 2. Nhóm Dấu TELEX: Cam Amber, vát nhọn sang phải + khấc mũi tên phải */
+    .grid-key.key-group-tone-telex {
+      background: linear-gradient(90deg, rgba(240, 136, 62, 0.06) 0%, rgba(240, 136, 62, 0.18) 100%);
+      border-color: rgba(240, 136, 62, 0.35);
+      border-right: 2.5px solid #f0883e;
+      border-radius: 9px 3px 3px 9px;
+      box-shadow: inset -2px 0 6px rgba(240, 136, 62, 0.12);
+    }
+    .grid-key.key-group-tone-telex .key-char {
+      color: #ffc499;
+    }
+    .grid-key.key-group-tone-telex::after {
+      content: '›';
+      position: absolute;
+      right: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      font-weight: 900;
+      color: #f0883e;
+      opacity: 0.75;
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    /* Nhóm Dấu VNI (Hàng số 0..5): Cam Amber */
+    .grid-key.key-group-tone-vni {
+      background: rgba(240, 136, 62, 0.12);
+      border-color: rgba(240, 136, 62, 0.4);
+    }
+    .grid-key.key-group-tone-vni .key-char {
+      color: #ffc499;
+    }
+
+    /* 3. Nhóm Phụ Âm Ghép: Tím Thạch Anh, vát nhọn sang trái + khấc mũi tên trái */
+    .grid-key.key-group-cons {
+      background: linear-gradient(270deg, rgba(188, 140, 255, 0.06) 0%, rgba(188, 140, 255, 0.18) 100%);
+      border-color: rgba(188, 140, 255, 0.35);
+      border-left: 2.5px solid var(--glow-cons);
+      border-radius: 3px 9px 9px 3px;
+      box-shadow: inset 2px 0 6px rgba(188, 140, 255, 0.12);
+    }
+    .grid-key.key-group-cons .key-char {
+      color: #e2caff;
+    }
+    .grid-key.key-group-cons::before {
+      content: '‹';
+      position: absolute;
+      left: 2px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 11px;
+      font-weight: 900;
+      color: var(--glow-cons);
+      opacity: 0.75;
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    /* 4. Nhóm Nguyên Âm Cốt Lõi: Lục Emerald, bo tròn mềm cân đối */
+    .grid-key.key-group-vowel-letter {
+      background: rgba(126, 231, 135, 0.12);
+      border-color: rgba(126, 231, 135, 0.38);
+      border-radius: 8px;
+      box-shadow: inset 0 0 6px rgba(126, 231, 135, 0.08);
+    }
+    .grid-key.key-group-vowel-letter .key-char {
+      color: #aff5b4;
+    }
+
+    /* NEIGHBOR BLOOM (LƯU LẠI 8 HƯỚNG BỀN VỮNG) */
+    .grid-key.active-root {
+      background: #1f6feb !important;
+      border-color: #58a6ff !important;
+      box-shadow: 0 0 14px rgba(88, 166, 255, 0.8) !important;
+      z-index: 20;
+    }
+    .grid-key.active-root .key-char {
+      color: #fff !important;
+    }
+
+    .grid-key.neighbor-bloom {
+      position: relative;
+      background: #1c2738 !important;
+      border-color: #388bfd !important;
+      box-shadow: 0 0 8px rgba(56, 139, 253, 0.4);
+      z-index: 10;
+    }
+
+    /* TEACHING HIGHLIGHTS & A1 VISUALS */
+    .grid-key.teach-cons {
+      background: rgba(88, 166, 255, 0.22) !important;
+      border: 2px double #58a6ff !important;
+      box-shadow: 0 0 10px rgba(88, 166, 255, 0.5) !important;
+    }
+    .grid-key.teach-rhyme {
+      background: rgba(242, 204, 96, 0.25) !important;
+      border: 2.5px solid #f2cc60 !important;
+      box-shadow: 0 0 12px rgba(242, 204, 96, 0.6) !important;
+    }
+    .grid-key.teach-tone {
+      background: rgba(240, 136, 62, 0.2) !important;
+      border: 2px solid #f0883e !important;
+      box-shadow: 0 0 10px rgba(240, 136, 62, 0.5) !important;
+    }
+
+    .bloom-badge {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 10.5px;
+      font-family: var(--font-mono);
+      padding: 2px 5px;
+      border-radius: 4px;
+      border-width: 1px;
+      border-style: solid;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.85);
+      z-index: 25;
+    }
+
+    /* === HỆ MÃ MÀU 3 BẢNG VẦN VCOMP === */
+    /* 🔷 Bảng 1: Dấu Telex zfsrxj */
+    .bloom-badge.b1-mark {
+      color: var(--glow-b1) !important;
+      border-color: var(--glow-b1) !important;
+      background: rgba(13, 20, 32, 0.95);
+      box-shadow: 0 0 8px rgba(88, 166, 255, 0.4);
+    }
+    /* 🔶 Bảng 2: Dấu Phụ Âm bkvlqd */
+    .bloom-badge.b2-mark {
+      color: var(--glow-b2) !important;
+      border-color: var(--glow-b2) !important;
+      background: rgba(28, 23, 14, 0.95);
+      box-shadow: 0 0 8px rgba(242, 204, 96, 0.4);
+    }
+    /* 🟢 Bảng 3: Dấu Số VNI 012345 */
+    .bloom-badge.b3-mark {
+      color: var(--glow-b3) !important;
+      border-color: var(--glow-b3) !important;
+      background: rgba(14, 26, 18, 0.95);
+      box-shadow: 0 0 8px rgba(63, 185, 80, 0.4);
+    }
+    /* 🟣 Phụ âm ghép: th, ch, nh, ng... */
+    .bloom-badge.cons-mark {
+      color: var(--glow-cons) !important;
+      border-color: var(--glow-cons) !important;
+      background: rgba(24, 16, 32, 0.95);
+      box-shadow: 0 0 8px rgba(188, 140, 255, 0.4);
+    }
+
+    /* === HÌNH DÁNG & KIỂU CHỮ (PHÂN BIỆT BASE60 THƯỜNG vs HOA) === */
+    /* Base60 Thường (u, s, f...): Chữ thường, dáng đứng */
+    .bloom-badge.is-lowercase {
+      font-style: normal !important;
+      font-weight: 700 !important;
+    }
+    /* Base60 HOA (U, Y, T...): IN HOA + IN NGHIÊNG */
+    .bloom-badge.is-uppercase {
+      font-style: italic !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.5px;
+      text-decoration: underline dotted;
+    }
+
+    .grid-key.neighbor-hover {
+      background: var(--glow-b2) !important;
+      border-color: #fff !important;
+      box-shadow: 0 0 16px rgba(242, 204, 96, 0.9) !important;
+      z-index: 30;
+    }
+    .grid-key.neighbor-hover .key-char,
+    .grid-key.neighbor-hover .bloom-badge {
+      color: #000 !important;
+      font-weight: 800;
+    }
+
+    /* Guide & Legend Panel */
+    .legend-panel {
+      padding: 10px 14px;
+      background: #0f141c;
+      border-top: 1px solid var(--border-dark);
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: all 0.25s;
+    }
+    .legend-panel.collapsed {
+      display: none;
+    }
+
+    .legend-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+    .legend-title {
+      font-weight: 700;
+      color: var(--glow-cyan);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .btn-close-legend {
+      background: transparent;
+      border: 1px solid var(--border-dark);
+      color: var(--text-muted);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+    .btn-close-legend:hover {
+      color: #fff;
+      border-color: #8b949e;
+    }
+
+    .legend-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+    }
+    .dot.root { background: var(--glow-cyan); }
+    .dot.b1 { background: var(--glow-b1); }
+    .dot.b2 { background: var(--glow-b2); }
+    .dot.b3 { background: var(--glow-b3); }
+    .dot.cons { background: var(--glow-cons); }
+
+    .tone-table-chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+      background: rgba(0,0,0,0.3);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #21262d;
+    }
+    .tone-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+    }
+    .tg-label {
+      color: #8b949e;
+      font-weight: 600;
+    }
+    .tg-keys.b1 { color: var(--glow-b1); font-weight: 700; }
+    .tg-keys.b2 { color: var(--glow-b2); font-weight: 700; }
+    .tg-keys.b3 { color: var(--glow-b3); font-weight: 700; }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 4px;
+      }
+      .grid-key {
+        height: 44px;
+      }
+      .key-char {
+        font-size: 13.5px;
+      }
+      .key-tl, .key-sub {
+        font-size: 7.5px;
+      }
+      .bloom-badge {
+        font-size: 8.5px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main Simulator Container (Bắt đầu ngay từ đỉnh màn hình, KHÔNG có header che chắn) -->
+  <div class="simulator-container mobile-mode" id="simulatorApp">
+    
+    <!-- 1. Output Editor Area (Nhỏ gọn, KHÔNG dâng bàn phím native của điện thoại) -->
+    <div class="output-area">
+      <div class="output-header-mini">
+        <span class="output-title">📝 Gõ VComp</span>
+        <div class="output-actions-mini">
+          <a href="vcomp-audit.html" class="btn-mini" style="color: #fff; background: #1f6feb; border-color: #388bfd; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-weight: 700;" title="Mở bảng tra 169 vần & phím VComp">📊 169 Vần ➔</a>
+          <button class="btn-mini" id="btnCopyText" title="Sao chép văn bản">📋 Copy</button>
+          <button class="btn-mini" id="btnClearTextMini" title="Xóa nội dung">🧹 Xóa</button>
+        </div>
+      </div>
+      <div class="output-display" id="outputBox"></div>
+    </div>
+
+    <!-- 2. BÀN PHÍM LƯỚI GRID (NẰM NGAY TRÊN ĐẦU, CHẠM LÀ GÕ NGAY LẬP TỨC!) -->
+    <div class="keyboard-wrapper" id="keyboardWrapper">
+      <!-- Generated by JavaScript to guarantee exact grid rows & coordinates -->
+    </div>
+
+    <!-- 3. Suggestion Bar (Toàn bộ chiều rộng dành cho Gợi Ý Thông Minh) -->
+    <div class="suggestion-bar">
+      <div class="suggestion-chips" id="suggestionChips">
+        <div class="sug-chip primary" onclick="pickSuggestion('toán')">toán</div>
+        <div class="sug-chip" onclick="pickSuggestion('kêu')">kêu</div>
+        <div class="sug-chip" onclick="pickSuggestion('vươn')">vươn</div>
+      </div>
+      <button class="btn-hide-kb" title="Ẩn/Hiện bàn phím" onclick="toggleKeyboardVisibility()">⌵</button>
+    </div>
+
+    <!-- 4. Live VComp Inspector Banner (ĐƯA XUỐNG DƯỚI BÀN PHÍM) -->
+    <div class="vcomp-live-inspector" id="vcompLiveInspector">
+      <div class="vcomp-pill">
+        <span class="vcomp-lbl">VComp Live:</span>
+        <span id="vcompPillText">Sẵn sàng gõ từ mới...</span>
+      </div>
+      <div class="vcomp-code" id="vcompLiveCode">Mã Base60: --</div>
+    </div>
+
+    <!-- 5. Editor Stats & Mã Màu (ĐƯA XUỐNG DƯỚI BÀN PHÍM) -->
+    <div class="editor-stats">
+      <span id="statChars">Ký tự: 0 | Từ: 0</span>
+      <span id="statLastAction">Mã màu: 🔷 B1 (Telex) | 🔶 B2 (bkvlqd) | 🟢 B3 (Số) | 🟣 Phụ âm ghép</span>
+    </div>
+
+    <!-- 6. Bottom Controls Menu (ĐƯA TOÀN BỘ MENU TRÊN CÙNG XUỐNG ĐÁY) -->
+    <div class="bottom-controls">
+      <div class="brand-title">
+        <span>⚡ VSecretKeyboard Grid</span>
+        <span class="badge">MÃ MÀU & HÌNH DÁNG HỌC VCOMP</span>
+      </div>
+      <div class="view-toggles">
+        <button class="btn-toggle" id="btnToggleLegend" title="Bật/Tắt hướng dẫn quy ước">💡 Thuyết minh</button>
+        <button class="btn-toggle active" id="btnModeMobile">📱 Điện Thoại</button>
+        <button class="btn-toggle" id="btnModeDesktop">💻 Toàn Màn Hình</button>
+        <button class="btn-toggle" id="btnClearText">🧹 Xóa Hết</button>
+      </div>
+    </div>
+
+    <!-- 7. Legend & Guide (Hệ thống Mã Màu & Hình Dáng Học VComp) -->
+    <div class="legend-panel" id="legendPanel">
+      <div class="legend-header">
+        <div class="legend-title">
+          <span>📖 Hệ Thống Mã Màu & Hình Dáng Để Học Thuộc VComp</span>
+        </div>
+        <button class="btn-close-legend" id="btnCloseLegend">✕ Ẩn thuyết minh</button>
+      </div>
+
+      <div class="legend-row">
+        <div class="legend-item"><span class="dot b2"></span> <strong>Dấu BKVLQD (Vàng ›): b, k, v, l, q, d (Quẹt phải)</strong></div>
+        <div class="legend-item"><span class="dot" style="background:#f0883e;"></span> <strong>Dấu Telex/VNI (Cam ›): s, f, x, j, z & Số 1..5 (Quẹt phải)</strong></div>
+        <div class="legend-item"><span class="dot cons"></span> <strong>Phụ âm ghép (Tím ‹): Th, Ch, Nh, Tr... (Quẹt trái)</strong></div>
+        <div class="legend-item"><span class="dot" style="background:#3fb950;"></span> <strong>Nguyên âm (Lục): a, e, i, o, u, y (Khung cân đối)</strong></div>
+      </div>
+
+      <div class="tone-table-chips">
+        <div class="tone-group">
+          <span class="tg-label">✍️ Nhận diện Base60 để Viết Tay:</span>
+          <span style="color:#f0f6fc; margin-left:4px;">
+            <strong>-u, -oan</strong> (chữ thường đứng) ➔ Base60 là <strong>chữ thường</strong> | 
+            <em style="color:#fff; text-decoration:underline dotted;">-ÊU, -YÊU</em> (in hoa nghiêng) ➔ Base60 là <strong>chữ HOA [U, Y...]</strong>
+          </span>
+        </div>
+      </div>
+
+      <div style="font-size: 11.5px; color: #8b949e; line-height: 1.45; margin-top: 4px;">
+        👉 <strong>Mục đích chính là HỌC VCOMP:</strong> Nhìn màu sắc để biết phải gõ/viết bộ Dấu nào. Nhìn kiểu chữ (đứng hay nghiêng in hoa) để biết khi cầm bút viết tay là chữ Thường hay chữ HOA.<br>
+        👉 <strong>Quy luật Phụ Âm Ghép:</strong> Viết hoa chữ cái đầu (<strong>Th, Tr, Ch, Kh, Gh, Ng, Nh</strong>) đại diện trực tiếp cho mã Base60 IN HOA: <strong>Th ➔ T</strong> (tại phím t) | <strong>Tr ➔ R</strong> (tại phím r) | <strong>Ch ➔ C</strong> | <strong>Kh ➔ K</strong> | <strong>Gh ➔ G</strong> | <strong>Ng ➔ N</strong> | <strong>Nh ➔ H</strong> (tại phím h).<br>
+        👉 <strong>Mỗi âm là DUY NHẤT:</strong> Phím <strong>y</strong> chỉ có <em>-YÊU</em> (độc lập), còn vần <em>-ÊU</em> nằm riêng ở phím <strong>e</strong> để ghép với <em>k, l, đ, n, r, s...</em>
+      </div>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import {
+      encodeWord, decodeWord, timeToBase60, base60ToTime,
+      extractPhonetics, applyTone,
+      TONE_TABLE_B1, TONE_TABLE_B2, TONE_TABLE_B3
+    } from './vcomp.js';
+
+    import {
+      RHYMES_BASE, RHYMES_EXTRA_1, RHYMES_EXTRA_2,
+      BASE60_MAPPING
+    } from './data.js';
+
+    import { VIETNAMESE_LEXICON_MAP } from './vietnamese_lexicon.js';
+
+    // ========================================================
+    // 1. TỰ ĐỘNG PHÂN TÍCH MÃ MÀU & HÌNH DÁNG CHO MỌI VẦN VCOMP
+    // - B1 (Lam): Dấu Telex z s f r x j
+    // - B2 (Vàng): Dấu bkvlqd
+    // - B3 (Lục): Dấu Số 0 1 2 3 4 5
+    // - Phụ âm ghép (Tím): th, ch, nh, ng...
+    // - Ký tự Base60 HOA ➔ IN HOA + IN NGHIÊNG
+    // - Ký tự Base60 thường ➔ Chữ thường đứng
+    // ========================================================
+    function analyzeRhymeMeta(rhymeRaw) {
+      // A0. Dấu thanh: =, /, \, ?, ~, .
+      if (['=', '/', '\\', '?', '~', '.'].includes(rhymeRaw)) {
+        return {
+          type: 'tone',
+          table: 2,
+          isUpper: true,
+          colorClass: 'b2-mark',
+          shapeClass: 'is-uppercase',
+          display: rhymeRaw
+        };
+      }
+
+      const clean = rhymeRaw.replace(/^-/, '').toLowerCase();
+
+      // A. Phụ âm ghép (Viết dạng Th, Tr, Ch... để học thuộc mã Base60 in hoa!)
+      const CONS_LIST = ['th', 'ch', 'nh', 'ng', 'gh', 'gi', 'đ', 'kh', 'ph', 'tr', 'qu'];
+      if (CONS_LIST.includes(clean)) {
+        const consDisplayMap = {
+          'th': 'Th', // Base60 T hoa
+          'tr': 'Tr', // Base60 R hoa
+          'ch': 'Ch', // Base60 C hoa
+          'kh': 'Kh', // Base60 K hoa
+          'gh': 'Gh', // Base60 G hoa
+          'ng': 'Ng', // Base60 N hoa
+          'nh': 'Nh', // Base60 H hoa (h họ hàng với nh!)
+          'ph': 'Ph', // Base60 f
+          'qu': 'Qu', // Base60 q
+          'gi': 'gi', // Base60 j
+          'đ':  'đ'   // Base60 d
+        };
+        return {
+          type: 'cons',
+          colorClass: 'cons-mark',
+          shapeClass: 'is-uppercase',
+          display: consDisplayMap[clean] || clean
+        };
+      }
+
+      // B. Tra cứu Bảng Vần trong Core VComp
+      let table = 1;
+      let mm = RHYMES_BASE.indexOf(clean);
+      if (mm !== -1) {
+        table = 1;
+      } else {
+        mm = RHYMES_EXTRA_1.indexOf(clean);
+        if (mm !== -1) {
+          table = 2;
+        } else {
+          mm = RHYMES_EXTRA_2.indexOf(clean);
+          if (mm !== -1) {
+            table = 3;
+          }
+        }
+      }
+
+      const colorClass = table === 1 ? 'b1-mark' : table === 2 ? 'b2-mark' : 'b3-mark';
+
+      let isUpper = false;
+      if (mm !== -1 && mm < BASE60_MAPPING.length) {
+        const b60Char = BASE60_MAPPING[mm];
+        isUpper = /^[A-Z]$/.test(b60Char);
+      }
+
+      const shapeClass = isUpper ? 'is-uppercase' : 'is-lowercase';
+      const display = '-' + (isUpper ? clean.toUpperCase() : clean);
+
+      return {
+        type: 'rhyme',
+        table,
+        isUpper,
+        colorClass,
+        shapeClass,
+        display
+      };
+    }
+
+    // ========================================================
+    // 2. DATA DICTIONARY 8 HƯỚNG QUANH CÁC PHÍM
+    // QUY ƯỚC CHUẨN 3x3 ĐÃ THỐNG NHẤT:
+    // [Top-Left]: Telex (B1 HOA)    | [Top]: VNI (B3 HOA)     | [Top-Right]: BKVLQD (B2 HOA)
+    // [Left]: Phụ âm ghép            | [Center]: TÂM           | [Right]: Dấu thanh
+    // [Bottom-Left]: Telex (B1 THƯỜNG)| [Bottom]: VNI (B3 THƯỜNG)| [Bottom-Right]: BKVLQD (B2 THƯỜNG)
+    // ========================================================
+    function buildCanonicalKeyNeighbors() {
+      const CONS_MAP = {
+        't': 'Th', 'r': 'Tr', 'c': 'Ch', 'k': 'Kh', 'g': 'Gh',
+        'n': 'Ng', 'h': 'Nh', 'p': 'Ph', 'q': 'Qu', 'l': 'Ngh', 'd': 'đ'
+      };
+
+      const TONE_DISPLAY_MAP = {
+        // BKVLQD (Bách Khoa)
+        'b': '=', 'k': '/', 'v': '\\', 'l': '?', 'q': '~', 'd': '.',
+        // TELEX
+        'z': '=', 's': '/', 'f': '\\', 'r': '?', 'x': '~', 'j': '.'
+      };
+
+      const map = {};
+      const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+
+      for (const ch of letters) {
+        const lowIdx = BASE60_MAPPING.indexOf(ch);
+        const upIdx = BASE60_MAPPING.indexOf(ch.toUpperCase());
+
+        const r1_low = lowIdx !== -1 && RHYMES_BASE[lowIdx] !== '-' ? '-' + RHYMES_BASE[lowIdx] : null;
+        const r2_low = lowIdx !== -1 && RHYMES_EXTRA_1[lowIdx] !== '-' ? '-' + RHYMES_EXTRA_1[lowIdx] : null;
+        const r3_low = lowIdx !== -1 && RHYMES_EXTRA_2[lowIdx] !== '-' ? '-' + RHYMES_EXTRA_2[lowIdx] : null;
+
+        const r1_up = upIdx !== -1 && RHYMES_BASE[upIdx] !== '-' ? '-' + RHYMES_BASE[upIdx] : null;
+        const r2_up = upIdx !== -1 && RHYMES_EXTRA_1[upIdx] !== '-' ? '-' + RHYMES_EXTRA_1[upIdx] : null;
+        const r3_up = upIdx !== -1 && RHYMES_EXTRA_2[upIdx] !== '-' ? '-' + RHYMES_EXTRA_2[upIdx] : null;
+
+        const cons = CONS_MAP[ch];
+        const toneSymbol = TONE_DISPLAY_MAP[ch];
+        const dirs = {};
+
+        // HÀNG TRÊN: Ứng với CHỮ HOA của phím
+        // Cột 1 (Top-Left): Telex (B1 HOA)
+        if (r1_up) dirs.top_left = { rhyme: r1_up };
+        // Cột 2 (Top): VNI (B3 HOA)
+        if (r3_up) dirs.top = { rhyme: r3_up };
+        // Cột 3 (Top-Right): BKVLQD (B2 HOA)
+        if (r2_up) dirs.top_right = { rhyme: r2_up };
+
+        // HÀNG GIỮA: Trục chức năng
+        // Cánh Trái (Left): Phụ âm ghép
+        if (cons) dirs.left = { rhyme: cons, type: 'cons' };
+        // Cánh Phải (Right): Dấu thanh
+        if (toneSymbol) dirs.right = { rhyme: toneSymbol, type: 'tone' };
+
+        // HÀNG DƯỚI: Ứng với CHỮ THƯỜNG của phím
+        // Cột 1 (Bottom-Left): Telex (B1 THƯỜNG)
+        if (r1_low) dirs.bottom_left = { rhyme: r1_low };
+        // Cột 2 (Bottom): VNI (B3 THƯỜNG)
+        if (r3_low) dirs.bottom = { rhyme: r3_low };
+        // Cột 3 (Bottom-Right): BKVLQD (B2 THƯỜNG)
+        if (r2_low) dirs.bottom_right = { rhyme: r2_low };
+
+        map[ch] = dirs;
+      }
+
+      // Hàng số 0..9 (Vần phụ bổ trợ)
+      const digits = '0123456789'.split('');
+      for (const dg of digits) {
+        const idx = BASE60_MAPPING.indexOf(dg);
+        if (idx !== -1) {
+          const r1 = RHYMES_BASE[idx] !== '-' ? '-' + RHYMES_BASE[idx] : null;
+          const r2 = RHYMES_EXTRA_1[idx] !== '-' ? '-' + RHYMES_EXTRA_1[idx] : null;
+          const r3 = RHYMES_EXTRA_2[idx] !== '-' ? '-' + RHYMES_EXTRA_2[idx] : null;
+          map[dg] = {
+            bottom_left: r1 ? { rhyme: r1 } : null,
+            bottom: r2 ? { rhyme: r2 } : null,
+            bottom_right: r3 ? { rhyme: r3 } : null
+          };
+        }
+      }
+
+      return map;
+    }
+
+    const KEY_NEIGHBORS = buildCanonicalKeyNeighbors();
+
+    // Từ điển dự đoán không dấu ➔ có dấu
+    const UNACCENTED_MAP = {
+      'thoi': ['thôi', 'thời', 'thỏi', 'thối', 'thổi', 'thoi'],
+      'tho': ['thơ', 'thổ', 'thở', 'thờ', 'thợ', 'thô', 'tho'],
+      'toan': ['toán', 'toàn', 'toản', 'toan'],
+      'keu': ['kêu', 'kểu', 'kệu'],
+      'tien': ['tiền', 'tiến', 'tiện', 'tiên', 'tiển'],
+      'tuong': ['tương', 'tướng', 'tường', 'tượng'],
+      'viet': ['việt', 'viết', 'viết lách', 'việt nam'],
+      'nam': ['nam', 'năm', 'nấm', 'nằm'],
+      'hoc': ['học', 'hóc', 'hốc', 'hộc'],
+      'van': ['văn', 'vấn', 'vẫn', 'vận', 'vạn'],
+      'nguoi': ['người', 'ngươi', 'nguội'],
+      'duoc': ['được', 'dược'],
+      'khong': ['không', 'khổng'],
+      'cho': ['cho', 'chó', 'chờ', 'chỗ', 'chợ'],
+      'anh': ['anh', 'ánh', 'ảnh'],
+      'em': ['em', 'ém'],
+      'ban': ['bạn', 'bản', 'bàn', 'bán', 'ban'],
+      'nhap': ['nhập', 'nháp', 'nhạp'],
+      'thuong': ['thương', 'thưởng', 'thường', 'thượng'],
+      'vuon': ['vươn', 'vượn', 'vườn'],
+      'suong': ['sướng', 'sương'],
+      'yeu': ['yêu', 'yếu', 'yểu']
+    };
+
+    // Ánh xạ phím Dấu: B1 (Telex: zfsrxj), B2 (Phụ âm: bkvlqd), B3 (Số: 012345)
+    const TONE_KEYS = {
+      // B1 (Telex: zfsrxj)
+      'z': { tone: 0, group: 'B1 (Telex)', name: 'Bằng' },
+      's': { tone: 1, group: 'B1 (Telex)', name: 'Sắc' },
+      'f': { tone: 2, group: 'B1 (Telex)', name: 'Huyền' },
+      'r': { tone: 3, group: 'B1 (Telex)', name: 'Hỏi' },
+      'x': { tone: 4, group: 'B1 (Telex)', name: 'Ngã' },
+      'j': { tone: 5, group: 'B1 (Telex)', name: 'Nặng' },
+
+      // B2 (Phụ âm bkvlqd: b=bằng, k=sắc, v=huyền, l=hỏi, q=ngã, d=nặng)
+      'b': { tone: 0, group: 'B2 (bkvlqd)', name: 'Bằng' },
+      'k': { tone: 1, group: 'B2 (bkvlqd)', name: 'Sắc' },
+      'v': { tone: 2, group: 'B2 (bkvlqd)', name: 'Huyền' },
+      'l': { tone: 3, group: 'B2 (bkvlqd)', name: 'Hỏi' },
+      'q': { tone: 4, group: 'B2 (bkvlqd)', name: 'Ngã' },
+      'd': { tone: 5, group: 'B2 (bkvlqd)', name: 'Nặng' },
+
+      // B3 (Số VNI: 012345)
+      '0': { tone: 0, group: 'B3 (Số)', name: 'Bằng' },
+      '1': { tone: 1, group: 'B3 (Số)', name: 'Sắc' },
+      '2': { tone: 2, group: 'B3 (Số)', name: 'Huyền' },
+      '3': { tone: 3, group: 'B3 (Số)', name: 'Hỏi' },
+      '4': { tone: 4, group: 'B3 (Số)', name: 'Ngã' },
+      '5': { tone: 5, group: 'B3 (Số)', name: 'Nặng' }
+    };
+
+    // ========================================================
+    // 3. GRID LAYOUT 12 CỘT (CỘT TRÁI + 10 CHỮ/SỐ + CỘT PHẢI)
+    // ========================================================
+    const GRID_ROWS = [
+      // HÀNG 0: [ : ] + 1..0 (10 phím số) + [ 000 ]
+      [
+        { id: 'k_0_0', char: ':', shift: '[', sub: '[', type: 'flank', r: 0, c: 0 },
+        { id: 'k_0_1', char: '1', shift: '!', sub: '!', tl: 'yê', r: 0, c: 1 },
+        { id: 'k_0_2', char: '2', shift: '@', sub: '@', tl: 'oat', r: 0, c: 2 },
+        { id: 'k_0_3', char: '3', shift: '#', sub: '#', tl: 'ê', r: 0, c: 3 },
+        { id: 'k_0_4', char: '4', shift: '$', sub: '$', tl: 'ươu', r: 0, c: 4 },
+        { id: 'k_0_5', char: '5', shift: '%', sub: '%', tl: 'âu', r: 0, c: 5 },
+        { id: 'k_0_6', char: '6', shift: '^', sub: '^', tl: 'ươ', r: 0, c: 6 },
+        { id: 'k_0_7', char: '7', shift: '&', sub: '&', tl: 'oai', r: 0, c: 7 },
+        { id: 'k_0_8', char: '8', shift: '*', sub: '*', tl: 'oă', r: 0, c: 8 },
+        { id: 'k_0_9', char: '9', shift: '(', sub: '(', tl: 'ây', r: 0, c: 9 },
+        { id: 'k_0_10', char: '0', shift: ')', sub: ')', tl: 'ô', r: 0, c: 10 },
+        { id: 'k_0_11', char: '000', shift: '₫', sub: '₫', type: 'flank', r: 0, c: 11 }
+      ],
+      // HÀNG 1: [ ❖ Mode ] + q w e r t y u i o p + [ ⌫ Bksp ]
+      [
+        { id: 'k_1_0', char: '❖', sub: 'Mode', type: 'mode', r: 1, c: 0 },
+        { id: 'k_1_1', char: 'q', shift: 'Q', tl: 'Qu', r: 1, c: 1 },
+        { id: 'k_1_2', char: 'w', shift: 'W', tl: 'ư', r: 1, c: 2 },
+        { id: 'k_1_3', char: 'e', shift: 'E', tl: 'êu', r: 1, c: 3 },
+        { id: 'k_1_4', char: 'r', shift: 'R', tl: 'Tr', r: 1, c: 4 },
+        { id: 'k_1_5', char: 't', shift: 'T', tl: 'Th', r: 1, c: 5 },
+        { id: 'k_1_6', char: 'y', shift: 'Y', tl: 'yêu', r: 1, c: 6 },
+        { id: 'k_1_7', char: 'u', shift: 'U', tl: 'u', r: 1, c: 7 },
+        { id: 'k_1_8', char: 'i', shift: 'I', tl: 'i', r: 1, c: 8 },
+        { id: 'k_1_9', char: 'o', shift: 'O', tl: 'o', r: 1, c: 9 },
+        { id: 'k_1_10', char: 'p', shift: 'P', tl: 'Ph', r: 1, c: 10 },
+        { id: 'k_1_11', char: '⌫', sub: 'Del', type: 'bksp', r: 1, c: 11 }
+      ],
+      // HÀNG 2: [ ớ Vowel ] + a s d f g h j k l ; + [ 🔍 Soi ]
+      [
+        { id: 'k_2_0', char: 'ớ', sub: 'Vowel', type: 'vowel', r: 2, c: 0 },
+        { id: 'k_2_1', char: 'a', shift: 'A', tl: 'a', r: 2, c: 1 },
+        { id: 'k_2_2', char: 's', shift: 'S', tl: 'ương', r: 2, c: 2 },
+        { id: 'k_2_3', char: 'd', shift: 'D', tl: 'đ', r: 2, c: 3 },
+        { id: 'k_2_4', char: 'f', shift: 'F', tl: 'ươn', r: 2, c: 4 },
+        { id: 'k_2_5', char: 'g', shift: 'G', tl: 'Gh', r: 2, c: 5 },
+        { id: 'k_2_6', char: 'h', shift: 'H', tl: 'Nh', r: 2, c: 6 },
+        { id: 'k_2_7', char: 'j', shift: 'J', tl: 'eo', r: 2, c: 7 },
+        { id: 'k_2_8', char: 'k', shift: 'K', tl: 'Kh', r: 2, c: 8 },
+        { id: 'k_2_9', char: 'l', shift: 'L', tl: 'oi', r: 2, c: 9 },
+        { id: 'k_2_10', char: ';', shift: '|', sub: '|', type: 'fn', r: 2, c: 10 },
+        { id: 'k_2_11', char: '🔍', sub: 'Soi', type: 'flank', r: 2, c: 11 }
+      ],
+      // HÀNG 3: [ ⇧ Shift ] + / z x c v b n m , . + [ ↵ Enter ]
+      [
+        { id: 'k_3_0', char: '⇧', sub: 'Shift', type: 'shift', r: 3, c: 0 },
+        { id: 'k_3_1', char: '/', shift: '\\', sub: '\\', type: 'fn', r: 3, c: 1 },
+        { id: 'k_3_2', char: 'z', shift: 'Z', tl: 'ưa', r: 3, c: 2 },
+        { id: 'k_3_3', char: 'x', shift: 'X', tl: 'ơi', r: 3, c: 3 },
+        { id: 'k_3_4', char: 'c', shift: 'C', tl: 'Ch', r: 3, c: 4 },
+        { id: 'k_3_5', char: 'v', shift: 'V', tl: 'ia', r: 3, c: 5 },
+        { id: 'k_3_6', char: 'b', shift: 'B', tl: 'uy', r: 3, c: 6 },
+        { id: 'k_3_7', char: 'n', shift: 'N', tl: 'Ng', r: 3, c: 7 },
+        { id: 'k_3_8', char: 'm', shift: 'M', tl: 'uôi', r: 3, c: 8 },
+        { id: 'k_3_9', char: ',', shift: '…', sub: '…', type: 'fn', r: 3, c: 9 },
+        { id: 'k_3_10', char: '.', shift: '\'', sub: '\'', type: 'fn', r: 3, c: 10 },
+        { id: 'k_3_11', char: '↵', sub: 'Go', type: 'action', r: 3, c: 11 }
+      ],
+      // HÀNG 4: [ ?123 ] + ( ) " [ SPACE 3 CỘT ] ? + - = >
+      // HÀNG 4: [ ?123 ] [ ( ] [ ) ] [ ‹ ] [ Space ] [ › ] [ , ] [ ? ] [ + ] [ - ] [ " ] [ ↵ ]
+      [
+        { id: 'k_4_0', char: '?123', sub: 'Sym', type: 'fn', r: 4, c: 0 },
+        { id: 'k_4_1', char: '(', shift: '<', sub: '<', type: 'fn', r: 4, c: 1 },
+        { id: 'k_4_2', char: ')', shift: '>', sub: '>', type: 'fn', r: 4, c: 2 },
+        { id: 'k_4_3', char: '‹', shift: '{', sub: 'Lùi', type: 'fn', r: 4, c: 3 },
+        { id: 'k_4_4', char: 'Space', sub: 'VN', type: 'space', r: 4, c: 4 },
+        { id: 'k_4_5', char: '›', shift: '}', sub: 'Tiến', type: 'fn', r: 4, c: 5 },
+        { id: 'k_4_6', char: ',', shift: ';', sub: ';', type: 'fn', r: 4, c: 6 },
+        { id: 'k_4_7', char: '?', shift: ']', sub: ']', type: 'fn', r: 4, c: 7 },
+        { id: 'k_4_8', char: '+', shift: '}', sub: '}', type: 'fn', r: 4, c: 8 },
+        { id: 'k_4_9', char: '-', shift: '_', sub: '_', type: 'fn', r: 4, c: 9 },
+        { id: 'k_4_10', char: '"', shift: '~', sub: '~', type: 'fn', r: 4, c: 10 },
+        { id: 'k_4_11', char: '↵', sub: 'Enter', type: 'action', r: 4, c: 11 }
+      ]
+    ];
+
+    // Build Key Matrix index by (r, c) and ID
+    const MATRIX_MAP = {};
+    const MATRIX_MAP_BY_ID = {};
+    const MATRIX_MAP_BY_CHAR = {};
+    GRID_ROWS.forEach(row => {
+      row.forEach(key => {
+        MATRIX_MAP[`${key.r}_${key.c}`] = key;
+        MATRIX_MAP_BY_ID[key.id] = key;
+        if (key.char) MATRIX_MAP_BY_CHAR[key.char.toLowerCase()] = key;
+        if (key.shift) MATRIX_MAP_BY_CHAR[key.shift] = key;
+      });
+    });
+
+    function getKeyAtPoint(x, y) {
+      if (x === undefined || y === undefined) return null;
+      const el = document.elementFromPoint(x, y)?.closest('.grid-key');
+      if (el && MATRIX_MAP_BY_ID[el.id]) return MATRIX_MAP_BY_ID[el.id];
+
+      // Fallback: Tìm phím gần nhất trong bán kính 45px (bắt dính viền phím trên màn hình cảm ứng)
+      let nearestKey = null;
+      let minDist = 45;
+      for (const keyDef of Object.values(MATRIX_MAP_BY_ID)) {
+        const keyEl = document.getElementById(keyDef.id);
+        if (!keyEl) continue;
+        const rect = keyEl.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const dist = Math.hypot(x - centerX, y - centerY);
+        if (dist < minDist) {
+          minDist = dist;
+          nearestKey = keyDef;
+        }
+      }
+      return nearestKey;
+    }
+
+    // ========================================================
+    // BỘ MÃ HÓA & GIẢI MÃ A1 (TỐC KÝ KHÔNG SHIFT) & vV1 (BASE60)
+    // ========================================================
+    const CONS_MAP_A1 = {
+      '': 'z',     // Không phụ âm đầu
+      'th': '1',   // Phụ âm kép số 1..5
+      'ch': '2',
+      'tr': '3',
+      'nh': '4',
+      'ng': '5',
+      'ph': 'f',   // Phụ âm chữ
+      'gi': 'j',
+      'đ': 'w',
+      'd': 'd',
+      'kh': 'a',
+      'qu': 'o',
+      'gh': 'u',
+      'ngh': 'y',
+      'b': 'b', 'c': 'c', 'g': 'g', 'h': 'h', 'k': 'k', 'l': 'l', 'm': 'm', 'n': 'n', 'p': 'p', 'r': 'r', 's': 's', 't': 't', 'v': 'v', 'x': 'x'
+    };
+
+    const REV_CONS_A1 = {};
+    for (const [k, v] of Object.entries(CONS_MAP_A1)) {
+      REV_CONS_A1[v] = k;
+    }
+
+    // 6 Bảng Dấu Chuẩn (Thanh 0..5: Bằng, Sắc, Huyền, Hỏi, Ngã, Nặng)
+    const TONES_B1 = ['z', 's', 'f', 'r', 'x', 'j']; // B1 thường (Telex)
+    const TONES_B2 = ['b', 'k', 'v', 'l', 'q', 'd']; // B2 thường (BKVLQD)
+    const TONES_B3 = ['0', '1', '2', '3', '4', '5']; // B3 thường (VNI)
+    const TONES_B4 = ['a', 'e', 'i', 'o', 'u', 'y']; // B1 HOA (6 nguyên âm)
+    const TONES_B5 = ['c', 'g', 'h', 'p', 't', 'w']; // B2 HOA (6 phụ âm ABC)
+    const TONES_B6 = ['6', '7', '8', '9', 'm', 'n']; // B3 HOA (Số VNI mở rộng)
+
+    function encodeA1(word) {
+      if (!word) return null;
+      const { consonant, rhyme, tone } = extractPhonetics(word);
+      let c1 = CONS_MAP_A1[consonant] || (consonant ? consonant[0] : 'z');
+      let rIdx = RHYMES_BASE.indexOf(rhyme);
+      let table = 1;
+      if (rIdx === -1) { rIdx = RHYMES_EXTRA_1.indexOf(rhyme); table = 2; }
+      if (rIdx === -1) { rIdx = RHYMES_EXTRA_2.indexOf(rhyme); table = 3; }
+      if (rIdx === -1) return null;
+
+      const b60Char = BASE60_MAPPING[rIdx];
+      const isUpper = /^[A-Z]$/.test(b60Char);
+      const c2 = b60Char.toLowerCase();
+      let c3 = '';
+      if (!isUpper) {
+        if (table === 1) c3 = TONES_B1[tone];
+        else if (table === 2) c3 = TONES_B2[tone];
+        else c3 = TONES_B3[tone];
+      } else {
+        if (table === 1) c3 = TONES_B4[tone];
+        else if (table === 2) c3 = TONES_B5[tone];
+        else c3 = TONES_B6[tone];
+      }
+      return { a1: `${c1}${c2}${c3}`, c1, c2, c3, isUpper, table, tone };
+    }
+
+    function decodeA1(code) {
+      if (!code || code.length < 2) return null;
+      let c1, c2, c3;
+      if (code.length === 2) {
+        c1 = 'z';
+        c2 = code[0].toLowerCase();
+        c3 = code[1];
+      } else {
+        c1 = code[0].toLowerCase();
+        c2 = code[1].toLowerCase();
+        c3 = code[2];
+      }
+      const cons = REV_CONS_A1[c1];
+      if (cons === undefined) return null;
+
+      let tone = -1;
+      let table = 1;
+      let isUpper = false;
+      if (TONES_B1.includes(c3)) { tone = TONES_B1.indexOf(c3); table = 1; isUpper = false; }
+      else if (TONES_B2.includes(c3)) { tone = TONES_B2.indexOf(c3); table = 2; isUpper = false; }
+      else if (TONES_B3.includes(c3)) { tone = TONES_B3.indexOf(c3); table = 3; isUpper = false; }
+      else if (TONES_B4.includes(c3)) { tone = TONES_B4.indexOf(c3); table = 1; isUpper = true; }
+      else if (TONES_B5.includes(c3)) { tone = TONES_B5.indexOf(c3); table = 2; isUpper = true; }
+      else if (TONES_B6.includes(c3)) { tone = TONES_B6.indexOf(c3); table = 3; isUpper = true; }
+      if (tone === -1) return null;
+
+      const b60Char = isUpper ? c2.toUpperCase() : c2.toLowerCase();
+      const rIdx = BASE60_MAPPING.indexOf(b60Char);
+      if (rIdx === -1) return null;
+
+      let rime = '';
+      if (table === 1) rime = RHYMES_BASE[rIdx];
+      else if (table === 2) rime = RHYMES_EXTRA_1[rIdx];
+      else rime = RHYMES_EXTRA_2[rIdx];
+      if (!rime || rime === '-') return null;
+
+      let prefix = cons;
+      if (cons === 'gi' && rime) {
+        if (rime.startsWith('iê')) rime = rime.substring(1);
+        else if (rime.startsWith('i')) prefix = 'g';
+      }
+
+      const tonedRime = applyTone(rime, tone);
+      return prefix + tonedRime;
+    }
+
+    function isValidVietnameseWord(word) {
+      if (!word || typeof word !== 'string') return false;
+      // Không được chứa mã lỗi kỹ thuật hoặc từ không xác định
+      if (word.startsWith('[') || word.includes('ERR') || word.includes('UNKNOWN') || word.includes('ENG:')) {
+        return false;
+      }
+      return true;
+    }
+
+    function decodeVV1(code) {
+      if (!code || code.length < 2) return null;
+      try {
+        const time = base60ToTime(code);
+        if (time && time.length === 6 && !time.includes('?')) {
+          const ss = parseInt(time.substring(4, 6), 10);
+          if (ss >= 36) return null; // ss >= 36 là từ điển Tiếng Anh trong TimeCypher, KHÔNG phải từ tiếng Việt!
+          const w = decodeWord(time);
+          if (w && isValidVietnameseWord(w)) return w;
+        }
+      } catch(e){}
+      return null;
+    }
+
+    function getWordCodes(word) {
+      if (!word) return { vV1: '', a1: '', route: '', isSame: false };
+      let vV1 = '';
+      try {
+        const enc = encodeWord(word);
+        vV1 = timeToBase60(enc);
+      } catch(e){}
+
+      const encA1 = encodeA1(word);
+      const a1 = encA1 ? encA1.a1 : '';
+
+      let route = '';
+      if (a1 && a1.length === 3) {
+        route = `${a1[0]}➔${a1[1]}➔${a1[2]}`;
+      } else if (vV1 && vV1.length === 3) {
+        route = `${vV1[0]}➔${vV1[1]}➔${vV1[2]}`;
+      }
+
+      return {
+        vV1,
+        a1,
+        route,
+        isSame: vV1 === a1 && !!vV1
+      };
+    }
+
+    // ========================================================
+    // QUY LUẬT HÌNH HỌC CỬ CHỈ (GEOMETRIC GRAMMAR OF GESTURES)
+    // - Quan hệ 1 (Phụ âm ➔ Vần): KÉO THẲNG (vd: đi, di, cha, the, mo)
+    // - Quan hệ 2 (Vần ➔ Dấu): KÉO CONG (vd: thết, ết, đì, chà)
+    // - 3 Ký tự (Phụ âm ➔ Vần ➔ Dấu): Kéo thẳng đoạn đầu rồi bẻ góc/uốn cong đoạn sau
+    // ========================================================
+    function decodeStraight2Key(kStart, kEnd) {
+      if (!kStart || !kEnd) return null;
+      const s = kStart.toLowerCase();
+      const e = kEnd.toLowerCase();
+
+      // 1. Thử a1: Phụ âm (s) + Vần (e) + Thanh ngang ('z')
+      let wA1 = decodeA1(s + e + 'z');
+      if (wA1) return { word: wA1, system: 'a1', code: `${s}${e}z` };
+
+      // Thử a1 với vần HOA (tone B4 'a' cho thanh ngang)
+      wA1 = decodeA1(s + e + 'a');
+      if (wA1) return { word: wA1, system: 'a1', code: `${s}${e}a` };
+
+      // 2. Thử vV1: Phụ âm + Vần + Thanh ngang ('b' hoặc '0')
+      let wV1 = decodeVV1(kStart + kEnd + 'b');
+      if (wV1) return { word: wV1, system: 'vV1', code: `${kStart}${kEnd}b` };
+
+      wV1 = decodeVV1(kStart + kEnd + '0');
+      if (wV1) return { word: wV1, system: 'vV1', code: `${kStart}${kEnd}0` };
+
+      // 3. Ghép trực tiếp phụ âm và nguyên âm đơn nếu có
+      const cons = REV_CONS_A1[s] !== undefined ? REV_CONS_A1[s] : s;
+      if (cons && /^[aeiouyw]$/i.test(e)) {
+        return { word: cons + e, system: 'a1', code: `${s}${e}` };
+      }
+
+      return null;
+    }
+
+    function decodeCurved2Key(kStartDef, kEndDef, currentBuffer = '') {
+      if (!kStartDef || !kEndDef) return null;
+      const sChar = (typeof kStartDef === 'object' ? kStartDef.char : kStartDef) || '';
+      const eChar = (typeof kEndDef === 'object' ? kEndDef.char : kEndDef) || '';
+      const sTl = (typeof kStartDef === 'object' ? kStartDef.tl : '') || '';
+      const eTl = (typeof kEndDef === 'object' ? kEndDef.tl : '') || '';
+
+      if (!sChar || !eChar || sChar === eChar) return null;
+
+      let cons = '';
+      let cA1 = 'z';
+      let cV1 = 'z';
+      if (currentBuffer) {
+        if (REV_CONS_A1[currentBuffer.toLowerCase()]) {
+          cons = REV_CONS_A1[currentBuffer.toLowerCase()];
+          cA1 = currentBuffer.toLowerCase();
+          cV1 = getConsonantBase60(cons).charAt(0);
+        } else {
+          const ph = extractPhonetics(currentBuffer);
+          cons = ph.consonant || currentBuffer.toLowerCase();
+          cA1 = CONS_MAP_A1[cons] || (cons ? cons[0] : 'z');
+          cV1 = getConsonantBase60(cons).charAt(0);
+        }
+      }
+
+      const pairs = [
+        { start: sChar.toLowerCase(), end: eChar.toLowerCase(), tlStart: sTl, tlEnd: eTl },
+        { start: eChar.toLowerCase(), end: sChar.toLowerCase(), tlStart: eTl, tlEnd: sTl }
+      ];
+
+      for (const pair of pairs) {
+        const s = pair.start;
+        const e = pair.end;
+
+        // 1. Thử decodeA1 (Phụ âm + Vần 's' + Dấu 'e')
+        const wA1 = decodeA1(cA1 + s + e);
+        if (wA1) return { word: wA1, system: 'a1', code: `${cA1}${s}${e}` };
+
+        // 2. Thử decodeVV1
+        const wV1 = decodeVV1(cV1 + s + e);
+        if (wV1) return { word: wV1, system: 'vV1', code: `${cV1}${s}${e}` };
+
+        // 3. Thử với nhãn thị giác góc trên phím (Visual tl Rhyme + Tone key)
+        const rhymeCandidate = pair.tlStart;
+        if (rhymeCandidate && TONE_KEYS[e]) {
+          const toneNum = TONE_KEYS[e].tone;
+          const tonedRhyme = applyTone(rhymeCandidate, toneNum);
+          if (tonedRhyme) {
+            const finalWord = (cons || '') + tonedRhyme;
+            return { word: finalWord, system: 'visual', code: `${cons || 'ø'}+${rhymeCandidate}+${e}` };
+          }
+        }
+      }
+
+      return null;
+    }
+
+    function decode3Key(k1, k2, k3) {
+      if (!k1 || !k2 || !k3) return null;
+      const c1 = k1.toLowerCase();
+      const c2 = k2.toLowerCase();
+      const c3 = k3.toLowerCase();
+
+      // 1. Thử a1 trước (chữ thường và số)
+      const wA1 = decodeA1(c1 + c2 + c3);
+      if (wA1 && isValidVietnameseWord(wA1)) return { word: wA1, system: 'a1', code: `${c1}${c2}${c3}` };
+
+      // 2. Thử vV1 nguyên bản (hỗ trợ cả chữ Hoa / Thường)
+      const rawCode = k1 + k2 + k3;
+      const wV1 = decodeVV1(rawCode);
+      if (wV1 && isValidVietnameseWord(wV1)) return { word: wV1, system: 'vV1', code: rawCode };
+
+      // 3. Thử vV1 viết hoa vần k2
+      const altCode = k1 + k2.toUpperCase() + k3;
+      const wV1Alt = decodeVV1(altCode);
+      if (wV1Alt && isValidVietnameseWord(wV1Alt)) return { word: wV1Alt, system: 'vV1', code: altCode };
+
+      return null;
+    }
+
+    // Dò tìm các đỉnh góc ngoặt thực tế dựa trên góc quay (Turning Corners / Sharp Angular Peaks)
+    function findTurningCorners(pts, windowPx = 22) {
+      if (!pts || pts.length < 8) return [];
+
+      const dists = [0];
+      for (let i = 1; i < pts.length; i++) {
+        dists.push(dists[i-1] + Math.hypot(pts[i].x - pts[i-1].x, pts[i].y - pts[i-1].y));
+      }
+      const totalLen = dists[dists.length - 1];
+      if (totalLen < 30) return [];
+
+      const scores = [];
+      for (let i = 0; i < pts.length; i++) {
+        const curD = dists[i];
+        if (curD < windowPx * 0.7 || totalLen - curD < windowPx * 0.7) {
+          continue;
+        }
+
+        let iPrev = i;
+        while (iPrev > 0 && curD - dists[iPrev] < windowPx) iPrev--;
+
+        let iNext = i;
+        while (iNext < pts.length - 1 && dists[iNext] - curD < windowPx) iNext++;
+
+        const dx1 = pts[i].x - pts[iPrev].x, dy1 = pts[i].y - pts[iPrev].y;
+        const dx2 = pts[iNext].x - pts[i].x, dy2 = pts[iNext].y - pts[i].y;
+        const l1 = Math.hypot(dx1, dy1);
+        const l2 = Math.hypot(dx2, dy2);
+        if (l1 < 4 || l2 < 4) continue;
+
+        const dot = (dx1 * dx2 + dy1 * dy2) / (l1 * l2);
+        const angleRad = Math.acos(Math.max(-1, Math.min(1, dot)));
+        const angleDeg = angleRad * 180 / Math.PI;
+
+        scores.push({
+          index: i,
+          point: pts[i],
+          angleDeg,
+          distFromStart: curD
+        });
+      }
+
+      const peaks = [];
+      for (let j = 1; j < scores.length - 1; j++) {
+        const curr = scores[j];
+        if (curr.angleDeg >= 38 && curr.angleDeg >= scores[j-1].angleDeg && curr.angleDeg >= scores[j+1].angleDeg) {
+          const tooClose = peaks.some(p => Math.abs(p.distFromStart - curr.distFromStart) < windowPx * 1.2);
+          if (!tooClose) {
+            peaks.push(curr);
+          }
+        }
+      }
+
+      peaks.sort((a, b) => b.angleDeg - a.angleDeg);
+      return peaks;
+    }
+
+    function resolveSwipeGesture(pathPoints, startKeyDef, currentBuffer = '') {
+      if (!pathPoints || pathPoints.length < 2 || !startKeyDef) return null;
+
+      const pStart = pathPoints[0];
+      const pEnd = pathPoints[pathPoints.length - 1];
+
+      // Tìm phím kết thúc tại pEnd (dùng getKeyAtPoint chống trượt viền phím trên điện thoại)
+      const endDef = getKeyAtPoint(pEnd.x, pEnd.y);
+      if (!endDef || !endDef.char) return null;
+
+      const kStart = startKeyDef.char;
+      const kEnd = endDef.char;
+
+      if (kStart === kEnd) return null;
+
+      // 1. Tính toán độ dài dây cung và chiều dài cung
+      const chordDx = pEnd.x - pStart.x;
+      const chordDy = pEnd.y - pStart.y;
+      const chordDist = Math.hypot(chordDx, chordDy);
+      if (chordDist < 18) return null;
+
+      let pathLen = 0;
+      for (let i = 1; i < pathPoints.length; i++) {
+        pathLen += Math.hypot(pathPoints[i].x - pathPoints[i-1].x, pathPoints[i].y - pathPoints[i-1].y);
+      }
+      const straightness = pathLen > 0 ? (chordDist / pathLen) : 1;
+
+      // 2. Dò tìm các đỉnh góc ngoặt thực tế bằng toán hình học góc quay
+      const corners = findTurningCorners(pathPoints, 22);
+
+      // NHÁNH 1: 3 KÝ TỰ (Bẻ góc: Phụ âm ➔ Vần ➔ Dấu)
+      if (corners.length > 0) {
+        for (const corner of corners) {
+          const midDef = getKeyAtPoint(corner.point.x, corner.point.y);
+          if (midDef && midDef.char && midDef.char !== kStart && midDef.char !== kEnd) {
+            const kMid = midDef.char;
+            const res3 = decode3Key(kStart, kMid, kEnd);
+            if (res3) {
+              return {
+                ...res3,
+                gestureType: '3key',
+                keys: [kStart, kMid, kEnd],
+                apexPoint: corner.point,
+                cornerAngle: corner.angleDeg,
+                desc: `3 phím (Góc bẻ ${corner.angleDeg.toFixed(0)}°): [${kStart}] ➔ [${kMid}] ➔ [${kEnd}]`
+              };
+            }
+          }
+        }
+      }
+
+      // NHÁNH 2: 2 KÝ TỰ KÉO CONG (Quan hệ 2: Vần ➔ Dấu)
+      // Loại bỏ kéo thẳng 2 phím (ví dụ d->i thành di, chấp nhận gõ 2 lần theo yêu cầu của User)
+      // Nếu là đường thẳng (straightness >= 0.93) -> Không nhận diện
+      if (straightness >= 0.93) {
+        return null;
+      }
+
+      const curvedRes = decodeCurved2Key(startKeyDef, endDef, currentBuffer);
+      if (curvedRes) {
+        return {
+          ...curvedRes,
+          gestureType: 'curved',
+          keys: [kStart, kEnd],
+          desc: `Vuốt cong (Vần + Dấu): [${kStart}] ➔ [${kEnd}]`
+        };
+      }
+
+      return null;
+    }
+
+    function resolveGlide(keys, currentBuffer = '') {
+      if (!keys || keys.length < 2) return null;
+      if (keys.length === 3) return decode3Key(keys[0], keys[1], keys[2]);
+      if (keys.length === 2) return decodeCurved2Key(keys[0], keys[1], currentBuffer);
+      return null;
+    }
+
+    // ========================================================
+    // 4. STATE & COMPOSING ENGINE
+    // ========================================================
+    let isShift = false;
+    let isCaps = false;
+
+    // Buffer bộ soạn thảo
+    let committedText = '';      // Văn bản đã hoàn tất
+    let composingBuffer = '';    // Âm tiết đang soạn dở (vd: 't', 'toan')
+
+    // Active Root Key & Persistent Neighbors (Lưu lại 8 hướng cố định)
+    let activeRootKey = null;
+
+    const outputBox = document.getElementById('outputBox');
+    const suggestionChips = document.getElementById('suggestionChips');
+    let lastAutoCommittedCode = null;
+    let lastAutoCommittedWord = null;
+    const statChars = document.getElementById('statChars');
+    const statLastAction = document.getElementById('statLastAction');
+    const keyboardWrapper = document.getElementById('keyboardWrapper');
+    const vcompPillText = document.getElementById('vcompPillText');
+    const vcompLiveCode = document.getElementById('vcompLiveCode');
+    const legendPanel = document.getElementById('legendPanel');
+    const btnToggleLegend = document.getElementById('btnToggleLegend');
+    const btnCloseLegend = document.getElementById('btnCloseLegend');
+
+    // Quản lý trạng thái đóng/mở Thuyết minh (Zero-Bloat Rule)
+    const isLegendVisible = localStorage.getItem('vsecret_grid_legend_visible') !== 'false';
+    if (!isLegendVisible) {
+      legendPanel.classList.add('collapsed');
+      btnToggleLegend.classList.remove('active');
+    } else {
+      btnToggleLegend.classList.add('active');
+    }
+
+    function toggleLegend() {
+      const isNowCollapsed = legendPanel.classList.toggle('collapsed');
+      const visible = !isNowCollapsed;
+      btnToggleLegend.classList.toggle('active', visible);
+      localStorage.setItem('vsecret_grid_legend_visible', visible ? 'true' : 'false');
+    }
+    btnToggleLegend.addEventListener('click', toggleLegend);
+    btnCloseLegend.addEventListener('click', toggleLegend);
+
+    function updateDisplay() {
+      if (composingBuffer) {
+        outputBox.innerHTML = escapeHtml(committedText) + `<span class="composing-word">${escapeHtml(composingBuffer)}</span>`;
+      } else {
+        outputBox.innerText = committedText;
+      }
+      updateEditorStats();
+      analyzeSuggestions();
+      updateVCompLiveInspector();
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function updateEditorStats() {
+      const fullText = committedText + composingBuffer;
+      const chars = fullText.length;
+      const words = fullText.trim() === '' ? 0 : fullText.trim().split(/\s+/).length;
+      statChars.textContent = `Ký tự: ${chars} | Từ: ${words}`;
+    }
+
+    function updateVCompLiveInspector() {
+      if (!composingBuffer) {
+        const lastWord = committedText.trim().split(/\s+/).pop();
+        if (lastWord) {
+          const codes = getWordCodes(lastWord);
+          vcompPillText.textContent = `Từ gần nhất: "${lastWord}"${codes.route ? ` (Vuốt: ${codes.route})` : ''}`;
+          vcompLiveCode.textContent = codes.isSame ? `Mã: ${codes.a1}` : `vV1: ${codes.vV1 || '--'} | a1: ${codes.a1 || '--'}`;
+        } else {
+          vcompPillText.textContent = `Sẵn sàng gõ từ mới...`;
+          vcompLiveCode.textContent = `Mã: vV1 / a1`;
+        }
+        return;
+      }
+
+      // Đang có composingBuffer
+      try {
+        const { consonant, rhyme } = extractPhonetics(composingBuffer);
+        const codes = getWordCodes(composingBuffer);
+        vcompPillText.textContent = `Đang soạn: "${composingBuffer}" [PA: ${consonant || 'ø'}, Vần: -${rhyme || 'ø'}] ➔ Chọn gợi ý hoặc vuốt tốc ký!`;
+        vcompLiveCode.textContent = codes.a1 || codes.vV1 ? (codes.isSame ? `Mã: ${codes.a1}` : `vV1: ${codes.vV1 || '--'} | a1: ${codes.a1 || '--'}`) : `Đang gõ...`;
+      } catch (e) {
+        vcompPillText.textContent = `Đang soạn: "${composingBuffer}"`;
+        vcompLiveCode.textContent = `Mã: --`;
+      }
+    }
+
+    function getWordAnatomy(word) {
+      try {
+        const { consonant, rhyme, tone } = extractPhonetics(word);
+        const codes = getWordCodes(word);
+        const toneName = ['ngang', 'sắc', 'huyền', 'hỏi', 'ngã', 'nặng'][tone] || '';
+        return `${consonant || 'ø'} + ${rhyme} (${toneName}) ➔ vV1: [${codes.vV1}] | a1: [${codes.a1}]${codes.route ? ` | Vuốt: ${codes.route}` : ''}`;
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function getBase60Permutations(code) {
+      if (!code || code.length < 2) return [];
+      const c1 = code[0];
+      const c2 = code[1];
+      const c3 = code.length >= 3 ? code[2] : null;
+
+      const c1List = [c1.toLowerCase(), c1.toUpperCase()];
+      const c2List = [c2.toLowerCase(), c2.toUpperCase()];
+      const toneList = c3 ? [c3] : ['b', 'z', '0', 'k', 's', '1', 'v', 'f', '2'];
+
+      const results = [];
+      const seenWords = new Set();
+
+      for (const t of toneList) {
+        for (const v1 of c1List) {
+          for (const v2 of c2List) {
+            const fullCode = v1 + v2 + t;
+            try {
+              const time = base60ToTime(fullCode);
+              if (time && time.length === 6 && !time.includes('?')) {
+                const ss = parseInt(time.substring(4, 6), 10);
+                if (ss >= 36) continue;
+                const word = decodeWord(time);
+                if (word && isValidVietnameseWord(word) && !seenWords.has(word)) {
+                  seenWords.add(word);
+                  results.push({ word, code: fullCode });
+                }
+              }
+            } catch(e) {}
+          }
+        }
+        if (results.length >= 8) break;
+      }
+      return results;
+    }
+
+    function renderChipCodesHtml(codes) {
+      if (!codes) return '';
+      const vV1 = codes.vV1 || '';
+      const a1 = codes.a1 || '';
+      if (!vV1 && !a1) return '';
+
+      // Trường hợp 1: vV1 và a1 giống nhau hoàn toàn -> chỉ hiển thị 1 mã với màu trắng
+      if (vV1 === a1 || !vV1 || !a1) {
+        const c = a1 || vV1;
+        return `<span class="chip-code-tag"><span class="char-white">${escapeHtml(c)}</span></span>`;
+      }
+
+      // Trường hợp 2: vV1 và a1 khác nhau -> so sánh từng ký tự, ký tự giống nhau để màu trắng
+      const maxLen = Math.max(vV1.length, a1.length);
+      let vHtml = '';
+      let aHtml = '';
+      for (let i = 0; i < maxLen; i++) {
+        const cv = vV1[i] || '';
+        const ca = a1[i] || '';
+        if (cv === ca && cv !== '') {
+          vHtml += `<span class="char-white">${escapeHtml(cv)}</span>`;
+          aHtml += `<span class="char-white">${escapeHtml(ca)}</span>`;
+        } else {
+          if (cv) vHtml += `<span class="char-diff-vv1">${escapeHtml(cv)}</span>`;
+          if (ca) aHtml += `<span class="char-diff-a1">${escapeHtml(ca)}</span>`;
+        }
+      }
+
+      return `<span class="chip-code-tag" title="vV1: ${escapeHtml(vV1)}">${vHtml}</span> <span class="chip-code-tag" title="a1: ${escapeHtml(a1)}">${aHtml}</span>`;
+    }
+
+    function analyzeSuggestions() {
+      const target = composingBuffer ? composingBuffer.toLowerCase() : '';
+      suggestionChips.innerHTML = '';
+
+      // 1. TRƯỜNG HỢP VỪA NỔ TỪ TỐC KÝ XONG:
+      // Hiển thị ngay các biến thể anh em để người dùng bấm sửa trực tiếp
+      if (!target && lastAutoCommittedCode) {
+        const variants = getBase60Permutations(lastAutoCommittedCode);
+        const altVariants = variants.filter(v => v.word !== lastAutoCommittedWord);
+
+        if (altVariants.length > 0) {
+          altVariants.forEach((v, idx) => {
+            const codes = getWordCodes(v.word);
+            const chip = document.createElement('div');
+            chip.className = `sug-chip ${idx === 0 ? 'primary' : ''}`;
+            chip.dataset.word = v.word;
+            chip.innerHTML = `
+              <span class="chip-word">${escapeHtml(v.word)}</span>
+              <span class="chip-codes">${renderChipCodesHtml(codes)}</span>
+            `;
+            chip.title = `Bấm để đổi '${lastAutoCommittedWord}' thành '${v.word}'`;
+            chip.onclick = () => window.pickSuggestion(v.word);
+            suggestionChips.appendChild(chip);
+          });
+          return;
+        }
+      }
+
+      // 2. TRƯỜNG HỢP BUFFER TRỐNG: Hiển thị các từ mẫu tiêu biểu kèm mã vV1, a1
+      if (!target) {
+        const defaultWords = ['mong', 'thết', 'chàng', 'toán', 'đi', 'việt', 'người', 'thương'];
+        defaultWords.forEach(w => {
+          const codes = getWordCodes(w);
+          const chip = document.createElement('div');
+          chip.className = 'sug-chip';
+          chip.dataset.word = w;
+          chip.innerHTML = `
+            <span class="chip-word">${escapeHtml(w)}</span>
+            <span class="chip-codes">${renderChipCodesHtml(codes)}</span>
+          `;
+          chip.title = getWordAnatomy(w);
+          chip.onclick = () => window.pickSuggestion(w);
+          suggestionChips.appendChild(chip);
+        });
+        return;
+      }
+
+      // 3. TRƯỜNG HỢP ĐANG GÕ TỪ (Từ thô không dấu vd: 'mong', 'thet', 'chang', 'di'...)
+      let b60Variants = [];
+      if (target.length === 2) {
+        b60Variants = getBase60Permutations(target);
+      }
+
+      // Tra cứu từ điển tiếng Việt thực tế
+      const matches = VIETNAMESE_LEXICON_MAP[target] || [];
+
+      // Tổng hợp danh sách gợi ý (kết hợp Từ điển thực tế + Base60 biến thể, khử trùng lặp)
+      const combined = [];
+      const seenWords = new Set();
+
+      // Thêm các từ điển tiếng Việt thực tế trước (ưu tiên từ thật của từ điển)
+      matches.forEach(item => {
+        if (!seenWords.has(item)) {
+          seenWords.add(item);
+          combined.push(item);
+        }
+      });
+
+      // Nếu số lượng ít, sinh thêm biến thể 6 thanh từ extractPhonetics
+      if (combined.length < 6) {
+        try {
+          const { consonant, rhyme } = extractPhonetics(target);
+          if (rhyme) {
+            for (let t = 0; t <= 5; t++) {
+              const w = (consonant || '') + applyTone(rhyme, t);
+              if (w && !seenWords.has(w)) {
+                seenWords.add(w);
+                combined.push(w);
+              }
+            }
+          }
+        } catch(e) {}
+      }
+
+      // Đưa thêm các biến thể Base60 nếu đang gõ 2 ký tự
+      b60Variants.forEach(v => {
+        if (!seenWords.has(v.word)) {
+          seenWords.add(v.word);
+          combined.push(v.word);
+        }
+      });
+
+      // 4. NẾU KHÔNG CÓ BẤT KỲ GỢI Ý NÀO: Hiển thị từ thô đang gõ
+      if (combined.length === 0) {
+        const chip = document.createElement('div');
+        chip.className = 'sug-chip primary';
+        chip.dataset.word = target;
+        chip.innerHTML = `<span class="chip-word">${escapeHtml(target)}</span>`;
+        chip.onclick = () => window.pickSuggestion(target);
+        suggestionChips.appendChild(chip);
+        return;
+      }
+
+      // Hiển thị tối đa 10 chip gợi ý với định dạng siêu gọn: từ + mã vV1 + mã a1 (ký tự trùng màu trắng)
+      combined.slice(0, 10).forEach((w, idx) => {
+        const codes = getWordCodes(w);
+        const anatomy = getWordAnatomy(w);
+        const chip = document.createElement('div');
+        chip.className = `sug-chip ${idx === 0 ? 'primary' : ''}`;
+        chip.dataset.word = w;
+        chip.innerHTML = `
+          <span class="chip-word">${escapeHtml(w)}</span>
+          <span class="chip-codes">${renderChipCodesHtml(codes)}</span>
+        `;
+        chip.title = anatomy;
+        chip.onclick = () => window.pickSuggestion(w);
+        suggestionChips.appendChild(chip);
+      });
+    }
+
+    // ========================================================
+    // 5. CORE TYPING & SYLLABLE LOGIC
+    // ========================================================
+    function commitWord(word) {
+      if (!word) return;
+      playClickSound(800, 0.04);
+      committedText += word + ' ';
+      composingBuffer = '';
+      updateDisplay();
+
+      clearNeighborBloom();
+      showTeachingHighlightForWord(word);
+
+      const codes = getWordCodes(word);
+      if (codes.a1 || codes.vV1) {
+        statLastAction.textContent = `✨ Đã chốt: '${word}' [vV1: ${codes.vV1 || '--'} | a1: ${codes.a1 || '--'}]${codes.route ? ` (Vuốt: ${codes.route})` : ''}`;
+      } else {
+        statLastAction.textContent = `✨ Đã chốt: '${word}'`;
+      }
+    }
+
+    function applyToneToComposing(toneNumber, toneInfo) {
+      if (!composingBuffer) return;
+      
+      const { consonant, rhyme } = extractPhonetics(composingBuffer);
+      if (!rhyme) {
+        return;
+      }
+
+      const tonedRhyme = applyTone(rhyme, toneNumber);
+      const finishedWord = (consonant || '') + tonedRhyme;
+
+      playClickSound(950, 0.05);
+      commitWord(finishedWord);
+      statLastAction.textContent = `✨ Chốt dấu '${toneInfo.name}': '${finishedWord}' (${toneInfo.group})`;
+    }
+
+    function handleKeyTap(char) {
+      playClickSound(650, 0.03);
+
+      // 1. Nhận diện Tốc Ký 3 ký tự: Hỗ trợ CẢ a1 (không Shift: 1cs ➔ thết, 2ki ➔ chàng) VÀ vV1 (Base60: Tcs ➔ thết, mzb ➔ mong)
+      // QUAN TRỌNG: KHÔNG ĐƯỢC cướp phím khi người dùng đang gõ một từ tiếng Việt thông thường (như anh, con, cho, hoc, ban, nam, em...)
+      const candidateCode = composingBuffer + char;
+      const isLexiconWord = VIETNAMESE_LEXICON_MAP[candidateCode.toLowerCase()] !== undefined;
+
+      if (candidateCode.length === 3 && !isLexiconWord) {
+        // A. Nếu ký tự đầu là số 1..5 (phụ âm kép a1: 1=th, 2=ch, 3=tr, 4=nh, 5=ng), chắc chắn là tốc ký a1!
+        if (/^[1-5]/.test(candidateCode)) {
+          const wordA1 = decodeA1(candidateCode);
+          if (wordA1 && isValidVietnameseWord(wordA1)) {
+            playClickSound(950, 0.05);
+            commitWord(wordA1);
+            lastAutoCommittedCode = candidateCode;
+            lastAutoCommittedWord = wordA1;
+            statLastAction.textContent = `🚀 Tốc ký a1 [${candidateCode}] ➔ '${wordA1}'`;
+            analyzeSuggestions();
+            return;
+          }
+        }
+
+        // B. Nếu ký tự đầu là chữ HOA (Base60 phụ âm kép: T=th, R=tr, C=ch, K=kh...), chắc chắn là tốc ký vV1!
+        if (/^[A-Z]/.test(candidateCode)) {
+          const wordV1 = decodeVV1(candidateCode);
+          if (wordV1 && isValidVietnameseWord(wordV1)) {
+            playClickSound(950, 0.05);
+            commitWord(wordV1);
+            lastAutoCommittedCode = candidateCode;
+            lastAutoCommittedWord = wordV1;
+            statLastAction.textContent = `🚀 Tốc ký vV1 [${candidateCode}] ➔ '${wordV1}'`;
+            analyzeSuggestions();
+            return;
+          }
+        }
+
+        // C. Với chữ thường: CHỈ coi là tốc ký khi phím thứ 3 thuộc bảng dấu chuẩn (B1: zfsrxj, B2: bkvlqd, B3: 012345)
+        // TUYỆT ĐỐI KHÔNG dùng B4/B5/B6 vì chứa các chữ cái thông thường (h, n, c, a, e...) sẽ cướp từ tiếng Việt!
+        const c3 = char;
+        const isStandardTone = TONE_TABLE_B1.includes(c3) || TONE_TABLE_B2.includes(c3) || TONE_TABLE_B3.includes(c3) ||
+                               TONES_B1.includes(c3) || TONES_B2.includes(c3) || TONES_B3.includes(c3);
+        if (isStandardTone) {
+          const testWordV1 = decodeVV1(candidateCode);
+          if (testWordV1 && isValidVietnameseWord(testWordV1)) {
+            playClickSound(950, 0.05);
+            commitWord(testWordV1);
+            lastAutoCommittedCode = candidateCode;
+            lastAutoCommittedWord = testWordV1;
+            statLastAction.textContent = `🚀 Tốc ký vV1 [${candidateCode}] ➔ '${testWordV1}'`;
+            analyzeSuggestions();
+            return;
+          }
+
+          const testWordA1 = decodeA1(candidateCode);
+          if (testWordA1 && isValidVietnameseWord(testWordA1)) {
+            playClickSound(950, 0.05);
+            commitWord(testWordA1);
+            lastAutoCommittedCode = candidateCode;
+            lastAutoCommittedWord = testWordA1;
+            statLastAction.textContent = `🚀 Tốc ký a1 [${candidateCode}] ➔ '${testWordA1}'`;
+            analyzeSuggestions();
+            return;
+          }
+        }
+      }
+
+      lastAutoCommittedCode = null;
+      lastAutoCommittedWord = null;
+
+      // 2. Kiểm tra nếu đang soạn dở và chạm vào phím Dấu thông thường:
+      // CHỈ kích hoạt khi:
+      // - Buffer ĐÃ CÓ NGUYÊN ÂM (a,ă,â,e,ê,i,o,ô,ơ,u,ư,y)
+      // - VÀ char là phím dấu (B1: zfsrxj, B2: bkvlqd, B3: 012345)
+      if (composingBuffer && TONE_KEYS[char]) {
+        const { rhyme } = extractPhonetics(composingBuffer);
+        const hasVowel = rhyme && /[aăâeêioôơuưy]/i.test(rhyme);
+        if (hasVowel) {
+          applyToneToComposing(TONE_KEYS[char].tone, TONE_KEYS[char]);
+          return;
+        }
+      }
+
+      // 3. Tự động chốt từ trước nếu từ cũ đã có vần hoàn chỉnh mà người dùng gõ một phụ âm đầu mới
+      // QUAN TRỌNG: phải kiểm tra ký tự đơn có thể là PHẦN TIẾP THEO của phụ âm cuối đa ký tự không:
+      //   - 'g' sau buffer kết thúc 'n' → có thể tạo thành '-ng' (mong, tang, sang...)
+      //   - 'h' sau buffer kết thúc 'n' → có thể tạo thành '-nh' (anh, xinh, thanh...)
+      //   - 'h' sau buffer kết thúc 'c' → có thể tạo thành '-ch' (sách, thích, cách...)
+      if (composingBuffer) {
+        const { rhyme } = extractPhonetics(composingBuffer);
+        const bufLow = composingBuffer.toLowerCase();
+        const charLow = char.toLowerCase();
+        const validFinalSingle = ['c', 'm', 'n', 'p', 't'];
+        const isConsonant = /^[bcdđghklmnpqrstvx]$/i.test(char);
+        
+        // Kiểm tra xem char có thể là phần mở rộng hợp lệ của phụ âm cuối đa ký tự không
+        const couldExtendFinal =
+          (charLow === 'g' && bufLow.endsWith('n')) ||  // n + g = ng
+          (charLow === 'h' && bufLow.endsWith('n')) ||  // n + h = nh
+          (charLow === 'h' && bufLow.endsWith('c'));     // c + h = ch
+
+        if (rhyme && isConsonant && !validFinalSingle.includes(charLow) && !TONE_KEYS[char] && !couldExtendFinal) {
+          commitWord(composingBuffer);
+          composingBuffer = char;
+          updateDisplay();
+          return;
+        }
+      }
+
+      // 4. Bình thường: thêm vào composingBuffer (cho phép gõ tự do mong, hoan...)
+      composingBuffer += char;
+      updateDisplay();
+      statLastAction.textContent = `Nhập: '${char}' ➔ Buffer: '${composingBuffer}'`;
+    }
+
+    function handleToneSwipe(symbol, keyDef) {
+      const toneMap = { '=': 0, '/': 1, '\\': 2, '?': 3, '~': 4, '.': 5 };
+      const toneNames = ['Bằng', 'Sắc', 'Huyền', 'Hỏi', 'Ngã', 'Nặng'];
+      const toneNum = toneMap[symbol];
+      if (toneNum === undefined) return;
+
+      playClickSound(950, 0.05);
+
+      if (composingBuffer) {
+        const { consonant, rhyme } = extractPhonetics(composingBuffer);
+        if (rhyme) {
+          const tonedRhyme = applyTone(rhyme, toneNum);
+          const finishedWord = (consonant || '') + tonedRhyme;
+          commitWord(finishedWord);
+          statLastAction.textContent = `✨ Vuốt phải chốt dấu '${toneNames[toneNum]}': '${finishedWord}'`;
+          return;
+        }
+      }
+
+      statLastAction.textContent = `Dấu: '${toneNames[toneNum]}' (${symbol})`;
+    }
+
+    function handleRimeSwipe(rimeText) {
+      const cleanRime = rimeText.replace(/^-/, '').toLowerCase();
+      playClickSound(750, 0.04);
+
+      if (!composingBuffer) {
+        composingBuffer = cleanRime;
+      } else {
+        // Kiểm tra xem composingBuffer đã có NGUYÊN ÂM thực sự chưa
+        const hasVowel = /[aăâeêioôơuưy]/i.test(composingBuffer);
+
+        if (hasVowel) {
+          // Từ cũ đã có nguyên âm hoàn chỉnh (ví dụ: 'toan', 'mong', 'hoa')
+          // Chốt từ cũ và bắt đầu từ mới với vần vừa quẹt
+          commitWord(composingBuffer);
+          composingBuffer = cleanRime;
+        } else {
+          // Buffer chưa có nguyên âm (ví dụ: 't', 'th', 'tq', 'tk', 'ml'...)
+          
+          // THUẬT TOÁN 1: Hấp thụ mã Base60 trùng vần
+          // Nếu ký tự cuối của buffer là mã Base60 của chính vần vừa quẹt (ví dụ 'tq' với 'ôi', vì q = ôi)
+          const lastChar = composingBuffer.slice(-1);
+          const lastCharIdx = BASE60_MAPPING.indexOf(lastChar);
+          let isBase60Match = false;
+          if (lastCharIdx !== -1) {
+            const r1 = RHYMES_BASE[lastCharIdx];
+            const r2 = RHYMES_EXTRA_1[lastCharIdx];
+            const r3 = RHYMES_EXTRA_2[lastCharIdx];
+            if (r1 === cleanRime || r2 === cleanRime || r3 === cleanRime) {
+              isBase60Match = true;
+            }
+          }
+
+          if (isBase60Match) {
+            const prefixCons = composingBuffer.slice(0, -1);
+            composingBuffer = (prefixCons || '') + cleanRime;
+            statLastAction.textContent = `🎯 Thuật toán 1 (Hấp thụ mã Base60 [${lastChar}] ➔ vần '${cleanRime}'): '${composingBuffer}'`;
+            updateDisplay();
+            return;
+          }
+
+          // THUẬT TOÁN 2: Tự sửa lỗi gõ nhầm phụ âm (Typo Overwrite)
+          // Tìm phụ âm đầu hợp lệ dài nhất từ đầu buffer (ví dụ 'tk' -> giữ 't', 'ml' -> giữ 'm', 'th' -> giữ 'th')
+          const VALID_INITIAL_CONSONANTS = [
+            'th', 'tr', 'ch', 'kh', 'gh', 'ng', 'nh', 'ph', 'qu', 'gi', 'đ',
+            'b', 'c', 'd', 'g', 'h', 'k', 'l', 'm', 'n', 'p', 'r', 's', 't', 'v', 'x'
+          ];
+
+          let bestCons = '';
+          for (let len = composingBuffer.length; len > 0; len--) {
+            const sub = composingBuffer.substring(0, len).toLowerCase();
+            if (VALID_INITIAL_CONSONANTS.includes(sub)) {
+              bestCons = composingBuffer.substring(0, len);
+              break;
+            }
+          }
+
+          composingBuffer = (bestCons || '') + cleanRime;
+          statLastAction.textContent = `⚡ Ghép vần '${cleanRime}' ➔ Đang soạn: '${composingBuffer}'`;
+        }
+      }
+
+      updateDisplay();
+    }
+
+    function getConsonantBase60(cons) {
+      const map = {
+        'th': 'T (hoa)',
+        'tr': 'R (hoa)',
+        'ch': 'C (hoa)',
+        'kh': 'K (hoa)',
+        'gh': 'G (hoa)',
+        'ng': 'N (hoa)',
+        'nh': 'H (hoa)',
+        'ph': 'f (thường)',
+        'qu': 'q (thường)',
+        'gi': 'j (thường)',
+        'đ':  'd (thường)',
+        'd':  'D (hoa)'
+      };
+      return map[cons.toLowerCase()] || cons;
+    }
+
+    function handleConsonantClusterSwipe(cluster) {
+      playClickSound(700, 0.04);
+      if (composingBuffer) {
+        const { rhyme } = extractPhonetics(composingBuffer);
+        if (rhyme) {
+          commitWord(composingBuffer);
+        }
+      }
+      const cleanCluster = cluster.toLowerCase();
+      composingBuffer = cleanCluster;
+      updateDisplay();
+      statLastAction.textContent = `⚡ Phụ âm ghép: '${cluster}' ➔ Mã Base60: [ ${getConsonantBase60(cleanCluster)} ] (Vuốt tiếp vần!)`;
+    }
+
+    function backspace() {
+      playClickSound(400, 0.03);
+      if (composingBuffer.length > 0) {
+        composingBuffer = composingBuffer.slice(0, -1);
+      } else if (committedText.length > 0) {
+        committedText = committedText.slice(0, -1);
+      }
+      updateDisplay();
+      statLastAction.textContent = 'Backspace: Xóa 1 ký tự';
+    }
+
+    function swipeSmartBackspace() {
+      playClickSound(350, 0.06);
+      if (composingBuffer.length > 0) {
+        composingBuffer = '';
+      } else {
+        const str = committedText.trimEnd();
+        const lastSpace = str.lastIndexOf(' ');
+        if (lastSpace >= 0) {
+          committedText = str.substring(0, lastSpace) + ' ';
+        } else {
+          committedText = '';
+        }
+      }
+      updateDisplay();
+      statLastAction.textContent = 'Smart Backspace: Đã xóa nguyên từ!';
+    }
+
+    // ========================================================
+    // ========================================================
+    // 6. CANVAS OVERLAY & CONTINUOUS GLIDE / SWIPE ENGINE
+    // ========================================================
+    let swipeCanvas = null;
+    let swipeCtx = null;
+    let glidePoints = [];          // Tọa độ ngón tay
+    let glideKeys = [];            // Danh sách các phím đã lướt qua
+    let glideElements = [];        // Danh sách DOM elements
+    let isMultiKeyGlide = false;
+    let fadeAnimationId = null;
+
+    function initSwipeCanvas() {
+      swipeCanvas = document.getElementById('swipeCanvas');
+      if (!swipeCanvas) {
+        swipeCanvas = document.createElement('canvas');
+        swipeCanvas.id = 'swipeCanvas';
+        swipeCanvas.className = 'swipe-canvas';
+        keyboardWrapper.prepend(swipeCanvas);
+      }
+      swipeCtx = swipeCanvas.getContext('2d');
+      resizeSwipeCanvas();
+    }
+
+    function resizeSwipeCanvas() {
+      if (!swipeCanvas || !keyboardWrapper) return;
+      const rect = keyboardWrapper.getBoundingClientRect();
+      swipeCanvas.width = rect.width || keyboardWrapper.clientWidth;
+      swipeCanvas.height = rect.height || keyboardWrapper.clientHeight;
+    }
+
+    window.addEventListener('resize', resizeSwipeCanvas);
+
+    function drawGlideCanvas(currentX, currentY, alpha = 1, apexPoint = null) {
+      if (!swipeCtx || !swipeCanvas || !keyboardWrapper) return;
+      swipeCtx.clearRect(0, 0, swipeCanvas.width, swipeCanvas.height);
+      if (glidePoints.length === 0) return;
+
+      const wrapRect = keyboardWrapper.getBoundingClientRect();
+
+      swipeCtx.save();
+      swipeCtx.globalAlpha = alpha;
+
+      // 1. Vẽ vệt sáng neon mượt mà nối các tọa độ cử chỉ (Smooth Neon Trail)
+      swipeCtx.beginPath();
+      glidePoints.forEach((p, idx) => {
+        const px = p.x - wrapRect.left;
+        const py = p.y - wrapRect.top;
+        if (idx === 0) swipeCtx.moveTo(px, py);
+        else swipeCtx.lineTo(px, py);
+      });
+
+      if (currentX !== undefined && currentY !== undefined && glidePoints.length > 0) {
+        swipeCtx.lineTo(currentX - wrapRect.left, currentY - wrapRect.top);
+      }
+
+      swipeCtx.strokeStyle = '#00f0ff';
+      swipeCtx.lineWidth = 5;
+      swipeCtx.lineCap = 'round';
+      swipeCtx.lineJoin = 'round';
+      swipeCtx.shadowColor = 'rgba(0, 240, 255, 0.9)';
+      swipeCtx.shadowBlur = 14;
+      swipeCtx.stroke();
+
+      // 2. Điểm mốc tại điểm bắt đầu P0 (Màu lam điện)
+      const p0 = glidePoints[0];
+      if (p0) {
+        swipeCtx.beginPath();
+        swipeCtx.arc(p0.x - wrapRect.left, p0.y - wrapRect.top, 8, 0, Math.PI * 2);
+        swipeCtx.fillStyle = '#58a6ff';
+        swipeCtx.shadowColor = '#00f0ff';
+        swipeCtx.shadowBlur = 10;
+        swipeCtx.fill();
+        swipeCtx.lineWidth = 2;
+        swipeCtx.strokeStyle = '#fff';
+        swipeCtx.stroke();
+      }
+
+      // 3. Điểm mốc Apex (nếu có góc ngoặt / vần trung gian)
+      if (apexPoint) {
+        swipeCtx.beginPath();
+        swipeCtx.arc(apexPoint.x - wrapRect.left, apexPoint.y - wrapRect.top, 7, 0, Math.PI * 2);
+        swipeCtx.fillStyle = '#f2cc60';
+        swipeCtx.shadowColor = '#f2cc60';
+        swipeCtx.shadowBlur = 10;
+        swipeCtx.fill();
+        swipeCtx.lineWidth = 2;
+        swipeCtx.strokeStyle = '#fff';
+        swipeCtx.stroke();
+      }
+
+      // 4. Điểm mốc tại điểm hiện tại / kết thúc (Màu lục bảo)
+      const pLast = (currentX !== undefined && currentY !== undefined)
+        ? { x: currentX, y: currentY }
+        : glidePoints[glidePoints.length - 1];
+      if (pLast) {
+        swipeCtx.beginPath();
+        swipeCtx.arc(pLast.x - wrapRect.left, pLast.y - wrapRect.top, 7, 0, Math.PI * 2);
+        swipeCtx.fillStyle = '#3fb950';
+        swipeCtx.shadowColor = '#3fb950';
+        swipeCtx.shadowBlur = 10;
+        swipeCtx.fill();
+        swipeCtx.lineWidth = 2;
+        swipeCtx.strokeStyle = '#fff';
+        swipeCtx.stroke();
+      }
+
+      swipeCtx.restore();
+    }
+
+    function clearGlideCanvasFade() {
+      let alpha = 1;
+      function fade() {
+        alpha -= 0.15;
+        if (alpha <= 0) {
+          if (swipeCtx && swipeCanvas) swipeCtx.clearRect(0, 0, swipeCanvas.width, swipeCanvas.height);
+          document.querySelectorAll('.glide-active').forEach(el => el.classList.remove('glide-active'));
+          glideKeys = [];
+          glideElements = [];
+          glidePoints = [];
+          isMultiKeyGlide = false;
+          fadeAnimationId = null;
+        } else {
+          drawGlideCanvas(undefined, undefined, alpha);
+          fadeAnimationId = requestAnimationFrame(fade);
+        }
+      }
+      fadeAnimationId = requestAnimationFrame(fade);
+    }
+
+    // ========================================================
+    // TEACHING HIGHLIGHT & A1 GLIDE TRAJECTORY
+    // ========================================================
+    function findKeyElement(target, type = 'char') {
+      if (!target) return null;
+      const t = target.toLowerCase();
+      const allKeys = Array.from(document.querySelectorAll('.grid-key'));
+      if (type === 'char') {
+        return allKeys.find(el => el.dataset.keyChar && el.dataset.keyChar.toLowerCase() === t) || null;
+      }
+      if (type === 'cons') {
+        return allKeys.find(el => {
+          const tl = el.querySelector('.key-tl')?.textContent?.trim().toLowerCase();
+          return tl === t;
+        }) || allKeys.find(el => el.dataset.keyChar && el.dataset.keyChar.toLowerCase() === t) || null;
+      }
+      return null;
+    }
+
+    function clearTeachingHighlight() {
+      document.querySelectorAll('.teach-cons, .teach-rhyme, .teach-tone').forEach(el => {
+        el.classList.remove('teach-cons', 'teach-rhyme', 'teach-tone');
+      });
+      document.querySelectorAll('.teach-tone-badge').forEach(el => el.remove());
+      if (swipeCtx && swipeCanvas) {
+        swipeCtx.clearRect(0, 0, swipeCanvas.width, swipeCanvas.height);
+      }
+    }
+
+    function showTeachingHighlightForWord(word) {
+      clearTeachingHighlight();
+      clearNeighborBloom();
+      if (!word) return;
+      const clean = removeAccents(word.trim().toLowerCase());
+      if (!clean) return;
+
+      const { consonant: cons, rhyme, tone } = extractPhonetics(word);
+      const a1Result = encodeA1(clean);
+
+      // 1. Phụ âm
+      if (cons) {
+        const consKeyEl = findKeyElement(cons, 'cons');
+        if (consKeyEl) consKeyEl.classList.add('teach-cons');
+      }
+
+      // 2. Vần
+      if (rhyme) {
+        let rIdx = RHYMES_BASE.indexOf(rhyme);
+        let table = 1;
+        if (rIdx === -1) { rIdx = RHYMES_EXTRA_1.indexOf(rhyme); table = 2; }
+        if (rIdx === -1) { rIdx = RHYMES_EXTRA_2.indexOf(rhyme); table = 3; }
+        if (rIdx !== -1) {
+          const b60Char = BASE60_MAPPING[rIdx];
+          if (b60Char) {
+            const rhymeKeyEl = findKeyElement(b60Char.toLowerCase(), 'char');
+            if (rhymeKeyEl) rhymeKeyEl.classList.add('teach-rhyme');
+          }
+        }
+      }
+
+      // 3. Dấu thanh (tone): Lấy chính xác phím dấu theo bảng vần VComp (c3 trong A1)
+      const sym = tone === 0 ? '—' : tone === 1 ? '´' : tone === 2 ? '`' : tone === 3 ? '?' : tone === 4 ? '~' : tone === 5 ? '.' : '';
+      const toneChar = a1Result ? a1Result.c3 : (tone === 0 ? 'z' : tone === 1 ? 's' : tone === 2 ? 'f' : tone === 3 ? 'r' : tone === 4 ? 'x' : 'j');
+      if (toneChar) {
+        const toneKeyEl = findKeyElement(toneChar, 'char');
+        if (toneKeyEl) {
+          toneKeyEl.classList.add('teach-tone');
+          if (sym) {
+            const toneBadge = document.createElement('span');
+            toneBadge.className = 'teach-tone-badge';
+            toneBadge.style.cssText = 'position:absolute; top:2px; right:4px; font-size:10px; font-weight:bold; color:#f0883e; pointer-events:none;';
+            toneBadge.textContent = sym;
+            toneKeyEl.appendChild(toneBadge);
+          }
+        }
+      }
+
+      // 4. Vẽ quỹ đạo A1
+      if (a1Result) {
+        const k1El = findKeyElement(a1Result.c1, 'char');
+        const k2El = findKeyElement(a1Result.c2, 'char');
+        const k3El = findKeyElement(a1Result.c3, 'char');
+        const keyEls = [k1El, k2El, k3El].filter(Boolean);
+        if (keyEls.length >= 2) {
+          drawA1TrajectoryOnCanvas(keyEls);
+        }
+      }
+    }
+
+    function drawA1TrajectoryOnCanvas(keyEls) {
+      if (!swipeCtx || !swipeCanvas || !keyboardWrapper) return;
+      resizeSwipeCanvas();
+      swipeCtx.clearRect(0, 0, swipeCanvas.width, swipeCanvas.height);
+
+      const wrapRect = keyboardWrapper.getBoundingClientRect();
+      const pts = keyEls.map(el => {
+        const r = el.getBoundingClientRect();
+        return {
+          x: r.left + r.width / 2 - wrapRect.left,
+          y: r.top + r.height / 2 - wrapRect.top,
+          row: parseInt(el.dataset.r !== undefined ? el.dataset.r : (el.dataset.row || 0)),
+          col: parseInt(el.dataset.c !== undefined ? el.dataset.c : (el.dataset.col || 0)),
+          rect: {
+            left: r.left - wrapRect.left,
+            top: r.top - wrapRect.top,
+            right: r.right - wrapRect.left,
+            bottom: r.bottom - wrapRect.top,
+            width: r.width,
+            height: r.height
+          }
+        };
+      });
+
+      // Kiểm tra thẳng hàng
+      let isCollinear = false;
+      if (pts.length === 3) {
+        isCollinear = ((pts[1].row - pts[0].row) * (pts[2].col - pts[0].col) === (pts[2].row - pts[0].row) * (pts[1].col - pts[0].col));
+      }
+
+      swipeCtx.save();
+
+      // 1. Vẽ đường Glow phát quang
+      swipeCtx.beginPath();
+      pts.forEach((p, i) => {
+        if (i === 0) swipeCtx.moveTo(p.x, p.y);
+        else swipeCtx.lineTo(p.x, p.y);
+      });
+      swipeCtx.strokeStyle = 'rgba(56, 139, 253, 0.45)';
+      swipeCtx.lineWidth = 10;
+      swipeCtx.lineCap = 'round';
+      swipeCtx.lineJoin = 'round';
+      swipeCtx.stroke();
+
+      // 2. Vẽ đường Core
+      swipeCtx.beginPath();
+      pts.forEach((p, i) => {
+        if (i === 0) swipeCtx.moveTo(p.x, p.y);
+        else swipeCtx.lineTo(p.x, p.y);
+      });
+      swipeCtx.strokeStyle = '#58a6ff';
+      swipeCtx.lineWidth = 3;
+      swipeCtx.stroke();
+
+      if (isCollinear) {
+        // THẲNG HÀNG: Bỏ mũi tên, vẽ hollow ring + mini badge 1, 2, 3 ở góc trên-phải
+        const colors = ['#58a6ff', '#f2cc60', '#f0883e'];
+        pts.forEach((p, i) => {
+          const col = colors[i] || '#58a6ff';
+          // Hollow ring tại tâm
+          swipeCtx.beginPath();
+          swipeCtx.arc(p.x, p.y, 11, 0, Math.PI * 2);
+          swipeCtx.strokeStyle = col;
+          swipeCtx.lineWidth = 2;
+          swipeCtx.stroke();
+
+          // Mini badge tại góc trên phải
+          const bx = p.rect.right - 8;
+          const by = p.rect.top + 8;
+          swipeCtx.beginPath();
+          swipeCtx.arc(bx, by, 6, 0, Math.PI * 2);
+          swipeCtx.fillStyle = col;
+          swipeCtx.fill();
+
+          swipeCtx.fillStyle = (i === 1) ? '#000' : '#fff';
+          swipeCtx.font = 'bold 9px sans-serif';
+          swipeCtx.textAlign = 'center';
+          swipeCtx.textBaseline = 'middle';
+          swipeCtx.fillText(`${i + 1}`, bx, by);
+        });
+      } else {
+        // KHÔNG THẲNG HÀNG: Vẽ mũi tên trên từng chặng, bỏ vòng tròn & số 1, 2, 3
+        for (let i = 0; i < pts.length - 1; i++) {
+          drawArrowHeadCanvas(swipeCtx, pts[i], pts[i + 1]);
+        }
+        // Điểm waypoint nhỏ
+        pts.forEach(p => {
+          swipeCtx.beginPath();
+          swipeCtx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
+          swipeCtx.fillStyle = '#58a6ff';
+          swipeCtx.fill();
+        });
+      }
+      swipeCtx.restore();
+    }
+
+    function drawArrowHeadCanvas(ctx, from, to) {
+      const dx = to.x - from.x;
+      const dy = to.y - from.y;
+      const len = Math.hypot(dx, dy);
+      if (len < 16) return;
+
+      const ax = from.x + dx * 0.58;
+      const ay = from.y + dy * 0.58;
+      const angle = Math.atan2(dy, dx);
+      const arrowLen = 8;
+      const arrowAngle = Math.PI / 6;
+
+      ctx.beginPath();
+      ctx.moveTo(ax - arrowLen * Math.cos(angle - arrowAngle), ay - arrowLen * Math.sin(angle - arrowAngle));
+      ctx.lineTo(ax, ay);
+      ctx.lineTo(ax - arrowLen * Math.cos(angle + arrowAngle), ay - arrowLen * Math.sin(angle + arrowAngle));
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2.4;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+      ctx.stroke();
+    }
+
+    // ========================================================
+    // 7. RENDER BÀN PHÍM & LƯU 8 HƯỚNG BỀN VỮNG
+    // ========================================================
+    function renderKeyboard() {
+      keyboardWrapper.innerHTML = '';
+      const isShifted = isShift || isCaps;
+
+      // Canvas overlay cho Continuous Glide
+      const canvasEl = document.createElement('canvas');
+      canvasEl.id = 'swipeCanvas';
+      canvasEl.className = 'swipe-canvas';
+      keyboardWrapper.appendChild(canvasEl);
+      initSwipeCanvas();
+
+      GRID_ROWS.forEach((rowDef) => {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'grid-row';
+        rowDef.forEach(k => {
+          const keyEl = document.createElement('div');
+          
+          let shiftClass = '';
+          if (k.type === 'shift') {
+            if (isCaps) shiftClass = ' active caps';
+            else if (isShift) shiftClass = ' active';
+          }
+
+          // Phân loại nhóm chức năng thị giác & hình học công thái học
+          let groupClass = '';
+          const lowChar = (k.char || '').toLowerCase();
+          
+          if (!k.type || k.type === 'letter') {
+            if (['b', 'k', 'v', 'l', 'q', 'd'].includes(lowChar)) {
+              groupClass = ' key-group-tone-b2';
+            } else if (['f', 'j', 'z', 's', 'x'].includes(lowChar)) {
+              groupClass = ' key-group-tone-telex';
+            } else if (['t', 'c', 'n', 'p', 'g', 'r', 'h'].includes(lowChar)) {
+              groupClass = ' key-group-cons';
+            } else if (['a', 'e', 'i', 'o', 'u', 'y', 'w'].includes(lowChar)) {
+              groupClass = ' key-group-vowel-letter';
+            }
+          } else if (k.r === 0 && /^[0-5]$/.test(k.char)) {
+            groupClass = ' key-group-tone-vni';
+          }
+
+          keyEl.className = `grid-key ${k.type ? k.type + '-key' : ''} ${k.span ? 'span-' + k.span : ''}${shiftClass}${groupClass}`;
+          keyEl.id = k.id;
+          keyEl.dataset.keyChar = k.char;
+          keyEl.dataset.r = k.r;
+          keyEl.dataset.c = k.c;
+
+          let displayChar = k.char;
+          let displaySub = k.sub || '';
+
+          if (isShifted) {
+            if (k.shift) {
+              displayChar = k.shift;
+              displaySub = k.char;
+            } else if (k.char.length === 1 && !k.type) {
+              displayChar = k.char.toUpperCase();
+              displaySub = k.char;
+            }
+          } else {
+            displayChar = k.char;
+            displaySub = k.sub || k.shift || '';
+          }
+
+          keyEl.innerHTML = `
+            ${k.tl ? `<span class="key-tl">${k.tl}</span>` : ''}
+            <span class="key-char">${displayChar}</span>
+            ${displaySub ? `<span class="key-sub">${displaySub}</span>` : ''}
+            <span class="bloom-badge" id="badge_${k.id}"></span>
+          `;
+
+          setupKeyEvents(keyEl, k);
+          rowEl.appendChild(keyEl);
+        });
+        keyboardWrapper.appendChild(rowEl);
+      });
+
+      requestAnimationFrame(resizeSwipeCanvas);
+    }
+
+    const audioCtx = (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext || window.webkitAudioContext)() : null;
+    function playClickSound(freq = 600, duration = 0.03) {
+      if (!audioCtx) return;
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + duration);
+      } catch (e) {}
+    }
+
+    function getNeighborCoordinates(r, c) {
+      if (r === 0) {
+        return {
+          left:         { r: 0, c: c - 1 },
+          right:        { r: 0, c: c + 1 },
+          bottom_left:  { r: 1, c: c - 1 },
+          bottom:       { r: 1, c: c },
+          bottom_right: { r: 1, c: c + 1 }
+        };
+      }
+      return {
+        top_left:     { r: r - 1, c: c - 1 },
+        top:          { r: r - 1, c: c },
+        top_right:    { r: r - 1, c: c + 1 },
+        left:         { r: r,     c: c - 1 },
+        right:        { r: r,     c: c + 1 },
+        bottom_left:  { r: r + 1, c: c - 1 },
+        bottom:       { r: r + 1, c: c },
+        bottom_right: { r: r + 1, c: c + 1 }
+      };
+    }
+
+    // ========================================================
+    // 8. CƠ CHẾ LƯU 8 HƯỚNG CỐ ĐỊNH & GÁN MÃ MÀU + HÌNH DÁNG
+    // ========================================================
+    function showNeighborBloomFor(keyDef) {
+      clearNeighborBloom();
+      activeRootKey = keyDef;
+
+      const rootEl = document.getElementById(keyDef.id);
+      if (rootEl) rootEl.classList.add('active-root');
+
+      const charKey = keyDef.char.toLowerCase();
+      const config = KEY_NEIGHBORS[charKey];
+      const countDirs = Object.keys(config || {}).length;
+      const neighbors = getNeighborCoordinates(keyDef.r, keyDef.c);
+
+      for (const [dir, coord] of Object.entries(neighbors)) {
+        const neighborDef = MATRIX_MAP[`${coord.r}_${coord.c}`];
+        if (!neighborDef) continue;
+
+        const neighborEl = document.getElementById(neighborDef.id);
+        if (!neighborEl) continue;
+
+        neighborEl.classList.add('neighbor-bloom');
+
+        let rawItem = config ? config[dir] : null;
+        const badgeEl = document.getElementById(`badge_${neighborDef.id}`);
+
+        if (rawItem && rawItem.rhyme) {
+          const meta = analyzeRhymeMeta(rawItem.rhyme);
+          if (badgeEl) {
+            badgeEl.textContent = meta.display;
+            badgeEl.className = `bloom-badge ${meta.colorClass} ${meta.shapeClass}`;
+            badgeEl.style.display = 'block';
+          }
+        } else {
+          if (badgeEl) {
+            badgeEl.style.display = 'none';
+          }
+        }
+      }
+
+      statLastAction.textContent = `Đã lưu ${countDirs} quanh '${keyDef.char}' (Xem màu để chọn bộ Dấu, xem kiểu chữ để biết Base60 Thường/HOA)`;
+    }
+
+    function clearNeighborBloom() {
+      document.querySelectorAll('.active-root').forEach(el => el.classList.remove('active-root'));
+      document.querySelectorAll('.neighbor-bloom').forEach(el => {
+        el.classList.remove('neighbor-bloom', 'neighbor-hover');
+      });
+      document.querySelectorAll('.bloom-badge').forEach(el => {
+        el.textContent = '';
+        el.className = 'bloom-badge';
+        el.style.display = 'none';
+      });
+
+      activeRootKey = null;
+    }
+
+    function getDirectionFromDelta(dx, dy, row) {
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI; // -180 đến 180
+      
+      if (row === 0) {
+        if (angle > -45 && angle <= 45) return 'right';
+        if (angle > 45 && angle <= 75) return 'bottom_right';
+        if (angle > 75 && angle <= 105) return 'bottom';
+        if (angle > 105 && angle <= 135) return 'bottom_left';
+        return 'left';
+      }
+
+      if (angle >= -22.5 && angle < 22.5) return 'right';
+      if (angle >= 22.5 && angle < 67.5) return 'bottom_right';
+      if (angle >= 67.5 && angle < 112.5) return 'bottom';
+      if (angle >= 112.5 && angle < 157.5) return 'bottom_left';
+      if (angle >= -67.5 && angle < -22.5) return 'top_right';
+      if (angle >= -112.5 && angle < -67.5) return 'top';
+      if (angle >= -157.5 && angle < -112.5) return 'top_left';
+      return 'left';
+    }
+
+    // ========================================================
+    // 9. POINTER EVENTS & CONTINUOUS MULTI-KEY GLIDE SWIPE
+    // ========================================================
+    let activePointerId = null;
+    let gestureStartX = 0;
+    let gestureStartY = 0;
+    let gestureKeyDef = null;
+    let currentHoveredDir = null;
+
+    function setupKeyEvents(keyEl, k) {
+      keyEl.addEventListener('pointerdown', (e) => {
+        e.preventDefault();
+        clearTeachingHighlight();
+        activePointerId = e.pointerId;
+        try {
+          keyEl.setPointerCapture(e.pointerId);
+        } catch(err) {}
+
+        if (fadeAnimationId) {
+          cancelAnimationFrame(fadeAnimationId);
+          fadeAnimationId = null;
+        }
+
+        gestureStartX = e.clientX;
+        gestureStartY = e.clientY;
+        gestureKeyDef = k;
+        currentHoveredDir = null;
+
+        // Khởi tạo luồng Glide cử chỉ
+        glidePoints = [{ x: e.clientX, y: e.clientY, time: Date.now() }];
+        glideKeys = [k];
+        glideElements = [keyEl];
+        isMultiKeyGlide = false;
+
+        // Nếu là phím chữ/số thường: LẬP TỨC LƯU 8 HƯỚNG CỐ ĐỊNH!
+        if ((k.char.length === 1 || k.r === 0) && !k.type) {
+          showNeighborBloomFor(k);
+        }
+      });
+
+      keyEl.addEventListener('pointermove', (e) => {
+        if (activePointerId !== e.pointerId || !gestureKeyDef) return;
+        e.preventDefault();
+
+        const dx = e.clientX - gestureStartX;
+        const dy = e.clientY - gestureStartY;
+        const dist = Math.hypot(dx, dy);
+
+        glidePoints.push({ x: e.clientX, y: e.clientY, time: Date.now() });
+
+        // Nếu vuốt quá ngưỡng 20px -> Chuyển sang chế độ Continuous Glide
+        if (dist > 20) {
+          if (!isMultiKeyGlide) {
+            isMultiKeyGlide = true;
+            clearNeighborBloom();
+          }
+          drawGlideCanvas(e.clientX, e.clientY);
+          return;
+        }
+
+        // Xử lý 8 hướng đơn phím (Bloom / Flick thông thường)
+        document.querySelectorAll('.neighbor-hover').forEach(h => h.classList.remove('neighbor-hover'));
+
+        if (dist > 12) {
+          const dir = getDirectionFromDelta(dx, dy, gestureKeyDef.r);
+          currentHoveredDir = dir;
+
+          const neighbors = getNeighborCoordinates(gestureKeyDef.r, gestureKeyDef.c);
+          const coord = neighbors[dir];
+          if (coord) {
+            const neighborDef = MATRIX_MAP[`${coord.r}_${coord.c}`];
+            if (neighborDef) {
+              const nEl = document.getElementById(neighborDef.id);
+              if (nEl) nEl.classList.add('neighbor-hover');
+            }
+          }
+        } else {
+          currentHoveredDir = null;
+        }
+      });
+
+      keyEl.addEventListener('pointerup', (e) => {
+        if (activePointerId !== e.pointerId || !gestureKeyDef) return;
+        e.preventDefault();
+        try {
+          keyEl.releasePointerCapture(e.pointerId);
+        } catch(err) {}
+
+        const dx = e.clientX - gestureStartX;
+        const dy = e.clientY - gestureStartY;
+        const dist = Math.hypot(dx, dy);
+        const currentK = gestureKeyDef;
+
+        glidePoints.push({ x: e.clientX, y: e.clientY, time: Date.now() });
+
+        try {
+          // 1. CỬ CHỈ VUỐT HÌNH HỌC (3 PHÍM HOẶC VUỐT CONG 2 PHÍM VẦN+DẤU)
+          if (isMultiKeyGlide && dist > 20 && glidePoints.length >= 2) {
+            const resolved = resolveSwipeGesture(glidePoints, currentK, composingBuffer);
+            if (resolved && resolved.word) {
+              playClickSound(1050, 0.06);
+              commitWord(resolved.word);
+              statLastAction.textContent = `🚀 ${resolved.desc} ➔ '${resolved.word}' (${resolved.system.toUpperCase()}: ${resolved.code})`;
+
+              // Hiệu ứng flash viền outputBox
+              outputBox.classList.remove('glide-commit-flash');
+              void outputBox.offsetWidth;
+              outputBox.classList.add('glide-commit-flash');
+
+              if (resolved.apexPoint) {
+                drawGlideCanvas(undefined, undefined, 1, resolved.apexPoint);
+              }
+            } else {
+              const endDef = getKeyAtPoint(e.clientX, e.clientY);
+              const endChar = endDef ? endDef.char : '?';
+              statLastAction.textContent = `⚠️ Không tìm thấy từ tương ứng với cử chỉ: [${currentK.char} ➔ ${endChar}]`;
+            }
+            return;
+          }
+
+          // 2. Vuốt sang trái trên nút Backspace ➔ Smart Backspace xóa từ
+          if (currentK.type === 'bksp' && dx < -30) {
+            swipeSmartBackspace();
+            return;
+          }
+
+          // 3. Nếu có cử chỉ vuốt theo 8 hướng đơn phím
+          if (currentHoveredDir) {
+            const config = KEY_NEIGHBORS[currentK.char.toLowerCase()];
+            const item = config ? config[currentHoveredDir] : null;
+
+            if (item && item.rhyme) {
+              const badgeText = item.rhyme;
+              const itemType = item.type;
+
+              if (itemType === 'cons' || ['th', 'ch', 'nh', 'ng', 'gh', 'gi', 'đ', 'kh', 'ph', 'tr', 'qu'].includes(badgeText.toLowerCase())) {
+                handleConsonantClusterSwipe(badgeText);
+              } else if (itemType === 'tone' || ['=', '/', '\\', '?', '~', '.'].includes(badgeText)) {
+                handleToneSwipe(badgeText, currentK);
+              } else if (badgeText.startsWith('-')) {
+                handleRimeSwipe(badgeText);
+              } else {
+                handleKeyTap(badgeText);
+              }
+            } else {
+              handleKeyAction(currentK);
+            }
+          } else {
+            // 4. Chạm nhấc tay tại chỗ (Tap thường)
+            handleKeyAction(currentK);
+          }
+        } catch (err) {
+          console.error('Lỗi khi xử lý pointerup:', err);
+        } finally {
+          document.querySelectorAll('.neighbor-hover').forEach(h => h.classList.remove('neighbor-hover'));
+          clearGlideCanvasFade();
+          if (isMultiKeyGlide) {
+            clearNeighborBloom();
+          }
+          activePointerId = null;
+          gestureKeyDef = null;
+          currentHoveredDir = null;
+        }
+      });
+
+      keyEl.addEventListener('pointercancel', (e) => {
+        document.querySelectorAll('.neighbor-hover').forEach(h => h.classList.remove('neighbor-hover'));
+        clearGlideCanvasFade();
+        activePointerId = null;
+        gestureKeyDef = null;
+        currentHoveredDir = null;
+      });
+    }
+
+    function handleKeyAction(k) {
+      if (k.type === 'bksp') {
+        backspace();
+      } else if (k.type === 'shift') {
+        toggleShift();
+      } else if (k.type === 'action') {
+        if (composingBuffer) {
+          commitWord(composingBuffer);
+        }
+        committedText += '\n';
+        updateDisplay();
+        statLastAction.textContent = 'Enter / Xuống dòng';
+      } else if (k.type === 'space') {
+        if (composingBuffer) {
+          // Tự động chốt gợi ý hàng đầu (Primary suggestion) khi bấm Space!
+          const primaryChip = suggestionChips.querySelector('.sug-chip.primary');
+          if (primaryChip && primaryChip.dataset.word) {
+            window.pickSuggestion(primaryChip.dataset.word);
+            return;
+          }
+          commitWord(composingBuffer);
+        } else {
+          committedText += ' ';
+          updateDisplay();
+        }
+        statLastAction.textContent = 'Space / Đệm khoảng trắng';
+      } else if (k.type === 'mode') {
+        statLastAction.textContent = '❖ Chuyển Tầng Mode (Hex / Con trỏ)';
+      } else if (k.type === 'vowel') {
+        statLastAction.textContent = 'ớ Chuyển Tầng Vowel (Nguyên âm)';
+      } else if (k.char === '‹') {
+        playClickSound(550, 0.03);
+        statLastAction.textContent = '‹ Điều hướng lùi con trỏ';
+      } else if (k.char === '›') {
+        playClickSound(550, 0.03);
+        statLastAction.textContent = '› Điều hướng tiến con trỏ';
+      } else if (k.char === 'Esc' || k.char === '⌵') {
+        toggleKeyboardVisibility();
+      } else {
+        let charToCommit = k.char;
+        if (isShift || isCaps) {
+          if (k.shift) charToCommit = k.shift;
+          else if (k.char.length === 1 && !k.type) charToCommit = k.char.toUpperCase();
+        }
+        handleKeyTap(charToCommit);
+
+        if (isShift && !isCaps) {
+          isShift = false;
+          renderKeyboard();
+        }
+      }
+    }
+
+    function toggleShift() {
+      playClickSound(500, 0.03);
+      if (isCaps) {
+        isCaps = false;
+        isShift = false;
+      } else if (isShift) {
+        isCaps = true;
+      } else {
+        isShift = true;
+      }
+      renderKeyboard();
+    }
+
+    function toggleKeyboardVisibility() {
+      const kw = document.getElementById('keyboardWrapper');
+      if (kw.style.display === 'none') {
+        kw.style.display = 'flex';
+      } else {
+        kw.style.display = 'none';
+      }
+    }
+
+    // Gắn vào window để gọi từ inline HTML
+    window.pickSuggestion = function(word) {
+      clearNeighborBloom();
+      if (lastAutoCommittedWord && composingBuffer === '') {
+        // Thay thế từ vừa nổ Base60 cuối cùng bằng từ mới được chọn từ biến thể!
+        const trimmed = committedText.trimEnd();
+        const lastSpaceIdx = trimmed.lastIndexOf(' ');
+        if (lastSpaceIdx !== -1) {
+          committedText = trimmed.substring(0, lastSpaceIdx + 1) + word + ' ';
+        } else {
+          committedText = word + ' ';
+        }
+        playClickSound(800, 0.04);
+        statLastAction.textContent = `🔄 Đã sửa '${lastAutoCommittedWord}' ➔ '${word}'`;
+        lastAutoCommittedWord = word;
+        updateDisplay();
+        showTeachingHighlightForWord(word);
+        analyzeSuggestions();
+      } else {
+        lastAutoCommittedCode = null;
+        lastAutoCommittedWord = null;
+        commitWord(word);
+      }
+    };
+    window.toggleKeyboardVisibility = toggleKeyboardVisibility;
+
+    // View toggles
+    const appEl = document.getElementById('simulatorApp');
+    const btnMobile = document.getElementById('btnModeMobile');
+    const btnDesktop = document.getElementById('btnModeDesktop');
+    const btnClear = document.getElementById('btnClearText');
+
+    btnMobile.addEventListener('click', () => {
+      btnMobile.classList.add('active');
+      btnDesktop.classList.remove('active');
+      appEl.classList.add('mobile-mode');
+    });
+
+    btnDesktop.addEventListener('click', () => {
+      btnDesktop.classList.add('active');
+      btnMobile.classList.remove('active');
+      appEl.classList.remove('mobile-mode');
+    });
+
+    btnClear.addEventListener('click', () => {
+      committedText = '';
+      composingBuffer = '';
+      clearNeighborBloom();
+      updateDisplay();
+      statLastAction.textContent = 'Đã xóa toàn bộ nội dung';
+    });
+
+    const btnClearMini = document.getElementById('btnClearTextMini');
+    if (btnClearMini) {
+      btnClearMini.addEventListener('click', () => {
+        committedText = '';
+        composingBuffer = '';
+        clearNeighborBloom();
+        updateDisplay();
+        statLastAction.textContent = 'Đã xóa toàn bộ nội dung';
+      });
+    }
+
+    const btnCopyText = document.getElementById('btnCopyText');
+    if (btnCopyText) {
+      btnCopyText.addEventListener('click', async () => {
+        const fullText = (committedText + composingBuffer).trim();
+        if (!fullText) return;
+        try {
+          await navigator.clipboard.writeText(fullText);
+          btnCopyText.textContent = '✅ Đã chép!';
+          setTimeout(() => { btnCopyText.textContent = '📋 Copy'; }, 1500);
+          statLastAction.textContent = `📋 Đã sao chép vào clipboard: "${fullText}"`;
+        } catch(e) {
+          // Fallback if clipboard API is not available
+          const ta = document.createElement('textarea');
+          ta.value = fullText;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          btnCopyText.textContent = '✅ Đã chép!';
+          setTimeout(() => { btnCopyText.textContent = '📋 Copy'; }, 1500);
+          statLastAction.textContent = `📋 Đã sao chép vào clipboard: "${fullText}"`;
+        }
+      });
+    }
+
+    // Khởi tạo
+    renderKeyboard();
+    updateDisplay();
+  </script>
+</body>
+</html>

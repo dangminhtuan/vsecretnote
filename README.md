@@ -51,9 +51,50 @@ npm run build
 *Sản phẩm được phát triển nhằm mục tiêu tối ưu hóa tốc độ nhập liệu và bảo mật thông tin cá nhân bằng ngôn ngữ Tiếng Việt.*
 
 
+## 🌟 BẢNG DẤU BKVLQD (BÁCH KHOA VL QUỐC DÂN - ĐỌC TẮT: BÁCH KHOA)
+> **Bước Đột Phá Bảng Dấu B2: Bộ 6 Phụ Âm Vàng Không Bao Giờ Đứng Cuối Từ**
+
+Trong hệ thống mã hóa Base60 VComp, Bảng Dấu B2 chính thức được chuẩn hóa thành bộ 6 phụ âm độc nhất vô nhị tiếng Việt: **`b, k, v, l, q, d`**.  
+Điểm thiên tài của bộ 6 phụ âm này là: **Tuyệt đối 100% không bao giờ đứng cuối bất kỳ từ tiếng Việt nào**, giúp bộ gõ nhận diện tức thì ý định kết thúc từ/thêm dấu mà không bao giờ gây xung đột nhập liệu hay nhầm lẫn với nguyên âm!
+
+### 💡 Bảng Quy Ước Ký Hiệu & Mẹo Nhớ Đỉnh Cao:
+
+| Dấu Thanh | Ký Hiệu Hình Học | Phím BKVLQD | Khẩu Quyết / Mẹo Nhớ Cực Dễ | Ý Nghĩa Ngữ Âm |
+| :---: | :---: | :---: | :--- | :--- |
+| **Ngang / Bằng** | `=` | **`b`** | **B**ằng / **B**ình thường | Thanh bằng phẳng lặng, giữ nguyên tone |
+| **Sắc** | `/` | **`k`** | **K**ích lên / **K**éo lên | Vuốt xéo lên, kích âm vực bay cao |
+| **Huyền** | `\` | **`v`** | **V**ề / **V**ùi xuống | Vuốt xéo xuống, giọng trầm lắng chìm sâu |
+| **Hỏi** | `?` | **`l`** | **L**ửng lơ | Lên rồi lại xuống, lơ lửng giữa chừng |
+| **Ngã** | `~` | **`q`** | **Q**uăn queo | Uốn lượn gập ghềnh, quằn quại âm vực |
+| **Nặng** | `.` | **`d`** | **D**ưới đáy | Rơi thẳng xuống đáy, đè nặng âm tiết |
+
+---
+
+## 🧭 CẤU TRÚC ĐỊNH HƯỚNG 8 HƯỚNG QUANH 1 PHÍM (KEY ANATOMY)
+Mỗi phím bấm trên bàn phím lưới Grid được tổ chức theo ma trận trực quan **"Liếc Qua Là Hiểu"**:
+
+```
+[ Top-Left ]       [ Top ]       [ Top-Right ]
+Telex (B1)         VNI (B3)      BKVLQD (B2)   <-- Ứng với CHỮ HOA của phím
+-------------------------------------------------------------------------
+[ Left ]           [ Center ]    [ Right ]
+Phụ Âm Ghép        TÂM PHÍM      Dấu Thanh     <-- Trục chức năng
+-------------------------------------------------------------------------
+[ Bottom-Left ]    [ Bottom ]    [ Bottom-Right ]
+Telex (B1)         VNI (B3)      BKVLQD (B2)   <-- Ứng với CHỮ THƯỜNG của phím
+```
+
+- **Tâm phím**: Ký tự gốc (gõ chạm tap thường).
+- **Cánh Trái (Left)**: Phụ âm ghép đặc trưng của phím (VD: phím `t` vuốt trái ra `Th`, phím `c` ra `Ch`, phím `h` ra `Nh`).
+- **Cánh Phải (Right)**: Hướng chốt dấu thanh trực tiếp.
+- **Tầng Trên & Tầng Dưới**: Phân định rạch ròi 3 hệ vần (Telex B1, VNI B3, BKVLQD B2) giữa chữ Thường và chữ Hoa, không bao giờ phải dò tìm!
+
+---
+
 ## 🚀 Sức mạnh của VCOMP (Vietnamese Base60 Compression)
 VCOMP là một bước tiến hóa tối thượng trong việc xử lý và lưu trữ tiếng Việt:
 - **Nén Dữ Liệu Tuyệt Đối:** Mọi từ tiếng Việt được nén thành chính xác 3 ký tự Base60 thuần túy, triệt tiêu hoàn toàn dấu cách. Tiết kiệm hơn 50% dung lượng lưu trữ so với tiếng Việt có dấu.
+- **Tự Động Sinh Biến Thể Hoa/Thường Thông Minh:** Gõ phím thường không cần Shift (VD: `ts` hoặc `tsb`) hệ thống tự động nhận diện và gợi ý trọn bộ tổ hợp `toan [tsb]`, `ton [tSb]`, `thoan [Tsb]`, `thon [TSb]`, chạm 1 chạm để đổi từ tức thì!
 - **Bảo Toàn Hệ Thống:** Không bao giờ lỗi font, lỗi url, lỗi database key nhờ vào tập ký tự Base60 an toàn 100%.
 - **Bảo Mật Nhận Thức:** Hoạt động như một lớp mật mã tự nhiên (Zero-Knowledge) giúp bảo vệ quyền riêng tư tuyệt đối. Con người có thể được huấn luyện để giải mã và đọc hiểu qua hệ sinh thái học tập của VCOMP.
 
