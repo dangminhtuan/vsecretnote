@@ -1285,6 +1285,52 @@
     .key-sub-zone-3kt { color: #f2cc60 !important; font-weight: 700 !important; font-size: 8px !important; }
     .key-sub-zone-4kt { color: #bc8cff !important; font-weight: 700 !important; font-size: 8px !important; }
 
+    /* Hiệu ứng Dải Sáng Liền Khúc (Unified Capsule Glow) khi kích hoạt Bệ Phóng */
+    .launchpad-active-z1 {
+      background: linear-gradient(180deg, rgba(88, 166, 255, 0.42), rgba(88, 166, 255, 0.75)) !important;
+      border-color: #58a6ff !important;
+      box-shadow: 0 0 16px rgba(88, 166, 255, 0.95), inset 0 0 10px rgba(88, 166, 255, 0.5) !important;
+      color: #ffffff !important;
+      transform: translateY(-2px);
+      z-index: 10;
+    }
+    .launchpad-active-z2 {
+      background: linear-gradient(180deg, rgba(242, 204, 96, 0.42), rgba(242, 204, 96, 0.75)) !important;
+      border-color: #f2cc60 !important;
+      box-shadow: 0 0 16px rgba(242, 204, 96, 0.95), inset 0 0 10px rgba(242, 204, 96, 0.5) !important;
+      color: #ffffff !important;
+      transform: translateY(-2px);
+      z-index: 10;
+    }
+    .launchpad-active-z3 {
+      background: linear-gradient(180deg, rgba(188, 140, 255, 0.42), rgba(188, 140, 255, 0.75)) !important;
+      border-color: #bc8cff !important;
+      box-shadow: 0 0 16px rgba(188, 140, 255, 0.95), inset 0 0 10px rgba(188, 140, 255, 0.5) !important;
+      color: #ffffff !important;
+      transform: translateY(-2px);
+      z-index: 10;
+    }
+    /* Hợp nhất viền các phím liền nhau tạo cảm giác nối liền một khối thống nhất */
+    .launchpad-fuse-left {
+      border-top-right-radius: 0 !important;
+      border-bottom-right-radius: 0 !important;
+      border-right: none !important;
+      margin-right: 0 !important;
+    }
+    .launchpad-fuse-mid {
+      border-radius: 0 !important;
+      border-left: none !important;
+      border-right: none !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+    }
+    .launchpad-fuse-right {
+      border-top-left-radius: 0 !important;
+      border-bottom-left-radius: 0 !important;
+      border-left: none !important;
+      margin-left: 0 !important;
+    }
+
     @media (max-width: 600px) {
       body {
         padding: 4px;
@@ -1721,7 +1767,7 @@
         { id: 'k_4_3', char: '‹', shift: '{', sub: '2 KT', type: 'fn', r: 4, c: 3 },
         { id: 'k_4_4', char: 'Space', sub: '3 KT', type: 'space', r: 4, c: 4 },
         { id: 'k_4_5', char: '›', shift: '}', sub: '3 KT', type: 'fn', r: 4, c: 5 },
-        { id: 'k_4_6', char: ',', shift: ';', sub: '4+ KT', type: 'fn', r: 4, c: 6 },
+        { id: 'k_4_6', char: ',', shift: ';', sub: '3 KT', type: 'fn', r: 4, c: 6 },
         { id: 'k_4_7', char: '?', shift: ']', sub: '4+ KT', type: 'fn', r: 4, c: 7 },
         { id: 'k_4_8', char: '+', shift: '}', sub: '4+ KT', type: 'fn', r: 4, c: 8 },
         { id: 'k_4_9', char: '-', shift: '_', sub: '4+ KT', type: 'fn', r: 4, c: 9 },
@@ -2503,7 +2549,7 @@
         const col = startKeyDef.c !== undefined ? startKeyDef.c : 4;
         let launchZone = 2; // default
         if (col <= 3) launchZone = 1;      // Vùng 1 (Trái): 2 Ký tự
-        else if (col <= 5) launchZone = 2; // Vùng 2 (Giữa): 3 Ký tự
+        else if (col <= 6) launchZone = 2; // Vùng 2 (Giữa): 3 Ký tự
         else launchZone = 3;               // Vùng 3 (Phải): 4+ Ký tự
 
         // 1. Lấy toàn bộ phím lướt qua bằng cả 2 kênh: Dense Sampling từ tọa độ + glideKeys
@@ -3875,8 +3921,8 @@
         else if (/^[bkvlqd]$/.test(k.char)) subClass += ' key-sub-b2';
         else if (k.r === 4) {
           if (k.c >= 1 && k.c <= 3) subClass += ' key-sub-zone-2kt';
-          else if (k.c >= 4 && k.c <= 5) subClass += ' key-sub-zone-3kt';
-          else if (k.c >= 6 && k.c <= 10) subClass += ' key-sub-zone-4kt';
+          else if (k.c >= 4 && k.c <= 6) subClass += ' key-sub-zone-3kt';
+          else if (k.c >= 7 && k.c <= 10) subClass += ' key-sub-zone-4kt';
         }
       }
 
@@ -4073,6 +4119,53 @@
       activeRootKey = null;
     }
 
+    let activeLaunchpadZone = 0;
+
+    function highlightLaunchpadZone(zone) {
+      clearLaunchpadZoneHighlight();
+      activeLaunchpadZone = zone;
+      let ids = [];
+      let cls = `launchpad-active-z${zone}`;
+      let zoneName = '';
+      let zoneColor = '';
+
+      if (zone === 1) {
+        ids = ['k_4_1', 'k_4_2', 'k_4_3'];
+        zoneName = '2 KÝ TỰ (đi, có, ra, là, ăn...)';
+        zoneColor = '#58a6ff';
+      } else if (zone === 2) {
+        ids = ['k_4_4', 'k_4_5', 'k_4_6'];
+        zoneName = '3 KÝ TỰ (con, làm, cho, tay, bạn...)';
+        zoneColor = '#f2cc60';
+      } else if (zone === 3) {
+        ids = ['k_4_7', 'k_4_8', 'k_4_9', 'k_4_10'];
+        zoneName = '4+ KÝ TỰ (chúng, toán, người, thời...)';
+        zoneColor = '#bc8cff';
+      }
+
+      ids.forEach((id, idx) => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.add(cls);
+          if (idx === 0) el.classList.add('launchpad-fuse-left');
+          else if (idx === ids.length - 1) el.classList.add('launchpad-fuse-right');
+          else el.classList.add('launchpad-fuse-mid');
+        }
+      });
+
+      if (statLastAction) {
+        statLastAction.innerHTML = `<span style="color:${zoneColor}; font-weight:bold;">🚀 BỆ PHÓNG: ${zoneName}</span>`;
+      }
+    }
+
+    function clearLaunchpadZoneHighlight() {
+      activeLaunchpadZone = 0;
+      document.querySelectorAll('.launchpad-active-z1, .launchpad-active-z2, .launchpad-active-z3, .launchpad-fuse-left, .launchpad-fuse-mid, .launchpad-fuse-right')
+        .forEach(el => {
+          el.classList.remove('launchpad-active-z1', 'launchpad-active-z2', 'launchpad-active-z3', 'launchpad-fuse-left', 'launchpad-fuse-mid', 'launchpad-fuse-right');
+        });
+    }
+
     function getDirectionFromDelta(dx, dy, row) {
       const angle = Math.atan2(dy, dx) * 180 / Math.PI; // -180 đến 180
       
@@ -4171,12 +4264,22 @@
 
         glidePoints.push({ x: e.clientX, y: e.clientY, time: Date.now() });
 
-        // Nếu vuốt quá ngưỡng 20px -> Chuyển sang chế độ Continuous Glide
-        if (dist > 20) {
+        // Nếu vuốt quá ngưỡng 20px hoặc vuốt từ hàng 4 ngược lên -> Chuyển sang chế độ Continuous Glide
+        const isUpwardFromRow4 = (gestureKeyDef.r === 4) && (-dy > 12);
+        if (dist > 20 || isUpwardFromRow4) {
           if (!isMultiKeyGlide) {
             isMultiKeyGlide = true;
             clearNeighborBloom();
           }
+
+          if (gestureKeyDef.r === 4 && !activeLaunchpadZone) {
+            let z = 0;
+            if (gestureKeyDef.c >= 1 && gestureKeyDef.c <= 3) z = 1;
+            else if (gestureKeyDef.c >= 4 && gestureKeyDef.c <= 6) z = 2;
+            else if (gestureKeyDef.c >= 7 && gestureKeyDef.c <= 10) z = 3;
+            if (z > 0) highlightLaunchpadZone(z);
+          }
+
           const curK = getKeyAtPoint(e.clientX, e.clientY);
           if (curK && (glideKeys.length === 0 || glideKeys[glideKeys.length - 1].id !== curK.id)) {
             glideKeys.push(curK);
@@ -4186,6 +4289,16 @@
               glideElements.push(curEl);
             }
           }
+
+          if (activeLaunchpadZone > 0) {
+            const cleanChars = glideKeys.filter(k => k.char && /^[a-z]$/i.test(k.char)).map(k => k.char.toLowerCase());
+            const zNames = { 1: '2 KÝ TỰ', 2: '3 KÝ TỰ', 3: '4+ KÝ TỰ' };
+            const zColors = { 1: '#58a6ff', 2: '#f2cc60', 3: '#bc8cff' };
+            if (statLastAction && cleanChars.length > 0) {
+              statLastAction.innerHTML = `<span style="color:${zColors[activeLaunchpadZone]}; font-weight:bold;">🚀 [BỆ PHÓNG: ${zNames[activeLaunchpadZone]}]</span> ➔ <span style="color:#ffffff; font-weight:bold; font-size:15px;">${cleanChars.join(' ➔ ')}</span>`;
+            }
+          }
+
           drawGlideCanvas(e.clientX, e.clientY);
           return;
         }
@@ -4317,6 +4430,7 @@
         } finally {
           document.querySelectorAll('.neighbor-hover').forEach(h => h.classList.remove('neighbor-hover'));
           clearGlideCanvasFade();
+          clearLaunchpadZoneHighlight();
           if (isMultiKeyGlide) {
             clearNeighborBloom();
           }
@@ -4340,6 +4454,7 @@
         }
         document.querySelectorAll('.neighbor-hover').forEach(h => h.classList.remove('neighbor-hover'));
         clearGlideCanvasFade();
+        clearLaunchpadZoneHighlight();
         activePointerId = null;
         gestureKeyDef = null;
         currentHoveredDir = null;
