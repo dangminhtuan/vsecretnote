@@ -2390,7 +2390,7 @@
       return peaks;
     }
 
-    function resolveSwipeGesture(pathPoints, startKeyDef, currentBuffer = '') {
+    function resolveSwipeGesture(pathPoints, startKeyDef, currentBuffer = '', glideKeys = []) {
       if (!pathPoints || pathPoints.length < 2 || !startKeyDef) return null;
 
       const pStart = pathPoints[0];
@@ -2419,6 +2419,119 @@
 
       // 2. Dò tìm các đỉnh góc ngoặt thực tế bằng toán hình học góc quay
       const corners = findTurningCorners(pathPoints, 22);
+      const chronoCorners = corners.slice().sort((a, b) => a.distFromStart - b.distFromStart);
+
+      // ========================================================
+      // NHÁNH 0: VUỐT TỪ DÀI TIẾNG VIỆT KHÔNG DẤU (>= 4 PHÍM / >= 2 GÓC NGOẶT HOẶC BỆ PHÓNG HÀNG 4)
+      // ========================================================
+      const isRow4Launchpad = (startKeyDef.r === 4) && (pStart.y - pEnd.y > 20 || (endDef.r !== undefined && endDef.r < 4));
+
+      if (isRow4Launchpad || chronoCorners.length >= 2) {
+        const crossedLetters = (glideKeys || [])
+          .map(k => (k && k.char ? k.char.toLowerCase() : ''))
+          .filter(c => c && c.length === 1 && /^[a-z]$/i.test(c));
+
+        const cleanCrossed = [];
+        for (const c of crossedLetters) {
+          if (cleanCrossed.length === 0 || cleanCrossed[cleanCrossed.length - 1] !== c) {
+            cleanCrossed.push(c);
+          }
+        }
+
+        let startChar = '';
+        if (isRow4Launchpad) {
+          startChar = cleanCrossed.length > 0 ? cleanCrossed[0] : '';
+        } else {
+          startChar = (kStart || '').toLowerCase();
+        }
+
+        const endChar = (kEnd || '').toLowerCase();
+
+        const cornerChars = [];
+        for (const c of chronoCorners) {
+          const cDef = getKeyAtPoint(c.point.x, c.point.y);
+          if (cDef && cDef.char && /^[a-z]$/i.test(cDef.char)) {
+            const ch = cDef.char.toLowerCase();
+            if (ch !== startChar && ch !== endChar && (cornerChars.length === 0 || cornerChars[cornerChars.length - 1] !== ch)) {
+              cornerChars.push(ch);
+            }
+          }
+        }
+
+        const anchorLetters = [];
+        if (startChar && /^[a-z]$/i.test(startChar)) anchorLetters.push(startChar);
+        for (const ch of cornerChars) anchorLetters.push(ch);
+        if (endChar && /^[a-z]$/i.test(endChar) && (anchorLetters.length === 0 || anchorLetters[anchorLetters.length - 1] !== endChar)) {
+          anchorLetters.push(endChar);
+        }
+        const anchorCode = anchorLetters.join('').toLowerCase();
+
+        function getLexWords(code) {
+          if (!code) return [];
+          if (typeof VIETNAMESE_LEXICON_MAP !== 'undefined' && VIETNAMESE_LEXICON_MAP[code]) return VIETNAMESE_LEXICON_MAP[code];
+          if (typeof UNACCENTED_MAP !== 'undefined' && UNACCENTED_MAP[code]) return UNACCENTED_MAP[code];
+          return [];
+        }
+
+        let matchedWord = null;
+        let matchedCode = '';
+
+        // 1. Thử khớp trực tiếp mã các đỉnh
+        if (anchorCode.length >= 3) {
+          const directWords = getLexWords(anchorCode);
+          if (directWords.length > 0) {
+            matchedWord = typeof directWords[0] === 'string' ? directWords[0] : directWords[0].word;
+            matchedCode = anchorCode;
+          }
+        }
+
+        // 2. Thử quét subsequence trong từ điển
+        if (!matchedWord && startChar && endChar && cleanCrossed.length >= 3) {
+          let bestCandidate = null;
+          let bestLen = 0;
+          const allLexKeys = typeof VIETNAMESE_LEXICON_MAP !== 'undefined' ? Object.keys(VIETNAMESE_LEXICON_MAP) : [];
+          for (const wordKey of allLexKeys) {
+            if (wordKey.length < 3 || wordKey.length > cleanCrossed.length) continue;
+            if (!wordKey.startsWith(startChar) || !wordKey.endsWith(endChar)) continue;
+
+            let cIdx = 0;
+            for (let i = 0; i < wordKey.length && cIdx < cornerChars.length; i++) {
+              if (wordKey[i] === cornerChars[cIdx]) cIdx++;
+            }
+            if (cIdx < cornerChars.length) continue;
+
+            let kIdx = 0;
+            for (let i = 0; i < cleanCrossed.length && kIdx < wordKey.length; i++) {
+              if (cleanCrossed[i] === wordKey[kIdx]) kIdx++;
+            }
+            if (kIdx === wordKey.length) {
+              if (wordKey.length > bestLen) {
+                bestLen = wordKey.length;
+                bestCandidate = wordKey;
+              }
+            }
+          }
+
+          if (bestCandidate) {
+            const candWords = getLexWords(bestCandidate);
+            if (candWords.length > 0) {
+              matchedWord = typeof candWords[0] === 'string' ? candWords[0] : candWords[0].word;
+              matchedCode = bestCandidate;
+            }
+          }
+        }
+
+        if (matchedWord) {
+          return {
+            word: matchedWord,
+            system: 'lexicon',
+            code: matchedCode,
+            gestureType: 'multi_corner',
+            keys: anchorLetters,
+            desc: `Vuốt từ (${isRow4Launchpad ? 'Bệ phóng Hàng 4' : `${chronoCorners.length} góc ngoặt`}): [${matchedCode}] ➔ '${matchedWord}'`
+          };
+        }
+      }
 
       // NHÁNH 1: 3 KÝ TỰ (Bẻ góc: Phụ âm ➔ Vần ➔ Dấu)
       if (corners.length > 0) {
@@ -3960,22 +4073,20 @@
         try {
           // 1. CỬ CHỈ VUỐT HÌNH HỌC (3 PHÍM HOẶC VUỐT CONG 2 PHÍM VẦN+DẤU)
           if (isMultiKeyGlide && dist > 20 && glidePoints.length >= 2) {
-            let resolved = resolveSwipeGesture(glidePoints, currentK, composingBuffer);
-            if (!resolved || !resolved.word) {
-              const letterChars = glideKeys.map(k => k.char).filter(c => c && c.length === 1 && /^[a-zA-Z]$/.test(c)).join('').toLowerCase();
-              if (letterChars.length >= 4 && VIETNAMESE_LEXICON_MAP[letterChars]) {
-                const words = VIETNAMESE_LEXICON_MAP[letterChars];
-                if (words && words.length > 0) {
-                  const bestWord = typeof words[0] === 'string' ? words[0] : words[0].word;
-                  resolved = { word: bestWord, desc: 'Lướt từ tiếng Việt', system: 'lexicon', code: letterChars };
-                }
-              }
-            }
+            let resolved = resolveSwipeGesture(glidePoints, currentK, composingBuffer, glideKeys);
 
             if (resolved && resolved.word) {
               playClickSound(1050, 0.06);
               commitWord(resolved.word);
               statLastAction.textContent = `🚀 ${resolved.desc} ➔ '${resolved.word}' (${resolved.system.toUpperCase()}: ${resolved.code})`;
+
+              if (resolved.code && typeof VIETNAMESE_LEXICON_MAP !== 'undefined') {
+                const variants = VIETNAMESE_LEXICON_MAP[resolved.code] || [];
+                if (variants.length > 0) {
+                  lastAutoCommittedWord = resolved.word;
+                  updateSuggestionChips(resolved.code);
+                }
+              }
 
               // Hiệu ứng flash viền outputBox
               outputBox.classList.remove('glide-commit-flash');
