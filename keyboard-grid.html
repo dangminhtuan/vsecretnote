@@ -849,6 +849,40 @@
       font-family: var(--font-mono);
       pointer-events: none;
     }
+    .key-sub.key-sub-tone {
+      color: #f0883e !important;
+      font-weight: 700;
+    }
+    .key-sub.key-sub-cons {
+      color: #bc8cff !important;
+      font-weight: 700;
+    }
+    .key-sub.key-sub-b2 {
+      color: #f2cc60 !important;
+      font-weight: 700;
+    }
+    .key-sub.key-sub-b4 {
+      color: #7ee787 !important;
+      font-weight: 700;
+    }
+    .key-sub.key-sub-b5 {
+      color: #f2cc60 !important;
+      font-weight: 700;
+    }
+    .key-sub.key-sub-b6 {
+      color: #bc8cff !important;
+      font-weight: 700;
+    }
+    .grid-key.neighbor-bloom[data-r="0"] .key-char {
+      position: absolute;
+      bottom: 2px;
+      left: 3px;
+      font-size: 8.5px;
+      font-weight: 700;
+      color: #e6edf3;
+      z-index: 12;
+      line-height: 1;
+    }
 
     /* Key Variants */
     .flank-key {
@@ -1562,23 +1596,23 @@
     const GRID_ROWS_NORMAL = [
       // HÀNG 0: [ : ] + 1..0 (10 phím số) + [ 000 ]
       [
-        { id: 'k_0_0', char: ':', shift: '[', sub: '[', type: 'flank', r: 0, c: 0 },
-        { id: 'k_0_1', char: '1', shift: '!', sub: '!', tl: 'yê', r: 0, c: 1 },
-        { id: 'k_0_2', char: '2', shift: '@', sub: '@', tl: 'oat', r: 0, c: 2 },
-        { id: 'k_0_3', char: '3', shift: '#', sub: '#', tl: 'ê', r: 0, c: 3 },
-        { id: 'k_0_4', char: '4', shift: '$', sub: '$', tl: 'ươu', r: 0, c: 4 },
-        { id: 'k_0_5', char: '5', shift: '%', sub: '%', tl: 'âu', r: 0, c: 5 },
-        { id: 'k_0_6', char: '6', shift: '^', sub: '^', tl: 'ươ', r: 0, c: 6 },
-        { id: 'k_0_7', char: '7', shift: '&', sub: '&', tl: 'oai', r: 0, c: 7 },
-        { id: 'k_0_8', char: '8', shift: '*', sub: '*', tl: 'oă', r: 0, c: 8 },
-        { id: 'k_0_9', char: '9', shift: '(', sub: '(', tl: 'ây', r: 0, c: 9 },
-        { id: 'k_0_10', char: '0', shift: ')', sub: ')', tl: 'ô', r: 0, c: 10 },
+        { id: 'k_0_0', char: ':', shift: '[', sub: '°', type: 'flank', r: 0, c: 0 },
+        { id: 'k_0_1', char: '1', shift: '!', sub: 'sắc', tl: 'yê', r: 0, c: 1 },
+        { id: 'k_0_2', char: '2', shift: '@', sub: 'huyền', tl: 'oat', r: 0, c: 2 },
+        { id: 'k_0_3', char: '3', shift: '#', sub: 'hỏi', tl: 'ê', r: 0, c: 3 },
+        { id: 'k_0_4', char: '4', shift: '$', sub: 'ngã', tl: 'ươu', r: 0, c: 4 },
+        { id: 'k_0_5', char: '5', shift: '%', sub: 'nặng', tl: 'âu', r: 0, c: 5 },
+        { id: 'k_0_6', char: '6', shift: '^', sub: 'th', tl: 'ươ', r: 0, c: 6 },
+        { id: 'k_0_7', char: '7', shift: '&', sub: 'ch', tl: 'oai', r: 0, c: 7 },
+        { id: 'k_0_8', char: '8', shift: '*', sub: 'tr', tl: 'oă', r: 0, c: 8 },
+        { id: 'k_0_9', char: '9', shift: '(', sub: 'nh', tl: 'ây', r: 0, c: 9 },
+        { id: 'k_0_10', char: '0', shift: ')', sub: 'ng', tl: 'ô', r: 0, c: 10 },
         { id: 'k_0_11', char: '000', shift: '₫', sub: '₫', type: 'flank', r: 0, c: 11 }
       ],
-      // HÀNG 1: [ ❖ Mode ] + q w e r t y u i o p + [ ⌫ Bksp ]
+      // HÀNG 1: [ 🔢 Sym ] + q w e r t y u i o p + [ ⌫ Bksp ]
       [
-        { id: 'k_1_0', char: '❖', sub: 'Mode', type: 'mode', r: 1, c: 0 },
-        { id: 'k_1_1', char: 'q', shift: 'Q', tl: 'Qu', r: 1, c: 1 },
+        { id: 'k_1_0', char: '🔢', sub: 'Sym', type: 'fn', r: 1, c: 0 },
+        { id: 'k_1_1', char: 'q', shift: 'Q', tl: 'Qu', sub: 'ngã', r: 1, c: 1 },
         { id: 'k_1_2', char: 'w', shift: 'W', tl: 'ư', r: 1, c: 2 },
         { id: 'k_1_3', char: 'e', shift: 'E', tl: 'êu', r: 1, c: 3 },
         { id: 'k_1_4', char: 'r', shift: 'R', tl: 'Tr', r: 1, c: 4 },
@@ -1595,13 +1629,13 @@
         { id: 'k_2_0', char: 'ớ', sub: 'Vowel', type: 'vowel', r: 2, c: 0 },
         { id: 'k_2_1', char: 'a', shift: 'A', tl: 'a', r: 2, c: 1 },
         { id: 'k_2_2', char: 's', shift: 'S', tl: 'ương', r: 2, c: 2 },
-        { id: 'k_2_3', char: 'd', shift: 'D', tl: 'đ', r: 2, c: 3 },
+        { id: 'k_2_3', char: 'd', shift: 'D', tl: 'đ', sub: 'nặng', r: 2, c: 3 },
         { id: 'k_2_4', char: 'f', shift: 'F', tl: 'ươn', r: 2, c: 4 },
         { id: 'k_2_5', char: 'g', shift: 'G', tl: 'Gh', r: 2, c: 5 },
         { id: 'k_2_6', char: 'h', shift: 'H', tl: 'Nh', r: 2, c: 6 },
         { id: 'k_2_7', char: 'j', shift: 'J', tl: 'eo', r: 2, c: 7 },
-        { id: 'k_2_8', char: 'k', shift: 'K', tl: 'Kh', r: 2, c: 8 },
-        { id: 'k_2_9', char: 'l', shift: 'L', tl: 'oi', r: 2, c: 9 },
+        { id: 'k_2_8', char: 'k', shift: 'K', tl: 'Kh', sub: 'sắc', r: 2, c: 8 },
+        { id: 'k_2_9', char: 'l', shift: 'L', tl: 'oi', sub: 'hỏi', r: 2, c: 9 },
         { id: 'k_2_10', char: ';', shift: '|', sub: '|', type: 'fn', r: 2, c: 10 },
         { id: 'k_2_11', char: '🔍', sub: 'Soi', type: 'flank', r: 2, c: 11 }
       ],
@@ -1612,17 +1646,17 @@
         { id: 'k_3_2', char: 'z', shift: 'Z', tl: 'ưa', r: 3, c: 2 },
         { id: 'k_3_3', char: 'x', shift: 'X', tl: 'ơi', r: 3, c: 3 },
         { id: 'k_3_4', char: 'c', shift: 'C', tl: 'Ch', r: 3, c: 4 },
-        { id: 'k_3_5', char: 'v', shift: 'V', tl: 'ia', r: 3, c: 5 },
-        { id: 'k_3_6', char: 'b', shift: 'B', tl: 'uy', r: 3, c: 6 },
+        { id: 'k_3_5', char: 'v', shift: 'V', tl: 'ia', sub: 'huyền', r: 3, c: 5 },
+        { id: 'k_3_6', char: 'b', shift: 'B', tl: 'uy', sub: 'ngang', r: 3, c: 6 },
         { id: 'k_3_7', char: 'n', shift: 'N', tl: 'Ng', r: 3, c: 7 },
         { id: 'k_3_8', char: 'm', shift: 'M', tl: 'uôi', r: 3, c: 8 },
         { id: 'k_3_9', char: ',', shift: '…', sub: '…', type: 'fn', r: 3, c: 9 },
         { id: 'k_3_10', char: '.', shift: '\'', sub: '\'', type: 'fn', r: 3, c: 10 },
         { id: 'k_3_11', char: '↵', sub: 'Go', type: 'action', r: 3, c: 11 }
       ],
-      // HÀNG 4: [ ?123 ] [ ( ] [ ) ] [ ‹ ] [ Space ] [ › ] [ , ] [ ? ] [ + ] [ - ] [ " ] [ ↵ ]
+      // HÀNG 4: [ 📱 1-Tay ] [ ( ] [ ) ] [ ‹ ] [ Space ] [ › ] [ , ] [ ? ] [ + ] [ - ] [ " ] [ ↵ ]
       [
-        { id: 'k_4_0', char: '?123', sub: 'Sym', type: 'fn', r: 4, c: 0 },
+        { id: 'k_4_0', char: '📱', sub: '1-Tay', type: 'mode', r: 4, c: 0 },
         { id: 'k_4_1', char: '(', shift: '<', sub: '<', type: 'fn', r: 4, c: 1 },
         { id: 'k_4_2', char: ')', shift: '>', sub: '>', type: 'fn', r: 4, c: 2 },
         { id: 'k_4_3', char: '‹', shift: '{', sub: 'Lùi', type: 'fn', r: 4, c: 3 },
@@ -1688,27 +1722,27 @@
         { id: 'f_0_3', char: '>', shift: '}', sub: '}', type: 'fn', r: 0, c: 11 }
       ],
       [
-        { id: 'f_1_0', char: ';', shift: '|', sub: '|', type: 'fn', r: 1, c: 8 },
+        { id: 'f_1_0', char: '⌫', sub: 'Del', type: 'bksp', r: 1, c: 8 },
         { id: 'f_1_1', char: ':', shift: '[', sub: '[', type: 'fn', r: 1, c: 9 },
-        { id: 'f_1_2', char: '"', shift: '`', sub: '`', type: 'fn', r: 1, c: 10 },
-        { id: 'f_1_3', char: '⌫', sub: 'Del', type: 'bksp', r: 1, c: 11 }
+        { id: 'f_1_2', char: ';', shift: '|', sub: '|', type: 'fn', r: 1, c: 10 },
+        { id: 'f_1_3', char: '"', shift: '`', sub: '`', type: 'fn', r: 1, c: 11 }
       ],
       [
-        { id: 'f_2_0', char: '(', shift: '<', sub: '<', type: 'fn', r: 2, c: 8 },
-        { id: 'f_2_1', char: ')', shift: '>', sub: '>', type: 'fn', r: 2, c: 9 },
-        { id: 'f_2_2', char: '/', shift: '?', sub: '?', type: 'fn', r: 2, c: 10 },
-        { id: 'f_2_3', char: '🔍', sub: 'Soi', type: 'flank', r: 2, c: 11 }
+        { id: 'f_2_0', char: '.', shift: '\'', sub: '\'', type: 'fn', r: 2, c: 8 },
+        { id: 'f_2_1', char: ',', shift: '…', sub: '…', type: 'fn', r: 2, c: 9 },
+        { id: 'f_2_2', char: '(', shift: '<', sub: '<', type: 'fn', r: 2, c: 10 },
+        { id: 'f_2_3', char: ')', shift: '>', sub: '>', type: 'fn', r: 2, c: 11 }
       ],
       [
-        { id: 'f_3_0', char: '⇧', sub: 'Shift', type: 'shift', r: 3, c: 8 },
-        { id: 'f_3_1', char: ',', shift: '…', sub: '…', type: 'fn', r: 3, c: 9 },
-        { id: 'f_3_2', char: '.', shift: '\'', sub: '\'', type: 'fn', r: 3, c: 10 },
-        { id: 'f_3_3', char: '↵', sub: 'Go', type: 'action', r: 3, c: 11 }
+        { id: 'f_3_0', char: '↵', sub: 'Go', type: 'action', r: 3, c: 8 },
+        { id: 'f_3_1', char: '⇧', sub: 'Shift', type: 'shift', r: 3, c: 9 },
+        { id: 'f_3_2', char: '/', shift: '?', sub: '?', type: 'fn', r: 3, c: 10 },
+        { id: 'f_3_3', char: '🔍', sub: 'Soi', type: 'flank', r: 3, c: 11 }
       ],
       [
-        { id: 'f_4_0', char: '?123', sub: 'Sym', type: 'fn', r: 4, c: 8 },
-        { id: 'f_4_1', char: 'Space', sub: 'VN', type: 'space', span: 2, r: 4, c: 9 },
-        { id: 'f_4_3', char: '❖', sub: 'Mode', type: 'mode', r: 4, c: 11 }
+        { id: 'f_4_1', char: 'Space', sub: 'VN', type: 'space', span: 2, r: 4, c: 8 },
+        { id: 'f_4_2', char: '?', shift: '!', sub: '!', type: 'fn', r: 4, c: 10 },
+        { id: 'f_4_3', char: '📴', sub: '1-Tay', type: 'mode', r: 4, c: 11 }
       ]
     ];
 
@@ -1777,27 +1811,27 @@
         { id: 'fr_0_3', char: '>', shift: '}', sub: '}', type: 'fn', r: 0, c: 3 }
       ],
       [
-        { id: 'fr_1_0', char: '⌫', sub: 'Del', type: 'bksp', r: 1, c: 0 },
-        { id: 'fr_1_1', char: '"', shift: '`', sub: '`', type: 'fn', r: 1, c: 1 },
+        { id: 'fr_1_0', char: '"', shift: '`', sub: '`', type: 'fn', r: 1, c: 0 },
+        { id: 'fr_1_1', char: ';', shift: '|', sub: '|', type: 'fn', r: 1, c: 1 },
         { id: 'fr_1_2', char: ':', shift: '[', sub: '[', type: 'fn', r: 1, c: 2 },
-        { id: 'fr_1_3', char: ';', shift: '|', sub: '|', type: 'fn', r: 1, c: 3 }
+        { id: 'fr_1_3', char: '⌫', sub: 'Del', type: 'bksp', r: 1, c: 3 }
       ],
       [
-        { id: 'fr_2_0', char: '🔍', sub: 'Soi', type: 'flank', r: 2, c: 0 },
-        { id: 'fr_2_1', char: '/', shift: '?', sub: '?', type: 'fn', r: 2, c: 1 },
-        { id: 'fr_2_2', char: '(', shift: '<', sub: '<', type: 'fn', r: 2, c: 2 },
-        { id: 'fr_2_3', char: ')', shift: '>', sub: '>', type: 'fn', r: 2, c: 3 }
+        { id: 'fr_2_0', char: ')', shift: '>', sub: '>', type: 'fn', r: 2, c: 0 },
+        { id: 'fr_2_1', char: '(', shift: '<', sub: '<', type: 'fn', r: 2, c: 1 },
+        { id: 'fr_2_2', char: ',', shift: '…', sub: '…', type: 'fn', r: 2, c: 2 },
+        { id: 'fr_2_3', char: '.', shift: '\'', sub: '\'', type: 'fn', r: 2, c: 3 }
       ],
       [
-        { id: 'fr_3_0', char: '↵', sub: 'Go', type: 'action', r: 3, c: 0 },
-        { id: 'fr_3_1', char: '.', shift: '\'', sub: '\'', type: 'fn', r: 3, c: 1 },
-        { id: 'fr_3_2', char: ',', shift: '…', sub: '…', type: 'fn', r: 3, c: 2 },
-        { id: 'fr_3_3', char: '⇧', sub: 'Shift', type: 'shift', r: 3, c: 3 }
+        { id: 'fr_3_0', char: '🔍', sub: 'Soi', type: 'flank', r: 3, c: 0 },
+        { id: 'fr_3_1', char: '/', shift: '?', sub: '?', type: 'fn', r: 3, c: 1 },
+        { id: 'fr_3_2', char: '⇧', sub: 'Shift', type: 'shift', r: 3, c: 2 },
+        { id: 'fr_3_3', char: '↵', sub: 'Go', type: 'action', r: 3, c: 3 }
       ],
       [
-        { id: 'fr_4_0', char: '❖', sub: 'Mode', type: 'mode', r: 4, c: 0 },
-        { id: 'fr_4_1', char: 'Space', sub: 'VN', type: 'space', span: 2, r: 4, c: 1 },
-        { id: 'fr_4_3', char: '?123', sub: 'Sym', type: 'fn', r: 4, c: 3 }
+        { id: 'fr_4_0', char: '📴', sub: '1-Tay', type: 'mode', r: 4, c: 0 },
+        { id: 'fr_4_1', char: '?', shift: '!', sub: '!', type: 'fn', r: 4, c: 1 },
+        { id: 'fr_4_2', char: 'Space', sub: 'VN', type: 'space', span: 2, r: 4, c: 2 }
       ]
     ];
 
@@ -1932,11 +1966,11 @@
     // ========================================================
     const CONS_MAP_A1 = {
       '': 'z',     // Không phụ âm đầu
-      'th': '1',   // Phụ âm kép số 1..5
-      'ch': '2',
-      'tr': '3',
-      'nh': '4',
-      'ng': '5',
+      'th': '6',   // Phụ âm kép số 6..0 thường, 1..5 HOA
+      'ch': '7',
+      'tr': '8',
+      'nh': '9',
+      'ng': '0',
       'ph': 'f',   // Phụ âm chữ
       'gi': 'j',
       'đ': 'w',
@@ -1948,7 +1982,9 @@
       'b': 'b', 'c': 'c', 'g': 'g', 'h': 'h', 'k': 'k', 'l': 'l', 'm': 'm', 'n': 'n', 'p': 'p', 'r': 'r', 's': 's', 't': 't', 'v': 'v', 'x': 'x'
     };
 
-    const REV_CONS_A1 = {};
+    const REV_CONS_A1 = {
+      '1': 'th', '2': 'ch', '3': 'tr', '4': 'nh', '5': 'ng'
+    };
     for (const [k, v] of Object.entries(CONS_MAP_A1)) {
       REV_CONS_A1[v] = k;
     }
@@ -1963,8 +1999,25 @@
 
     function encodeA1(word) {
       if (!word) return null;
+      const isAllUpper = word.length > 1 && word === word.toUpperCase() && /[A-ZÀ-ỸĐ]/.test(word);
+      const isFirstUpper = /^[A-ZÀ-ỸĐ]/.test(word);
+
       const { consonant, rhyme, tone } = extractPhonetics(word);
-      let c1 = CONS_MAP_A1[consonant] || (consonant ? consonant[0] : 'z');
+      let c1 = '';
+      if (['th', 'ch', 'tr', 'nh', 'ng'].includes(consonant)) {
+        const digMap = {
+          'th': isAllUpper || isFirstUpper ? '1' : '6',
+          'ch': isAllUpper || isFirstUpper ? '2' : '7',
+          'tr': isAllUpper || isFirstUpper ? '3' : '8',
+          'nh': isAllUpper || isFirstUpper ? '4' : '9',
+          'ng': isAllUpper || isFirstUpper ? '5' : '0'
+        };
+        c1 = digMap[consonant];
+      } else {
+        const base = CONS_MAP_A1[consonant] || (consonant ? consonant[0] : 'z');
+        c1 = (isAllUpper || isFirstUpper) ? base.toUpperCase() : base;
+      }
+
       let rIdx = RHYMES_BASE.indexOf(rhyme);
       let table = 1;
       if (rIdx === -1) { rIdx = RHYMES_EXTRA_1.indexOf(rhyme); table = 2; }
@@ -1973,7 +2026,7 @@
 
       const b60Char = BASE60_MAPPING[rIdx];
       const isUpper = /^[A-Z]$/.test(b60Char);
-      const c2 = b60Char.toLowerCase();
+      let c2 = b60Char.toLowerCase();
       let c3 = '';
       if (!isUpper) {
         if (table === 1) c3 = TONES_B1[tone];
@@ -1984,36 +2037,62 @@
         else if (table === 2) c3 = TONES_B5[tone];
         else c3 = TONES_B6[tone];
       }
+      if (isAllUpper) {
+        c2 = c2.toUpperCase();
+        c3 = c3.toUpperCase();
+      }
       return { a1: `${c1}${c2}${c3}`, c1, c2, c3, isUpper, table, tone };
     }
 
     function decodeA1(code) {
-      if (!code || code.length < 2) return null;
-      let c1, c2, c3;
-      if (code.length === 2) {
-        c1 = 'z';
-        c2 = code[0].toLowerCase();
-        c3 = code[1];
-      } else {
-        c1 = code[0].toLowerCase();
-        c2 = code[1].toLowerCase();
-        c3 = code[2];
-      }
-      const cons = REV_CONS_A1[c1];
-      if (cons === undefined) return null;
+      if (!code || code.length < 2 || code.length > 3) return null;
+      const isTwoChar = (code.length === 2);
+      const c1Raw = isTwoChar ? 'z' : code[0];
+      const c2Raw = isTwoChar ? code[0] : code[1];
+      const c3Raw = isTwoChar ? code[1] : code[2];
 
+      let cons = '';
+      let isCap = false;
+      if (c1Raw === '1') { cons = 'th'; isCap = true; }
+      else if (c1Raw === '2') { cons = 'ch'; isCap = true; }
+      else if (c1Raw === '3') { cons = 'tr'; isCap = true; }
+      else if (c1Raw === '4') { cons = 'nh'; isCap = true; }
+      else if (c1Raw === '5') { cons = 'ng'; isCap = true; }
+      else if (c1Raw === '6') { cons = 'th'; isCap = false; }
+      else if (c1Raw === '7') { cons = 'ch'; isCap = false; }
+      else if (c1Raw === '8') { cons = 'tr'; isCap = false; }
+      else if (c1Raw === '9') { cons = 'nh'; isCap = false; }
+      else if (c1Raw === '0') { cons = 'ng'; isCap = false; }
+      else {
+        const low = c1Raw.toLowerCase();
+        cons = REV_CONS_A1[low];
+        if (cons === undefined) return null;
+        isCap = isTwoChar ? /^[A-Z]$/.test(c2Raw) : /^[A-Z]$/.test(c1Raw);
+      }
+
+      let isAllUpper = false;
+      if (isTwoChar) {
+        isAllUpper = /^[A-Z]$/.test(c2Raw) && /^[A-Z]$/.test(c3Raw);
+      } else if (/^[1-5]$/.test(c1Raw)) {
+        isAllUpper = /^[A-Z]$/.test(c2Raw) && /^[A-Z]$/.test(c3Raw);
+      } else {
+        isAllUpper = /^[A-Z]$/.test(c1Raw) && /^[A-Z]$/.test(c2Raw) && /^[A-Z]$/.test(c3Raw);
+      }
+
+      const c3Clean = c3Raw.toLowerCase();
       let tone = -1;
       let table = 1;
       let isUpper = false;
-      if (TONES_B1.includes(c3)) { tone = TONES_B1.indexOf(c3); table = 1; isUpper = false; }
-      else if (TONES_B2.includes(c3)) { tone = TONES_B2.indexOf(c3); table = 2; isUpper = false; }
-      else if (TONES_B3.includes(c3)) { tone = TONES_B3.indexOf(c3); table = 3; isUpper = false; }
-      else if (TONES_B4.includes(c3)) { tone = TONES_B4.indexOf(c3); table = 1; isUpper = true; }
-      else if (TONES_B5.includes(c3)) { tone = TONES_B5.indexOf(c3); table = 2; isUpper = true; }
-      else if (TONES_B6.includes(c3)) { tone = TONES_B6.indexOf(c3); table = 3; isUpper = true; }
+      if (TONES_B1.includes(c3Clean)) { tone = TONES_B1.indexOf(c3Clean); table = 1; isUpper = false; }
+      else if (TONES_B2.includes(c3Clean)) { tone = TONES_B2.indexOf(c3Clean); table = 2; isUpper = false; }
+      else if (TONES_B3.includes(c3Clean)) { tone = TONES_B3.indexOf(c3Clean); table = 3; isUpper = false; }
+      else if (TONES_B4.includes(c3Clean)) { tone = TONES_B4.indexOf(c3Clean); table = 1; isUpper = true; }
+      else if (TONES_B5.includes(c3Clean)) { tone = TONES_B5.indexOf(c3Clean); table = 2; isUpper = true; }
+      else if (TONES_B6.includes(c3Clean)) { tone = TONES_B6.indexOf(c3Clean); table = 3; isUpper = true; }
       if (tone === -1) return null;
 
-      const b60Char = isUpper ? c2.toUpperCase() : c2.toLowerCase();
+      const c2Clean = c2Raw.toLowerCase();
+      const b60Char = isUpper ? c2Clean.toUpperCase() : c2Clean;
       const rIdx = BASE60_MAPPING.indexOf(b60Char);
       if (rIdx === -1) return null;
 
@@ -2030,7 +2109,10 @@
       }
 
       const tonedRime = applyTone(rime, tone);
-      return prefix + tonedRime;
+      const rawWord = prefix + tonedRime;
+      if (isAllUpper) return rawWord.toUpperCase();
+      if (isCap) return rawWord.charAt(0).toUpperCase() + rawWord.slice(1);
+      return rawWord;
     }
 
     function isValidVietnameseWord(word) {
@@ -2043,7 +2125,7 @@
     }
 
     function decodeVV1(code) {
-      if (!code || code.length < 2) return null;
+      if (!code || code.length !== 3) return null;
       try {
         const time = base60ToTime(code);
         if (time && time.length === 6 && !time.includes('?')) {
@@ -2575,8 +2657,36 @@
         }
       }
 
-      // 2. TRƯỜNG HỢP BUFFER TRỐNG: Hiển thị các từ mẫu tiêu biểu kèm mã vV1, a1 (20 từ)
+      // 2. TRƯỜNG HỢP BUFFER TRỐNG:
       if (!target) {
+        // Soi từ gần nhất vừa gõ xong (vd: 'phải' -> hiện ngay 'phai', 'phái', 'phại' để sửa đổi 1 chạm)
+        const trimmed = committedText.trimEnd();
+        const lastWord = trimmed ? trimmed.split(/\s+/).pop() : '';
+        if (lastWord && isValidVietnameseWord(lastWord)) {
+          const cleanLast = lastWord.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+          const variants = [];
+          if (cleanLast && cleanLast !== lastWord.toLowerCase()) variants.push(cleanLast);
+          const related = VIETNAMESE_LEXICON_MAP[cleanLast] || [];
+          related.forEach(w => {
+            if (w.toLowerCase() !== lastWord.toLowerCase() && !variants.includes(w)) variants.push(w);
+          });
+          if (variants.length > 0) {
+            lastAutoCommittedWord = lastWord;
+            const isUpper = /^[A-ZÀ-Ỹ]/.test(lastWord);
+            const candidates = variants.map((w, idx) => {
+              const displayWord = isUpper ? (w.charAt(0).toUpperCase() + w.slice(1)) : w;
+              return {
+                word: displayWord,
+                codesHtml: renderChipCodesHtml(getWordCodes(displayWord)),
+                isPrimary: idx === 0,
+                title: `Bấm để đổi '${lastWord}' thành '${displayWord}'`
+              };
+            });
+            renderCandidateChips(candidates);
+            return;
+          }
+        }
+
         const defaultWords = [
           'mong', 'thết', 'chàng', 'toán', 'đi', 'việt', 'người', 'thương',
           'bạn', 'mới', 'tiền', 'biết', 'làm', 'cho', 'sẽ', 'như', 'được', 'yêu', 'năm', 'giờ'
@@ -2636,6 +2746,12 @@
         }
       });
 
+      // Đảm bảo nếu từ target đã có dấu (như "phải"), bản không dấu ("phai") luôn xuất hiện ngay bên cạnh để người dùng sửa đổi 1 chạm
+      const cleanTarget = target.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      if (cleanTarget && cleanTarget !== target && !seenWords.has(cleanTarget)) {
+        combined.splice(combined.length > 0 ? 1 : 0, 0, cleanTarget);
+      }
+
       // 4. NẾU KHÔNG CÓ BẤT KỲ GỢI Ý NÀO: Hiển thị từ thô đang gõ
       if (combined.length === 0) {
         renderCandidateChips([{
@@ -2647,8 +2763,26 @@
         return;
       }
 
-      // Hiển thị danh sách gợi ý với định dạng siêu gọn: từ + mã vV1 + mã a1
-      const candidates = combined.map((w, idx) => ({
+      // Hiển thị danh sách gợi ý với hỗ trợ song hành HOA & THƯỜNG nếu Shift đang bật
+      const isShifted = isShift || isCaps;
+      let finalWords = [];
+      if (isShifted) {
+        combined.forEach((w, idx) => {
+          const upper = w.charAt(0).toUpperCase() + w.slice(1);
+          const lower = w.toLowerCase();
+          if (idx === 0) {
+            finalWords.push(upper);
+            if (lower !== upper) finalWords.push(lower);
+          } else {
+            if (!finalWords.includes(upper)) finalWords.push(upper);
+            if (!finalWords.includes(lower)) finalWords.push(lower);
+          }
+        });
+      } else {
+        finalWords = combined;
+      }
+
+      const candidates = finalWords.map((w, idx) => ({
         word: w,
         codesHtml: renderChipCodesHtml(getWordCodes(w)),
         isPrimary: idx === 0,
@@ -2694,8 +2828,43 @@
       statLastAction.textContent = `✨ Chốt dấu '${toneInfo.name}': '${finishedWord}' (${toneInfo.group})`;
     }
 
+    const ENGLISH_WORDS = new Set([
+      'ok', 'oke', 'oki', 'web', 'link', 'file', 'app', 'ad', 'user', 'yes', 'no', 'hi', 'hello',
+      'video', 'call', 'chat', 'pass', 'code', 'dev', 'test', 'fix', 'bug', 'log', 'pro', 'max',
+      'plus', 'auto', 'mode', 'game', 'view', 'card', 'id', 'ip', 'dns', 'wifi', 'sim', 'pin',
+      'box', 'car', 'bus', 'cup', 'fan', 'hot', 'cool', 'top', 'bot', 'mid', 'adc', 'sp', 'gg',
+      'lol', 'mail', 'email', 'post', 'page', 'tab', 'hub', 'sub', 'pub', 'club', 'bar', 'gym',
+      'vip', 'like', 'share', 'follow', 'live', 'stream', 'status', 'story', 'reels',
+      'tiktok', 'zalo', 'facebook', 'youtube', 'google', 'ai', 'gemini', 'gpt',
+      'is', 'as', 'if', 'of', 'for', 'in', 'on', 'at', 'to', 'by', 'up', 'all', 'and', 'or'
+    ]);
+
+    const TELEX_TONE_MAP = {
+      'z': 0, 's': 1, 'f': 2, 'r': 3, 'x': 4, 'j': 5
+    };
+
     function handleKeyTap(char) {
       playClickSound(650, 0.03);
+
+      // 0. Xử lý dấu câu thông minh (tự bỏ dấu cách trước, thêm dấu cách sau, tự viết hoa đầu câu)
+      const punctSet = ['.', ',', '?', '!', ':', ';'];
+      if (punctSet.includes(char)) {
+        if (composingBuffer) {
+          commitWord(composingBuffer);
+        }
+        if (committedText.endsWith(' ')) {
+          committedText = committedText.slice(0, -1);
+        }
+        committedText += char + ' ';
+        if (['.', '?', '!'].includes(char)) {
+          isShift = true;
+          renderKeyboard();
+          renderTopHexBar();
+        }
+        updateDisplay();
+        statLastAction.textContent = `Dấu câu chính tả: '${char}' ➔ '${char} '`;
+        return;
+      }
 
       // 1. Nhận diện Tốc Ký 3 ký tự: Hỗ trợ CẢ a1 (không Shift: 1cs ➔ thết, 2ki ➔ chàng) VÀ vV1 (Base60: Tcs ➔ thết, mzb ➔ mong)
       // QUAN TRỌNG: KHÔNG ĐƯỢC cướp phím khi người dùng đang gõ một từ tiếng Việt thông thường (như anh, con, cho, hoc, ban, nam, em...)
@@ -2703,8 +2872,8 @@
       const isLexiconWord = VIETNAMESE_LEXICON_MAP[candidateCode.toLowerCase()] !== undefined;
 
       if (candidateCode.length === 3 && !isLexiconWord) {
-        // A. Nếu ký tự đầu là số 1..5 (phụ âm kép a1: 1=th, 2=ch, 3=tr, 4=nh, 5=ng), chắc chắn là tốc ký a1!
-        if (/^[1-5]/.test(candidateCode)) {
+        // A. Nếu ký tự đầu là số 0..9 (phụ âm kép a1: 67890 thường, 12345 hoa), chắc chắn là tốc ký a1!
+        if (/^[0-9]/.test(candidateCode)) {
           const wordA1 = decodeA1(candidateCode);
           if (wordA1 && isValidVietnameseWord(wordA1)) {
             playClickSound(950, 0.05);
@@ -2717,7 +2886,7 @@
           }
         }
 
-        // B. Nếu ký tự đầu là chữ HOA (Base60 phụ âm kép: T=th, R=tr, C=ch, K=kh...), chắc chắn là tốc ký vV1!
+        // B. Nếu ký tự đầu là chữ HOA: thử cả vV1 lẫn a1 hoa (như Mzb -> Mong, MZB -> MONG)!
         if (/^[A-Z]/.test(candidateCode)) {
           const wordV1 = decodeVV1(candidateCode);
           if (wordV1 && isValidVietnameseWord(wordV1)) {
@@ -2726,6 +2895,16 @@
             lastAutoCommittedCode = candidateCode;
             lastAutoCommittedWord = wordV1;
             statLastAction.textContent = `🚀 Tốc ký vV1 [${candidateCode}] ➔ '${wordV1}'`;
+            analyzeSuggestions();
+            return;
+          }
+          const wordA1 = decodeA1(candidateCode);
+          if (wordA1 && isValidVietnameseWord(wordA1)) {
+            playClickSound(950, 0.05);
+            commitWord(wordA1);
+            lastAutoCommittedCode = candidateCode;
+            lastAutoCommittedWord = wordA1;
+            statLastAction.textContent = `🚀 Tốc ký a1 [${candidateCode}] ➔ '${wordA1}'`;
             analyzeSuggestions();
             return;
           }
@@ -2764,46 +2943,25 @@
       lastAutoCommittedCode = null;
       lastAutoCommittedWord = null;
 
-      // 2. Kiểm tra nếu đang soạn dở và chạm vào phím Dấu thông thường:
-      // CHỈ kích hoạt khi:
-      // - Buffer ĐÃ CÓ NGUYÊN ÂM (a,ă,â,e,ê,i,o,ô,ơ,u,ư,y)
-      // - VÀ char là phím dấu (B1: zfsrxj, B2: bkvlqd, B3: 012345)
-      if (composingBuffer && TONE_KEYS[char]) {
-        const { rhyme } = extractPhonetics(composingBuffer);
-        const hasVowel = rhyme && /[aăâeêioôơuưy]/i.test(rhyme);
-        if (hasVowel) {
-          applyToneToComposing(TONE_KEYS[char].tone, TONE_KEYS[char]);
-          return;
+      // 2. Chạm phím Dấu Telex thông thường (s, f, r, x, j, z):
+      // CHỈ kích hoạt khi buffer ĐÃ CÓ NGUYÊN ÂM và chuỗi ghép KHÔNG PHẢI từ tiếng Anh/viết tắt thông dụng
+      const telexTone = TELEX_TONE_MAP[char.toLowerCase()];
+      if (composingBuffer && telexTone !== undefined) {
+        const testRaw = (composingBuffer + char).toLowerCase();
+        if (!ENGLISH_WORDS.has(testRaw)) {
+          const { consonant, rhyme } = extractPhonetics(composingBuffer);
+          const hasVowel = rhyme && /[aăâeêioôơuưy]/i.test(rhyme);
+          if (hasVowel) {
+            const tonedRhyme = applyTone(rhyme, telexTone);
+            composingBuffer = (consonant || '') + tonedRhyme;
+            updateDisplay();
+            statLastAction.textContent = `Dấu Telex '${char}' ➔ '${composingBuffer}'`;
+            return;
+          }
         }
       }
 
-      // 3. Tự động chốt từ trước nếu từ cũ đã có vần hoàn chỉnh mà người dùng gõ một phụ âm đầu mới
-      // QUAN TRỌNG: phải kiểm tra ký tự đơn có thể là PHẦN TIẾP THEO của phụ âm cuối đa ký tự không:
-      //   - 'g' sau buffer kết thúc 'n' → có thể tạo thành '-ng' (mong, tang, sang...)
-      //   - 'h' sau buffer kết thúc 'n' → có thể tạo thành '-nh' (anh, xinh, thanh...)
-      //   - 'h' sau buffer kết thúc 'c' → có thể tạo thành '-ch' (sách, thích, cách...)
-      if (composingBuffer) {
-        const { rhyme } = extractPhonetics(composingBuffer);
-        const bufLow = composingBuffer.toLowerCase();
-        const charLow = char.toLowerCase();
-        const validFinalSingle = ['c', 'm', 'n', 'p', 't'];
-        const isConsonant = /^[bcdđghklmnpqrstvx]$/i.test(char);
-        
-        // Kiểm tra xem char có thể là phần mở rộng hợp lệ của phụ âm cuối đa ký tự không
-        const couldExtendFinal =
-          (charLow === 'g' && bufLow.endsWith('n')) ||  // n + g = ng
-          (charLow === 'h' && bufLow.endsWith('n')) ||  // n + h = nh
-          (charLow === 'h' && bufLow.endsWith('c'));     // c + h = ch
-
-        if (rhyme && isConsonant && !validFinalSingle.includes(charLow) && !TONE_KEYS[char] && !couldExtendFinal) {
-          commitWord(composingBuffer);
-          composingBuffer = char;
-          updateDisplay();
-          return;
-        }
-      }
-
-      // 4. Bình thường: thêm vào composingBuffer (cho phép gõ tự do mong, hoan...)
+      // 3. Bình thường: thêm vào composingBuffer (cho phép gõ tự do ok, web, link, mong, hoan...)
       composingBuffer += char;
       updateDisplay();
       statLastAction.textContent = `Nhập: '${char}' ➔ Buffer: '${composingBuffer}'`;
@@ -3206,71 +3364,49 @@
 
       swipeCtx.save();
 
-      // 1. Vẽ đường Glow phát quang
+      // 1. Vẽ đường Glow phát quang (bán trong suốt mỏng nhẹ)
       swipeCtx.beginPath();
       pts.forEach((p, i) => {
         if (i === 0) swipeCtx.moveTo(p.x, p.y);
         else swipeCtx.lineTo(p.x, p.y);
       });
-      swipeCtx.strokeStyle = 'rgba(56, 139, 253, 0.45)';
-      swipeCtx.lineWidth = 10;
+      swipeCtx.strokeStyle = 'rgba(234, 179, 8, 0.22)';
+      swipeCtx.lineWidth = 6;
       swipeCtx.lineCap = 'round';
       swipeCtx.lineJoin = 'round';
       swipeCtx.stroke();
 
-      // 2. Vẽ đường Core
+      // 2. Vẽ đường Core (thanh mảnh, bán trong suốt)
       swipeCtx.beginPath();
       pts.forEach((p, i) => {
         if (i === 0) swipeCtx.moveTo(p.x, p.y);
         else swipeCtx.lineTo(p.x, p.y);
       });
-      swipeCtx.strokeStyle = '#58a6ff';
-      swipeCtx.lineWidth = 3;
+      swipeCtx.strokeStyle = 'rgba(250, 204, 21, 0.7)';
+      swipeCtx.lineWidth = 2.0;
       swipeCtx.stroke();
 
-      if (isCollinear) {
-        // THẲNG HÀNG: Bỏ mũi tên, vẽ hollow ring + mini badge 1, 2, 3 ở góc trên-phải
-        const colors = ['#58a6ff', '#f2cc60', '#f0883e'];
-        pts.forEach((p, i) => {
-          const col = colors[i] || '#58a6ff';
-          // Hollow ring tại tâm
-          swipeCtx.beginPath();
-          swipeCtx.arc(p.x, p.y, 11, 0, Math.PI * 2);
-          swipeCtx.strokeStyle = col;
-          swipeCtx.lineWidth = 2;
-          swipeCtx.stroke();
-
-          // Mini badge tại góc trên phải
-          const bx = p.rect.right - 8;
-          const by = p.rect.top + 8;
-          swipeCtx.beginPath();
-          swipeCtx.arc(bx, by, 6, 0, Math.PI * 2);
-          swipeCtx.fillStyle = col;
-          swipeCtx.fill();
-
-          swipeCtx.fillStyle = (i === 1) ? '#000' : '#fff';
-          swipeCtx.font = 'bold 9px sans-serif';
-          swipeCtx.textAlign = 'center';
-          swipeCtx.textBaseline = 'middle';
-          swipeCtx.fillText(`${i + 1}`, bx, by);
-        });
-      } else {
-        // KHÔNG THẲNG HÀNG: Vẽ mũi tên trên từng chặng, bỏ vòng tròn & số 1, 2, 3
-        for (let i = 0; i < pts.length - 1; i++) {
-          drawArrowHeadCanvas(swipeCtx, pts[i], pts[i + 1]);
-        }
-        // Điểm waypoint nhỏ
-        pts.forEach(p => {
-          swipeCtx.beginPath();
-          swipeCtx.arc(p.x, p.y, 3.5, 0, Math.PI * 2);
-          swipeCtx.fillStyle = '#58a6ff';
-          swipeCtx.fill();
-        });
+      // 3. Mũi tên chặng (Chặng 1 vàng, Chặng 2 đỏ)
+      for (let i = 0; i < pts.length - 1; i++) {
+        const arrowCol = (i === 0) ? '#facc15' : '#ef4444';
+        drawArrowHeadCanvas(swipeCtx, pts[i], pts[i + 1], arrowCol);
       }
+
+      // 4. Vòng viền rỗng tại tâm phím (1 Xanh lục, 2 Vàng, 3 Đỏ)
+      const nodeColors = ['#22c55e', pts.length === 2 ? '#ef4444' : '#facc15', '#ef4444'];
+      pts.forEach((p, i) => {
+        const col = nodeColors[i] || '#facc15';
+        // Hollow ring tại tâm (không che con chữ)
+        swipeCtx.beginPath();
+        swipeCtx.arc(p.x, p.y, 9.5, 0, Math.PI * 2);
+        swipeCtx.strokeStyle = col;
+        swipeCtx.lineWidth = 1.8;
+        swipeCtx.stroke();
+      });
       swipeCtx.restore();
     }
 
-    function drawArrowHeadCanvas(ctx, from, to) {
+    function drawArrowHeadCanvas(ctx, from, to, color = '#facc15') {
       const dx = to.x - from.x;
       const dy = to.y - from.y;
       const len = Math.hypot(dx, dy);
@@ -3279,18 +3415,20 @@
       const ax = from.x + dx * 0.58;
       const ay = from.y + dy * 0.58;
       const angle = Math.atan2(dy, dx);
-      const arrowLen = 8;
+      const arrowLen = 6.5;
       const arrowAngle = Math.PI / 6;
 
+      ctx.save();
       ctx.beginPath();
       ctx.moveTo(ax - arrowLen * Math.cos(angle - arrowAngle), ay - arrowLen * Math.sin(angle - arrowAngle));
       ctx.lineTo(ax, ay);
       ctx.lineTo(ax - arrowLen * Math.cos(angle + arrowAngle), ay - arrowLen * Math.sin(angle + arrowAngle));
-      ctx.strokeStyle = '#fff';
-      ctx.lineWidth = 2.4;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 1.8;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
       ctx.stroke();
+      ctx.restore();
     }
 
     // ========================================================
@@ -3324,8 +3462,10 @@
         } else if (['a', 'e', 'i', 'o', 'u', 'y', 'w'].includes(lowChar)) {
           groupClass = ' key-group-vowel-letter';
         }
-      } else if (k.r === 0 && /^[0-5]$/.test(k.char)) {
+      } else if (k.r === 0 && /^[1-5]$/.test(k.char)) {
         groupClass = ' key-group-tone-vni';
+      } else if (k.r === 0 && (/^[6-9]$/.test(k.char) || k.char === '0')) {
+        groupClass = ' key-group-cons';
       } else if (k.type === 'mode_choice') {
         if (k.choice === '36L') groupClass = ' choice-36l';
         else if (k.choice === '36R') groupClass = ' choice-36r';
@@ -3342,17 +3482,37 @@
       let displayChar = k.char;
       let displaySub = k.sub || '';
 
+      const SHIFT_TONE_B4 = { 'a': 'ngang', 'e': 'sắc', 'i': 'huyền', 'o': 'hỏi', 'u': 'ngã', 'y': 'nặng' };
+      const SHIFT_TONE_B5 = { 'c': 'ngang', 'g': 'sắc', 'h': 'huyền', 'p': 'hỏi', 't': 'ngã', 'w': 'nặng' };
+      const SHIFT_TONE_B6 = { '6': '6:ngang', '7': '7:sắc', '8': '8:huyền', '9': '9:hỏi', 'm': 'ngã', 'n': 'nặng' };
+
+      let subClass = 'key-sub';
+
       if (isShifted) {
         if (k.shift) {
           displayChar = k.shift;
-          displaySub = k.char;
         } else if (k.char.length === 1 && !k.type) {
           displayChar = k.char.toUpperCase();
-          displaySub = k.char;
+        }
+        const cLow = (k.char || '').toLowerCase();
+        if (SHIFT_TONE_B4[cLow]) {
+          displaySub = SHIFT_TONE_B4[cLow];
+          subClass += ' key-sub-b4';
+        } else if (SHIFT_TONE_B5[cLow]) {
+          displaySub = SHIFT_TONE_B5[cLow];
+          subClass += ' key-sub-b5';
+        } else if (SHIFT_TONE_B6[cLow]) {
+          displaySub = SHIFT_TONE_B6[cLow];
+          subClass += ' key-sub-b6';
+        } else {
+          displaySub = '';
         }
       } else {
         displayChar = k.char;
-        displaySub = k.sub || k.shift || '';
+        displaySub = k.sub || '';
+        if (k.r === 0 && /^[1-5]$/.test(k.char)) subClass += ' key-sub-tone';
+        else if (k.r === 0 && (/^[6-9]$/.test(k.char) || k.char === '0')) subClass += ' key-sub-cons';
+        else if (/^[bkvlqd]$/.test(k.char)) subClass += ' key-sub-b2';
       }
 
       const displayTl = k.tl || (lowChar && VCOMP_TL_MAP[lowChar]) || '';
@@ -3360,7 +3520,7 @@
       keyEl.innerHTML = `
         ${displayTl ? `<span class="key-tl">${displayTl}</span>` : ''}
         <span class="key-char">${displayChar}</span>
-        ${displaySub ? `<span class="key-sub">${displaySub}</span>` : ''}
+        ${displaySub ? `<span class="${subClass}">${displaySub}</span>` : ''}
         <span class="bloom-badge" id="badge_${k.id}"></span>
       `;
 
@@ -3587,6 +3747,9 @@
     }
 
     function setupKeyEvents(keyEl, k) {
+      let modeLongTimer = null;
+      let isModeLongTriggered = false;
+
       keyEl.addEventListener('pointerdown', (e) => {
         if (k.type === 'blank') return;
         e.preventDefault();
@@ -3605,6 +3768,16 @@
         gestureStartY = e.clientY;
         gestureKeyDef = k;
         currentHoveredDir = null;
+
+        // Long Press Handler cho nút Mode: Bấm giữ >= 350ms -> Về bàn phím Chuẩn!
+        if (k.type === 'mode' || k.char === '❖' || k.char === '📱' || k.char === '📴' || k.id === 'top_mid_36l' || k.id === 'top_mid_36r' || k.id === 'k_4_0' || k.id === 'f_4_3' || k.id === 'fr_4_0') {
+          modeLongTimer = setTimeout(() => {
+            isModeLongTriggered = true;
+            playClickSound(950, 0.08);
+            setKeyboardMode('normal');
+            statLastAction.textContent = '⏱️ Giữ nút Mode ➔ Đã trở về bàn phím Chuẩn 5×12!';
+          }, 350);
+        }
 
         // Khởi tạo luồng Glide cử chỉ
         glidePoints = [{ x: e.clientX, y: e.clientY, time: Date.now() }];
@@ -3625,6 +3798,11 @@
         const dx = e.clientX - gestureStartX;
         const dy = e.clientY - gestureStartY;
         const dist = Math.hypot(dx, dy);
+
+        if (dist > 15 && modeLongTimer) {
+          clearTimeout(modeLongTimer);
+          modeLongTimer = null;
+        }
 
         glidePoints.push({ x: e.clientX, y: e.clientY, time: Date.now() });
 
@@ -3665,6 +3843,18 @@
         try {
           keyEl.releasePointerCapture(e.pointerId);
         } catch(err) {}
+
+        if (modeLongTimer) {
+          clearTimeout(modeLongTimer);
+          modeLongTimer = null;
+        }
+
+        if (isModeLongTriggered) {
+          activePointerId = null;
+          gestureKeyDef = null;
+          currentHoveredDir = null;
+          return;
+        }
 
         const dx = e.clientX - gestureStartX;
         const dy = e.clientY - gestureStartY;
@@ -3755,12 +3945,17 @@
       });
 
       keyEl.addEventListener('click', (e) => {
+        if (isModeLongTriggered) return;
         if (k.type === 'mode' || k.type === 'mode_choice') {
           safeHandleKeyAction(k);
         }
       });
 
       keyEl.addEventListener('pointercancel', (e) => {
+        if (modeLongTimer) {
+          clearTimeout(modeLongTimer);
+          modeLongTimer = null;
+        }
         document.querySelectorAll('.neighbor-hover').forEach(h => h.classList.remove('neighbor-hover'));
         clearGlideCanvasFade();
         activePointerId = null;
@@ -3779,8 +3974,11 @@
           commitWord(composingBuffer);
         }
         committedText += '\n';
+        isShift = true;
+        renderKeyboard();
+        renderTopHexBar();
         updateDisplay();
-        statLastAction.textContent = 'Enter / Xuống dòng';
+        statLastAction.textContent = 'Enter / Xuống dòng (Tự viết hoa)';
       } else if (k.type === 'space') {
         if (composingBuffer) {
           // Tự động chốt gợi ý hàng đầu (Primary suggestion) khi bấm Space!
@@ -3795,9 +3993,19 @@
           updateDisplay();
         }
         statLastAction.textContent = 'Space / Đệm khoảng trắng';
-      } else if (k.type === 'mode' || k.char === '❖' || k.id === 'top_mid_36l' || k.id === 'top_mid_36r') {
+      } else if (k.type === 'mode' || k.char === '❖' || k.char === '📱' || k.char === '📴' || k.id === 'top_mid_36l' || k.id === 'top_mid_36r' || k.id === 'k_4_0' || k.id === 'f_4_3' || k.id === 'fr_4_0') {
         playClickSound(700, 0.04);
-        toggleKeyboardMode();
+        // TAP: LUÂN CHUYỂN 1 TAY (L <-> R)
+        if (currentKeyboardMode === '36L') {
+          setKeyboardMode('36R');
+          statLastAction.textContent = '👉 Đã chuyển sang 36R (Tay Phải)';
+        } else if (currentKeyboardMode === '36R') {
+          setKeyboardMode('36L');
+          statLastAction.textContent = '👈 Đã chuyển sang 36L (Tay Trái)';
+        } else {
+          setKeyboardMode('36L');
+          statLastAction.textContent = '👈 Bật 36L (Tay Trái) [Bấm: đổi L/R, Giữ: về Chuẩn]';
+        }
       } else if (k.type === 'mode_choice') {
         playClickSound(800, 0.04);
         if (k.choice === 'close') {
