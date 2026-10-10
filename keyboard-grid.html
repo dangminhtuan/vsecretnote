@@ -1330,6 +1330,27 @@
       border-left: none !important;
       margin-left: 0 !important;
     }
+    /* Ẩn ký hiệu con và nhãn phụ khi hợp nhất thành một khối liền */
+    .launchpad-active-z1 .key-tl,
+    .launchpad-active-z1 .key-sub,
+    .launchpad-active-z2 .key-tl,
+    .launchpad-active-z2 .key-sub,
+    .launchpad-active-z3 .key-tl,
+    .launchpad-active-z3 .key-sub {
+      display: none !important;
+    }
+    .launchpad-fuse-left .key-char,
+    .launchpad-fuse-right .key-char {
+      display: none !important;
+    }
+    .launchpad-fuse-mid .key-char {
+      font-size: 13px !important;
+      font-weight: 800 !important;
+      letter-spacing: 0.5px !important;
+      white-space: nowrap !important;
+      color: #ffffff !important;
+      text-shadow: 0 0 8px rgba(0, 0, 0, 0.9) !important;
+    }
 
     @media (max-width: 600px) {
       body {
@@ -2574,29 +2595,70 @@
           }
         }
 
-        let startChar = cleanCrossed.length > 0 ? cleanCrossed[0] : '';
         let endChar = (kEnd || '').toLowerCase();
         if ((!endChar || !/^[a-z]$/i.test(endChar)) && cleanCrossed.length > 0) {
           endChar = cleanCrossed[cleanCrossed.length - 1];
         }
 
+        // Trích xuất các góc ngoặt thực sự (ở các hàng trên 0..3)
         const cornerChars = [];
         for (const c of chronoCorners) {
           const cDef = getKeyAtPoint(c.point.x, c.point.y);
-          if (cDef && cDef.char && /^[a-z]$/i.test(cDef.char)) {
+          if (cDef && cDef.char && /^[a-z]$/i.test(cDef.char) && cDef.r < 4) {
             const ch = cDef.char.toLowerCase();
-            if (ch !== startChar && ch !== endChar && (cornerChars.length === 0 || cornerChars[cornerChars.length - 1] !== ch)) {
+            if (ch !== endChar && (cornerChars.length === 0 || cornerChars[cornerChars.length - 1] !== ch)) {
               cornerChars.push(ch);
             }
           }
         }
 
-        const anchorLetters = [];
-        if (startChar && /^[a-z]$/i.test(startChar)) anchorLetters.push(startChar);
-        for (const ch of cornerChars) anchorLetters.push(ch);
-        if (endChar && /^[a-z]$/i.test(endChar) && (anchorLetters.length === 0 || anchorLetters[anchorLetters.length - 1] !== endChar)) {
-          anchorLetters.push(endChar);
+        // Bỏ qua các phím rác bị lướt qua trên đường phóng từ hàng 4 lên góc ngoặt đầu tiên (như x, c):
+        // Ký tự đầu tiên có chủ đích CHÍNH LÀ GÓC NGOẶT ĐẦU TIÊN (nếu có)!
+        let startChar = '';
+        if (cornerChars.length > 0) {
+          startChar = cornerChars[0];
+        } else {
+          startChar = cleanCrossed.length > 0 ? cleanCrossed[0] : '';
         }
+
+        let anchorLetters = [];
+        if (launchZone === 1) {
+          // VÙNG 1 (2 KÝ TỰ): Ký tự góc ngoặt đầu tiên + Ký tự thả tay
+          if (cornerChars.length >= 1 && endChar && cornerChars[0] !== endChar) {
+            anchorLetters = [cornerChars[0], endChar];
+          } else if (cleanCrossed.length >= 2) {
+            anchorLetters = cleanCrossed.slice(-2);
+          }
+        } else if (launchZone === 2) {
+          // VÙNG 2 (3 KÝ TỰ):
+          if (cornerChars.length >= 2 && endChar) {
+            anchorLetters = [cornerChars[0], cornerChars[1], endChar];
+          } else if (cornerChars.length === 1 && endChar) {
+            const idx1 = cleanCrossed.indexOf(cornerChars[0]);
+            const idx2 = cleanCrossed.lastIndexOf(endChar);
+            let midChar = '';
+            if (idx1 !== -1 && idx2 !== -1 && idx2 > idx1 + 1) {
+              midChar = cleanCrossed[Math.floor((idx1 + idx2) / 2)];
+            }
+            if (midChar && midChar !== cornerChars[0] && midChar !== endChar) {
+              anchorLetters = [cornerChars[0], midChar, endChar];
+            } else {
+              anchorLetters = [cornerChars[0], endChar];
+            }
+          } else if (cleanCrossed.length >= 3) {
+            anchorLetters = cleanCrossed.slice(-3);
+          }
+        } else {
+          // VÙNG 3 (4+ KÝ TỰ):
+          if (startChar) anchorLetters.push(startChar);
+          for (let i = 1; i < cornerChars.length; i++) {
+            anchorLetters.push(cornerChars[i]);
+          }
+          if (endChar && (anchorLetters.length === 0 || anchorLetters[anchorLetters.length - 1] !== endChar)) {
+            anchorLetters.push(endChar);
+          }
+        }
+
         const anchorCode = anchorLetters.join('').toLowerCase();
 
         function getLexWords(code) {
@@ -4153,6 +4215,17 @@
         }
       });
 
+      // Hiển thị nhãn thuyết minh to rõ ràng ở chính giữa khối bệ phóng
+      const midId = zone === 1 ? 'k_4_2' : (zone === 2 ? 'k_4_5' : 'k_4_8');
+      const midEl = document.getElementById(midId);
+      if (midEl) {
+        const charEl = midEl.querySelector('.key-char');
+        if (charEl && !charEl.hasAttribute('data-orig-char')) {
+          charEl.setAttribute('data-orig-char', charEl.textContent);
+          charEl.textContent = zone === 1 ? '🚀 2 KÝ TỰ' : (zone === 2 ? '🚀 3 KÝ TỰ' : '🚀 4+ KÝ TỰ');
+        }
+      }
+
       if (statLastAction) {
         statLastAction.innerHTML = `<span style="color:${zoneColor}; font-weight:bold;">🚀 BỆ PHÓNG: ${zoneName}</span>`;
       }
@@ -4160,6 +4233,10 @@
 
     function clearLaunchpadZoneHighlight() {
       activeLaunchpadZone = 0;
+      document.querySelectorAll('[data-orig-char]').forEach(el => {
+        el.textContent = el.getAttribute('data-orig-char');
+        el.removeAttribute('data-orig-char');
+      });
       document.querySelectorAll('.launchpad-active-z1, .launchpad-active-z2, .launchpad-active-z3, .launchpad-fuse-left, .launchpad-fuse-mid, .launchpad-fuse-right')
         .forEach(el => {
           el.classList.remove('launchpad-active-z1', 'launchpad-active-z2', 'launchpad-active-z3', 'launchpad-fuse-left', 'launchpad-fuse-mid', 'launchpad-fuse-right');
