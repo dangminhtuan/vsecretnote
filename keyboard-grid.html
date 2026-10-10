@@ -2333,6 +2333,70 @@
       return null;
     }
 
+    // Bản đồ phím lân cận (Adjacent Neighbors) phục vụ dung sai cử chỉ ngón tay
+    const ADJACENT_NEIGHBORS = {
+      'q': ['w', 'a'],
+      'w': ['q', 'e', 's', 'a'],
+      'e': ['w', 'r', 'd', 's'],
+      'r': ['e', 't', 'f', 'd'],
+      't': ['r', 'y', 'g', 'f'],
+      'y': ['t', 'u', 'h', 'g'],
+      'u': ['y', 'i', 'j', 'h'],
+      'i': ['u', 'o', 'k', 'j'],
+      'o': ['i', 'p', 'l', 'k'],
+      'p': ['o', 'l'],
+      'a': ['q', 'w', 's', 'z'],
+      's': ['w', 'e', 'a', 'd', 'z', 'x'],
+      'd': ['e', 'r', 's', 'f', 'x', 'c'],
+      'f': ['r', 't', 'd', 'g', 'c', 'v'],
+      'g': ['t', 'y', 'f', 'h', 'v', 'b'],
+      'h': ['y', 'u', 'g', 'j', 'b', 'n'],
+      'j': ['u', 'i', 'h', 'k', 'n', 'm'],
+      'k': ['i', 'o', 'j', 'l', 'm'],
+      'l': ['o', 'p', 'k'],
+      'z': ['a', 's', 'x'],
+      'x': ['z', 's', 'd', 'c'],
+      'c': ['x', 'd', 'f', 'v'],
+      'v': ['c', 'f', 'g', 'b'],
+      'b': ['v', 'g', 'h', 'n'],
+      'n': ['b', 'h', 'j', 'm'],
+      'm': ['n', 'j', 'k']
+    };
+
+    // Quét dày đặc (Dense Interpolation) dọc theo toàn bộ tọa độ đường vuốt
+    function extractKeysFromPath(pathPoints) {
+      if (!pathPoints || pathPoints.length === 0) return [];
+      const keys = [];
+      let lastKeyId = null;
+
+      for (let i = 0; i < pathPoints.length; i++) {
+        const p = pathPoints[i];
+        if (i === 0) {
+          const k = getKeyAtPoint(p.x, p.y);
+          if (k && k.id !== lastKeyId) {
+            keys.push(k);
+            lastKeyId = k.id;
+          }
+          continue;
+        }
+
+        const pPrev = pathPoints[i - 1];
+        const segDist = Math.hypot(p.x - pPrev.x, p.y - pPrev.y);
+        const steps = Math.max(1, Math.floor(segDist / 12));
+
+        for (let s = 1; s <= steps; s++) {
+          const sx = pPrev.x + (p.x - pPrev.x) * (s / steps);
+          const sy = pPrev.y + (p.y - pPrev.y) * (s / steps);
+          const k = getKeyAtPoint(sx, sy);
+          if (k && k.id !== lastKeyId) {
+            keys.push(k);
+            lastKeyId = k.id;
+          }
+        }
+      }
+      return keys;
+    }
+
     // Dò tìm các đỉnh góc ngoặt thực tế dựa trên góc quay (Turning Corners / Sharp Angular Peaks)
     function findTurningCorners(pts, windowPx = 22) {
       if (!pts || pts.length < 8) return [];
@@ -2426,26 +2490,43 @@
       // ========================================================
       const isRow4Launchpad = (startKeyDef.r === 4) && (pStart.y - pEnd.y > 20 || (endDef.r !== undefined && endDef.r < 4));
 
-      if (isRow4Launchpad || chronoCorners.length >= 2) {
-        const crossedLetters = (glideKeys || [])
-          .map(k => (k && k.char ? k.char.toLowerCase() : ''))
-          .filter(c => c && c.length === 1 && /^[a-z]$/i.test(c));
+      // 1. Lấy toàn bộ phím lướt qua bằng cả 2 kênh: Dense Sampling từ tọa độ + glideKeys
+      const denseKeyDefs = extractKeysFromPath(pathPoints);
+      const combinedKeyDefs = [];
+      const seenIds = new Set();
+      for (const kd of [...denseKeyDefs, ...(glideKeys || [])]) {
+        if (kd && kd.id && !seenIds.has(kd.id)) {
+          seenIds.add(kd.id);
+          combinedKeyDefs.push(kd);
+        }
+      }
 
-        const cleanCrossed = [];
-        for (const c of crossedLetters) {
+      // Trích xuất danh sách chữ cái a-z duy nhất theo thứ tự thời gian
+      const cleanCrossed = [];
+      for (const kd of combinedKeyDefs) {
+        const c = (kd.char || '').toLowerCase();
+        if (c && c.length === 1 && /^[a-z]$/i.test(c)) {
           if (cleanCrossed.length === 0 || cleanCrossed[cleanCrossed.length - 1] !== c) {
             cleanCrossed.push(c);
           }
         }
+      }
 
+      if (isRow4Launchpad || chronoCorners.length >= 2 || cleanCrossed.length >= 4) {
         let startChar = '';
         if (isRow4Launchpad) {
           startChar = cleanCrossed.length > 0 ? cleanCrossed[0] : '';
         } else {
           startChar = (kStart || '').toLowerCase();
         }
+        if (!startChar && cleanCrossed.length > 0) {
+          startChar = cleanCrossed[0];
+        }
 
-        const endChar = (kEnd || '').toLowerCase();
+        let endChar = (kEnd || '').toLowerCase();
+        if ((!endChar || !/^[a-z]$/i.test(endChar)) && cleanCrossed.length > 0) {
+          endChar = cleanCrossed[cleanCrossed.length - 1];
+        }
 
         const cornerChars = [];
         for (const c of chronoCorners) {
@@ -2476,7 +2557,7 @@
         let matchedWord = null;
         let matchedCode = '';
 
-        // 1. Thử khớp trực tiếp mã các đỉnh
+        // 1. Thử khớp trực tiếp mã các đỉnh nếu có
         if (anchorCode.length >= 3) {
           const directWords = getLexWords(anchorCode);
           if (directWords.length > 0) {
@@ -2485,34 +2566,88 @@
           }
         }
 
-        // 2. Thử quét subsequence trong từ điển
-        if (!matchedWord && startChar && endChar && cleanCrossed.length >= 3) {
+        // 2. Thuật toán chấm điểm ứng viên từ điển (Fuzzy Neighbor + Subsequence Scoring)
+        if (!matchedWord && startChar && endChar && cleanCrossed.length >= 2) {
           let bestCandidate = null;
-          let bestLen = 0;
+          let highestScore = -999;
           const allLexKeys = typeof VIETNAMESE_LEXICON_MAP !== 'undefined' ? Object.keys(VIETNAMESE_LEXICON_MAP) : [];
-          for (const wordKey of allLexKeys) {
-            if (wordKey.length < 3 || wordKey.length > cleanCrossed.length) continue;
-            if (!wordKey.startsWith(startChar) || !wordKey.endsWith(endChar)) continue;
 
-            let cIdx = 0;
-            for (let i = 0; i < wordKey.length && cIdx < cornerChars.length; i++) {
-              if (wordKey[i] === cornerChars[cIdx]) cIdx++;
-            }
-            if (cIdx < cornerChars.length) continue;
+          const startNeighbors = ADJACENT_NEIGHBORS[startChar] || [];
+          const endNeighbors = ADJACENT_NEIGHBORS[endChar] || [];
+
+          for (const wordKey of allLexKeys) {
+            if (wordKey.length < 3 || wordKey.length > 8) continue;
+
+            const isStartExact = wordKey.startsWith(startChar);
+            const isStartNeighbor = !isStartExact && startNeighbors.includes(wordKey[0]);
+            if (!isStartExact && !isStartNeighbor) continue;
+
+            const isEndExact = wordKey.endsWith(endChar);
+            const isEndNeighbor = !isEndExact && endNeighbors.includes(wordKey[wordKey.length - 1]);
+            if (!isEndExact && !isEndNeighbor) continue;
 
             let kIdx = 0;
-            for (let i = 0; i < cleanCrossed.length && kIdx < wordKey.length; i++) {
-              if (cleanCrossed[i] === wordKey[kIdx]) kIdx++;
-            }
-            if (kIdx === wordKey.length) {
-              if (wordKey.length > bestLen) {
-                bestLen = wordKey.length;
-                bestCandidate = wordKey;
+            let matchScore = 0;
+            let wordMatched = true;
+
+            for (let i = 0; i < wordKey.length; i++) {
+              const targetChar = wordKey[i];
+              let found = false;
+              const nbrs = ADJACENT_NEIGHBORS[targetChar] || [];
+
+              while (kIdx < cleanCrossed.length) {
+                const curChar = cleanCrossed[kIdx];
+                if (curChar === targetChar) {
+                  matchScore += 2.0;
+                  found = true;
+                  kIdx++;
+                  break;
+                } else if (nbrs.includes(curChar)) {
+                  matchScore += 1.2;
+                  found = true;
+                  kIdx++;
+                  break;
+                }
+                kIdx++;
               }
+
+              if (!found) {
+                wordMatched = false;
+                break;
+              }
+            }
+
+            if (!wordMatched) continue;
+
+            // Điểm thưởng các góc ngoặt
+            for (const c of cornerChars) {
+              if (wordKey.includes(c)) {
+                matchScore += 2.5;
+              } else {
+                const cNbrs = ADJACENT_NEIGHBORS[c] || [];
+                if (cNbrs.some(n => wordKey.includes(n))) {
+                  matchScore += 1.0;
+                }
+              }
+            }
+
+            // Phạt chênh lệch độ dài
+            const lenDiff = Math.abs(cleanCrossed.length - wordKey.length);
+            matchScore -= lenDiff * 0.25;
+
+            // Thưởng độ dài từ
+            matchScore += wordKey.length * 0.4;
+
+            if (isStartNeighbor) matchScore -= 1.5;
+            if (isEndNeighbor) matchScore -= 1.5;
+
+            if (matchScore > highestScore) {
+              highestScore = matchScore;
+              bestCandidate = wordKey;
             }
           }
 
-          if (bestCandidate) {
+          if (bestCandidate && highestScore > 3.0) {
             const candWords = getLexWords(bestCandidate);
             if (candWords.length > 0) {
               matchedWord = typeof candWords[0] === 'string' ? candWords[0] : candWords[0].word;
@@ -2527,7 +2662,7 @@
             system: 'lexicon',
             code: matchedCode,
             gestureType: 'multi_corner',
-            keys: anchorLetters,
+            keys: cleanCrossed,
             desc: `Vuốt từ (${isRow4Launchpad ? 'Bệ phóng Hàng 4' : `${chronoCorners.length} góc ngoặt`}): [${matchedCode}] ➔ '${matchedWord}'`
           };
         }
@@ -4019,6 +4154,15 @@
             isMultiKeyGlide = true;
             clearNeighborBloom();
           }
+          const curK = getKeyAtPoint(e.clientX, e.clientY);
+          if (curK && (glideKeys.length === 0 || glideKeys[glideKeys.length - 1].id !== curK.id)) {
+            glideKeys.push(curK);
+            const curEl = document.getElementById(curK.id);
+            if (curEl) {
+              curEl.classList.add('glide-active');
+              glideElements.push(curEl);
+            }
+          }
           drawGlideCanvas(e.clientX, e.clientY);
           return;
         }
@@ -4084,7 +4228,17 @@
                 const variants = VIETNAMESE_LEXICON_MAP[resolved.code] || [];
                 if (variants.length > 0) {
                   lastAutoCommittedWord = resolved.word;
-                  updateSuggestionChips(resolved.code);
+                  const isUpper = /^[A-ZÀ-Ỹ]/.test(resolved.word);
+                  const candidates = variants.map((w, idx) => {
+                    const displayWord = isUpper ? (w.charAt(0).toUpperCase() + w.slice(1)) : w;
+                    return {
+                      word: displayWord,
+                      codesHtml: renderChipCodesHtml(getWordCodes(displayWord)),
+                      isPrimary: idx === 0,
+                      title: `Bấm để đổi '${resolved.word}' thành '${displayWord}'`
+                    };
+                  });
+                  renderCandidateChips(candidates);
                 }
               }
 
