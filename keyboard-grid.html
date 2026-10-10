@@ -1280,6 +1280,11 @@
     .tg-keys.b2 { color: var(--glow-b2); font-weight: 700; }
     .tg-keys.b3 { color: var(--glow-b3); font-weight: 700; }
 
+    /* Bệ Phóng Hàng 4: 3 Phân Vùng Độ Dài */
+    .key-sub-zone-2kt { color: #58a6ff !important; font-weight: 700 !important; font-size: 8px !important; }
+    .key-sub-zone-3kt { color: #f2cc60 !important; font-weight: 700 !important; font-size: 8px !important; }
+    .key-sub-zone-4kt { color: #bc8cff !important; font-weight: 700 !important; font-size: 8px !important; }
+
     @media (max-width: 600px) {
       body {
         padding: 4px;
@@ -1711,16 +1716,16 @@
       // HÀNG 4: [ 📱 1-Tay ] [ ( ] [ ) ] [ ‹ ] [ Space ] [ › ] [ , ] [ ? ] [ + ] [ - ] [ " ] [ ↵ ]
       [
         { id: 'k_4_0', char: '📱', sub: '1-Tay', type: 'mode', r: 4, c: 0 },
-        { id: 'k_4_1', char: '(', shift: '<', sub: '<', type: 'fn', r: 4, c: 1 },
-        { id: 'k_4_2', char: ')', shift: '>', sub: '>', type: 'fn', r: 4, c: 2 },
-        { id: 'k_4_3', char: '‹', shift: '{', sub: 'Lùi', type: 'fn', r: 4, c: 3 },
-        { id: 'k_4_4', char: 'Space', sub: 'VN', type: 'space', r: 4, c: 4 },
-        { id: 'k_4_5', char: '›', shift: '}', sub: 'Tiến', type: 'fn', r: 4, c: 5 },
-        { id: 'k_4_6', char: ',', shift: ';', sub: ';', type: 'fn', r: 4, c: 6 },
-        { id: 'k_4_7', char: '?', shift: ']', sub: ']', type: 'fn', r: 4, c: 7 },
-        { id: 'k_4_8', char: '+', shift: '}', sub: '}', type: 'fn', r: 4, c: 8 },
-        { id: 'k_4_9', char: '-', shift: '_', sub: '_', type: 'fn', r: 4, c: 9 },
-        { id: 'k_4_10', char: '"', shift: '~', sub: '~', type: 'fn', r: 4, c: 10 },
+        { id: 'k_4_1', char: '(', shift: '<', sub: '2 KT', type: 'fn', r: 4, c: 1 },
+        { id: 'k_4_2', char: ')', shift: '>', sub: '2 KT', type: 'fn', r: 4, c: 2 },
+        { id: 'k_4_3', char: '‹', shift: '{', sub: '2 KT', type: 'fn', r: 4, c: 3 },
+        { id: 'k_4_4', char: 'Space', sub: '3 KT', type: 'space', r: 4, c: 4 },
+        { id: 'k_4_5', char: '›', shift: '}', sub: '3 KT', type: 'fn', r: 4, c: 5 },
+        { id: 'k_4_6', char: ',', shift: ';', sub: '4+ KT', type: 'fn', r: 4, c: 6 },
+        { id: 'k_4_7', char: '?', shift: ']', sub: '4+ KT', type: 'fn', r: 4, c: 7 },
+        { id: 'k_4_8', char: '+', shift: '}', sub: '4+ KT', type: 'fn', r: 4, c: 8 },
+        { id: 'k_4_9', char: '-', shift: '_', sub: '4+ KT', type: 'fn', r: 4, c: 9 },
+        { id: 'k_4_10', char: '"', shift: '~', sub: '4+ KT', type: 'fn', r: 4, c: 10 },
         { id: 'k_4_11', char: '↵', sub: 'Enter', type: 'action', r: 4, c: 11 }
       ]
     ];
@@ -2486,43 +2491,44 @@
       const chronoCorners = corners.slice().sort((a, b) => a.distFromStart - b.distFromStart);
 
       // ========================================================
-      // NHÁNH 0: VUỐT TỪ DÀI TIẾNG VIỆT KHÔNG DẤU (>= 4 PHÍM / >= 2 GÓC NGOẶT HOẶC BỆ PHÓNG HÀNG 4)
+      // BỆ PHÓNG HÀNG 4: PHÂN LUỒNG ĐỘ DÀI TIẾNG VIỆT KHÔNG DẤU
+      // Vùng 1 (Trái, Col 0..3): 2 Ký Tự
+      // Vùng 2 (Giữa, Col 4..5): 3 Ký Tự
+      // Vùng 3 (Phải, Col 6..11): 4+ Ký Tự
+      // (Khu vực 36 phím hàng trên chỉ dành 100% cho Tốc Ký VComp)
       // ========================================================
-      const isRow4Launchpad = (startKeyDef.r === 4) && (pStart.y - pEnd.y > 20 || (endDef.r !== undefined && endDef.r < 4));
+      const isRow4Launchpad = (startKeyDef.r === 4) && (pStart.y - pEnd.y > 15 || (endDef.r !== undefined && endDef.r < 4));
 
-      // 1. Lấy toàn bộ phím lướt qua bằng cả 2 kênh: Dense Sampling từ tọa độ + glideKeys
-      const denseKeyDefs = extractKeysFromPath(pathPoints);
-      const combinedKeyDefs = [];
-      const seenIds = new Set();
-      for (const kd of [...denseKeyDefs, ...(glideKeys || [])]) {
-        if (kd && kd.id && !seenIds.has(kd.id)) {
-          seenIds.add(kd.id);
-          combinedKeyDefs.push(kd);
-        }
-      }
+      if (isRow4Launchpad) {
+        const col = startKeyDef.c !== undefined ? startKeyDef.c : 4;
+        let launchZone = 2; // default
+        if (col <= 3) launchZone = 1;      // Vùng 1 (Trái): 2 Ký tự
+        else if (col <= 5) launchZone = 2; // Vùng 2 (Giữa): 3 Ký tự
+        else launchZone = 3;               // Vùng 3 (Phải): 4+ Ký tự
 
-      // Trích xuất danh sách chữ cái a-z duy nhất theo thứ tự thời gian
-      const cleanCrossed = [];
-      for (const kd of combinedKeyDefs) {
-        const c = (kd.char || '').toLowerCase();
-        if (c && c.length === 1 && /^[a-z]$/i.test(c)) {
-          if (cleanCrossed.length === 0 || cleanCrossed[cleanCrossed.length - 1] !== c) {
-            cleanCrossed.push(c);
+        // 1. Lấy toàn bộ phím lướt qua bằng cả 2 kênh: Dense Sampling từ tọa độ + glideKeys
+        const denseKeyDefs = extractKeysFromPath(pathPoints);
+        const combinedKeyDefs = [];
+        const seenIds = new Set();
+        for (const kd of [...denseKeyDefs, ...(glideKeys || [])]) {
+          if (kd && kd.id && !seenIds.has(kd.id)) {
+            seenIds.add(kd.id);
+            combinedKeyDefs.push(kd);
           }
         }
-      }
 
-      if (isRow4Launchpad || chronoCorners.length >= 2 || cleanCrossed.length >= 4) {
-        let startChar = '';
-        if (isRow4Launchpad) {
-          startChar = cleanCrossed.length > 0 ? cleanCrossed[0] : '';
-        } else {
-          startChar = (kStart || '').toLowerCase();
-        }
-        if (!startChar && cleanCrossed.length > 0) {
-          startChar = cleanCrossed[0];
+        // Trích xuất danh sách chữ cái a-z duy nhất theo thứ tự thời gian
+        const cleanCrossed = [];
+        for (const kd of combinedKeyDefs) {
+          const c = (kd.char || '').toLowerCase();
+          if (c && c.length === 1 && /^[a-z]$/i.test(c)) {
+            if (cleanCrossed.length === 0 || cleanCrossed[cleanCrossed.length - 1] !== c) {
+              cleanCrossed.push(c);
+            }
+          }
         }
 
+        let startChar = cleanCrossed.length > 0 ? cleanCrossed[0] : '';
         let endChar = (kEnd || '').toLowerCase();
         if ((!endChar || !/^[a-z]$/i.test(endChar)) && cleanCrossed.length > 0) {
           endChar = cleanCrossed[cleanCrossed.length - 1];
@@ -2554,11 +2560,17 @@
           return [];
         }
 
+        const isLenMatch = (len) => {
+          if (launchZone === 1) return len === 2;
+          if (launchZone === 2) return len === 3;
+          return len >= 4;
+        };
+
         let matchedWord = null;
         let matchedCode = '';
 
-        // 1. Thử khớp trực tiếp mã các đỉnh nếu có
-        if (anchorCode.length >= 3) {
+        // 1. Thử khớp trực tiếp mã các đỉnh nếu độ dài phù hợp với phân vùng
+        if (isLenMatch(anchorCode.length)) {
           const directWords = getLexWords(anchorCode);
           if (directWords.length > 0) {
             matchedWord = typeof directWords[0] === 'string' ? directWords[0] : directWords[0].word;
@@ -2566,7 +2578,7 @@
           }
         }
 
-        // 2. Thuật toán chấm điểm ứng viên từ điển (Fuzzy Neighbor + Subsequence Scoring)
+        // 2. Thuật toán chấm điểm ứng viên từ điển (Fuzzy Neighbor + Subsequence Scoring) theo phân vùng
         if (!matchedWord && startChar && endChar && cleanCrossed.length >= 2) {
           let bestCandidate = null;
           let highestScore = -999;
@@ -2576,7 +2588,8 @@
           const endNeighbors = ADJACENT_NEIGHBORS[endChar] || [];
 
           for (const wordKey of allLexKeys) {
-            if (wordKey.length < 3 || wordKey.length > 8) continue;
+            // LỌC CHẶT THEO ĐỘ DÀI CỦA PHÂN VÙNG
+            if (!isLenMatch(wordKey.length)) continue;
 
             const isStartExact = wordKey.startsWith(startChar);
             const isStartNeighbor = !isStartExact && startNeighbors.includes(wordKey[0]);
@@ -2647,7 +2660,7 @@
             }
           }
 
-          if (bestCandidate && highestScore > 3.0) {
+          if (bestCandidate && highestScore > (launchZone === 1 ? 0.8 : 2.5)) {
             const candWords = getLexWords(bestCandidate);
             if (candWords.length > 0) {
               matchedWord = typeof candWords[0] === 'string' ? candWords[0] : candWords[0].word;
@@ -2657,13 +2670,18 @@
         }
 
         if (matchedWord) {
+          const zoneNames = {
+            1: 'Vùng 1 (Trái: 2 Ký tự)',
+            2: 'Vùng 2 (Giữa: 3 Ký tự)',
+            3: 'Vùng 3 (Phải: 4+ Ký tự)'
+          };
           return {
             word: matchedWord,
             system: 'lexicon',
             code: matchedCode,
             gestureType: 'multi_corner',
             keys: cleanCrossed,
-            desc: `Vuốt từ (${isRow4Launchpad ? 'Bệ phóng Hàng 4' : `${chronoCorners.length} góc ngoặt`}): [${matchedCode}] ➔ '${matchedWord}'`
+            desc: `🚀 Bệ phóng ${zoneNames[launchZone]}: [${matchedCode}] ➔ '${matchedWord}'`
           };
         }
       }
@@ -3855,6 +3873,11 @@
         if (k.r === 0 && /^[1-5]$/.test(k.char)) subClass += ' key-sub-tone';
         else if (k.r === 0 && (/^[6-9]$/.test(k.char) || k.char === '0')) subClass += ' key-sub-cons';
         else if (/^[bkvlqd]$/.test(k.char)) subClass += ' key-sub-b2';
+        else if (k.r === 4) {
+          if (k.c >= 1 && k.c <= 3) subClass += ' key-sub-zone-2kt';
+          else if (k.c >= 4 && k.c <= 5) subClass += ' key-sub-zone-3kt';
+          else if (k.c >= 6 && k.c <= 10) subClass += ' key-sub-zone-4kt';
+        }
       }
 
       const displayTl = k.tl || (lowChar && VCOMP_TL_MAP[lowChar]) || '';
