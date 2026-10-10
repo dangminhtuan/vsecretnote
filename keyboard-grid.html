@@ -873,6 +873,60 @@
       color: #bc8cff !important;
       font-weight: 700;
     }
+    /* CHẾ ĐỘ HỌC DẤU TỐC KÝ A1 (SHIFT STUDY FOCUS) */
+    .grid-key.study-target.study-b4 {
+      background: rgba(46, 160, 67, 0.35) !important;
+      border: 1.8px solid #3fb950 !important;
+      box-shadow: 0 0 10px rgba(63, 185, 80, 0.5) !important;
+      z-index: 5;
+    }
+    .grid-key.study-target.study-b4 .key-sub {
+      color: #7ee787 !important;
+      font-weight: 800;
+      font-size: 8.5px;
+    }
+    .grid-key.study-target.study-b5 {
+      background: rgba(210, 153, 34, 0.35) !important;
+      border: 1.8px solid #d29922 !important;
+      box-shadow: 0 0 10px rgba(210, 153, 34, 0.5) !important;
+      z-index: 5;
+    }
+    .grid-key.study-target.study-b5 .key-sub {
+      color: #f2cc60 !important;
+      font-weight: 800;
+      font-size: 8.5px;
+    }
+    .grid-key.study-target.study-b6 {
+      background: rgba(163, 113, 247, 0.35) !important;
+      border: 1.8px solid #bc8cff !important;
+      box-shadow: 0 0 10px rgba(188, 140, 255, 0.5) !important;
+      z-index: 5;
+    }
+    .grid-key.study-target.study-b6 .key-sub {
+      color: #d2a8ff !important;
+      font-weight: 800;
+      font-size: 8.5px;
+    }
+    .grid-key.study-dimmed {
+      opacity: 0.28 !important;
+      filter: grayscale(80%) !important;
+      transition: opacity 0.2s ease;
+    }
+    .grid-key.study-active-ctrl {
+      background: #1f385c !important;
+      border: 1.8px solid #58a6ff !important;
+      box-shadow: 0 0 10px rgba(88, 166, 255, 0.5) !important;
+      z-index: 6;
+    }
+    .grid-key.study-active-ctrl .key-char {
+      color: #58a6ff !important;
+      font-size: 16px !important;
+    }
+    .grid-key.study-active-ctrl .key-sub {
+      color: #79c0ff !important;
+      font-weight: 800;
+      font-size: 8.5px;
+    }
     .grid-key.neighbor-bloom[data-r="0"] .key-char {
       position: absolute;
       bottom: 2px;
@@ -1624,9 +1678,9 @@
         { id: 'k_1_10', char: 'p', shift: 'P', tl: 'Ph', r: 1, c: 10 },
         { id: 'k_1_11', char: '⌫', sub: 'Del', type: 'bksp', r: 1, c: 11 }
       ],
-      // HÀNG 2: [ ớ Vowel ] + a s d f g h j k l ; + [ 🔍 Soi ]
+      // HÀNG 2: [ 📋 Dán ] + a s d f g h j k l ; + [ 🔍 Soi ]
       [
-        { id: 'k_2_0', char: 'ớ', sub: 'Vowel', type: 'vowel', r: 2, c: 0 },
+        { id: 'k_2_0', char: '📋', sub: 'Dán', type: 'flank', r: 2, c: 0 },
         { id: 'k_2_1', char: 'a', shift: 'A', tl: 'a', r: 2, c: 1 },
         { id: 'k_2_2', char: 's', shift: 'S', tl: 'ương', r: 2, c: 2 },
         { id: 'k_2_3', char: 'd', shift: 'D', tl: 'đ', sub: 'nặng', r: 2, c: 3 },
@@ -2419,6 +2473,7 @@
     // ========================================================
     let isShift = false;
     let isCaps = false;
+    let shiftStudyMode = 0; // 0: Tắt, 1: Tất cả (B4+B5+B6), 2: B4 (Lục), 3: B5 (Vàng), 4: B6 (Tím)
 
     // Buffer bộ soạn thảo
     let committedText = '';      // Văn bản đã hoàn tất
@@ -3489,23 +3544,62 @@
       let subClass = 'key-sub';
 
       if (isShifted) {
-        if (k.shift) {
+        if (k.id === 'k_2_0') {
+          displayChar = '🎓';
+          if (shiftStudyMode === 1) displaySub = 'Tất cả';
+          else if (shiftStudyMode === 2) displaySub = 'B4 (Lục)';
+          else if (shiftStudyMode === 3) displaySub = 'B5 (Vàng)';
+          else if (shiftStudyMode === 4) displaySub = 'B6 (Tím)';
+          else displaySub = 'Học dấu';
+          subClass = 'key-sub' + (shiftStudyMode > 0 ? ' key-sub-b4' : '');
+        } else if (k.shift) {
           displayChar = k.shift;
         } else if (k.char.length === 1 && !k.type) {
           displayChar = k.char.toUpperCase();
         }
+
         const cLow = (k.char || '').toLowerCase();
-        if (SHIFT_TONE_B4[cLow]) {
-          displaySub = SHIFT_TONE_B4[cLow];
-          subClass += ' key-sub-b4';
-        } else if (SHIFT_TONE_B5[cLow]) {
-          displaySub = SHIFT_TONE_B5[cLow];
-          subClass += ' key-sub-b5';
-        } else if (SHIFT_TONE_B6[cLow]) {
-          displaySub = SHIFT_TONE_B6[cLow];
-          subClass += ' key-sub-b6';
-        } else {
-          displaySub = '';
+        if (k.id !== 'k_2_0') {
+          if (SHIFT_TONE_B4[cLow]) {
+            displaySub = SHIFT_TONE_B4[cLow];
+            subClass += ' key-sub-b4';
+          } else if (SHIFT_TONE_B5[cLow]) {
+            displaySub = SHIFT_TONE_B5[cLow];
+            subClass += ' key-sub-b5';
+          } else if (SHIFT_TONE_B6[cLow]) {
+            displaySub = SHIFT_TONE_B6[cLow];
+            subClass += ' key-sub-b6';
+          } else {
+            displaySub = '';
+          }
+        }
+
+        if (shiftStudyMode > 0) {
+          const isB4 = Boolean(SHIFT_TONE_B4[cLow]);
+          const isB5 = Boolean(SHIFT_TONE_B5[cLow]);
+          const isB6 = Boolean(SHIFT_TONE_B6[cLow]);
+
+          let isStudyTarget = false;
+          let studyGroup = '';
+          if (shiftStudyMode === 1) {
+            if (isB4) { isStudyTarget = true; studyGroup = 'b4'; }
+            else if (isB5) { isStudyTarget = true; studyGroup = 'b5'; }
+            else if (isB6) { isStudyTarget = true; studyGroup = 'b6'; }
+          } else if (shiftStudyMode === 2 && isB4) {
+            isStudyTarget = true; studyGroup = 'b4';
+          } else if (shiftStudyMode === 3 && isB5) {
+            isStudyTarget = true; studyGroup = 'b5';
+          } else if (shiftStudyMode === 4 && isB6) {
+            isStudyTarget = true; studyGroup = 'b6';
+          }
+
+          if (isStudyTarget) {
+            keyEl.classList.add('study-target', 'study-' + studyGroup);
+          } else if (k.id === 'k_2_0') {
+            keyEl.classList.add('study-active-ctrl');
+          } else if (k.type !== 'shift') {
+            keyEl.classList.add('study-dimmed');
+          }
         }
       } else {
         displayChar = k.char;
@@ -4013,8 +4107,22 @@
         } else {
           setKeyboardMode(k.choice);
         }
-      } else if (k.type === 'vowel') {
-        statLastAction.textContent = 'ớ Chuyển Tầng Vowel (Nguyên âm)';
+      } else if (k.id === 'k_2_0' || k.type === 'vowel') {
+        playClickSound(650, 0.04);
+        if (isShift || isCaps) {
+          shiftStudyMode = (shiftStudyMode + 1) % 5;
+          const studyDescriptions = [
+            '🎓 Tắt chế độ học dấu, về Shift thông thường',
+            '🎓 Học Dấu (Lần 1): Sáng TẤT CẢ 3 Bảng (B4 Lục, B5 Vàng, B6 Tím)',
+            '🎓 Học Dấu (Lần 2): Chuyên sâu B4 (Nguyên âm A, E, I, O, U, Y)',
+            '🎓 Học Dấu (Lần 3): Chuyên sâu B5 (Phụ âm C, G, H, P, T, W)',
+            '🎓 Học Dấu (Lần 4): Chuyên sâu B6 (Ký tự 6, 7, 8, 9, M, N)'
+          ];
+          statLastAction.textContent = studyDescriptions[shiftStudyMode];
+          renderKeyboard();
+        } else {
+          statLastAction.textContent = '📋 Dán văn bản từ Clipboard (Mô phỏng)';
+        }
       } else if (k.char === '‹') {
         playClickSound(550, 0.03);
         statLastAction.textContent = '‹ Điều hướng lùi con trỏ';
@@ -4033,6 +4141,7 @@
 
         if (isShift && !isCaps) {
           isShift = false;
+          shiftStudyMode = 0;
           renderKeyboard();
         }
       }
@@ -4043,6 +4152,7 @@
       if (isCaps) {
         isCaps = false;
         isShift = false;
+        shiftStudyMode = 0;
       } else if (isShift) {
         isCaps = true;
       } else {
