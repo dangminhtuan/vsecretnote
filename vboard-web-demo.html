@@ -1897,13 +1897,161 @@
     // ====================================================================
     // 5. CỤM CÔNG CỤ TỰ ẨN KHI GÕ & VOICE / CLIPBOARD / AI NOTICES
     // ====================================================================
+    // Nhóm phụ âm đầu hoán đổi tương hỗ đa chiều & 1-1 (Port từ VCompEngine.kt):
+    const CONFUSABLE_CONSONANT_GROUPS = {
+      'gi': ['d', 'đ', 'r'],
+      'd': ['gi', 'đ', 'r'],
+      'đ': ['d', 'gi', 'r'],
+      'r': ['gi', 'd', 'đ'],
+      'ch': ['tr'], 'tr': ['ch'],
+      'l': ['n'], 'n': ['l'],
+      's': ['x'], 'x': ['s'],
+      't': ['th'], 'th': ['t'],
+      'c': ['kh'], 'k': ['kh'], 'kh': ['c'],
+      'g': ['ng'], 'gh': ['ngh'], 'ng': ['g'], 'ngh': ['gh'],
+      'p': ['ph'], 'ph': ['p'],
+      'v': ['b'], 'b': ['v'],
+      'h': ['nh'], 'nh': ['h']
+    };
+
+    const VIET_CONSONANTS_SET = new Set([
+      'b', 'c', 'd', 'đ', 'g', 'h', 'k', 'l', 'm', 'n', 'p', 'q', 'r', 's', 't', 'v', 'x'
+    ]);
+    const VALID_COMPOUND_CONSONANTS_SET = new Set([
+      'ch', 'gh', 'gi', 'kh', 'ng', 'ngh', 'nh', 'ph', 'qu', 'th', 'tr'
+    ]);
+
+    let isConsonantEditActive = false;
+    let consonantEditRhyme = '';
+    let consonantEditTone = 0;
+    let consonantEditCurrentCons = '';
+    let consonantEditIsFirstUpper = false;
+    let consonantEditIsAllUpper = false;
+
+    function removeVietnameseAccents(str) {
+      if (!str) return '';
+      return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+    }
+
+    function detectTone(word) {
+      if (!word) return 0;
+      const lower = word.toLowerCase();
+      if (/[áắấéếíóốớúứý]/.test(lower)) return 1;
+      if (/[àằầèềìòồờùừỳ]/.test(lower)) return 2;
+      if (/[ảẳẩẻểỉỏổởủửỷ]/.test(lower)) return 3;
+      if (/[ãẵẫẽễĩõỗỡũữỹ]/.test(lower)) return 4;
+      if (/[ạặậẹệịọộợụựỵ]/.test(lower)) return 5;
+      return 0;
+    }
+
+    function buildWordWithConsonant(candCons, rhyme, tone) {
+      if (!rhyme) return candCons;
+      let adjustedRhyme = rhyme;
+      if (candCons && candCons !== 'qu' && rhyme.startsWith('yê')) {
+        adjustedRhyme = 'iê' + rhyme.substring(2);
+      }
+      const tonedRhyme = typeof applyTone === 'function' ? applyTone(adjustedRhyme, tone) : adjustedRhyme;
+      const cleanRhyme = (removeVietnameseAccents(tonedRhyme) || '').toLowerCase();
+      const firstVowel = cleanRhyme.charAt(0);
+      const isFrontVowel = ['i', 'e', 'ê', 'y'].includes(firstVowel);
+      const isGhNghVowel = ['i', 'e', 'ê'].includes(firstVowel);
+
+      let normalizedCons = candCons;
+      if (candCons === 'c' || candCons === 'k') {
+        normalizedCons = isFrontVowel ? 'k' : 'c';
+      } else if (candCons === 'g' || candCons === 'gh') {
+        normalizedCons = isGhNghVowel ? 'gh' : 'g';
+      } else if (candCons === 'ng' || candCons === 'ngh') {
+        normalizedCons = isGhNghVowel ? 'ngh' : 'ng';
+      }
+
+      if (normalizedCons === 'gi' && cleanRhyme.startsWith('i')) {
+        return 'g' + tonedRhyme;
+      }
+      if (normalizedCons === 'qu' && cleanRhyme.startsWith('u')) {
+        return 'q' + tonedRhyme;
+      }
+      return normalizedCons + tonedRhyme;
+    }
+
+    function getConfusableConsonantVariants(rawWord) {
+      if (!rawWord) return [];
+      const isFirstUpper = rawWord.charAt(0) === rawWord.charAt(0).toUpperCase() && /[A-ZÀ-ỸĐ]/.test(rawWord.charAt(0));
+      const isAllUpper = rawWord.length > 1 && rawWord === rawWord.toUpperCase();
+      const lower = rawWord.toLowerCase();
+
+      const results = [];
+      const formatCase = (w) => {
+        if (isAllUpper) return w.toUpperCase();
+        if (isFirstUpper) return w.charAt(0).toUpperCase() + w.slice(1);
+        return w.toLowerCase();
+      };
+
+      let cons = '', rhyme = '', tone = 0;
+      if (typeof extractPhonetics === 'function') {
+        const p = extractPhonetics(lower);
+        cons = p[0] || '';
+        rhyme = p[1] || '';
+        tone = p[2] !== undefined ? p[2] : detectTone(lower);
+      }
+
+      if (cons && CONFUSABLE_CONSONANT_GROUPS[cons]) {
+        for (const targetCons of CONFUSABLE_CONSONANT_GROUPS[cons]) {
+          const built = buildWordWithConsonant(targetCons, rhyme, tone);
+          if (built && built.toLowerCase() !== lower && !results.includes(formatCase(built))) {
+            results.push(formatCase(built));
+          }
+        }
+      }
+
+      if (results.length > 0) {
+        const realWords = results.filter(w => isValidVietnameseWord(w.toLowerCase()));
+        const others = results.filter(w => !isValidVietnameseWord(w.toLowerCase()));
+        return [...new Set([...realWords, ...others])];
+      }
+      return [];
+    }
+
+    function getWordUnderCursorWeb() {
+      const before = committedText.slice(0, caretIndex);
+      const after = committedText.slice(caretIndex);
+      const beforeMatch = before.match(/[\p{L}\p{M}\p{Nd}_]+$/u);
+      const afterMatch = after.match(/^[\p{L}\p{M}\p{Nd}_]+/u);
+      const beforeWord = beforeMatch ? beforeMatch[0] : '';
+      const afterWord = afterMatch ? afterMatch[0] : '';
+      const fullWord = beforeWord + afterWord;
+      if (!fullWord) return null;
+      return {
+        fullWord,
+        beforeLen: beforeWord.length,
+        afterLen: afterWord.length
+      };
+    }
+
     function updateToolbarVisibility() {
-      const isTyping = composingBuffer.length > 0;
+      const inspected = !composingBuffer ? getWordUnderCursorWeb() : null;
+      const isTyping = composingBuffer.length > 0 || !!inspected || (lastCommittedWord && lastCommittedWord.length > 0);
       const btnPaste = document.getElementById('btnToolPaste');
       const btnSettings = document.getElementById('btnToolSettings');
+      const btnAskAi = document.getElementById('btnToolAskAi');
+      const btnVoice = document.getElementById('btnToolVoice');
+
       if (btnPaste && btnSettings) {
         btnPaste.style.display = isTyping ? 'none' : 'inline-flex';
         btnSettings.style.display = isTyping ? 'none' : 'inline-flex';
+      }
+      if (btnAskAi && btnVoice) {
+        if (isTyping) {
+          btnAskAi.textContent = '❓';
+          btnAskAi.style.padding = '0 5px';
+          btnVoice.textContent = isAiVoiceActive ? '✨🎤' : '🎤';
+          btnVoice.style.padding = '0 5px';
+        } else {
+          btnAskAi.textContent = '❓🎤';
+          btnAskAi.style.padding = '0 7px';
+          btnVoice.textContent = isAiVoiceActive ? '✨✍️🎤' : '✍️🎤';
+          btnVoice.style.padding = '0 7px';
+        }
       }
     }
 
@@ -2077,11 +2225,19 @@
         });
       }
 
-      // 5. ĐỒNG NHẤT HỌC MÃ TỐC KÝ:
-      // Nếu vừa commit từ (lastCommittedWord), tự động hiển thị CHIP HỌC MÃ [từ  vV1 a1] ở đầu tiên!
+      // 5. ĐỒNG NHẤT HỌC MÃ TỐC KÝ & GỢI Ý HOÁN VỊ PHỤ ÂM ĐẦU (d/đ/gi/r...):
       const displayWords = [];
-      if (lastCommittedWord && isValidVietnameseWord(lastCommittedWord)) {
-        displayWords.push(lastCommittedWord);
+      const inspected = !composingBuffer ? getWordUnderCursorWeb() : null;
+      const targetWord = inspected ? inspected.fullWord : lastCommittedWord;
+
+      let confusableVariants = [];
+      if (targetWord && isValidVietnameseWord(targetWord)) {
+        displayWords.push(targetWord);
+        // Thêm biến thể hoán vị phụ âm đầu dễ nhầm (gi ➔ d, rán...)
+        confusableVariants = getConfusableConsonantVariants(targetWord);
+        for (const cw of confusableVariants) {
+          if (!displayWords.includes(cw)) displayWords.push(cw);
+        }
       }
       const starters = ['tôi', 'bạn', 'hôm nay', 'chúng ta', 'công việc', 'thực sự', 'toán', 'mong'];
       starters.forEach(w => {
@@ -2089,9 +2245,10 @@
       });
 
       displayWords.forEach((word, index) => {
-        const isLearningChip = (word === lastCommittedWord);
+        const isLearningChip = (word === targetWord);
+        const isConfusableChip = confusableVariants.includes(word);
         const chip = document.createElement('div');
-        chip.className = `sug-chip ${isLearningChip ? 'learning-chip' : (index === 0 && calcSuggestions.length === 0 ? 'primary' : '')}`;
+        chip.className = `sug-chip ${isLearningChip ? 'learning-chip' : (isConfusableChip ? 'primary' : (index === 0 && calcSuggestions.length === 0 ? 'primary' : ''))}`;
         
         const { vV1, a1 } = getWordCodes(word);
         let codeTag = '';
@@ -2107,6 +2264,18 @@
         chip.onclick = () => {
           if (isLearningChip) {
             showTeachingHighlightForWord(word);
+          } else if (inspected && isConfusableChip) {
+            // Sửa 1 chạm từ dưới con trỏ
+            const before = committedText.slice(0, caretIndex);
+            const after = committedText.slice(caretIndex);
+            const newBefore = before.slice(0, before.length - inspected.beforeLen);
+            const newAfter = after.slice(inspected.afterLen);
+            committedText = newBefore + word + ' ' + newAfter;
+            caretIndex = (newBefore + word + ' ').length;
+            lastCommittedWord = word;
+            updateEditorDisplay();
+            renderSuggestions();
+            showToast(`🎯 Sửa 1 chạm: '${inspected.fullWord}' ➔ '${word}'`);
           } else {
             commitWord(word);
           }
@@ -2232,6 +2401,7 @@
       committedText = before + insertWord + after;
       caretIndex = (before + insertWord).length;
       composingBuffer = '';
+      isConsonantEditActive = false;
       lastCommittedWord = word;
       isNumberRowLaunchpadActive = true;
 
@@ -4239,6 +4409,7 @@
         // Xóa bình thường
         if (composingBuffer) {
           composingBuffer = composingBuffer.slice(0, -1);
+          if (!composingBuffer) isConsonantEditActive = false;
         } else if (caretIndex > 0) {
           committedText = committedText.slice(0, caretIndex - 1) + committedText.slice(caretIndex);
           caretIndex--;
@@ -4274,7 +4445,16 @@
         const toneName = vniToneMap[k.char];
         if (toneName) {
           try {
-            const toned = applyTone(lastCommittedWord, toneName);
+            let toned = null;
+            if (k.char === '9') {
+              const confVariants = getConfusableConsonantVariants(lastCommittedWord);
+              if (confVariants.length > 0) {
+                const curIdx = confVariants.findIndex(v => v.toLowerCase() === lastCommittedWord.toLowerCase());
+                toned = (curIdx >= 0 && curIdx + 1 < confVariants.length) ? confVariants[curIdx + 1] : confVariants[0];
+              }
+            } else {
+              toned = applyTone(lastCommittedWord, toneName);
+            }
             if (toned && toned !== lastCommittedWord) {
               const before = committedText.slice(0, caretIndex);
               const after = committedText.slice(caretIndex);
@@ -4310,6 +4490,67 @@
       }
 
       if (isBloomLockedOpen) clearNeighborBloom();
+
+      // 14.1. Khi đang trong phiên SỬA PHỤ ÂM THÔNG MINH (isConsonantEditActive):
+      if (isConsonantEditActive && charToType && charToType.length === 1) {
+        const nextCharLower = charToType.toLowerCase();
+        const candCompound = consonantEditCurrentCons + nextCharLower;
+        if (VALID_COMPOUND_CONSONANTS_SET.has(candCompound)) {
+          consonantEditCurrentCons = candCompound;
+          const compoundWord = buildWordWithConsonant(consonantEditCurrentCons, consonantEditRhyme, consonantEditTone);
+          const formatted = consonantEditIsAllUpper ? compoundWord.toUpperCase() :
+            (consonantEditIsFirstUpper ? compoundWord.charAt(0).toUpperCase() + compoundWord.slice(1) : compoundWord);
+          composingBuffer = formatted;
+          if (consonantEditCurrentCons !== 'ng') {
+            isConsonantEditActive = false;
+          }
+          updateEditorDisplay();
+          renderSuggestions();
+          showToast(`🎯 Phụ âm ghép: '${consonantEditCurrentCons}' ➔ '${formatted}'`);
+          return;
+        } else {
+          isConsonantEditActive = false;
+        }
+      }
+
+      // 14.2. KÍCH HOẠT CHẾ ĐỘ SỬA PHỤ ÂM THÔNG MINH (Consonant Composing Mode):
+      const inspectedUnderCursor = !composingBuffer ? getWordUnderCursorWeb() : null;
+      if (!composingBuffer && inspectedUnderCursor && charToType && charToType.length === 1 && VIET_CONSONANTS_SET.has(charToType.toLowerCase())) {
+        const rawTarget = inspectedUnderCursor.fullWord;
+        let oldCons = '', rhyme = '', tone = 0;
+        if (typeof extractPhonetics === 'function') {
+          const p = extractPhonetics(rawTarget.toLowerCase());
+          oldCons = p[0] || '';
+          rhyme = p[1] || '';
+          tone = p[2] !== undefined ? p[2] : detectTone(rawTarget.toLowerCase());
+        }
+        if (rhyme) {
+          isConsonantEditActive = true;
+          consonantEditIsFirstUpper = /[A-ZÀ-ỸĐ]/.test(rawTarget.charAt(0));
+          consonantEditIsAllUpper = rawTarget.length > 1 && rawTarget === rawTarget.toUpperCase();
+          consonantEditRhyme = rhyme;
+          consonantEditTone = tone;
+          consonantEditCurrentCons = charToType.toLowerCase();
+
+          const newWord = buildWordWithConsonant(consonantEditCurrentCons, rhyme, tone);
+          const formattedNewWord = consonantEditIsAllUpper ? newWord.toUpperCase() :
+            (consonantEditIsFirstUpper ? newWord.charAt(0).toUpperCase() + newWord.slice(1) : newWord);
+
+          // Xóa từ cũ trên committedText
+          const before = committedText.slice(0, caretIndex);
+          const after = committedText.slice(caretIndex);
+          const newBefore = before.slice(0, before.length - inspectedUnderCursor.beforeLen);
+          const newAfter = after.slice(inspectedUnderCursor.afterLen);
+          committedText = newBefore + newAfter;
+          caretIndex = newBefore.length;
+
+          composingBuffer = formattedNewWord;
+          updateEditorDisplay();
+          renderSuggestions();
+          showToast(`🎯 Sửa phụ âm: '${oldCons}' ➔ '${consonantEditCurrentCons}' (Đang soạn '${formattedNewWord}')`);
+          return;
+        }
+      }
 
       composingBuffer += charToType;
       updateEditorDisplay();
