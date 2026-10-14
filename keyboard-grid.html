@@ -1164,6 +1164,46 @@
       box-shadow: 0 0 8px rgba(188, 140, 255, 0.4);
     }
 
+    /* === BÀN PHÍM MÃ VẦN BÍ MẬT & SOI SỐ === */
+    .key-peek-badge {
+      display: none;
+      position: absolute;
+      top: 3px;
+      right: 4px;
+      font-size: 10.5px;
+      font-family: var(--font-mono);
+      font-weight: 800;
+      color: var(--glow-b2) !important;
+      background: rgba(242, 204, 96, 0.22);
+      border: 1px solid rgba(242, 204, 96, 0.5);
+      padding: 1px 4px;
+      border-radius: 4px;
+      z-index: 5;
+    }
+    .secret-peek-active .key-peek-badge {
+      display: block !important;
+      animation: peekFadeIn 0.15s ease;
+    }
+    @keyframes peekFadeIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .secret-rhyme-main {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.1;
+    }
+    .secret-rhyme-sub {
+      font-size: 8.5px;
+      color: var(--text-muted);
+      opacity: 0.8;
+      max-width: 90%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     /* === HÌNH DÁNG & KIỂU CHỮ (PHÂN BIỆT BASE60 THƯỜNG vs HOA) === */
     /* Base60 Thường (u, s, f...): Chữ thường, dáng đứng */
     .bloom-badge.is-lowercase {
@@ -1352,6 +1392,95 @@
       text-shadow: 0 0 8px rgba(0, 0, 0, 0.9) !important;
     }
 
+    /* Number Row Launchpad Multi-Directional Overlay (Toàn cục cho cả Desktop & Mobile) */
+    .grid-key.launchpad-active {
+      position: relative !important;
+      overflow: hidden !important;
+      border-color: #388bfd !important;
+      background: #121824 !important;
+    }
+    .grid-key.launchpad-active > .key-char,
+    .grid-key.launchpad-active > .key-tl,
+    .grid-key.launchpad-active > .key-sub,
+    .grid-key.launchpad-active > .bloom-badge {
+      display: none !important;
+    }
+
+    .lp-container-3row {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+      align-items: stretch;
+      padding: 1px 2px;
+      user-select: none;
+      pointer-events: none;
+      box-sizing: border-box;
+    }
+
+    .lp-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 12.5px;
+      line-height: 12.5px;
+      border-radius: 3px;
+      padding: 0 1px;
+      transition: all 0.08s ease;
+      overflow: hidden;
+    }
+
+    .lp-text {
+      font-size: 8.5px;
+      font-weight: 600;
+      color: #e6edf3;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: -0.2px;
+      text-align: center;
+      user-select: none;
+    }
+
+    /* Dòng giữa phím 0..5: từ đổi dấu VNI mang màu vàng hổ phách tinh tế */
+    .lp-row.lp-row-tone .lp-text {
+      color: #f2cc60;
+      font-weight: 700;
+    }
+
+    /* Trạng thái Hover khi vuốt 3 hướng */
+    .lp-row.lp-hover {
+      background: #1f6feb !important;
+    }
+    .lp-row.lp-hover .lp-text {
+      color: #ffffff !important;
+      font-weight: 800;
+    }
+
+    .lp-row.lp-row-tone.lp-hover {
+      background: #d29922 !important;
+    }
+    .lp-row.lp-row-tone.lp-hover .lp-text {
+      color: #ffffff !important;
+      font-weight: 800;
+    }
+
+    /* Số nhỏ ở góc để định vị phím chắc chắn */
+    .lp-corner-digit {
+      position: absolute;
+      top: 1.5px;
+      right: 2.5px;
+      font-size: 7.5px;
+      font-weight: 700;
+      color: #8b949e;
+      opacity: 0.75;
+      pointer-events: none;
+      line-height: 1;
+      user-select: none;
+      font-family: var(--font-mono, monospace);
+    }
+
     @media (max-width: 600px) {
       body {
         padding: 4px;
@@ -1365,15 +1494,265 @@
       .key-tl, .key-sub {
         font-size: 7.5px;
       }
-      .bloom-badge {
-        font-size: 8.5px;
+      .lp-row {
+        height: 11px;
+        line-height: 11px;
+      }
+      .lp-text {
+        font-size: 7.8px;
+      }
+      .lp-corner-digit {
+        font-size: 6.8px;
+        top: 1px;
+        right: 2px;
       }
     }
+
+    /* ===== TOAST NOTIFICATION ===== */
+    #toastNotif {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(22, 27, 34, 0.95);
+      color: #f0f6fc;
+      border: 1px solid rgba(88, 166, 255, 0.5);
+      border-radius: 20px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s, transform 0.25s;
+      z-index: 9999;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    }
+    #toastNotif.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== MIC BUTTON IN SUGGESTION BAR ===== */
+    .mic-btn {
+      flex-shrink: 0;
+      width: 34px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(88, 166, 255, 0.4);
+      background: rgba(88, 166, 255, 0.12);
+      color: #f0f6fc;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      position: relative;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+    .mic-btn.ai-on {
+      border-color: rgba(242, 204, 96, 0.7);
+      background: rgba(242, 204, 96, 0.18);
+      box-shadow: 0 0 10px rgba(242, 204, 96, 0.35);
+    }
+    .mic-btn.recording {
+      border-color: #f85149;
+      background: rgba(248, 81, 73, 0.22);
+      box-shadow: 0 0 12px rgba(248, 81, 73, 0.5);
+      animation: micPulse 0.8s infinite alternate;
+    }
+    @keyframes micPulse {
+      from { box-shadow: 0 0 6px rgba(248, 81, 73, 0.4); }
+      to   { box-shadow: 0 0 18px rgba(248, 81, 73, 0.8); }
+    }
+    .mic-btn .mic-ai-badge {
+      position: absolute;
+      top: -3px;
+      right: -3px;
+      font-size: 8px;
+      line-height: 1;
+    }
+    .settings-btn {
+      flex-shrink: 0;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      border: 1.5px solid rgba(139, 148, 158, 0.3);
+      background: rgba(139, 148, 158, 0.08);
+      color: #8b949e;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .settings-btn:hover { border-color: rgba(88,166,255,0.5); color: #58a6ff; background: rgba(88,166,255,0.1); }
+
+    /* ===== SETTINGS PANEL OVERLAY ===== */
+    #settingsPanel {
+      position: fixed;
+      inset: 0;
+      z-index: 8000;
+      background: rgba(0,0,0,0.65);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    #settingsPanel.open { display: flex; }
+    .settings-sheet {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 16px 16px 0 0;
+      width: 100%;
+      max-width: 480px;
+      padding: 16px 16px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      animation: slideUp 0.25s ease-out;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(60px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .settings-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #f0f6fc;
+      border-bottom: 1px solid #30363d;
+      padding-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .settings-close-btn { background: none; border: none; color: #8b949e; font-size: 20px; cursor: pointer; padding: 0 4px; }
+    .settings-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 8px 10px;
+      background: #0f141c;
+      border: 1px solid #21262d;
+      border-radius: 8px;
+    }
+    .settings-row-header { display: flex; justify-content: space-between; align-items: center; }
+    .settings-row-label { font-size: 13px; font-weight: 700; color: #f0f6fc; }
+    .settings-row-tip { font-size: 11px; color: #8b949e; margin-top: 3px; line-height: 1.4; }
+    .settings-row-tip em { color: #f2cc60; font-style: normal; }
+    .settings-toggle-group { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
+    .settings-toggle-btn {
+      padding: 5px 12px;
+      border-radius: 6px;
+      border: 1px solid #30363d;
+      background: #21262d;
+      color: #8b949e;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .settings-toggle-btn.active { background: #1f6feb; border-color: #58a6ff; color: #fff; }
+    .settings-toggle-btn.active.yellow { background: rgba(242,204,96,0.2); border-color: #f2cc60; color: #f2cc60; }
+    .settings-link-row { display: flex; gap: 8px; margin-top: 2px; }
+    .settings-link-btn {
+      flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #30363d;
+      background: #21262d; color: #8b949e; font-size: 12px; font-weight: 600;
+      cursor: pointer; text-align: center; text-decoration: none;
+      display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.15s;
+    }
+    .settings-link-btn:hover { border-color: #58a6ff; color: #58a6ff; }
+
+    /* ===== SYM LAYER KEYBOARD ===== */
+    .sym-layer { display: none; }
+    .sym-layer.active { display: flex; flex-direction: column; gap: 4px; }
+    .sym-layer-header { display: flex; justify-content: flex-end; padding: 0 4px; }
+    .sym-settings-btn { background: none; border: none; color: #8b949e; font-size: 16px; cursor: pointer; padding: 2px 6px; }
+    .sym-row { display: flex; gap: 4px; width: 100%; }
+    .sym-key {
+      flex: 1; height: 44px; background: #1f232b; border: 1px solid #2d333b;
+      border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 14px; font-weight: 700; color: #f0f6fc;
+      transition: all 0.12s; user-select: none; touch-action: manipulation;
+    }
+    .sym-key:active, .sym-key:hover { background: #2d333b; border-color: #58a6ff; }
+    .sym-key.sym-action { background: #151d2b; border-color: #233348; color: #58a6ff; font-size: 12px; font-weight: 800; }
+    .sym-key.sym-special { background: #1a2010; border-color: #2a3818; color: #7ee787; font-size: 12px; font-weight: 700; }
+    .sym-key.sym-back { background: #238636; border-color: #2ea043; color: #fff; font-size: 12px; font-weight: 800; }
+    .sym-key.sym-digit { background: #1e2535; border-color: #2a3548; color: #f2cc60; font-size: 16px; font-weight: 800; }
+    .sym-key.span-2 { flex: 2; }
+    .sym-key.span-3 { flex: 3; }
   </style>
 </head>
 <body>
 
-  <!-- Main Simulator Container (Bắt đầu ngay từ đỉnh màn hình, KHÔNG có header che chắn) -->
+  <!-- ===== TOAST NOTIFICATION (global) ===== -->
+  <div id="toastNotif"></div>
+
+  <!-- ===== SETTINGS PANEL OVERLAY ===== -->
+  <div id="settingsPanel" onclick="if(event.target===this) closeSettings()">
+    <div class="settings-sheet">
+      <div class="settings-title">
+        ⚙️ Cài đặt &amp; Cẩm nang
+        <button class="settings-close-btn" onclick="closeSettings()">✕</button>
+      </div>
+
+      <!-- Voice AI Toggle -->
+      <div class="settings-row">
+        <div class="settings-row-header">
+          <span class="settings-row-label">🎤 Chế độ Giọng nói (Voice AI)</span>
+        </div>
+        <div class="settings-toggle-group">
+          <button class="settings-toggle-btn" id="settingsMicOff" onclick="setVoiceAI(false)">🎤 Tắt AI (Offline 0ms)</button>
+          <button class="settings-toggle-btn active yellow" id="settingsMicOn" onclick="setVoiceAI(true)">✨🎤 Bật AI (Gemini Flash)</button>
+        </div>
+        <div class="settings-row-tip">💡 Mẹo nhanh: <em>Giữ chặt nút 🎤 ngay trên bàn phím</em> để bật/tắt AI tức thì mà không cần mở Cài đặt!</div>
+      </div>
+
+      <!-- Shift Study Mode -->
+      <div class="settings-row">
+        <div class="settings-row-header">
+          <span class="settings-row-label">📖 Chế độ Học Dấu Tốc ký A1</span>
+        </div>
+        <div class="settings-toggle-group">
+          <button class="settings-toggle-btn active" id="settingsStudy0" onclick="setStudyMode(0)">Tắt</button>
+          <button class="settings-toggle-btn" id="settingsStudy1" onclick="setStudyMode(1)">Tất cả</button>
+          <button class="settings-toggle-btn" id="settingsStudy2" onclick="setStudyMode(2)">B4 Lục</button>
+          <button class="settings-toggle-btn" id="settingsStudy3" onclick="setStudyMode(3)">B5 Vàng</button>
+          <button class="settings-toggle-btn" id="settingsStudy4" onclick="setStudyMode(4)">B6 Tím</button>
+        </div>
+        <div class="settings-row-tip">💡 Mẹo nhanh: <em>Giữ chặt phím ⇧</em> ngay trên bàn phím để xoay vòng chế độ học nhanh!</div>
+      </div>
+
+      <!-- Layout -->
+      <div class="settings-row">
+        <div class="settings-row-header">
+          <span class="settings-row-label">📱 Chế độ Bố cục Bàn phím</span>
+        </div>
+        <div class="settings-toggle-group">
+          <button class="settings-toggle-btn" onclick="closeSettings(); setKeyboardMode('normal')">📲 Chuẩn 2 Tay</button>
+          <button class="settings-toggle-btn" onclick="closeSettings(); setKeyboardMode('36L')">36L Tay Trái</button>
+          <button class="settings-toggle-btn" onclick="closeSettings(); setKeyboardMode('36R')">36R Tay Phải</button>
+          <button class="settings-toggle-btn" onclick="closeSettings(); setKeyboardMode('secret_rhymes')">🔐 Mã Vần</button>
+        </div>
+        <div class="settings-row-tip">💡 Mẹo nhanh: <em>Giữ chặt phím 📱</em> để về bàn phím 2 tay chuẩn ngay lập tức!</div>
+      </div>
+
+      <!-- Links -->
+      <div class="settings-link-row">
+        <a href="/vboard.apk" download="vboard.apk" class="settings-link-btn">📥 Tải APK</a>
+        <a href="vcomp-169-rhymes.html" class="settings-link-btn">📊 169 Vần</a>
+        <button class="settings-link-btn" onclick="closeSettings()">📖 Cẩm nang</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Simulator Container -->
   <div class="simulator-container mobile-mode" id="simulatorApp">
     
     <!-- 1. Output Editor Area (Nhỏ gọn, KHÔNG dâng bàn phím native của điện thoại) -->
@@ -1381,6 +1760,7 @@
       <div class="output-header-mini">
         <span class="output-title">📝 Gõ VComp</span>
         <div class="output-actions-mini">
+          <a href="/vboard.apk" download="vboard.apk" class="btn-mini" style="color: #fff; background: #238636; border-color: #2ea043; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-weight: 700;" title="Tải file APK vboard để cài đặt trên điện thoại Android">📥 Tải APK</a>
           <a href="vcomp-169-rhymes.html" class="btn-mini" style="color: #fff; background: #1f6feb; border-color: #388bfd; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-weight: 700;" title="Mở bảng tra 169 vần & phím VComp">📊 169 Vần ➔</a>
           <button class="btn-mini" id="btnCopyText" title="Sao chép văn bản">📋 Copy</button>
           <button class="btn-mini" id="btnClearTextMini" title="Xóa nội dung">🧹 Xóa</button>
@@ -1396,11 +1776,39 @@
       <button class="btn-mode-toggle" id="btnMode_36L" onclick="setKeyboardMode('36L')">36L (1 Tay Trái + Hexa)</button>
       <button class="btn-mode-toggle" id="btnMode_36R" onclick="setKeyboardMode('36R')">36R (1 Tay Phải + Hexa)</button>
       <button class="btn-mode-toggle" id="btnMode_mode_select" onclick="setKeyboardMode('mode_select')">❖ Tầng Chọn Mode</button>
+      <button class="btn-mode-toggle" id="btnMode_secret_rhymes" onclick="setKeyboardMode('secret_rhymes')" style="color:var(--glow-b2); border-color:rgba(242,204,96,0.4);">🔐 Bàn Phím Mã Vần</button>
+    </div>
+
+    <!-- 2.1 Secret Rhymes Control Bar -->
+    <div id="secretRhymesToolbar" style="display: none; background: #111620; border: 1px solid var(--border-dark); border-radius: 8px; padding: 6px 10px; margin-bottom: 6px; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button class="btn-mini" id="btnSecretPeek" onclick="toggleSecretPeek()" style="font-weight: 700; color: var(--glow-b2); border-color: rgba(242, 204, 96, 0.4);">
+          <span id="secretPeekIcon">👁️</span> <span id="secretPeekLabel">Soi Số: ĐANG TẮT</span>
+        </button>
+        <button class="btn-mini" id="btnSecretRotate" onclick="rotateSecretRhymeCycle()" style="font-weight: 700; color: var(--glow-cyan); border-color: rgba(88, 166, 255, 0.4);">
+          🎲 Đổi Vần (<span id="secretCycleLabel">Tầng 1: B3/B1</span>)
+        </button>
+        <button class="btn-mini" id="btnSecretList" onclick="showSecretPassList()" style="font-weight: 700; color: #fff;">
+          🔑 Két Pass (4)
+        </button>
+      </div>
+      <div id="secretNoticeFeedback" style="font-size: 11.5px; color: var(--text-muted);">
+        💡 Chạm 1 vần đầu ➔ Điền mật khẩu & vẽ vệt sáng học vần!
+      </div>
     </div>
 
     <!-- 3. Suggestion Bar (Hàng trên cùng của bàn phím: Gợi ý + 6 phím Hexa) -->
     <div class="suggestion-bar" id="suggestionBar">
       <div class="top-hex-bar" id="topHexBar" style="display: none;"></div>
+      <!-- Settings + Mic buttons (hiện khi suggestion bar visible) -->
+      <button class="settings-btn" id="btnSettings" title="Cài đặt" onclick="openSettings()">⚙️</button>
+      <button class="mic-btn" id="btnMic" title="Nhấn: Ghi âm | Giữ: Bật/Tắt AI"
+        onclick="handleMicTap()"
+        onmousedown="startMicLongPress(event)" onmouseup="cancelMicLongPress()"
+        ontouchstart="startMicLongPress(event)" ontouchend="cancelMicLongPress()">
+        <span id="micIcon">🎤</span>
+        <span class="mic-ai-badge" id="micAiBadge" style="display:none;">✨</span>
+      </button>
       <div class="suggestion-chips" id="suggestionChips">
         <div class="sug-chip primary" onclick="pickSuggestion('toán')">toán</div>
         <div class="sug-chip" onclick="pickSuggestion('kêu')">kêu</div>
@@ -1412,6 +1820,63 @@
     <!-- 4. BÀN PHÍM LƯỚI GRID -->
     <div class="keyboard-wrapper" id="keyboardWrapper">
       <!-- Generated by JavaScript to guarantee exact grid rows & coordinates -->
+    </div>
+
+    <!-- 4b. SYM LAYER (số & ký hiệu đặc biệt) -->
+    <div class="sym-layer" id="symLayer">
+      <div class="sym-layer-header">
+        <button class="sym-settings-btn" onclick="openSettings()" title="Cài đặt">⚙️</button>
+      </div>
+      <!-- Hàng 1: Số 1-9, 0 -->
+      <div class="sym-row">
+        <div class="sym-key sym-digit" onclick="symType('1')">1</div>
+        <div class="sym-key sym-digit" onclick="symType('2')">2</div>
+        <div class="sym-key sym-digit" onclick="symType('3')">3</div>
+        <div class="sym-key sym-digit" onclick="symType('4')">4</div>
+        <div class="sym-key sym-digit" onclick="symType('5')">5</div>
+        <div class="sym-key sym-digit" onclick="symType('6')">6</div>
+        <div class="sym-key sym-digit" onclick="symType('7')">7</div>
+        <div class="sym-key sym-digit" onclick="symType('8')">8</div>
+        <div class="sym-key sym-digit" onclick="symType('9')">9</div>
+        <div class="sym-key sym-digit" onclick="symType('0')">0</div>
+      </div>
+      <!-- Hàng 2: Ký hiệu phổ biến -->
+      <div class="sym-row">
+        <div class="sym-key" onclick="symType('@')">@</div>
+        <div class="sym-key" onclick="symType('#')">#</div>
+        <div class="sym-key" onclick="symType('$')">$</div>
+        <div class="sym-key" onclick="symType('%')">%</div>
+        <div class="sym-key" onclick="symType('^')">^</div>
+        <div class="sym-key" onclick="symType('&amp;')">&</div>
+        <div class="sym-key" onclick="symType('*')">*</div>
+        <div class="sym-key" onclick="symType('(')"> (</div>
+        <div class="sym-key" onclick="symType(')')">)</div>
+        <div class="sym-key sym-action" onclick="symBackspace()">⌫</div>
+      </div>
+      <!-- Hàng 3: Ký hiệu câu -->
+      <div class="sym-row">
+        <div class="sym-key" onclick="symType('!')">!</div>
+        <div class="sym-key" onclick="symType('?')">?</div>
+        <div class="sym-key" onclick="symType('.')">.</div>
+        <div class="sym-key" onclick="symType(','">,</div>
+        <div class="sym-key" onclick="symType(';')">;</div>
+        <div class="sym-key" onclick="symType(':')">:</div>
+        <div class="sym-key" onclick="symType('-')">-</div>
+        <div class="sym-key" onclick="symType('_')">_</div>
+        <div class="sym-key" onclick="symType('/')">/ </div>
+        <div class="sym-key" onclick="symType('\\')">\ </div>
+      </div>
+      <!-- Hàng 4: Đặc biệt + Enter + ABC -->
+      <div class="sym-row">
+        <div class="sym-key sym-special" onclick="symType('0')">0</div>
+        <div class="sym-key sym-special" onclick="symType('.')">.</div>
+        <div class="sym-key sym-special" onclick="symType('000')"><small>000</small></div>
+        <div class="sym-key sym-special" onclick="symType('+')">+</div>
+        <div class="sym-key sym-special" onclick="symType('=')">=</div>
+        <div class="sym-key sym-special" onclick="symType('🔥')">🔥</div>
+        <div class="sym-key span-2 sym-action" onclick="symType(' ')">␣ Cách</div>
+        <div class="sym-key span-2 sym-back" onclick="exitSymLayer()">ABC ←</div>
+      </div>
     </div>
 
     <!-- 4. Live VComp Inspector Banner (ĐƯA XUỐNG DƯỚI BÀN PHÍM) -->
@@ -1436,6 +1901,7 @@
         <span class="badge">MÃ MÀU & HÌNH DÁNG HỌC VCOMP</span>
       </div>
       <div class="view-toggles">
+        <a href="/vboard.apk" download="vboard.apk" class="btn-toggle" style="background:#238636;color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:4px;font-weight:600;" title="Tải file APK vboard để cài đặt trên điện thoại Android">📥 Tải APK</a>
         <button class="btn-toggle" id="btnToggleLegend" title="Bật/Tắt hướng dẫn quy ước">💡 Thuyết minh</button>
         <button class="btn-toggle active" id="btnModeMobile">📱 Điện Thoại</button>
         <button class="btn-toggle" id="btnModeDesktop">💻 Toàn Màn Hình</button>
@@ -2009,10 +2475,91 @@
       ]
     ];
 
-    let currentKeyboardMode = 'normal'; // 'normal', '36L', '36R', 'mode_select'
+    // ========================================================
+    // BÀN PHÍM MÃ VẦN BÍ MẬT (ANTI-PEEP RHYME CIPHER)
+    // 36 Phím tương ứng 36 họ vần theo chuẩn vV1 / a1
+    // ========================================================
+    const SECRET_36_KEYS_DATA = {
+      // Hàng số 1..0
+      '1': { digit: '1', rhymes: ['yê', 'sắc', 'ai', 'iêc', 'ua'], r: 0, c: 1 },
+      '2': { digit: '2', rhymes: ['oat', 'huyền', 'am', 'iên', 'uât'], r: 0, c: 2 },
+      '3': { digit: '3', rhymes: ['ê', 'hỏi', 'an', 'iêng', 'uc'], r: 0, c: 3 },
+      '4': { digit: '4', rhymes: ['ươu', 'ngã', 'ang', 'iêp', 'uê'], r: 0, c: 4 },
+      '5': { digit: '5', rhymes: ['âu', 'nặng', 'ôn', 'iêt', 'âm'], r: 0, c: 5 },
+      '6': { digit: '6', rhymes: ['ươ', 'th', 'ia', 'iu', 'um'], r: 0, c: 6 },
+      '7': { digit: '7', rhymes: ['oai', 'ch', 'ut', 'iêu', 'uân'], r: 0, c: 7 },
+      '8': { digit: '8', rhymes: ['oă', 'tr', 'ich', 'ip', 'ung'], r: 0, c: 8 },
+      '9': { digit: '9', rhymes: ['ây', 'nh', 'ương', 'inh', 'uôi'], r: 0, c: 9 },
+      '0': { digit: '0', rhymes: ['ô', 'ng', 'it', 'oa', 'uôn'], r: 0, c: 10 },
+      // Hàng chữ q..p
+      'q': { digit: 'q', rhymes: ['Qu', 'uyt', 'oe', 'uêch'], r: 1, c: 1 },
+      'w': { digit: 'w', rhymes: ['ư', 'ươi', 'uyn', 'oam'], r: 1, c: 2 },
+      'e': { digit: 'e', rhymes: ['êu', 'e', 'uơ', 'uyu'], r: 1, c: 3 },
+      'r': { digit: 'r', rhymes: ['Tr', 'r', 'oay', 'uych'], r: 1, c: 4 },
+      't': { digit: 't', rhymes: ['Th', 't', 'oang', 'uynh'], r: 1, c: 5 },
+      'y': { digit: 'y', rhymes: ['yêu', 'y', 'uênh', 'oan'], r: 1, c: 6 },
+      'u': { digit: 'u', rhymes: ['u', 'ui', 'uyêt', 'oac'], r: 1, c: 7 },
+      'i': { digit: 'i', rhymes: ['i', 'im', 'uôm', 'oap'], r: 1, c: 8 },
+      'o': { digit: 'o', rhymes: ['o', 'om', 'uông', 'oăm'], r: 1, c: 9 },
+      'p': { digit: 'p', rhymes: ['Ph', 'p', 'ươp', 'oăc'], r: 1, c: 10 },
+      // Hàng chữ a..l
+      'a': { digit: 'a', rhymes: ['a', 'ay', 'oap', 'oăt'], r: 2, c: 1 },
+      's': { digit: 's', rhymes: ['ương', 's', 'oai', 'oăm'], r: 2, c: 2 },
+      'd': { digit: 'd', rhymes: ['đ', 'd', 'oan', 'uâng'], r: 2, c: 3 },
+      'f': { digit: 'f', rhymes: ['ươn', 'f', 'oang', 'uât'], r: 2, c: 4 },
+      'g': { digit: 'g', rhymes: ['Gh', 'g', 'oac', 'uơ'], r: 2, c: 5 },
+      'h': { digit: 'h', rhymes: ['Nh', 'h', 'oăc', 'uyê'], r: 2, c: 6 },
+      'j': { digit: 'j', rhymes: ['eo', 'j', 'uê', 'uyt'], r: 2, c: 7 },
+      'k': { digit: 'k', rhymes: ['Kh', 'k', 'uêch', 'uych'], r: 2, c: 8 },
+      'l': { digit: 'l', rhymes: ['oi', 'l', 'uênh', 'uynh'], r: 2, c: 9 },
+      // Hàng chữ z..m
+      'z': { digit: 'z', rhymes: ['ưa', 'z', 'oanh', 'uôi'], r: 3, c: 2 },
+      'x': { digit: 'x', rhymes: ['ơi', 'x', 'oach', 'uôn'], r: 3, c: 3 },
+      'c': { digit: 'c', rhymes: ['Ch', 'c', 'uya', 'uôm'], r: 3, c: 4 },
+      'v': { digit: 'v', rhymes: ['ia', 'v', 'uyê', 'uông'], r: 3, c: 5 },
+      'b': { digit: 'b', rhymes: ['uy', 'b', 'uyu', 'ươp'], r: 3, c: 6 },
+      'n': { digit: 'n', rhymes: ['Ng', 'n', 'uyn', 'oay'], r: 3, c: 7 },
+      'm': { digit: 'm', rhymes: ['uôi', 'm', 'uyt', 'oe'], r: 3, c: 8 }
+    };
+
+    let secretRhymeCycle = 0;
+    let secretPeekActive = false;
+    let secretInputSequence = [];
+
+    const SECRET_PASSWORDS = [
+      { id: 'vcb', name: 'VCB Thẻ Chính (123456)', code: '123456', keyPath: ['1', '2', '3', '4', '5', '6'] },
+      { id: 'bidv', name: 'BIDV Công Việc (212121)', code: '212121', keyPath: ['2', '1', '2', '1', '2', '1'] },
+      { id: 'mb', name: 'MB Bank (257190)', code: '257190', keyPath: ['2', '5', '7', '1', '9', '0'] },
+      { id: 'master', name: 'Master Pass (Minh@2026)', code: 'Minh@2026', keyPath: ['m', 'i', 'n', 'h'] }
+    ];
+
+    function getSecretRhymesGridRows() {
+      // Sao chép khung GRID_ROWS_NORMAL và thay nhãn bằng VẦN theo chu kỳ
+      const rows = JSON.parse(JSON.stringify(GRID_ROWS_NORMAL));
+      for (let r = 0; r < rows.length; r++) {
+        for (let c = 0; c < rows[r].length; c++) {
+          const k = rows[r][c];
+          const rawChar = (k.char || '').toLowerCase();
+          const secretInfo = SECRET_36_KEYS_DATA[rawChar];
+          if (secretInfo) {
+            const list = secretInfo.rhymes;
+            const chosenRhyme = list[secretRhymeCycle % list.length];
+            k.origChar = k.char;
+            k.char = chosenRhyme;
+            k.isSecretKey = true;
+            k.secretDigit = secretInfo.digit;
+            k.sub = secretPeekActive ? `[${secretInfo.digit}]` : '';
+          }
+        }
+      }
+      return rows;
+    }
+
+    let currentKeyboardMode = 'normal'; // 'normal', '36L', '36R', 'mode_select', 'secret_rhymes'
     let previousKeyboardMode = 'normal';
 
     function getActiveGridRows() {
+      if (currentKeyboardMode === 'secret_rhymes') return getSecretRhymesGridRows();
       if (currentKeyboardMode === 'mode_select') return GRID_ROWS_MODE_SELECT;
       if (currentKeyboardMode === '36L') {
         const rows = [];
@@ -2123,6 +2670,11 @@
     const TONES_B5 = ['c', 'g', 'h', 'p', 't', 'w']; // B2 HOA (6 phụ âm ABC)
     const TONES_B6 = ['6', '7', '8', '9', 'm', 'n']; // B3 HOA (Số VNI mở rộng)
 
+    function removeAccents(str) {
+      if (!str) return '';
+      return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+    }
+
     function encodeA1(word) {
       if (!word) return null;
       const isAllUpper = word.length > 1 && word === word.toUpperCase() && /[A-ZÀ-ỸĐ]/.test(word);
@@ -2232,6 +2784,10 @@
       if (cons === 'gi' && rime) {
         if (rime.startsWith('iê')) rime = rime.substring(1);
         else if (rime.startsWith('i')) prefix = 'g';
+      }
+      // Chuẩn hóa chính tả tiếng Việt: sau phụ âm, vần yê... chuyển thành iê... (vd: m + yêng -> m + iêng = miếng)
+      if (prefix && prefix !== 'qu' && rime && rime.startsWith('yê')) {
+        rime = 'iê' + rime.substring(2);
       }
 
       const tonedRime = applyTone(rime, tone);
@@ -2533,24 +3089,70 @@
       const pEnd = pathPoints[pathPoints.length - 1];
 
       // Tìm phím kết thúc tại pEnd (dùng getKeyAtPoint chống trượt viền phím trên điện thoại)
-      const endDef = getKeyAtPoint(pEnd.x, pEnd.y);
+      const endDef = getKeyAtPoint(pEnd.x, pEnd.y) || startKeyDef;
       if (!endDef || !endDef.char) return null;
 
       const kStart = startKeyDef.char;
       const kEnd = endDef.char;
 
-      if (kStart === kEnd) return null;
-
       // 1. Tính toán độ dài dây cung và chiều dài cung
       const chordDx = pEnd.x - pStart.x;
       const chordDy = pEnd.y - pStart.y;
       const chordDist = Math.hypot(chordDx, chordDy);
-      if (chordDist < 18) return null;
 
       let pathLen = 0;
       for (let i = 1; i < pathPoints.length; i++) {
         pathLen += Math.hypot(pathPoints[i].x - pathPoints[i-1].x, pathPoints[i].y - pathPoints[i-1].y);
       }
+      if (pathLen < 22) return null;
+
+      // Nhận diện cử chỉ lặp 3 tại chỗ (Hình số 8 hoặc 2 vòng xoay: sss -> sướng)
+      let totalAbsCurvature = 0;
+      let signedWinding = 0;
+      for (let i = 1; i < pathPoints.length - 1; i++) {
+        const v1x = pathPoints[i].x - pathPoints[i - 1].x;
+        const v1y = pathPoints[i].y - pathPoints[i - 1].y;
+        const v2x = pathPoints[i + 1].x - pathPoints[i].x;
+        const v2y = pathPoints[i + 1].y - pathPoints[i].y;
+        const cross = v1x * v2y - v1y * v2x;
+        const dot = v1x * v2x + v1y * v2y;
+        const dAngle = Math.atan2(cross, dot);
+        totalAbsCurvature += Math.abs(dAngle);
+        signedWinding += dAngle;
+      }
+      const totalSignedWinding = Math.abs(signedWinding);
+
+      let minDx = 0, maxDx = 0, minDy = 0, maxDy = 0, maxDistFromStart = 0;
+      for (const p of pathPoints) {
+        const dX = p.x - pStart.x;
+        const dY = p.y - pStart.y;
+        if (dX < minDx) minDx = dX;
+        if (dX > maxDx) maxDx = dX;
+        if (dY < minDy) minDy = dY;
+        if (dY > maxDy) maxDy = dY;
+        const d = Math.hypot(dX, dY);
+        if (d > maxDistFromStart) maxDistFromStart = d;
+      }
+      const hasOppositeLobes = (minDx < -12 && maxDx > 12) || (minDy < -12 && maxDy > 12);
+      const isLocalToStart = maxDistFromStart < 160;
+      const isDoubleLoopOrFigure8 = (totalSignedWinding >= 6.5) ||
+        (totalAbsCurvature >= 6.5 && (hasOppositeLobes || kStart === kEnd));
+
+      if (isLocalToStart && pathLen >= 60 && (chordDist < 55 || kStart === kEnd) && isDoubleLoopOrFigure8) {
+        const res3 = decode3Key(kStart, kStart, kStart);
+        if (res3 && res3.word && isValidVietnameseWord(res3.word)) {
+          return {
+            ...res3,
+            gestureType: 'three_key',
+            keys: [kStart, kStart, kStart],
+            alternateWords: [res3.word],
+            desc: `Lặp 3 (Hình số 8 / 2 vòng): [${kStart}] ➔ '${res3.word}'`
+          };
+        }
+      }
+
+      if (kStart === kEnd && chordDist < 25) return null;
+      if (chordDist < 18 && pathLen < 45) return null;
       const straightness = pathLen > 0 ? (chordDist / pathLen) : 1;
 
       // 2. Dò tìm các đỉnh góc ngoặt thực tế bằng toán hình học góc quay
@@ -2612,54 +3214,20 @@
           }
         }
 
-        // Bỏ qua các phím rác bị lướt qua trên đường phóng từ hàng 4 lên góc ngoặt đầu tiên (như x, c):
-        // Ký tự đầu tiên có chủ đích CHÍNH LÀ GÓC NGOẶT ĐẦU TIÊN (nếu có)!
-        let startChar = '';
-        if (cornerChars.length > 0) {
-          startChar = cornerChars[0];
-        } else {
-          startChar = cleanCrossed.length > 0 ? cleanCrossed[0] : '';
-        }
+        const firstCrossed = cleanCrossed.length > 0 ? cleanCrossed[0] : '';
+        const firstCorner = cornerChars.length > 0 ? cornerChars[0] : '';
 
-        let anchorLetters = [];
-        if (launchZone === 1) {
-          // VÙNG 1 (2 KÝ TỰ): Ký tự góc ngoặt đầu tiên + Ký tự thả tay
-          if (cornerChars.length >= 1 && endChar && cornerChars[0] !== endChar) {
-            anchorLetters = [cornerChars[0], endChar];
-          } else if (cleanCrossed.length >= 2) {
-            anchorLetters = cleanCrossed.slice(-2);
-          }
-        } else if (launchZone === 2) {
-          // VÙNG 2 (3 KÝ TỰ):
-          if (cornerChars.length >= 2 && endChar) {
-            anchorLetters = [cornerChars[0], cornerChars[1], endChar];
-          } else if (cornerChars.length === 1 && endChar) {
-            const idx1 = cleanCrossed.indexOf(cornerChars[0]);
-            const idx2 = cleanCrossed.lastIndexOf(endChar);
-            let midChar = '';
-            if (idx1 !== -1 && idx2 !== -1 && idx2 > idx1 + 1) {
-              midChar = cleanCrossed[Math.floor((idx1 + idx2) / 2)];
-            }
-            if (midChar && midChar !== cornerChars[0] && midChar !== endChar) {
-              anchorLetters = [cornerChars[0], midChar, endChar];
-            } else {
-              anchorLetters = [cornerChars[0], endChar];
-            }
-          } else if (cleanCrossed.length >= 3) {
-            anchorLetters = cleanCrossed.slice(-3);
-          }
-        } else {
-          // VÙNG 3 (4+ KÝ TỰ):
-          if (startChar) anchorLetters.push(startChar);
-          for (let i = 1; i < cornerChars.length; i++) {
-            anchorLetters.push(cornerChars[i]);
-          }
-          if (endChar && (anchorLetters.length === 0 || anchorLetters[anchorLetters.length - 1] !== endChar)) {
-            anchorLetters.push(endChar);
-          }
+        const startCandidates = new Set();
+        if (firstCorner) startCandidates.add(firstCorner);
+        if (firstCrossed) startCandidates.add(firstCrossed);
+        if (launchZone === 1 && cleanCrossed.length >= 2) {
+          startCandidates.add(cleanCrossed[cleanCrossed.length - 2]);
         }
-
-        const anchorCode = anchorLetters.join('').toLowerCase();
+        const startNeighbors = new Set();
+        for (const sc of startCandidates) {
+          for (const n of (ADJACENT_NEIGHBORS[sc] || [])) startNeighbors.add(n);
+        }
+        const endNeighbors = endChar ? (ADJACENT_NEIGHBORS[endChar] || []) : [];
 
         function getLexWords(code) {
           if (!code) return [];
@@ -2674,150 +3242,245 @@
           return len >= 4;
         };
 
-        let matchedWord = null;
-        let matchedCode = '';
+        const allLexKeys = typeof VIETNAMESE_LEXICON_MAP !== 'undefined' ? Object.keys(VIETNAMESE_LEXICON_MAP) : (typeof UNACCENTED_MAP !== 'undefined' ? Object.keys(UNACCENTED_MAP) : []);
 
-        // 1. Thử khớp trực tiếp mã các đỉnh nếu độ dài phù hợp với phân vùng
-        if (isLenMatch(anchorCode.length)) {
-          const directWords = getLexWords(anchorCode);
-          if (directWords.length > 0) {
-            matchedWord = typeof directWords[0] === 'string' ? directWords[0] : directWords[0].word;
-            matchedCode = anchorCode;
-          }
-        }
+        const candidateEvaluations = [];
 
-        // 2. Thuật toán chấm điểm ứng viên từ điển (Fuzzy Neighbor + Subsequence Scoring) theo phân vùng
-        if (!matchedWord && startChar && endChar && cleanCrossed.length >= 2) {
-          let bestCandidate = null;
-          let highestScore = -999;
-          const allLexKeys = typeof VIETNAMESE_LEXICON_MAP !== 'undefined' ? Object.keys(VIETNAMESE_LEXICON_MAP) : [];
+        for (const unaccKey of allLexKeys) {
+          if (!isLenMatch(unaccKey.length)) continue;
 
-          const startNeighbors = ADJACENT_NEIGHBORS[startChar] || [];
-          const endNeighbors = ADJACENT_NEIGHBORS[endChar] || [];
+          const uStart = unaccKey[0];
+          const isStartExact = startCandidates.has(uStart);
+          const isStartNeighbor = !isStartExact && startNeighbors.has(uStart);
+          if (!isStartExact && !isStartNeighbor) continue;
+          const startScore = isStartExact ? 5.0 : 1.5;
 
-          for (const wordKey of allLexKeys) {
-            // LỌC CHẶT THEO ĐỘ DÀI CỦA PHÂN VÙNG
-            if (!isLenMatch(wordKey.length)) continue;
+          const uEnd = unaccKey[unaccKey.length - 1];
+          const isEndExact = (endChar && uEnd === endChar);
+          const isEndNeighbor = !isEndExact && endNeighbors.includes(uEnd);
+          if (!isEndExact && !isEndNeighbor) continue;
+          const endScore = isEndExact ? 5.0 : 1.5;
 
-            const isStartExact = wordKey.startsWith(startChar);
-            const isStartNeighbor = !isStartExact && startNeighbors.includes(wordKey[0]);
-            if (!isStartExact && !isStartNeighbor) continue;
+          // Khớp chuỗi con theo thứ tự thời gian
+          let kIdx = 0;
+          let subseqScore = 0;
+          let wordMatched = true;
 
-            const isEndExact = wordKey.endsWith(endChar);
-            const isEndNeighbor = !isEndExact && endNeighbors.includes(wordKey[wordKey.length - 1]);
-            if (!isEndExact && !isEndNeighbor) continue;
+          for (let i = 0; i < unaccKey.length; i++) {
+            const targetChar = unaccKey[i];
+            let found = false;
+            const nbrs = ADJACENT_NEIGHBORS[targetChar] || [];
 
-            let kIdx = 0;
-            let matchScore = 0;
-            let wordMatched = true;
-
-            for (let i = 0; i < wordKey.length; i++) {
-              const targetChar = wordKey[i];
-              let found = false;
-              const nbrs = ADJACENT_NEIGHBORS[targetChar] || [];
-
-              while (kIdx < cleanCrossed.length) {
-                const curChar = cleanCrossed[kIdx];
-                if (curChar === targetChar) {
-                  matchScore += 2.0;
-                  found = true;
-                  kIdx++;
-                  break;
-                } else if (nbrs.includes(curChar)) {
-                  matchScore += 1.2;
-                  found = true;
-                  kIdx++;
-                  break;
-                }
-                kIdx++;
-              }
-
-              if (!found) {
-                wordMatched = false;
+            while (kIdx < cleanCrossed.length) {
+              const curChar = cleanCrossed[kIdx];
+              kIdx++;
+              if (curChar === targetChar) {
+                subseqScore += 3.0;
+                found = true;
+                break;
+              } else if (nbrs.includes(curChar)) {
+                subseqScore += 1.2;
+                found = true;
                 break;
               }
             }
 
-            if (!wordMatched) continue;
-
-            // Điểm thưởng các góc ngoặt
-            for (const c of cornerChars) {
-              if (wordKey.includes(c)) {
-                matchScore += 2.5;
-              } else {
-                const cNbrs = ADJACENT_NEIGHBORS[c] || [];
-                if (cNbrs.some(n => wordKey.includes(n))) {
-                  matchScore += 1.0;
-                }
-              }
+            if (!found) {
+              wordMatched = false;
+              break;
             }
+          }
+          if (!wordMatched) continue;
 
-            // Phạt chênh lệch độ dài
-            const lenDiff = Math.abs(cleanCrossed.length - wordKey.length);
-            matchScore -= lenDiff * 0.25;
-
-            // Thưởng độ dài từ
-            matchScore += wordKey.length * 0.4;
-
-            if (isStartNeighbor) matchScore -= 1.5;
-            if (isEndNeighbor) matchScore -= 1.5;
-
-            if (matchScore > highestScore) {
-              highestScore = matchScore;
-              bestCandidate = wordKey;
+          // Thưởng góc ngoặt có chủ đích
+          let cornerBonus = 0;
+          for (const c of cornerChars) {
+            if (unaccKey.includes(c)) {
+              cornerBonus += 3.5;
+            } else {
+              const cNbrs = ADJACENT_NEIGHBORS[c] || [];
+              if (cNbrs.some(n => unaccKey.includes(n))) {
+                cornerBonus += 1.2;
+              }
             }
           }
 
-          if (bestCandidate && highestScore > (launchZone === 1 ? 0.8 : 2.5)) {
-            const candWords = getLexWords(bestCandidate);
-            if (candWords.length > 0) {
-              matchedWord = typeof candWords[0] === 'string' ? candWords[0] : candWords[0].word;
-              matchedCode = bestCandidate;
+          const lenDiff = Math.abs(cleanCrossed.length - unaccKey.length);
+          const lenPenalty = lenDiff * 0.15;
+
+          const directWords = getLexWords(unaccKey);
+          if (!directWords || directWords.length === 0) continue;
+
+          const rIdx = allLexKeys.indexOf(unaccKey);
+          const rank = rIdx !== -1 ? rIdx : 5000;
+          let freqBonus = -3.0;
+          if (rank < 300) freqBonus = 7.0;
+          else if (rank < 800) freqBonus = 4.5;
+          else if (rank < 1400) freqBonus = 2.5;
+          else if (rank < 3000) freqBonus = 1.0;
+
+          const totalScore = startScore + endScore + subseqScore + cornerBonus + freqBonus - lenPenalty;
+
+          for (const dw of directWords) {
+            const w = typeof dw === 'string' ? dw : (dw.word || '');
+            if (w) {
+              candidateEvaluations.push({
+                word: w,
+                unaccCode: unaccKey,
+                totalScore,
+                rank
+              });
             }
           }
         }
 
-        if (matchedWord) {
+        if (candidateEvaluations.length > 0) {
+          candidateEvaluations.sort((a, b) => {
+            if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+            return a.rank - b.rank;
+          });
+          const best = candidateEvaluations[0];
+          const alternates = [...new Set(candidateEvaluations.map(c => c.word))].slice(0, 30);
+
           const zoneNames = {
             1: 'Vùng 1 (Trái: 2 Ký tự)',
             2: 'Vùng 2 (Giữa: 3 Ký tự)',
             3: 'Vùng 3 (Phải: 4+ Ký tự)'
           };
           return {
-            word: matchedWord,
+            word: best.word,
             system: 'lexicon',
-            code: matchedCode,
+            code: best.unaccCode,
             gestureType: 'multi_corner',
             keys: cleanCrossed,
-            desc: `🚀 Bệ phóng ${zoneNames[launchZone]}: [${matchedCode}] ➔ '${matchedWord}'`
+            alternateWords: alternates,
+            desc: `🚀 Bệ phóng ${zoneNames[launchZone]}: [${best.unaccCode}] ➔ '${best.word}'`
           };
         }
       }
 
-      // NHÁNH 1: 3 KÝ TỰ (Bẻ góc: Phụ âm ➔ Vần ➔ Dấu)
+      // NHÁNH 1: 3 KÝ TỰ (Bẻ góc: Phụ âm ➔ Vần ➔ Dấu) - FUZZY APEX TOLERANCE & FREQUENCY VOTING
       if (corners.length > 0) {
+        const cornerEvaluations = [];
+        const allLexKeys = typeof VIETNAMESE_LEXICON_MAP !== 'undefined' ? Object.keys(VIETNAMESE_LEXICON_MAP) : [];
+
         for (const corner of corners) {
           const midDef = getKeyAtPoint(corner.point.x, corner.point.y);
           if (midDef && midDef.char && midDef.char !== kStart && midDef.char !== kEnd) {
             const kMid = midDef.char;
-            const res3 = decode3Key(kStart, kMid, kEnd);
-            if (res3) {
-              return {
-                ...res3,
-                gestureType: '3key',
-                keys: [kStart, kMid, kEnd],
-                apexPoint: corner.point,
-                cornerAngle: corner.angleDeg,
-                desc: `3 phím (Góc bẻ ${corner.angleDeg.toFixed(0)}°): [${kStart}] ➔ [${kMid}] ➔ [${kEnd}]`
-              };
+
+            const endKeysToTry = [{ key: kEnd, isExact: true }];
+            const endCharLow = kEnd.toLowerCase();
+            for (const en of (ADJACENT_NEIGHBORS[endCharLow] || [])) {
+              endKeysToTry.push({ key: en, isExact: false });
+            }
+
+            // 1. Phím góc ngoặt chính xác (Exact Apex)
+            const midKeysToTry = [{ key: kMid, isExact: true }];
+
+            // 2. Các phím lân cận của góc ngoặt (Fuzzy Neighbors)
+            const midChar = kMid.toLowerCase();
+            const neighbors = ADJACENT_NEIGHBORS[midChar] || [];
+            for (const nbr of neighbors) {
+              if (nbr !== kStart.toLowerCase() && nbr !== kEnd.toLowerCase() && nbr !== midChar) {
+                midKeysToTry.push({ key: nbr, isExact: false });
+              }
+            }
+
+            for (const { key: tryMid, isExact: isMidExact } of midKeysToTry) {
+              for (const { key: tryEnd, isExact: isEndExact } of endKeysToTry) {
+                const res3 = decode3Key(kStart, tryMid, tryEnd);
+                if (!res3 || !res3.word || !isValidVietnameseWord(res3.word)) continue;
+
+                const cleanWord = res3.word.toLowerCase();
+                let rIdx = allLexKeys.indexOf(cleanWord);
+                if (rIdx === -1) {
+                  const unacc = cleanWord.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+                  rIdx = allLexKeys.indexOf(unacc);
+                }
+                const rank = rIdx !== -1 ? rIdx : 99999;
+
+                const spatialBonus = (isMidExact ? 2.0 : -1.0) + (isEndExact ? 1.5 : -1.0);
+                let freqBonus = 0;
+                if (rank < 300) freqBonus = 8.0;       // Siêu phổ biến (như "muốn")
+                else if (rank < 800) freqBonus = 4.0;  // Phổ biến (như "miếng")
+                else if (rank < 1200) freqBonus = 1.5; // Khá thông dụng
+                else if (rank > 1400) freqBonus = -4.0;// Hiếm gặp
+                else freqBonus = -8.0;                 // Không có trong từ điển
+
+                const totalScore = spatialBonus + freqBonus;
+
+                cornerEvaluations.push({
+                  ...res3,
+                  midKey: tryMid,
+                  isExact: isMidExact && isEndExact,
+                  totalScore,
+                  rank,
+                  apexPoint: corner.point,
+                  cornerAngle: corner.angleDeg
+                });
+              }
             }
           }
         }
+
+        if (cornerEvaluations.length > 0) {
+          cornerEvaluations.sort((a, b) => {
+            if (b.totalScore !== a.totalScore) return b.totalScore - a.totalScore;
+            return a.rank - b.rank;
+          });
+          const best = cornerEvaluations[0];
+          const alternates = [...new Set(cornerEvaluations.map(c => c.word))].slice(0, 30);
+
+          return {
+            ...best,
+            gestureType: '3key',
+            keys: [kStart, best.midKey, kEnd],
+            apexPoint: best.apexPoint,
+            cornerAngle: best.cornerAngle,
+            alternateWords: alternates,
+            desc: `3 phím (Bẻ góc ${best.cornerAngle.toFixed(0)}°): [${kStart}] ➔ [${best.midKey}] ➔ [${kEnd}]`
+          };
+        }
       }
 
-      // NHÁNH 2: 2 KÝ TỰ KÉO CONG (Quan hệ 2: Vần ➔ Dấu)
-      // Loại bỏ kéo thẳng 2 phím (ví dụ d->i thành di, chấp nhận gõ 2 lần theo yêu cầu của User)
-      // Nếu là đường thẳng (straightness >= 0.93) -> Không nhận diện
+      // NHÁNH 2: 2 PHÍM TRONG 36 PHÍM
+      // 1. Auto-Double Fallback (nét vuốt thẳng từ k1 -> k2, e.g. h -> z khớp hhz ra "hôn", h -> s khớp hhs ra "hốn"):
+      const autoDoubleCandidates = [];
+      const adStart = decode3Key(kStart, kStart, kEnd);
+      if (adStart && adStart.word && isValidVietnameseWord(adStart.word)) autoDoubleCandidates.push(adStart);
+      const adEnd = decode3Key(kStart, kEnd, kEnd);
+      if (adEnd && adEnd.word && isValidVietnameseWord(adEnd.word)) autoDoubleCandidates.push(adEnd);
+
+      const endChar2 = kEnd.toLowerCase();
+      for (const en of (ADJACENT_NEIGHBORS[endChar2] || [])) {
+        const ad1 = decode3Key(kStart, kStart, en);
+        if (ad1 && ad1.word && isValidVietnameseWord(ad1.word)) autoDoubleCandidates.push(ad1);
+        const ad2 = decode3Key(kStart, en, en);
+        if (ad2 && ad2.word && isValidVietnameseWord(ad2.word)) autoDoubleCandidates.push(ad2);
+      }
+
+      if (autoDoubleCandidates.length > 0) {
+        const uniqueAuto = [];
+        const seenWords = new Set();
+        for (const c of autoDoubleCandidates) {
+          if (!seenWords.has(c.word)) {
+            seenWords.add(c.word);
+            uniqueAuto.push(c);
+          }
+        }
+        const best = uniqueAuto[0];
+        const alts = uniqueAuto.map(c => c.word);
+        return {
+          ...best,
+          gestureType: 'three_key',
+          keys: [kStart, kStart, kEnd],
+          alternateWords: alts,
+          desc: `Auto-Double: [${kStart}] ➔ [${kEnd}]`
+        };
+      }
+
+      // 2. KÉO CONG 2 KÝ TỰ (Quan hệ 2: Vần ➔ Dấu, chỉ khi KHÔNG thẳng)
       if (straightness >= 0.93) {
         return null;
       }
@@ -3091,6 +3754,7 @@
         // Soi từ gần nhất vừa gõ xong (vd: 'phải' -> hiện ngay 'phai', 'phái', 'phại' để sửa đổi 1 chạm)
         const trimmed = committedText.trimEnd();
         const lastWord = trimmed ? trimmed.split(/\s+/).pop() : '';
+        updateNumberRowLaunchpad(lastWord);
         if (lastWord && isValidVietnameseWord(lastWord)) {
           const cleanLast = lastWord.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
           const variants = [];
@@ -3131,6 +3795,7 @@
       }
 
       // 3. TRƯỜNG HỢP ĐANG GÕ TỪ (Từ thô không dấu vd: 'mong', 'thet', 'chang', 'di'...)
+      clearNumberRowLaunchpad();
       let b60Variants = [];
       if (target.length === 2) {
         b60Variants = getBase60Permutations(target);
@@ -3181,6 +3846,12 @@
         combined.splice(combined.length > 0 ? 1 : 0, 0, cleanTarget);
       }
 
+      // Dự phòng chuỗi thô khi gõ số VNI (ví dụ: "Hay4")
+      if (lastVniLiteral && !seenWords.has(lastVniLiteral)) {
+        seenWords.add(lastVniLiteral);
+        combined.splice(combined.length > 0 ? 1 : 0, 0, lastVniLiteral);
+      }
+
       // 4. NẾU KHÔNG CÓ BẤT KỲ GỢI Ý NÀO: Hiển thị từ thô đang gõ
       if (combined.length === 0) {
         renderCandidateChips([{
@@ -3221,23 +3892,265 @@
     }
 
     // ========================================================
+    // NUMBER ROW LAUNCHPAD (MULTI-DIRECTIONAL SUGGESTION & TONE FLICK)
+    // - Phím 0..5: Vuốt thẳng ↑ sửa dấu VNI, vuốt ↖ và ↗ chọn 2 từ gợi ý (2 hàng)
+    // - Phím 6..9: Vuốt ↖, ↑, ↗ chọn 3 từ gợi ý (3 hàng)
+    // ========================================================
+    let numberRowLaunchpadData = {};
+    let isNumberRowLaunchpadActive = false;
+
+    function clearNumberRowLaunchpad() {
+      if (!isNumberRowLaunchpadActive) return;
+      isNumberRowLaunchpadActive = false;
+      numberRowLaunchpadData = {};
+      const numberKeys = ['k_0_10', 'k_0_1', 'k_0_2', 'k_0_3', 'k_0_4', 'k_0_5', 'k_0_6', 'k_0_7', 'k_0_8', 'k_0_9'];
+      numberKeys.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.classList.remove('launchpad-active');
+          const lpOld = el.querySelector('.lp-container-2row, .lp-container-3row');
+          if (lpOld) lpOld.remove();
+        }
+      });
+    }
+
+    function replaceLastCommittedWord(newWord) {
+      if (!newWord) return;
+      const trimmed = committedText.trimEnd();
+      const words = trimmed.split(/\s+/);
+      if (words.length > 0) {
+        words.pop();
+        committedText = (words.length > 0 ? words.join(' ') + ' ' : '') + newWord + ' ';
+        composingBuffer = '';
+        updateDisplay();
+        showTeachingHighlightForWord(newWord);
+        analyzeSuggestions();
+      }
+    }
+
+    function updateNumberRowLaunchpad(lastWord) {
+      if (!lastWord || !isValidVietnameseWord(lastWord)) {
+        clearNumberRowLaunchpad();
+        return;
+      }
+
+      isNumberRowLaunchpadActive = true;
+      numberRowLaunchpadData = {};
+
+      // 1. Sinh 6 biến thể dấu VNI (0..5) của lastWord bằng applyToneToWord
+      const toneVariants = [];
+      for (let t = 0; t <= 5; t++) {
+        toneVariants.push(applyToneToWord(lastWord, t));
+      }
+
+      // 2. Lấy kho từ gợi ý tiếp theo và từ ghép
+      const cleanLast = lastWord.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      const pool = [];
+
+      // Từ ghép từ từ điển
+      const lexMatches = (typeof VIETNAMESE_LEXICON_MAP !== 'undefined' ? VIETNAMESE_LEXICON_MAP[cleanLast] : []) || [];
+      lexMatches.forEach(w => {
+        if (w.toLowerCase() !== lastWord.toLowerCase() && !pool.includes(w)) pool.push(w);
+      });
+
+      // Từ nối tiếp thông dụng tiếng Việt
+      const COMMON_NEXT = [
+        'là', 'có', 'rất', 'không', 'sẽ', 'được', 'của', 'cho', 'mà', 'một',
+        'ra', 'lại', 'vào', 'này', 'đó', 'với', 'trong', 'đã', 'khi', 'đang',
+        'về', 'ở', 'đến', 'theo', 'như', 'vì', 'thì', 'cũng', 'đều', 'lên'
+      ];
+      COMMON_NEXT.forEach(w => {
+        if (!pool.includes(w)) pool.push(w);
+      });
+
+      let sugIndex = 0;
+
+      // Phím 0 (k_0_10): Sửa dấu Ngang (0) - lọc từ điển
+      const v0 = toneVariants[0];
+      const isReal0 = typeof isValidVietnameseWord === 'function' ? isValidVietnameseWord(v0) : true;
+      if (isReal0) {
+        numberRowLaunchpadData['k_0_10'] = {
+          mode: 'tone',
+          digit: '0',
+          toneNum: 0,
+          toneSymbol: '=',
+          toneWord: v0,
+          up: v0,
+          up_left: pool[sugIndex++] || v0,
+          up_right: pool[sugIndex++] || (lastWord + ' tiên')
+        };
+      } else {
+        numberRowLaunchpadData['k_0_10'] = {
+          mode: 'suggest3',
+          digit: '0',
+          up_left: pool[sugIndex++] || 'là',
+          up: pool[sugIndex++] || 'có',
+          up_right: pool[sugIndex++] || 'rất'
+        };
+      }
+
+      // Phím 1..5: Sửa dấu VNI 1..5 - lọc từ điển
+      const toneDefs = [
+        { id: 'k_0_1', num: 1, sym: '/' },
+        { id: 'k_0_2', num: 2, sym: '\\' },
+        { id: 'k_0_3', num: 3, sym: '?' },
+        { id: 'k_0_4', num: 4, sym: '~' },
+        { id: 'k_0_5', num: 5, sym: '.' }
+      ];
+      toneDefs.forEach(({ id, num, sym }) => {
+        const v = toneVariants[num];
+        const isReal = typeof isValidVietnameseWord === 'function' ? isValidVietnameseWord(v) : true;
+        if (isReal) {
+          numberRowLaunchpadData[id] = {
+            mode: 'tone',
+            digit: num.toString(),
+            toneNum: num,
+            toneSymbol: sym,
+            toneWord: v,
+            up: v,
+            up_left: pool[sugIndex++] || v,
+            up_right: pool[sugIndex++] || (lastWord + ' ' + (pool[sugIndex] || 'tốt'))
+          };
+        } else {
+          numberRowLaunchpadData[id] = {
+            mode: 'suggest3',
+            digit: num.toString(),
+            up_left: pool[sugIndex++] || 'sẽ',
+            up: pool[sugIndex++] || 'được',
+            up_right: pool[sugIndex++] || 'của'
+          };
+        }
+      });
+
+      // Phím 6..9: 3 từ gợi ý mỗi phím
+      const extKeys = ['k_0_6', 'k_0_7', 'k_0_8', 'k_0_9'];
+      extKeys.forEach(id => {
+        numberRowLaunchpadData[id] = {
+          mode: 'suggest3',
+          digit: id.replace('k_0_', ''),
+          up_left: pool[sugIndex++] || 'là',
+          up: pool[sugIndex++] || 'có',
+          up_right: pool[sugIndex++] || 'rất'
+        };
+      });
+
+      renderNumberRowLaunchpadUI();
+    }
+
+    function renderNumberRowLaunchpadUI() {
+      for (const [keyId, data] of Object.entries(numberRowLaunchpadData)) {
+        const el = document.getElementById(keyId);
+        if (!el) continue;
+
+        el.classList.add('launchpad-active');
+        let lpWrap = el.querySelector('.lp-container-3row, .lp-container-2row');
+        if (lpWrap) lpWrap.remove();
+
+        lpWrap = document.createElement('div');
+        lpWrap.className = 'lp-container-3row';
+
+        if (data.mode === 'tone') {
+          // Phím 0..5: 3 hàng từ trên xuống dưới = \ | / (Dòng giữa là từ sửa dấu VNI mang màu vàng hổ phách, góc có số)
+          lpWrap.innerHTML = `
+            <span class="lp-corner-digit">${data.digit}</span>
+            <div class="lp-row lp-row-1" data-dir="up_left"><span class="lp-text">${data.up_left}</span></div>
+            <div class="lp-row lp-row-2 lp-row-tone" data-dir="up"><span class="lp-text">${data.toneWord}</span></div>
+            <div class="lp-row lp-row-3" data-dir="up_right"><span class="lp-text">${data.up_right}</span></div>
+          `;
+        } else if (data.mode === 'suggest3') {
+          // Phím 6..9: 3 hàng từ trên xuống dưới = \ | / (3 từ gợi ý, góc có số)
+          lpWrap.innerHTML = `
+            <span class="lp-corner-digit">${data.digit}</span>
+            <div class="lp-row lp-row-1" data-dir="up_left"><span class="lp-text">${data.up_left}</span></div>
+            <div class="lp-row lp-row-2" data-dir="up"><span class="lp-text">${data.up}</span></div>
+            <div class="lp-row lp-row-3" data-dir="up_right"><span class="lp-text">${data.up_right}</span></div>
+          `;
+        }
+        el.appendChild(lpWrap);
+      }
+    }
+
+    // ========================================================
     // 5. CORE TYPING & SYLLABLE LOGIC
     // ========================================================
+    let lastVniLiteral = null;
+
+    function applyToneToWord(rawWord, toneNum) {
+      if (!rawWord) return rawWord;
+      const isAllUpper = /^[A-ZÀ-Ỹ]+$/.test(rawWord) && rawWord.length > 1;
+      const isCap = /^[A-ZÀ-Ỹ]/.test(rawWord);
+      const { consonant, rhyme } = extractPhonetics(rawWord);
+      if (!rhyme) return rawWord;
+      const toned = applyTone(rhyme, toneNum);
+      const cleanRhyme = (toned || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+      let res = (consonant || '') + toned;
+      if (consonant && consonant.toLowerCase() === 'gi' && cleanRhyme.startsWith('i')) {
+        res = (consonant.charAt(0) === 'G' ? 'G' : 'g') + toned;
+      } else if (consonant && consonant.toLowerCase() === 'qu' && cleanRhyme.startsWith('u')) {
+        res = (consonant.charAt(0) === 'Q' ? 'Q' : 'q') + toned;
+      }
+      if (isAllUpper) res = res.toUpperCase();
+      else if (isCap) res = res.charAt(0).toUpperCase() + res.slice(1);
+      return res;
+    }
+
+    function applyVniChar(buffer, vniChar) {
+      if (!buffer) return buffer;
+      const isCap = /^[A-ZÀ-Ỹ]/.test(buffer);
+      const isAllUpper = /^[A-ZÀ-Ỹ]+$/.test(buffer) && buffer.length > 1;
+      let lower = buffer.toLowerCase();
+
+      // Dấu thanh 0..5
+      if (/^[0-5]$/.test(vniChar)) {
+        return applyToneToWord(buffer, parseInt(vniChar, 10));
+      }
+
+      // Dấu mũ / móc / trăng / đ 6..9
+      if (vniChar === '6') {
+        if (lower.includes('a')) lower = lower.replace('a', 'â');
+        else if (lower.includes('e')) lower = lower.replace('e', 'ê');
+        else if (lower.includes('o')) lower = lower.replace('o', 'ô');
+      } else if (vniChar === '7') {
+        if (lower.includes('uo')) lower = lower.replace('uo', 'ươ');
+        else if (lower.includes('u')) lower = lower.replace('u', 'ư');
+        else if (lower.includes('o')) lower = lower.replace('o', 'ơ');
+      } else if (vniChar === '8') {
+        if (lower.includes('a')) lower = lower.replace('a', 'ă');
+      } else if (vniChar === '9') {
+        if (lower.startsWith('d')) lower = 'đ' + lower.slice(1);
+      }
+
+      if (isAllUpper) return lower.toUpperCase();
+      if (isCap) return lower.charAt(0).toUpperCase() + lower.slice(1);
+      return lower;
+    }
+
     function commitWord(word) {
       if (!word) return;
       playClickSound(800, 0.04);
-      committedText += word + ' ';
+      let finalWord = word;
+      if (isShift || isCaps) {
+        if (isCaps) finalWord = word.toUpperCase();
+        else finalWord = word.charAt(0).toUpperCase() + word.slice(1);
+      }
+      committedText += finalWord + ' ';
       composingBuffer = '';
+      lastVniLiteral = null;
       updateDisplay();
 
       clearNeighborBloom();
-      showTeachingHighlightForWord(word);
+      showTeachingHighlightForWord(finalWord);
 
-      const codes = getWordCodes(word);
+      const codes = getWordCodes(finalWord);
       if (codes.a1 || codes.vV1) {
-        statLastAction.textContent = `✨ Đã chốt: '${word}' [vV1: ${codes.vV1 || '--'} | a1: ${codes.a1 || '--'}]${codes.route ? ` (Vuốt: ${codes.route})` : ''}`;
+        statLastAction.textContent = `✨ Đã chốt: '${finalWord}' [vV1: ${codes.vV1 || '--'} | a1: ${codes.a1 || '--'}]${codes.route ? ` (Vuốt: ${codes.route})` : ''}`;
       } else {
-        statLastAction.textContent = `✨ Đã chốt: '${word}'`;
+        statLastAction.textContent = `✨ Đã chốt: '${finalWord}'`;
+      }
+      updateNumberRowLaunchpad(finalWord);
+      if (isShift && !isCaps) {
+        isShift = false;
+        renderKeyboard();
       }
     }
 
@@ -3385,6 +4298,26 @@
             composingBuffer = (consonant || '') + tonedRhyme;
             updateDisplay();
             statLastAction.textContent = `Dấu Telex '${char}' ➔ '${composingBuffer}'`;
+            analyzeSuggestions();
+            return;
+          }
+        }
+      }
+
+      // 2.1 Chạm phím Dấu VNI (0..5) hoặc Mũ/Móc/Trăng/Đ (6..9) khi đang Composing:
+      if (composingBuffer && /^[0-9]$/.test(char)) {
+        const { consonant, rhyme } = extractPhonetics(composingBuffer);
+        const hasVowel = rhyme && /[aăâeêioôơuưy]/i.test(rhyme);
+        if (hasVowel || /^[6-9]$/.test(char)) {
+          const rawLiteral = composingBuffer + char;
+          const vniResult = applyVniChar(composingBuffer, char);
+          if (vniResult && vniResult !== composingBuffer) {
+            lastVniLiteral = rawLiteral;
+            composingBuffer = vniResult;
+            updateDisplay();
+            const vniNames = { '0': 'Ngang', '1': 'Sắc', '2': 'Huyền', '3': 'Hỏi', '4': 'Ngã', '5': 'Nặng', '6': '^', '7': 'móc', '8': 'trăng', '9': 'đ' };
+            statLastAction.textContent = `Dấu VNI ${char} (${vniNames[char] || ''}) ➔ '${composingBuffer}' [Dự phòng: ${rawLiteral}]`;
+            analyzeSuggestions();
             return;
           }
         }
@@ -3761,6 +4694,27 @@
       }
     }
 
+    function drawWaypointNodeCanvas(ctx, p, color, shape = 'square') {
+      ctx.save();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.0;
+      const size = 18;
+      const half = size / 2;
+      if (shape === 'nested') {
+        ctx.strokeRect(p.x - half, p.y - half, size, size);
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, half * 0.62, 0, Math.PI * 2);
+        ctx.stroke();
+      } else if (shape === 'circle') {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, half, 0, Math.PI * 2);
+        ctx.stroke();
+      } else {
+        ctx.strokeRect(p.x - half, p.y - half, size, size);
+      }
+      ctx.restore();
+    }
+
     function drawA1TrajectoryOnCanvas(keyEls) {
       if (!swipeCtx || !swipeCanvas || !keyboardWrapper) return;
       resizeSwipeCanvas();
@@ -3773,65 +4727,97 @@
           x: r.left + r.width / 2 - wrapRect.left,
           y: r.top + r.height / 2 - wrapRect.top,
           row: parseInt(el.dataset.r !== undefined ? el.dataset.r : (el.dataset.row || 0)),
-          col: parseInt(el.dataset.c !== undefined ? el.dataset.c : (el.dataset.col || 0)),
-          rect: {
-            left: r.left - wrapRect.left,
-            top: r.top - wrapRect.top,
-            right: r.right - wrapRect.left,
-            bottom: r.bottom - wrapRect.top,
-            width: r.width,
-            height: r.height
-          }
+          col: parseInt(el.dataset.c !== undefined ? el.dataset.c : (el.dataset.col || 0))
         };
       });
 
-      // Kiểm tra thẳng hàng
-      let isCollinear = false;
-      if (pts.length === 3) {
-        isCollinear = ((pts[1].row - pts[0].row) * (pts[2].col - pts[0].col) === (pts[2].row - pts[0].row) * (pts[1].col - pts[0].col));
-      }
+      if (pts.length < 2) return;
+
+      const isTripleSame = (keyEls.length >= 3 && keyEls[0] === keyEls[1] && keyEls[1] === keyEls[2]);
+      const isP1SameP2 = (keyEls.length >= 3 && keyEls[0] === keyEls[1]);
+      const isP2SameP3 = (keyEls.length >= 3 && keyEls[1] === keyEls[2]);
 
       swipeCtx.save();
 
-      // 1. Vẽ đường Glow phát quang (bán trong suốt mỏng nhẹ)
-      swipeCtx.beginPath();
-      pts.forEach((p, i) => {
-        if (i === 0) swipeCtx.moveTo(p.x, p.y);
-        else swipeCtx.lineTo(p.x, p.y);
-      });
-      swipeCtx.strokeStyle = 'rgba(234, 179, 8, 0.22)';
-      swipeCtx.lineWidth = 6;
-      swipeCtx.lineCap = 'round';
-      swipeCtx.lineJoin = 'round';
-      swipeCtx.stroke();
+      if (isTripleSame) {
+        // LẶP 3 (sss): Không có đường nối nào
+        drawWaypointNodeCanvas(swipeCtx, pts[0], '#22c55e', 'nested');
+      } else if (isP1SameP2) {
+        // LẶP ĐẦU (hhs / hhz -> hôn): Đường nối duy nhất màu ĐỎ
+        const p1 = pts[0];
+        const p3 = pts[2] || pts[1];
+        swipeCtx.beginPath();
+        swipeCtx.moveTo(p1.x, p1.y);
+        swipeCtx.lineTo(p3.x, p3.y);
+        swipeCtx.strokeStyle = 'rgba(239, 68, 68, 0.75)';
+        swipeCtx.lineWidth = 2.5;
+        swipeCtx.lineCap = 'round';
+        swipeCtx.stroke();
+        drawArrowHeadCanvas(swipeCtx, p1, p3, '#ef4444');
 
-      // 2. Vẽ đường Core (thanh mảnh, bán trong suốt)
-      swipeCtx.beginPath();
-      pts.forEach((p, i) => {
-        if (i === 0) swipeCtx.moveTo(p.x, p.y);
-        else swipeCtx.lineTo(p.x, p.y);
-      });
-      swipeCtx.strokeStyle = 'rgba(250, 204, 21, 0.7)';
-      swipeCtx.lineWidth = 2.0;
-      swipeCtx.stroke();
+        drawWaypointNodeCanvas(swipeCtx, p1, '#ef4444', 'circle'); // Vòng tròn
+        drawWaypointNodeCanvas(swipeCtx, p3, '#ef4444', 'square'); // Hình vuông
+      } else if (isP2SameP3) {
+        // LẶP ĐUÔI (hss -> hướng): Đường nối duy nhất màu VÀNG
+        const p1 = pts[0];
+        const p2 = pts[1];
+        swipeCtx.beginPath();
+        swipeCtx.moveTo(p1.x, p1.y);
+        swipeCtx.lineTo(p2.x, p2.y);
+        swipeCtx.strokeStyle = 'rgba(250, 204, 21, 0.75)';
+        swipeCtx.lineWidth = 2.5;
+        swipeCtx.lineCap = 'round';
+        swipeCtx.stroke();
+        drawArrowHeadCanvas(swipeCtx, p1, p2, '#facc15');
 
-      // 3. Mũi tên chặng (Chặng 1 vàng, Chặng 2 đỏ)
-      for (let i = 0; i < pts.length - 1; i++) {
-        const arrowCol = (i === 0) ? '#facc15' : '#ef4444';
-        drawArrowHeadCanvas(swipeCtx, pts[i], pts[i + 1], arrowCol);
+        drawWaypointNodeCanvas(swipeCtx, p1, '#22c55e', 'square'); // Hình vuông
+        drawWaypointNodeCanvas(swipeCtx, p2, '#facc15', 'circle'); // Vòng tròn
+      } else if (pts.length === 2) {
+        // 2 phím đơn: Đường nối màu VÀNG
+        const p1 = pts[0];
+        const p2 = pts[1];
+        swipeCtx.beginPath();
+        swipeCtx.moveTo(p1.x, p1.y);
+        swipeCtx.lineTo(p2.x, p2.y);
+        swipeCtx.strokeStyle = 'rgba(250, 204, 21, 0.75)';
+        swipeCtx.lineWidth = 2.5;
+        swipeCtx.lineCap = 'round';
+        swipeCtx.stroke();
+        drawArrowHeadCanvas(swipeCtx, p1, p2, '#facc15');
+
+        drawWaypointNodeCanvas(swipeCtx, p1, '#22c55e', 'square');
+        drawWaypointNodeCanvas(swipeCtx, p2, '#ef4444', 'square');
+      } else {
+        // Bình thường 3 phím phân biệt (hbs): Chặng 1 VÀNG, Chặng 2 ĐỎ, 3 đỉnh là 3 HÌNH VUÔNG
+        const p1 = pts[0];
+        const p2 = pts[1];
+        const p3 = pts[2];
+
+        // Chặng 1
+        swipeCtx.beginPath();
+        swipeCtx.moveTo(p1.x, p1.y);
+        swipeCtx.lineTo(p2.x, p2.y);
+        swipeCtx.strokeStyle = 'rgba(250, 204, 21, 0.75)';
+        swipeCtx.lineWidth = 2.5;
+        swipeCtx.lineCap = 'round';
+        swipeCtx.stroke();
+        drawArrowHeadCanvas(swipeCtx, p1, p2, '#facc15');
+
+        // Chặng 2
+        swipeCtx.beginPath();
+        swipeCtx.moveTo(p2.x, p2.y);
+        swipeCtx.lineTo(p3.x, p3.y);
+        swipeCtx.strokeStyle = 'rgba(239, 68, 68, 0.75)';
+        swipeCtx.lineWidth = 2.5;
+        swipeCtx.lineCap = 'round';
+        swipeCtx.stroke();
+        drawArrowHeadCanvas(swipeCtx, p2, p3, '#ef4444');
+
+        drawWaypointNodeCanvas(swipeCtx, p1, '#22c55e', 'square'); // ① Vuông Xanh lục
+        drawWaypointNodeCanvas(swipeCtx, p2, '#facc15', 'square'); // ② Vuông Vàng
+        drawWaypointNodeCanvas(swipeCtx, p3, '#ef4444', 'square'); // ③ Vuông Đỏ
       }
 
-      // 4. Vòng viền rỗng tại tâm phím (1 Xanh lục, 2 Vàng, 3 Đỏ)
-      const nodeColors = ['#22c55e', pts.length === 2 ? '#ef4444' : '#facc15', '#ef4444'];
-      pts.forEach((p, i) => {
-        const col = nodeColors[i] || '#facc15';
-        // Hollow ring tại tâm (không che con chữ)
-        swipeCtx.beginPath();
-        swipeCtx.arc(p.x, p.y, 9.5, 0, Math.PI * 2);
-        swipeCtx.strokeStyle = col;
-        swipeCtx.lineWidth = 1.8;
-        swipeCtx.stroke();
-      });
       swipeCtx.restore();
     }
 
@@ -3990,9 +4976,16 @@
 
       const displayTl = k.tl || (lowChar && VCOMP_TL_MAP[lowChar]) || '';
 
+      const isSecretMode = (currentKeyboardMode === 'secret_rhymes' && k.isSecretKey);
+      const peekBadgeHtml = (isSecretMode && secretPeekActive && k.secretDigit) 
+        ? `<span class="key-peek-badge">${k.secretDigit}</span>` 
+        : '';
+      const charClass = isSecretMode ? 'key-char secret-rhyme-main' : 'key-char';
+
       keyEl.innerHTML = `
         ${displayTl ? `<span class="key-tl">${displayTl}</span>` : ''}
-        <span class="key-char">${displayChar}</span>
+        ${peekBadgeHtml}
+        <span class="${charClass}">${displayChar}</span>
         ${displaySub ? `<span class="${subClass}">${displaySub}</span>` : ''}
         <span class="bloom-badge" id="badge_${k.id}"></span>
       `;
@@ -4314,6 +5307,16 @@
           }, 350);
         }
 
+        // Long Press Handler cho nút Backspace: Bấm giữ >= 350ms -> Chọn tất cả và Cắt!
+        if (k.type === 'bksp') {
+          modeLongTimer = setTimeout(() => {
+            isModeLongTriggered = true;
+            playClickSound(950, 0.08);
+            if (typeof handleBackspaceLongPress === 'function') handleBackspaceLongPress();
+          }, 350);
+        }
+
+
         // Khởi tạo luồng Glide cử chỉ
         glidePoints = [{ x: e.clientX, y: e.clientY, time: Date.now() }];
         glideKeys = [k];
@@ -4337,6 +5340,25 @@
         if (dist > 15 && modeLongTimer) {
           clearTimeout(modeLongTimer);
           modeLongTimer = null;
+        }
+
+        // Xử lý cử chỉ vuốt 3 hướng trên Number Row Launchpad
+        if (isNumberRowLaunchpadActive && gestureKeyDef.r === 0 && numberRowLaunchpadData[gestureKeyDef.id]) {
+          keyEl.querySelectorAll('.lp-row').forEach(el => el.classList.remove('lp-hover'));
+          if (dy < -8) {
+            const dir = dx < -8 ? 'up_left' : (dx > 8 ? 'up_right' : 'up');
+            if (dir === 'up_left') {
+              const target = keyEl.querySelector('.lp-row-1');
+              if (target) target.classList.add('lp-hover');
+            } else if (dir === 'up') {
+              const target = keyEl.querySelector('.lp-row-2');
+              if (target) target.classList.add('lp-hover');
+            } else if (dir === 'up_right') {
+              const target = keyEl.querySelector('.lp-row-3');
+              if (target) target.classList.add('lp-hover');
+            }
+          }
+          return;
         }
 
         glidePoints.push({ x: e.clientX, y: e.clientY, time: Date.now() });
@@ -4428,6 +5450,41 @@
         glidePoints.push({ x: e.clientX, y: e.clientY, time: Date.now() });
 
         try {
+          // 0. CỬ CHỈ NUMBER ROW LAUNCHPAD (VUỐT 3 HƯỚNG TRÊN HÀNG PHÍM SỐ KHI ĐÃ CHỐT TỪ)
+          if (isNumberRowLaunchpadActive && currentK.r === 0 && numberRowLaunchpadData[currentK.id] && dy < -12) {
+            const dir = dx < -8 ? 'up_left' : (dx > 8 ? 'up_right' : 'up');
+            const data = numberRowLaunchpadData[currentK.id];
+
+            if (data.mode === 'tone' && dir === 'up') {
+              playClickSound(950, 0.06);
+              replaceLastCommittedWord(data.toneWord);
+              statLastAction.innerHTML = `✨ <b>Vuốt | sửa dấu VNI ${data.toneNum}:</b> '${data.toneWord}'`;
+              updateNumberRowLaunchpad(data.toneWord);
+              return;
+            } else {
+              const chosen = data[dir];
+              if (chosen) {
+                playClickSound(900, 0.05);
+                commitWord(chosen);
+                const dirSym = dir === 'up_left' ? '\\' : (dir === 'up_right' ? '/' : '|');
+                statLastAction.innerHTML = `✨ <b>Vuốt ${dirSym} chọn:</b> '${chosen}'`;
+                updateNumberRowLaunchpad(chosen);
+                return;
+              }
+            }
+          }
+
+          // 0.1 VUỐT LÊN TRÊN HÀNG PHÍM SỐ KHI ĐANG SOẠN THẢO (VNI SWIPE-UP CHỐT DẤU TRỰC TIẾP)
+          if (composingBuffer && currentK.r === 0 && /^[0-9]$/.test(currentK.char) && dy < -12) {
+            const vniResult = applyVniChar(composingBuffer, currentK.char);
+            if (vniResult) {
+              playClickSound(950, 0.06);
+              commitWord(vniResult);
+              statLastAction.innerHTML = `✨ <b>Vuốt ↑ chốt VNI ${currentK.char}:</b> '${vniResult}'`;
+              return;
+            }
+          }
+
           // 1. CỬ CHỈ VUỐT HÌNH HỌC (3 PHÍM HOẶC VUỐT CONG 2 PHÍM VẦN+DẤU)
           if (isMultiKeyGlide && dist > 20 && glidePoints.length >= 2) {
             let resolved = resolveSwipeGesture(glidePoints, currentK, composingBuffer, glideKeys);
@@ -4437,22 +5494,35 @@
               commitWord(resolved.word);
               statLastAction.textContent = `🚀 ${resolved.desc} ➔ '${resolved.word}' (${resolved.system.toUpperCase()}: ${resolved.code})`;
 
+              const allCandidatesList = [];
+              if (resolved.alternateWords && resolved.alternateWords.length > 0) {
+                resolved.alternateWords.forEach(w => {
+                  if (!allCandidatesList.includes(w)) allCandidatesList.push(w);
+                });
+              } else if (resolved.word) {
+                allCandidatesList.push(resolved.word);
+              }
+
               if (resolved.code && typeof VIETNAMESE_LEXICON_MAP !== 'undefined') {
                 const variants = VIETNAMESE_LEXICON_MAP[resolved.code] || [];
-                if (variants.length > 0) {
-                  lastAutoCommittedWord = resolved.word;
-                  const isUpper = /^[A-ZÀ-Ỹ]/.test(resolved.word);
-                  const candidates = variants.map((w, idx) => {
-                    const displayWord = isUpper ? (w.charAt(0).toUpperCase() + w.slice(1)) : w;
-                    return {
-                      word: displayWord,
-                      codesHtml: renderChipCodesHtml(getWordCodes(displayWord)),
-                      isPrimary: idx === 0,
-                      title: `Bấm để đổi '${resolved.word}' thành '${displayWord}'`
-                    };
-                  });
-                  renderCandidateChips(candidates);
-                }
+                variants.forEach(w => {
+                  if (!allCandidatesList.includes(w)) allCandidatesList.push(w);
+                });
+              }
+
+              if (allCandidatesList.length > 0) {
+                lastAutoCommittedWord = resolved.word;
+                const isUpper = /^[A-ZÀ-Ỹ]/.test(resolved.word);
+                const candidates = allCandidatesList.map((w, idx) => {
+                  const displayWord = isUpper ? (w.charAt(0).toUpperCase() + w.slice(1)) : w;
+                  return {
+                    word: displayWord,
+                    codesHtml: renderChipCodesHtml(getWordCodes(displayWord)),
+                    isPrimary: idx === 0,
+                    title: `Bấm để đổi '${resolved.word}' thành '${displayWord}'`
+                  };
+                });
+                renderCandidateChips(candidates);
               }
 
               // Hiệu ứng flash viền outputBox
@@ -4471,9 +5541,25 @@
             return;
           }
 
-          // 2. Vuốt sang trái trên nút Backspace ➔ Smart Backspace xóa từ
+          // 2. Vuốt sang trái trên nút Backspace ➔ Smart Backspace xóa N từ
           if (currentK.type === 'bksp' && dx < -30) {
-            swipeSmartBackspace();
+            // Tính số từ theo khoảng cách vuốt (mỗi 40px = 1 từ thêm)
+            const wordCount = Math.max(1, Math.min(10, Math.floor(Math.abs(dx) / 40)));
+            if (wordCount === 1) {
+              swipeSmartBackspace();
+            } else if (typeof handleBackspaceSwipeLeft === 'function') {
+              handleBackspaceSwipeLeft(wordCount);
+            } else {
+              swipeSmartBackspace();
+            }
+            return;
+          }
+
+          // 2b. Vuốt xuống trên nút Backspace ➔ Xóa cả đoạn
+          if (currentK.type === 'bksp' && dy > 40) {
+            if (typeof handleBackspaceSwipeDown === 'function') {
+              handleBackspaceSwipeDown();
+            }
             return;
           }
 
@@ -4506,6 +5592,7 @@
           console.error('Lỗi khi xử lý pointerup:', err);
         } finally {
           document.querySelectorAll('.neighbor-hover').forEach(h => h.classList.remove('neighbor-hover'));
+          document.querySelectorAll('.lp-hover').forEach(h => h.classList.remove('lp-hover'));
           clearGlideCanvasFade();
           clearLaunchpadZoneHighlight();
           if (isMultiKeyGlide) {
@@ -4601,8 +5688,19 @@
           statLastAction.textContent = studyDescriptions[shiftStudyMode];
           renderKeyboard();
         } else {
-          statLastAction.textContent = '📋 Dán văn bản từ Clipboard (Mô phỏng)';
+          // Phím 📋 Dán — toast mô phỏng
+          if (typeof handlePasteKey === 'function') handlePasteKey();
+          else statLastAction.textContent = '📋 Dán văn bản từ Clipboard (Mô phỏng)';
         }
+      } else if (k.id === 'k_1_0' && k.sub === 'Sym') {
+        // Phím 🔢 Sym — vào tầng số & ký hiệu
+        playClickSound(700, 0.04);
+        if (typeof activateSymLayer === 'function') activateSymLayer();
+      } else if ((k.id === 'k_2_11' || k.id === 'f_3_3' || k.id === 'fr_3_0') && k.sub === 'Soi') {
+        // Phím 🔍 Soi — tra từ
+        playClickSound(700, 0.04);
+        if (typeof handleSearchKey === 'function') handleSearchKey();
+
       } else if (k.char === '‹') {
         playClickSound(550, 0.03);
         statLastAction.textContent = '‹ Điều hướng lùi con trỏ';
@@ -4612,6 +5710,10 @@
       } else if (k.char === 'Esc' || k.char === '⌵') {
         toggleKeyboardVisibility();
       } else {
+        if (currentKeyboardMode === 'secret_rhymes' && k.isSecretKey) {
+          handleSecretKeyTap(k);
+          return;
+        }
         let charToCommit = k.char;
         if (isShift || isCaps) {
           if (k.shift) charToCommit = k.shift;
@@ -4625,6 +5727,172 @@
           renderKeyboard();
         }
       }
+    }
+
+    function handleSecretKeyTap(k) {
+      playClickSound(850, 0.05);
+      const digit = (k.secretDigit || k.char || '').toLowerCase();
+      secretInputSequence.push(digit);
+
+      // Tìm mật khẩu khớp với chuỗi prefix
+      const matches = SECRET_PASSWORDS.filter(pw => {
+        if (pw.keyPath.length < secretInputSequence.length) return false;
+        for (let i = 0; i < secretInputSequence.length; i++) {
+          if (pw.keyPath[i].toLowerCase() !== secretInputSequence[i]) return false;
+        }
+        return true;
+      });
+
+      const feedbackEl = document.getElementById('secretNoticeFeedback');
+
+      if (matches.length === 1) {
+        // Khớp duy nhất 1 mật khẩu -> Auto fill & Vẽ vệt sáng!
+        const matchedPw = matches[0];
+        committedText += matchedPw.code;
+        secretInputSequence = [];
+        updateDisplay();
+
+        // Vẽ vệt sáng Neon tuần tự
+        drawSecretNeonPath(matchedPw.keyPath);
+
+        // Tự động xoay tầng vần (Epoch Rotate)
+        secretRhymeCycle = (secretRhymeCycle + 1) % 4;
+        const cycleNames = ['Tầng 1: B3/B1', 'Tầng 2: Dấu/Phụ âm', 'Tầng 3: B2', 'Tầng 4: Phụ'];
+        const cycleLabelEl = document.getElementById('secretCycleLabel');
+        if (cycleLabelEl) cycleLabelEl.textContent = cycleNames[secretRhymeCycle] || `Tầng ${secretRhymeCycle + 1}`;
+        renderKeyboard();
+
+        if (feedbackEl) {
+          feedbackEl.innerHTML = `✅ <b style="color:#58a6ff;">Tự điền: ${matchedPw.name}</b> ➔ <code>${matchedPw.code}</code>! Đã tự động xoay vần!`;
+        }
+        statLastAction.innerHTML = `🔐 Đã điền mật khẩu <b>${matchedPw.name}</b> và tự động xoay tầng vần!`;
+      } else if (matches.length > 1) {
+        // Nhiều mật khẩu khớp -> Tiếp tục phân nhánh
+        const names = matches.map(m => m.name).join(', ');
+        if (feedbackEl) {
+          feedbackEl.innerHTML = `⏳ <b style="color:#f2cc60;">Trùng tiền tố:</b> Bấm tiếp vần thứ ${secretInputSequence.length + 1} để phân nhánh [${names}]`;
+        }
+        statLastAction.textContent = `🔐 Đang phân nhánh mật khẩu (${secretInputSequence.join('➔')})...`;
+      } else {
+        // Không khớp két mật khẩu nào -> Gõ bình thường
+        secretInputSequence = [];
+        committedText += (k.secretDigit || k.char);
+        updateDisplay();
+        if (feedbackEl) {
+          feedbackEl.textContent = `💡 Chạm 1 vần đầu ➔ Điền mật khẩu & vẽ vệt sáng học vần!`;
+        }
+        statLastAction.textContent = `Chế độ mã vần: đã nhập '${k.secretDigit || k.char}'`;
+      }
+    }
+
+    function drawSecretNeonPath(keyPath) {
+      if (!swipeCtx || !swipeCanvas || !keyboardWrapper || !keyPath || keyPath.length < 2) return;
+      resizeSwipeCanvas();
+      swipeCtx.clearRect(0, 0, swipeCanvas.width, swipeCanvas.height);
+      const wrapRect = keyboardWrapper.getBoundingClientRect();
+
+      const keyPoints = [];
+      keyPath.forEach(char => {
+        const keyDef = Object.values(MATRIX_MAP_BY_ID).find(kd => {
+          return (kd.secretDigit && kd.secretDigit.toLowerCase() === char.toLowerCase()) ||
+                 (kd.char && kd.char.toLowerCase() === char.toLowerCase());
+        });
+        if (keyDef) {
+          const el = document.getElementById(keyDef.id);
+          if (el) {
+            const r = el.getBoundingClientRect();
+            keyPoints.push({
+              x: r.left + r.width / 2 - wrapRect.left,
+              y: r.top + r.height / 2 - wrapRect.top
+            });
+          }
+        }
+      });
+
+      if (keyPoints.length < 2) return;
+
+      // Vẽ vệt sáng Neon nhiều lớp
+      swipeCtx.save();
+      swipeCtx.beginPath();
+      keyPoints.forEach((p, idx) => {
+        if (idx === 0) swipeCtx.moveTo(p.x, p.y);
+        else swipeCtx.lineTo(p.x, p.y);
+      });
+
+      // Lớp phát quang ngoại
+      swipeCtx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
+      swipeCtx.lineWidth = 10;
+      swipeCtx.lineCap = 'round';
+      swipeCtx.lineJoin = 'round';
+      swipeCtx.shadowColor = '#00f0ff';
+      swipeCtx.shadowBlur = 18;
+      swipeCtx.stroke();
+
+      // Lớp lõi Neon vàng/xanh
+      swipeCtx.beginPath();
+      keyPoints.forEach((p, idx) => {
+        if (idx === 0) swipeCtx.moveTo(p.x, p.y);
+        else swipeCtx.lineTo(p.x, p.y);
+      });
+      swipeCtx.strokeStyle = '#f2cc60';
+      swipeCtx.lineWidth = 4;
+      swipeCtx.shadowBlur = 8;
+      swipeCtx.stroke();
+
+      // Vẽ các nút điểm waypoint
+      keyPoints.forEach((p, idx) => {
+        swipeCtx.beginPath();
+        swipeCtx.arc(p.x, p.y, idx === 0 ? 9 : 6, 0, Math.PI * 2);
+        swipeCtx.fillStyle = idx === 0 ? '#3fb950' : '#00f0ff';
+        swipeCtx.shadowColor = '#ffffff';
+        swipeCtx.shadowBlur = 10;
+        swipeCtx.fill();
+        swipeCtx.lineWidth = 2;
+        swipeCtx.strokeStyle = '#fff';
+        swipeCtx.stroke();
+      });
+      swipeCtx.restore();
+
+      // Tự động mờ dần sau 2.5s để người dùng kịp học
+      setTimeout(() => {
+        clearGlideCanvasFade();
+      }, 2500);
+    }
+
+    function toggleSecretPeek() {
+      secretPeekActive = !secretPeekActive;
+      const labelEl = document.getElementById('secretPeekLabel');
+      const iconEl = document.getElementById('secretPeekIcon');
+      if (labelEl) labelEl.textContent = secretPeekActive ? 'Soi Số: ĐANG BẬT' : 'Soi Số: ĐANG TẮT';
+      if (iconEl) iconEl.textContent = secretPeekActive ? '👁️' : '🙈';
+      const btnPeek = document.getElementById('btnSecretPeek');
+      if (btnPeek) {
+        if (secretPeekActive) {
+          btnPeek.style.background = '#382b08';
+          btnPeek.style.color = '#f2cc60';
+        } else {
+          btnPeek.style.background = '';
+          btnPeek.style.color = '';
+        }
+      }
+      playClickSound(secretPeekActive ? 750 : 500, 0.04);
+      renderKeyboard();
+      statLastAction.textContent = secretPeekActive ? '👁️ Đã bật soi số ngầm (Ngón tay không che bàn phím)' : '🙈 Đã tắt soi số';
+    }
+
+    function rotateSecretRhymeCycle() {
+      secretRhymeCycle = (secretRhymeCycle + 1) % 4;
+      const cycleNames = ['Tầng 1: B3/B1', 'Tầng 2: Dấu/Phụ âm', 'Tầng 3: B2', 'Tầng 4: Phụ'];
+      const cycleLabelEl = document.getElementById('secretCycleLabel');
+      if (cycleLabelEl) cycleLabelEl.textContent = cycleNames[secretRhymeCycle] || `Tầng ${secretRhymeCycle + 1}`;
+      playClickSound(800, 0.04);
+      renderKeyboard();
+      statLastAction.textContent = `🎲 Đã đổi chu kỳ vần: ${cycleNames[secretRhymeCycle]}`;
+    }
+
+    function showSecretPassList() {
+      const listStr = SECRET_PASSWORDS.map((pw, i) => `${i + 1}. ${pw.name}: Nhập bằng chuỗi [${pw.keyPath.join('➔')}]`).join('\n');
+      alert(`🔐 DANH SÁCH MẬT KHẨU ĐÃ LƯU TRONG KÉT:\n\n${listStr}\n\n👉 Cách dùng: Chạm vần đầu tiên của chuỗi, hệ thống sẽ tự điền mật khẩu và vẽ vệt sáng Neon nối qua các phím để bạn nhìn và học thuộc!`);
     }
 
     function toggleShift() {
@@ -4660,13 +5928,19 @@
       const activeBtn = document.getElementById(`btnMode_${mode}`);
       if (activeBtn) activeBtn.classList.add('active');
 
+      const secretToolbar = document.getElementById('secretRhymesToolbar');
+      if (secretToolbar) {
+        secretToolbar.style.display = (mode === 'secret_rhymes') ? 'flex' : 'none';
+      }
+
       renderKeyboard();
       renderTopHexBar();
       const modeNames = {
         'normal': 'Chuẩn 5x12',
         '36L': '36L (1 Tay Trái + Hexa)',
         '36R': '36R (1 Tay Phải + Hexa)',
-        'mode_select': 'Tầng Chọn Chế Độ (Bấm 36L hoặc 36R)'
+        'mode_select': 'Tầng Chọn Chế Độ (Bấm 36L hoặc 36R)',
+        'secret_rhymes': '🔐 Bàn Phím Mã Vần Bí Mật'
       };
       statLastAction.textContent = `Chế độ: ${modeNames[mode] || mode}`;
     }
@@ -4687,7 +5961,7 @@
 
       topHexBar.innerHTML = '';
 
-      if (currentKeyboardMode === 'normal' || currentKeyboardMode === 'mode_select') {
+      if (currentKeyboardMode === 'normal' || currentKeyboardMode === 'mode_select' || currentKeyboardMode === 'secret_rhymes') {
         topHexBar.style.display = 'none';
         sugChips.style.display = 'flex';
         sugChips.style.width = '100%';
@@ -4716,6 +5990,9 @@
 
     window.setKeyboardMode = setKeyboardMode;
     window.toggleKeyboardMode = toggleKeyboardMode;
+    window.toggleSecretPeek = toggleSecretPeek;
+    window.rotateSecretRhymeCycle = rotateSecretRhymeCycle;
+    window.showSecretPassList = showSecretPassList;
 
     // Gắn vào window để gọi từ inline HTML
     window.pickSuggestion = function(word) {
@@ -4809,6 +6086,228 @@
     renderKeyboard();
     renderTopHexBar();
     updateDisplay();
+
+    // ================================================================
+    // ===== TOAST NOTIFICATION =====
+    // ================================================================
+    let _toastTimer = null;
+    window.showToast = function(msg, durationMs = 2000) {
+      const el = document.getElementById('toastNotif');
+      if (!el) return;
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(_toastTimer);
+      _toastTimer = setTimeout(() => { el.classList.remove('show'); }, durationMs);
+    };
+
+    // ================================================================
+    // ===== MIC BUTTON LOGIC =====
+    // ================================================================
+    let voiceAIEnabled = true;  // mặc định bật AI
+    let isRecording = false;
+    let _micLongPressTimer = null;
+    const MIC_LONG_PRESS_MS = 350;
+
+    function updateMicUI() {
+      const btn = document.getElementById('btnMic');
+      const icon = document.getElementById('micIcon');
+      const badge = document.getElementById('micAiBadge');
+      if (!btn || !icon) return;
+      if (isRecording) {
+        icon.textContent = '🔴';
+        btn.className = 'mic-btn recording';
+        badge.style.display = 'none';
+      } else if (voiceAIEnabled) {
+        icon.textContent = '🎤';
+        btn.className = 'mic-btn ai-on';
+        badge.style.display = 'block';
+      } else {
+        icon.textContent = '🎤';
+        btn.className = 'mic-btn';
+        badge.style.display = 'none';
+      }
+      // Sync settings panel buttons
+      const settingsMicOff = document.getElementById('settingsMicOff');
+      const settingsMicOn = document.getElementById('settingsMicOn');
+      if (settingsMicOff && settingsMicOn) {
+        settingsMicOff.classList.toggle('active', !voiceAIEnabled);
+        settingsMicOff.classList.toggle('yellow', false);
+        settingsMicOn.classList.toggle('active', voiceAIEnabled);
+        settingsMicOn.classList.toggle('yellow', voiceAIEnabled);
+      }
+    }
+
+    window.handleMicTap = function() {
+      if (_micLongPressTimer) return; // long-press đang được xử lý
+      if (isRecording) {
+        // Dừng ghi âm
+        isRecording = false;
+        updateMicUI();
+        showToast('✅ Đã ghi xong — Đang xử lý giọng nói...');
+        setTimeout(() => {
+          showToast('📝 Văn bản từ giọng nói đã được chèn (Mô phỏng)');
+        }, 1200);
+      } else {
+        // Bắt đầu ghi âm
+        isRecording = true;
+        updateMicUI();
+        const modeLabel = voiceAIEnabled ? '✨ Chế độ AI — Không cần đọc dấu câu' : '⚡ Chế độ Offline — Đọc kèm: "phẩy", "chấm"...';
+        showToast(`🔴 Đang ghi âm... ${modeLabel}`, 5000);
+      }
+    };
+
+    window.startMicLongPress = function(e) {
+      e.preventDefault();
+      _micLongPressTimer = setTimeout(() => {
+        _micLongPressTimer = null;
+        // Toggle AI mode
+        voiceAIEnabled = !voiceAIEnabled;
+        if (isRecording) { isRecording = false; }
+        updateMicUI();
+        const msg = voiceAIEnabled
+          ? '✨🎤 Đã bật AI — Gemini sẽ tự đặt dấu câu!'
+          : '🎤 Đã tắt AI — Ghi âm Offline (0ms, không tốn quota)';
+        showToast(msg, 2500);
+      }, MIC_LONG_PRESS_MS);
+    };
+
+    window.cancelMicLongPress = function() {
+      if (_micLongPressTimer) {
+        clearTimeout(_micLongPressTimer);
+        _micLongPressTimer = null;
+      }
+    };
+
+    window.setVoiceAI = function(enabled) {
+      voiceAIEnabled = enabled;
+      if (isRecording) { isRecording = false; }
+      updateMicUI();
+      showToast(enabled ? '✨🎤 AI đã bật!' : '🎤 AI đã tắt (Offline)');
+    };
+
+    updateMicUI();
+
+    // ================================================================
+    // ===== SETTINGS PANEL =====
+    // ================================================================
+    window.openSettings = function() {
+      document.getElementById('settingsPanel').classList.add('open');
+      syncSettingsUI();
+    };
+    window.closeSettings = function() {
+      document.getElementById('settingsPanel').classList.remove('open');
+    };
+
+    function syncSettingsUI() {
+      // Sync study mode buttons
+      for (let i = 0; i <= 4; i++) {
+        const btn = document.getElementById('settingsStudy' + i);
+        if (btn) btn.classList.toggle('active', shiftStudyMode === i);
+      }
+      // Sync mic buttons
+      updateMicUI();
+    }
+
+    window.setStudyMode = function(mode) {
+      shiftStudyMode = mode;
+      renderKeyboard();
+      syncSettingsUI();
+      const labels = ['Tắt', 'Tất cả', 'B4 Lục', 'B5 Vàng', 'B6 Tím'];
+      showToast(`📖 Chế độ Học Dấu: ${labels[mode]}`);
+    };
+
+    // ================================================================
+    // ===== SYM LAYER =====
+    // ================================================================
+    let symLayerActive = false;
+
+    window.enterSymLayer = function() {
+      symLayerActive = true;
+      document.getElementById('keyboardWrapper').style.display = 'none';
+      document.getElementById('symLayer').classList.add('active');
+      document.getElementById('suggestionBar').style.display = 'none';
+    };
+
+    window.exitSymLayer = function() {
+      symLayerActive = false;
+      document.getElementById('keyboardWrapper').style.display = '';
+      document.getElementById('symLayer').classList.remove('active');
+      document.getElementById('suggestionBar').style.display = '';
+    };
+
+    window.symType = function(char) {
+      committedText += char;
+      updateDisplay();
+      showToast(`⌨️ Gõ: "${char}"`);
+    };
+
+    window.symBackspace = function() {
+      if (committedText.length > 0) {
+        committedText = committedText.slice(0, -1);
+        updateDisplay();
+      }
+    };
+
+    // Kích hoạt tầng Sym từ phím 🔢 Sym trong bàn phím chính
+    window.activateSymLayer = function() {
+      enterSymLayer();
+    };
+
+    // ================================================================
+    // ===== PHÍM DÁN 📋 — CLIPBOARD TOAST =====
+    // ================================================================
+    // Ghi đè handler hiện có để thêm toast
+    const _origBtnPaste = document.getElementById('btnCopyText');
+    // Thêm xử lý nút Dán riêng (phím 📋 trong keyboard grid sẽ gọi handlePasteKey)
+    window.handlePasteKey = function() {
+      showToast('📋 Đã dán nội dung từ Clipboard (Mô phỏng)');
+      statLastAction.textContent = '📋 Dán văn bản từ Clipboard (Mô phỏng)';
+    };
+
+    // ================================================================
+    // ===== PHÍM SỔI 🔍 — TOAST =====
+    // ================================================================
+    window.handleSearchKey = function() {
+      const word = composingBuffer || (committedText.trim().split(/\s+/).pop()) || '';
+      showToast(`🔍 Tra từ: "${word}" — Đang phân tích âm tiết...`, 2500);
+      statLastAction.textContent = `🔍 Đang tra từ: "${word}"`;
+    };
+
+    // ================================================================
+    // ===== BACKSPACE GESTURES =====
+    // ================================================================
+    // Vuốt trái: xóa N từ (HUD)
+    window.handleBackspaceSwipeLeft = function(n) {
+      n = n || 1;
+      const words = committedText.trimEnd().split(/\s+/);
+      if (words.length <= n) {
+        committedText = '';
+      } else {
+        committedText = words.slice(0, -n).join(' ') + ' ';
+      }
+      composingBuffer = '';
+      updateDisplay();
+      showToast(`⌫ Đã xóa ${n} từ`);
+    };
+
+    // Vuốt xuống: xóa đoạn
+    window.handleBackspaceSwipeDown = function() {
+      committedText = '';
+      composingBuffer = '';
+      updateDisplay();
+      showToast('⌫ Đã xóa toàn bộ đoạn văn');
+    };
+
+    // Long-press: Select All + Cut
+    window.handleBackspaceLongPress = function() {
+      const all = (committedText + composingBuffer).trim();
+      committedText = '';
+      composingBuffer = '';
+      updateDisplay();
+      showToast('✂️ Đã Chọn Tất Cả và Cắt (Mô phỏng)');
+      statLastAction.textContent = `✂️ Select All & Cut: "${all.substring(0, 30)}${all.length > 30 ? '...' : ''}"`;
+    };
+
   </script>
 </body>
 </html>

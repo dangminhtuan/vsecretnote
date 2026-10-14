@@ -64,7 +64,8 @@ export default defineConfig({
         keyboard_grid: resolve(import.meta.dirname, 'keyboard-grid.html'),
         vcomp_matrix: resolve(import.meta.dirname, 'vcomp-matrix.html'),
         vcomp_169_rhymes: resolve(import.meta.dirname, 'vcomp-169-rhymes.html'),
-        vcomp_audit: resolve(import.meta.dirname, 'vcomp-audit.html')
+        vcomp_audit: resolve(import.meta.dirname, 'vcomp-audit.html'),
+        vboard_web_demo: resolve(import.meta.dirname, 'vboard-web-demo.html')
       }
     }
   }
