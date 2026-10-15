@@ -811,6 +811,55 @@
       box-shadow: 0 0 10px rgba(240, 136, 62, 0.5) !important;
     }
 
+    /* ICON SEARCH & UNDO/REDO KEY STYLES */
+    .icon-search-active {
+      border-color: rgba(242, 204, 96, 0.75) !important;
+      background: rgba(242, 204, 96, 0.16) !important;
+      box-shadow: 0 0 8px rgba(242, 204, 96, 0.35) !important;
+    }
+    #k_4_3, #emo_4_3 {
+      border-color: rgba(121, 192, 255, 0.4) !important;
+    }
+    #k_4_3 .key-char, #emo_4_3 .key-char {
+      color: #79c0ff !important;
+    }
+    #k_4_5, #emo_4_5 {
+      border-color: rgba(242, 204, 96, 0.4) !important;
+    }
+
+    /* 10 FAVORITE EMOJIS DOCK ON ROW 0 */
+    .favorite-emoji-dock-key {
+      background: #182230 !important;
+      border-color: #388bfd !important;
+    }
+    .favorite-emoji-dock-key .key-char {
+      font-size: 17px !important;
+    }
+    .favorite-emoji-dock-key .key-tl {
+      color: #8b949e !important;
+      font-size: 8.5px !important;
+      font-weight: 800 !important;
+    }
+
+    /* SELECTED SWAP SLOT IN EMOJI KEYBOARD */
+    .selected-swap-slot {
+      background: rgba(242, 204, 96, 0.3) !important;
+      border: 2.2px solid #f2cc60 !important;
+      box-shadow: 0 0 12px rgba(242, 204, 96, 0.6) !important;
+      animation: pulseSwapSlot 0.9s infinite alternate;
+    }
+    @keyframes pulseSwapSlot {
+      from { box-shadow: 0 0 6px rgba(242, 204, 96, 0.4); }
+      to { box-shadow: 0 0 16px rgba(242, 204, 96, 0.9); }
+    }
+    .selected-swap-slot .key-tl {
+      color: #f2cc60 !important;
+    }
+    .selected-swap-slot .key-sub {
+      color: #f2cc60 !important;
+      font-weight: 800 !important;
+    }
+
     /* NUMBER ROW LAUNCHPAD BADGE CHUẨN VNI */
     .vni-launchpad-badge {
       position: absolute;
@@ -1593,9 +1642,9 @@
         { id: 'k_4_0', char: '📱', shift: '', tl: '', sub: '1-Tay', type: 'mode', r: 4, c: 0 },
         { id: 'k_4_1', char: '(', shift: '⇤', tl: '', sub: '2 KT', type: 'fn', r: 4, c: 1 },
         { id: 'k_4_2', char: ')', shift: '⇥', tl: '', sub: '2 KT', type: 'fn', r: 4, c: 2 },
-        { id: 'k_4_3', char: '‹', shift: '|‹', tl: '', sub: '2 KT', type: 'fn', r: 4, c: 3 },
+        { id: 'k_4_3', char: '↶', shift: '↷', tl: '', sub: 'Undo', type: 'undo', r: 4, c: 3 },
         { id: 'k_4_4', char: ' ', shift: '', tl: '', sub: '3 KT', type: 'space', r: 4, c: 4 },
-        { id: 'k_4_5', char: '›', shift: '›|', tl: '', sub: '3 KT', type: 'fn', r: 4, c: 5 },
+        { id: 'k_4_5', char: '🎨', shift: '😀', tl: '', sub: 'Icon', type: 'icon_toggle', r: 4, c: 5 },
         { id: 'k_4_6', char: ',', shift: ';', tl: '', sub: '3 KT', type: 'fn', r: 4, c: 6 },
         { id: 'k_4_7', char: '?', shift: ']', tl: '', sub: '4+ KT', type: 'fn', r: 4, c: 7 },
         { id: 'k_4_8', char: '+', shift: '}', tl: '', sub: '4+ KT', type: 'fn', r: 4, c: 8 },
@@ -2012,6 +2061,498 @@
       return [];
     }
 
+    // ====================================================================
+    // UNDO / REDO HISTORY ENGINE
+    // ====================================================================
+    let undoStack = [];
+    let redoStack = [];
+
+    function pushUndoSnapshot() {
+      const last = undoStack.length > 0 ? undoStack[undoStack.length - 1] : null;
+      if (last && last.text === committedText && last.composing === composingBuffer && last.caret === caretIndex) {
+        return;
+      }
+      undoStack.push({
+        text: committedText,
+        composing: composingBuffer,
+        caret: caretIndex,
+        lastWord: lastCommittedWord
+      });
+      if (undoStack.length > 50) undoStack.shift();
+      redoStack = []; // Xóa redo stack khi có thao tác nhập liệu mới
+    }
+
+    function handleUndo() {
+      if (composingBuffer) {
+        pushUndoSnapshot();
+        composingBuffer = '';
+        isConsonantEditActive = false;
+        updateEditorDisplay();
+        renderKeyboard();
+        renderSuggestions();
+        showToast('↶ Đã hủy trạng thái soạn nháp');
+        return;
+      }
+      if (undoStack.length > 0) {
+        const current = {
+          text: committedText,
+          composing: composingBuffer,
+          caret: caretIndex,
+          lastWord: lastCommittedWord
+        };
+        redoStack.push(current);
+        const prev = undoStack.pop();
+        committedText = prev.text;
+        composingBuffer = prev.composing;
+        caretIndex = prev.caret;
+        lastCommittedWord = prev.lastWord;
+        isConsonantEditActive = false;
+        updateEditorDisplay();
+        renderKeyboard();
+        renderSuggestions();
+        showToast('↶ Hoàn tác (Undo)');
+      } else {
+        showToast('ℹ️ Không có thao tác để hoàn tác');
+      }
+    }
+
+    function handleRedo() {
+      if (redoStack.length > 0) {
+        const current = {
+          text: committedText,
+          composing: composingBuffer,
+          caret: caretIndex,
+          lastWord: lastCommittedWord
+        };
+        undoStack.push(current);
+        const next = redoStack.pop();
+        committedText = next.text;
+        composingBuffer = next.composing;
+        caretIndex = next.caret;
+        lastCommittedWord = next.lastWord;
+        isConsonantEditActive = false;
+        updateEditorDisplay();
+        renderKeyboard();
+        renderSuggestions();
+        showToast('↷ Làm lại (Redo)');
+      } else {
+        showToast('ℹ️ Không có thao tác để làm lại');
+      }
+    }
+
+    // ====================================================================
+    // EMOJI / UNICODE SEARCH & KEYBOARD ENGINE
+    // ====================================================================
+    let isEmojiSearchActive = false;
+    const DEFAULT_FAVORITE_EMOJIS = ["😂", "❤️", "👍", "🙏", "🔥", "😍", "😭", "🎉", "🚗", "✨"];
+    let favoriteEmojis = [...DEFAULT_FAVORITE_EMOJIS];
+    let selectedSwapSlot = null; // 1..10
+
+    const GRID_26_KEY_IDS_WEB = [
+      'emo_1_1', 'emo_1_2', 'emo_1_3', 'emo_1_4', 'emo_1_5', 'emo_1_6', 'emo_1_7', 'emo_1_8', 'emo_1_9', 'emo_1_10',
+      'emo_2_1', 'emo_2_2', 'emo_2_3', 'emo_2_4', 'emo_2_5', 'emo_2_6', 'emo_2_7', 'emo_2_8', 'emo_2_9',
+      'emo_3_1', 'emo_3_2', 'emo_3_3', 'emo_3_4', 'emo_3_5', 'emo_3_6', 'emo_3_7'
+    ];
+
+    const DEFAULT_GRID_26_SET1 = [
+      "👍", "👎", "👌", "✌️", "🤞", "👏", "🙌", "🙏", "💪", "❤️",
+      "🚗", "✈️", "🛵", "🚲", "☂️", "⭐", "🔥", "🎉", "🎁",
+      "☀️", "🌙", "💧", "🌲", "🌸", "🏠", "💵"
+    ];
+
+    const DEFAULT_GRID_26_SET2 = [
+      "🍕", "🍔", "🍟", "🍦", "☕", "🍺", "🎮", "🎧", "📱", "💻",
+      "⚽", "🏀", "🎾", "🎸", "🎨", "🚀", "🚁", "🏖️", "⛺",
+      "🐱", "🐶", "🐼", "🦁", "🦄", "🌈", "⚡"
+    ];
+
+    const DEFAULT_GRID_26_SET3 = [
+      "🖕", "👙", "🩱", "🩲", "👠", "💋", "🍑", "🍆", "🔞", "🫦",
+      "👅", "💦", "🌶️", "💣", "⛓️", "🍾", "🍷", "🏩", "🛏️",
+      "😈", "👿", "🤤", "🥴", "😏", "💅", "💃"
+    ];
+
+    const DEFAULT_GRID_26_EMOJIS = DEFAULT_GRID_26_SET1;
+
+    let activeEmojiSetWeb = 1; // 1, 2, 3
+    let grid26Set1Web = [...DEFAULT_GRID_26_SET1];
+    let grid26Set2Web = [...DEFAULT_GRID_26_SET2];
+    let grid26Set3Web = [...DEFAULT_GRID_26_SET3];
+
+    function getActiveGridEmojisWeb() {
+      if (activeEmojiSetWeb === 2) return grid26Set2Web;
+      if (activeEmojiSetWeb === 3) return grid26Set3Web;
+      return grid26Set1Web;
+    }
+
+    let stagedEmojiWeb = null;
+
+    function stageEmojiWeb(emoji) {
+      if (!emoji) return;
+      stagedEmojiWeb = emoji.trim();
+      renderKeyboard();
+      showTemporaryNotice(`[Đã gắp ${stagedEmojiWeb}]`, true);
+    }
+
+    function clearStagedEmojiWeb() {
+      stagedEmojiWeb = null;
+      renderKeyboard();
+    }
+
+    let emojiUsageMap = {};
+
+    function loadGrid26EmojisWeb() {
+      try {
+        const s1 = localStorage.getItem('vboard_grid_26_set1') || localStorage.getItem('vboard_grid_26_emojis');
+        if (s1) {
+          const arr = JSON.parse(s1);
+          if (Array.isArray(arr) && arr.length === 26) grid26Set1Web = arr;
+        }
+        const s2 = localStorage.getItem('vboard_grid_26_set2');
+        if (s2) {
+          const arr = JSON.parse(s2);
+          if (Array.isArray(arr) && arr.length === 26) grid26Set2Web = arr;
+        }
+        const s3 = localStorage.getItem('vboard_grid_26_set3');
+        if (s3) {
+          const arr = JSON.parse(s3);
+          if (Array.isArray(arr) && arr.length === 26) grid26Set3Web = arr;
+        }
+      } catch(e) {}
+    }
+
+    function saveActiveGridEmojisWeb() {
+      try {
+        const key = activeEmojiSetWeb === 2 ? 'vboard_grid_26_set2' : (activeEmojiSetWeb === 3 ? 'vboard_grid_26_set3' : 'vboard_grid_26_set1');
+        localStorage.setItem(key, JSON.stringify(getActiveGridEmojisWeb()));
+      } catch(e) {}
+    }
+
+    function loadEmojiUsageWeb() {
+      try {
+        const saved = localStorage.getItem('vboard_emoji_usage_stats');
+        if (saved) emojiUsageMap = JSON.parse(saved);
+      } catch(e) {}
+    }
+
+    function saveEmojiUsageWeb() {
+      try {
+        localStorage.setItem('vboard_emoji_usage_stats', JSON.stringify(emojiUsageMap));
+      } catch(e) {}
+    }
+
+    function recordEmojiUsageWeb(emo) {
+      if (!emo) return;
+      const clean = emo.trim();
+      emojiUsageMap[clean] = (emojiUsageMap[clean] || 0) + 1;
+      saveEmojiUsageWeb();
+    }
+
+    function promoteEmojiLFUWeb(newEmoji) {
+      stageEmojiWeb(newEmoji);
+    }
+
+    loadGrid26EmojisWeb();
+    loadEmojiUsageWeb();
+
+    const NUMERIC_CONTEXT_SYMBOLS = {
+      "k_1_1": "+", "k_1_2": "-", "k_1_3": "×", "k_1_4": "÷", "k_1_5": "=",
+      "k_1_6": "%", "k_1_7": "^", "k_1_8": "(", "k_1_9": ")", "k_1_10": "!",
+      "k_2_1": ".", "k_2_2": ",", "k_2_3": "₫", "k_2_4": "$", "k_2_5": "€",
+      "k_2_6": "¥", "k_2_7": "<", "k_2_8": ">", "k_2_9": "[", "k_2_10": "]",
+      "k_3_1": "/", "k_3_2": ":", "k_3_3": ";", "k_3_4": "~", "k_3_5": "_",
+      "k_3_6": "\\", "k_3_7": "π", "k_3_8": "√", "k_3_9": "{", "k_3_10": "}"
+    };
+    let isContextualNumericMode = false;
+
+    function checkContextualNumericModeWeb() {
+      const before = committedText.slice(0, caretIndex);
+      if (!before || before.endsWith(' ') || before.endsWith('\n') || before.endsWith('\t')) {
+        if (isContextualNumericMode) {
+          isContextualNumericMode = false;
+          renderKeyboard();
+        }
+        return;
+      }
+      const lastToken = before.split(/\s+/).pop() || '';
+      const hasTwoDigits = /\d{2,}/.test(lastToken);
+      const isNumericToken = /^[\d+\-×÷=%^()!.,₫$€¥<>\[\]:;~_\\/π√{}]+$/.test(lastToken);
+      const shouldActivate = hasTwoDigits && isNumericToken;
+      if (shouldActivate) {
+        if (currentMode !== 'normal') {
+          currentMode = 'normal';
+        }
+        if (!isContextualNumericMode) {
+          isContextualNumericMode = true;
+          renderKeyboard();
+        }
+      } else {
+        if (isContextualNumericMode) {
+          isContextualNumericMode = false;
+          renderKeyboard();
+        }
+      }
+    }
+
+    function loadFavoriteEmojisWeb() {
+      try {
+        const saved = localStorage.getItem('vboard_favorite_emojis');
+        if (saved) {
+          const arr = JSON.parse(saved);
+          if (Array.isArray(arr) && arr.length === 10) {
+            favoriteEmojis = arr;
+          }
+        }
+      } catch(e) {}
+    }
+
+    function saveFavoriteEmojisWeb() {
+      try {
+        localStorage.setItem('vboard_favorite_emojis', JSON.stringify(favoriteEmojis));
+      } catch(e) {}
+    }
+    loadFavoriteEmojisWeb();
+
+    const EMOJI_KEYWORD_MAP = {
+      "o": ["🚗", "☂️", "⭕", "👌"],
+      "0": ["⭕", "0️⃣", "🚗", "☂️", "👌"],
+      "1": ["1️⃣", "🥇", "☝️"],
+      "2": ["2️⃣", "🥈", "✌️"],
+      "3": ["3️⃣", "🥉"],
+      "4": ["4️⃣"],
+      "5": ["5️⃣", "⭐"],
+      "6": ["6️⃣"],
+      "7": ["7️⃣"],
+      "8": ["8️⃣", "🎱"],
+      "9": ["9️⃣"],
+      "10": ["🔟", "💯"],
+      "100": ["💯"],
+      "ô": ["☂️", "🚗"],
+      "oto": ["🚗", "🚘", "🚙"],
+      "xe": ["🚗", "🚙", "🛵", "🚲", "🏍️"],
+      "may bay": ["✈️", "🛫", "🚁"],
+      "maybay": ["✈️", "🛫", "🚁"],
+      "mb": ["✈️", "🏦"],
+      "du": ["☂️", "⛱️"],
+      "cai o": ["☂️", "⛱️"],
+      "caio": ["☂️", "⛱️"],
+      "tim": ["❤️", "💖", "💓", "💘"],
+      "sao": ["⭐", "🌟", "✨"],
+      "lua": ["🔥"],
+      "hoa": ["🌸", "🌺", "🌹", "🌻"],
+      "nuoc": ["💧", "🌊", "🥛"],
+      "nha": ["🏠", "🏡", "🏢"],
+      "tien": ["💰", "💵", "💳"],
+      "cuoi": ["😂", "🤣", "😀", "😆"],
+      "khoc": ["😭", "😢"],
+      "like": ["👍", "👌", "💯"],
+      "dislike": ["👎"],
+      "ok": ["👌", "✅", "👍"],
+      "v": ["✌️", "✅"],
+      "check": ["✅", "✔️"],
+      "dien thoai": ["📱", "📞"],
+      "dt": ["📱", "📞"],
+      "laptop": ["💻", "🖥️"],
+      "may tinh": ["💻", "🖥️"],
+      "sach": ["📚", "📖"],
+      "dong ho": ["⏰", "⏱️", "⌚"],
+      "mat troi": ["☀️", "🌞"],
+      "trang": ["🌙", "🌕"],
+      "cho": ["🐶", "🐕"],
+      "meo": ["🐱", "🐈"],
+      "ga": ["🐔", "🍗"],
+      "ca": ["🐟", "🐠"],
+      "an": ["🍽️", "😋", "🍲"],
+      "uong": ["☕", "🍵", "🍺", "🧋"],
+      "cafe": ["☕"],
+      "ca phe": ["☕"],
+      "tra": ["🍵", "🧋"],
+      "bia": ["🍺", "🍻"],
+      "bong": ["⚽", "🏀", "🎈"],
+      "qua": ["🎁", "🍎"],
+      "cay": ["🌲", "🌳", "🌱"],
+      "mua": ["🌧️", "⛈️", "☔"],
+      "sam": ["⚡", "🌩️"],
+      "tuyet": ["❄️", "☃️"],
+      "ao": ["👕", "👗"],
+      "quan": ["👖", "🩳"],
+      "giay": ["👟", "👞"],
+      "kinh": ["👓", "🕶️"],
+      "nhac": ["🎵", "🎶", "🎸"],
+      "khoa": ["🔒", "🔑"],
+      "co": ["🚩", "🇻🇳"],
+      "vn": ["🇻🇳"]
+    };
+
+    function getEmojisForWord(word) {
+      if (!word) return [];
+      const clean = word.trim().toLowerCase();
+      if (!clean) return [];
+      const unaccented = removeVietnameseAccents(clean);
+      const results = [];
+      if (EMOJI_KEYWORD_MAP[clean]) {
+        results.push(...EMOJI_KEYWORD_MAP[clean]);
+      }
+      if (unaccented && unaccented !== clean && EMOJI_KEYWORD_MAP[unaccented]) {
+        results.push(...EMOJI_KEYWORD_MAP[unaccented]);
+      }
+      return [...new Set(results)];
+    }
+
+    function toggleEmojiSearch() {
+      isEmojiSearchActive = !isEmojiSearchActive;
+      renderKeyboard();
+      renderSuggestions();
+      showToast(isEmojiSearchActive ? '✨ Đã BẬT gợi ý Icon theo từ' : '🔒 Đã TẮT gợi ý Icon');
+    }
+
+    const VAULT_30_KEY_IDS_WEB = [
+      'emo_1_1', 'emo_1_2', 'emo_1_3', 'emo_1_4', 'emo_1_5', 'emo_1_6', 'emo_1_7', 'emo_1_8', 'emo_1_9', 'emo_1_10',
+      'emo_2_1', 'emo_2_2', 'emo_2_3', 'emo_2_4', 'emo_2_5', 'emo_2_6', 'emo_2_7', 'emo_2_8', 'emo_2_9', 'emo_2_10',
+      'emo_3_1', 'emo_3_2', 'emo_3_3', 'emo_3_4', 'emo_3_5', 'emo_3_6', 'emo_3_7', 'emo_3_8', 'emo_3_9', 'emo_3_10'
+    ];
+
+    let personalVaultEmojis = [];
+    let activeEmojiPageWeb = 1;
+
+    function loadPersonalVaultEmojisWeb() {
+      try {
+        const saved = localStorage.getItem('vboard_personal_vault_emojis');
+        if (saved) {
+          const arr = JSON.parse(saved);
+          if (Array.isArray(arr)) personalVaultEmojis = arr;
+        }
+      } catch(e) {}
+    }
+
+    function savePersonalVaultEmojisWeb() {
+      try {
+        localStorage.setItem('vboard_personal_vault_emojis', JSON.stringify(personalVaultEmojis));
+      } catch(e) {}
+    }
+    loadPersonalVaultEmojisWeb();
+
+    function getTotalEmojiPagesWeb() {
+      return Math.max(1, Math.floor((personalVaultEmojis.length - 1) / 30) + 1);
+    }
+
+    function addEmojiToVaultWeb(emoji) {
+      const clean = (emoji || '').trim();
+      if (!clean) return '';
+      if (personalVaultEmojis.includes(clean)) {
+        return '[Đã có trong kho]';
+      }
+      personalVaultEmojis.push(clean);
+      savePersonalVaultEmojisWeb();
+      const page = Math.floor((personalVaultEmojis.length - 1) / 30) + 1;
+      activeEmojiPageWeb = page;
+      renderKeyboard();
+      return `[Đã lưu vào Bộ ${page}]`;
+    }
+
+    function cycleEmojiPageWeb() {
+      const total = getTotalEmojiPagesWeb();
+      activeEmojiPageWeb = (activeEmojiPageWeb >= total) ? 1 : activeEmojiPageWeb + 1;
+      renderKeyboard();
+      showTemporaryNotice(`Bộ ${activeEmojiPageWeb}`, true);
+    }
+
+    function openEmojiKeyboard(page = 1) {
+      const total = getTotalEmojiPagesWeb();
+      activeEmojiPageWeb = Math.max(1, Math.min(total, page));
+      selectedSwapSlot = null;
+      if (currentMode !== 'emoji') {
+        switchMode('emoji');
+      } else {
+        renderKeyboard();
+      }
+      showTemporaryNotice(`Bộ ${activeEmojiPageWeb}`, true);
+    }
+
+    const EMOJI_ROWS = [
+      [
+        { id: 'emo_0_0', char: 'Bộ 1', sub: 'Đổi bộ', type: 'fn', r: 0, c: 0 },
+        { id: 'emo_0_1', char: '1', type: 'fav_emo', r: 0, c: 1 },
+        { id: 'emo_0_2', char: '2', type: 'fav_emo', r: 0, c: 2 },
+        { id: 'emo_0_3', char: '3', type: 'fav_emo', r: 0, c: 3 },
+        { id: 'emo_0_4', char: '4', type: 'fav_emo', r: 0, c: 4 },
+        { id: 'emo_0_5', char: '5', type: 'fav_emo', r: 0, c: 5 },
+        { id: 'emo_0_6', char: '6', type: 'fav_emo', r: 0, c: 6 },
+        { id: 'emo_0_7', char: '7', type: 'fav_emo', r: 0, c: 7 },
+        { id: 'emo_0_8', char: '8', type: 'fav_emo', r: 0, c: 8 },
+        { id: 'emo_0_9', char: '9', type: 'fav_emo', r: 0, c: 9 },
+        { id: 'emo_0_10', char: '0', type: 'fav_emo', r: 0, c: 10 },
+        { id: 'emo_0_11', char: '⚙️', sub: 'Cài đặt', type: 'flank', r: 0, c: 11 }
+      ],
+      [
+        { id: 'emo_1_0', char: 'ABC', sub: 'Chữ', type: 'mode', r: 1, c: 0 },
+        { id: 'emo_1_1', char: '', type: 'vault_emo', r: 1, c: 1 },
+        { id: 'emo_1_2', char: '', type: 'vault_emo', r: 1, c: 2 },
+        { id: 'emo_1_3', char: '', type: 'vault_emo', r: 1, c: 3 },
+        { id: 'emo_1_4', char: '', type: 'vault_emo', r: 1, c: 4 },
+        { id: 'emo_1_5', char: '', type: 'vault_emo', r: 1, c: 5 },
+        { id: 'emo_1_6', char: '', type: 'vault_emo', r: 1, c: 6 },
+        { id: 'emo_1_7', char: '', type: 'vault_emo', r: 1, c: 7 },
+        { id: 'emo_1_8', char: '', type: 'vault_emo', r: 1, c: 8 },
+        { id: 'emo_1_9', char: '', type: 'vault_emo', r: 1, c: 9 },
+        { id: 'emo_1_10', char: '', type: 'vault_emo', r: 1, c: 10 },
+        { id: 'emo_1_11', char: '⌫', sub: 'Del', type: 'bksp', r: 1, c: 11 }
+      ],
+      [
+        { id: 'emo_2_0', char: '📋', sub: 'Dán', type: 'flank', r: 2, c: 0 },
+        { id: 'emo_2_1', char: '', type: 'vault_emo', r: 2, c: 1 },
+        { id: 'emo_2_2', char: '', type: 'vault_emo', r: 2, c: 2 },
+        { id: 'emo_2_3', char: '', type: 'vault_emo', r: 2, c: 3 },
+        { id: 'emo_2_4', char: '', type: 'vault_emo', r: 2, c: 4 },
+        { id: 'emo_2_5', char: '', type: 'vault_emo', r: 2, c: 5 },
+        { id: 'emo_2_6', char: '', type: 'vault_emo', r: 2, c: 6 },
+        { id: 'emo_2_7', char: '', type: 'vault_emo', r: 2, c: 7 },
+        { id: 'emo_2_8', char: '', type: 'vault_emo', r: 2, c: 8 },
+        { id: 'emo_2_9', char: '', type: 'vault_emo', r: 2, c: 9 },
+        { id: 'emo_2_10', char: '', type: 'vault_emo', r: 2, c: 10 },
+        { id: 'emo_2_11', char: '🔍', sub: 'Soi', type: 'flank', r: 2, c: 11 }
+      ],
+      [
+        { id: 'emo_3_0', char: '⇧', sub: 'Shift', type: 'shift', r: 3, c: 0 },
+        { id: 'emo_3_1', char: '', type: 'vault_emo', r: 3, c: 1 },
+        { id: 'emo_3_2', char: '', type: 'vault_emo', r: 3, c: 2 },
+        { id: 'emo_3_3', char: '', type: 'vault_emo', r: 3, c: 3 },
+        { id: 'emo_3_4', char: '', type: 'vault_emo', r: 3, c: 4 },
+        { id: 'emo_3_5', char: '', type: 'vault_emo', r: 3, c: 5 },
+        { id: 'emo_3_6', char: '', type: 'vault_emo', r: 3, c: 6 },
+        { id: 'emo_3_7', char: '', type: 'vault_emo', r: 3, c: 7 },
+        { id: 'emo_3_8', char: '', type: 'vault_emo', r: 3, c: 8 },
+        { id: 'emo_3_9', char: '', type: 'vault_emo', r: 3, c: 9 },
+        { id: 'emo_3_10', char: '', type: 'vault_emo', r: 3, c: 10 },
+        { id: 'emo_3_11', char: '⏎', sub: 'Line', type: 'action', r: 3, c: 11 }
+      ],
+      [
+        { id: 'emo_4_0', char: '🔤', sub: 'ABC', type: 'mode', r: 4, c: 0 },
+        { id: 'emo_4_1', char: '(', sub: '2 KT', type: 'fn', r: 4, c: 1 },
+        { id: 'emo_4_2', char: ')', sub: '2 KT', type: 'fn', r: 4, c: 2 },
+        { id: 'emo_4_3', char: '↶', sub: 'Undo', type: 'undo', r: 4, c: 3 },
+        { id: 'emo_4_4', char: ' ', sub: 'Space', type: 'space', r: 4, c: 4 },
+        { id: 'emo_4_5', char: '🎨', sub: 'Icon', type: 'icon_toggle', r: 4, c: 5 },
+        { id: 'emo_4_6', char: ',', sub: '3 KT', type: 'fn', r: 4, c: 6 },
+        { id: 'emo_4_7', char: '?', sub: '4+ KT', type: 'fn', r: 4, c: 7 },
+        { id: 'emo_4_8', char: '+', sub: '4+ KT', type: 'fn', r: 4, c: 8 },
+        { id: 'emo_4_9', char: '-', sub: '4+ KT', type: 'fn', r: 4, c: 9 },
+        { id: 'emo_4_10', char: '"', sub: '4+ KT', type: 'fn', r: 4, c: 10 },
+        { id: 'emo_4_11', char: '↵', sub: 'Enter', type: 'action', r: 4, c: 11 }
+      ]
+    ];
+
+    function renderEmojiLayout(container) {
+      EMOJI_ROWS.forEach(rowDef => {
+        const rowEl = document.createElement('div');
+        rowEl.className = 'grid-row';
+        rowDef.forEach(k => {
+          rowEl.appendChild(createKeyElement(k));
+        });
+        container.appendChild(rowEl);
+      });
+    }
+
     function getWordUnderCursorWeb() {
       const before = committedText.slice(0, caretIndex);
       const after = committedText.slice(caretIndex);
@@ -2177,21 +2718,76 @@
         const low = composingBuffer.toLowerCase();
         const found = Object.keys(VIETNAMESE_LEXICON_MAP).filter(w => w.startsWith(low)).slice(0, 10);
         const suggestions = found.length ? found : [composingBuffer];
+        const primaryWord = suggestions[0];
+        const otherWords = suggestions.slice(1);
 
-        suggestions.forEach((word, index) => {
+        // 1. Chip từ chính
+        const pChip = document.createElement('div');
+        pChip.className = 'sug-chip primary';
+        let codeTag = '';
+        try {
+          const enc = encodeWord(primaryWord);
+          if (enc && enc.base60) codeTag = `<span class="code-badge">[${enc.base60}]</span>`;
+        } catch(e) {}
+        pChip.innerHTML = `<span class="word-text">${primaryWord}</span>${codeTag}`;
+        pChip.onclick = () => commitWord(primaryWord);
+        container.appendChild(pChip);
+
+        // 2. Gợi ý Unicode Icon theo từ đang gõ (nếu đang BẬT) ngay sau từ đầu tiên
+        if (isEmojiSearchActive) {
+          const emojis = getEmojisForWord(composingBuffer);
+          emojis.forEach(emo => {
+            const chip = document.createElement('div');
+            chip.className = 'sug-chip emoji-chip';
+            chip.style.cssText = 'background: rgba(242, 204, 96, 0.22); border-color: rgba(242, 204, 96, 0.55); font-size: 15px; cursor: pointer;';
+            chip.title = "Giữ chặt để lưu vào Kho Icon cá nhân";
+            chip.innerHTML = `<span class="word-text">${emo}</span>`;
+            let pressTimer = null;
+            let longTriggered = false;
+            chip.onpointerdown = () => {
+              longTriggered = false;
+              pressTimer = setTimeout(() => {
+                longTriggered = true;
+                const notice = addEmojiToVaultWeb(emo);
+                showTemporaryNotice(notice, true);
+              }, 350);
+            };
+            chip.onpointerup = () => { if (pressTimer) clearTimeout(pressTimer); };
+            chip.onpointercancel = () => { if (pressTimer) clearTimeout(pressTimer); };
+            chip.oncontextmenu = (e) => {
+              e.preventDefault();
+              const notice = addEmojiToVaultWeb(emo);
+              showTemporaryNotice(notice, true);
+            };
+            chip.onclick = () => {
+              if (longTriggered) return;
+              recordEmojiUsageWeb(emo);
+              pushUndoSnapshot();
+              composingBuffer = '';
+              isConsonantEditActive = false;
+              insertTextAtCaret(emo + ' ');
+              renderKeyboard();
+              renderSuggestions();
+              showToast(`✨ Đã chèn icon ${emo}`);
+            };
+            container.appendChild(chip);
+          });
+        }
+
+        // 3. Các từ tiếng Việt gợi ý tiếp theo
+        otherWords.forEach(word => {
           const chip = document.createElement('div');
-          chip.className = `sug-chip ${index === 0 ? 'primary' : ''}`;
-          
-          let codeTag = '';
+          chip.className = 'sug-chip';
+          let cTag = '';
           try {
             const enc = encodeWord(word);
-            if (enc && enc.base60) codeTag = `<span class="code-badge">[${enc.base60}]</span>`;
+            if (enc && enc.base60) cTag = `<span class="code-badge">[${enc.base60}]</span>`;
           } catch(e) {}
-
-          chip.innerHTML = `<span class="word-text">${word}</span>${codeTag}`;
+          chip.innerHTML = `<span class="word-text">${word}</span>${cTag}`;
           chip.onclick = () => commitWord(word);
           container.appendChild(chip);
         });
+
         updateToolbarVisibility();
         return;
       }
@@ -2282,6 +2878,46 @@
         };
         container.appendChild(chip);
       });
+
+      // 6. Gợi ý Unicode Icon theo từ khóa (khi không composing, nếu đang BẬT)
+      if (isEmojiSearchActive) {
+        const queryWord = targetWord || '';
+        const emojis = getEmojisForWord(queryWord);
+        emojis.forEach(emo => {
+          const chip = document.createElement('div');
+          chip.className = 'sug-chip emoji-chip';
+          chip.style.cssText = 'background: rgba(242, 204, 96, 0.22); border-color: rgba(242, 204, 96, 0.55); font-size: 15px; cursor: pointer;';
+          chip.title = "Giữ chặt để lưu vào Kho Icon cá nhân";
+          chip.innerHTML = `<span class="word-text">${emo}</span>`;
+          let pressTimer = null;
+          let longTriggered = false;
+          chip.onpointerdown = () => {
+            longTriggered = false;
+            pressTimer = setTimeout(() => {
+              longTriggered = true;
+              const notice = addEmojiToVaultWeb(emo);
+              showTemporaryNotice(notice, true);
+            }, 350);
+          };
+          chip.onpointerup = () => { if (pressTimer) clearTimeout(pressTimer); };
+          chip.onpointercancel = () => { if (pressTimer) clearTimeout(pressTimer); };
+          chip.oncontextmenu = (e) => {
+            e.preventDefault();
+            const notice = addEmojiToVaultWeb(emo);
+            showTemporaryNotice(notice, true);
+          };
+          chip.onclick = () => {
+            if (longTriggered) return;
+            recordEmojiUsageWeb(emo);
+            pushUndoSnapshot();
+            insertTextAtCaret(emo + ' ');
+            renderKeyboard();
+            renderSuggestions();
+            showToast(`✨ Đã chèn icon ${emo}`);
+          };
+          container.appendChild(chip);
+        });
+      }
 
       updateToolbarVisibility();
     }
@@ -2389,6 +3025,7 @@
     }
 
     function commitWord(word) {
+      pushUndoSnapshot();
       const before = committedText.slice(0, caretIndex);
       const after = committedText.slice(caretIndex);
 
@@ -2409,6 +3046,7 @@
       updateEditorDisplay();
       renderKeyboard();
       renderSuggestions();
+      checkContextualNumericModeWeb();
 
       // Kích hoạt Đèn Quỹ đạo Dạy học A1 (Pedagogical Illumination)
       showTeachingHighlightForWord(word);
@@ -2517,6 +3155,7 @@
     }
 
     window.clearEditor = function() {
+      pushUndoSnapshot();
       committedText = '';
       composingBuffer = '';
       caretIndex = 0;
@@ -3895,6 +4534,8 @@
         render36RLayout(wrap);
       } else if (currentMode === 'secret_rhymes') {
         renderSecretRhymesLayout(wrap);
+      } else if (currentMode === 'emoji') {
+        renderEmojiLayout(wrap);
       }
       updateLaunchpadCapsule();
       updateVoiceBtnUI();
@@ -3927,6 +4568,39 @@
 
       let mainChar = k.char;
       let displaySub = k.sub || '';
+
+      if (k.id === 'k_4_5' || k.id === 'emo_4_5') {
+        if (currentMode === 'emoji') {
+          mainChar = '✕😀';
+          displaySub = 'Thoát';
+        } else {
+          mainChar = isEmojiSearchActive ? '✨😀' : '🎨';
+          displaySub = isEmojiSearchActive ? 'Icon: BẬT' : 'Icon: TẮT';
+          if (isEmojiSearchActive) el.classList.add('icon-search-active');
+        }
+      }
+      if (k.id === 'k_4_3' || k.id === 'emo_4_3') {
+        mainChar = '↶';
+        displaySub = 'Undo';
+      }
+
+      // Tầng Biểu Tượng Cảm Xúc (Emoji Layer): 26 Phím chữ biến thành 26 Emoji
+      if (currentMode === 'emoji') {
+        const gridIdx = GRID_26_KEY_IDS_WEB.indexOf(k.id);
+        if (gridIdx !== -1) {
+          mainChar = getActiveGridEmojisWeb()[gridIdx] || k.char;
+          displaySub = '';
+        }
+      }
+
+      // Chức năng theo ngữ cảnh (Contextual Numeric Mode): 26 Phím chữ biến thành Ký hiệu Toán & Số liệu
+      if (currentMode === 'normal' && isContextualNumericMode) {
+        if (NUMERIC_CONTEXT_SYMBOLS[k.id]) {
+          mainChar = NUMERIC_CONTEXT_SYMBOLS[k.id];
+          displaySub = '';
+          el.classList.add('numeric-context-key');
+        }
+      }
 
       // Biến đổi khi Shift active
       if ((isShift || isCaps) && k.shift) {
@@ -3988,12 +4662,77 @@
         el.appendChild(badge);
       }
 
+      // Slot 0 khi đang gắp icon (Staged Emoji)
+      if (stagedEmojiWeb && (k.id === 'k_0_10' || k.id === 'emo_0_10' || (k.r === 0 && k.c === 10))) {
+        mainChar = stagedEmojiWeb;
+        displaySub = 'Gắp';
+        el.style.border = '2px solid #F2CC60';
+        el.style.background = 'rgba(242, 204, 96, 0.35)';
+      }
+
+      // Hàng 0 khi ở Normal Mode + isEmojiSearchActive: 10 Icon Thường Dùng (ngoại trừ khi đang gõ số theo ngữ cảnh)
+      let isFavoriteDockKey = false;
+      let dockDigitChar = '';
+      if (currentMode === 'normal' && isEmojiSearchActive && !isContextualNumericMode && k.r === 0 && k.c >= 1 && k.c <= 10) {
+        if (!stagedEmojiWeb || k.c !== 10) {
+          isFavoriteDockKey = true;
+          dockDigitChar = k.char;
+          mainChar = favoriteEmojis[k.c - 1] || k.char;
+          displaySub = '';
+          el.classList.add('favorite-emoji-dock-key');
+        }
+      }
+
+      // Hàng 0 khi ở Emoji Mode (currentMode === 'emoji'): 10 Icon Thường Dùng kèm nhãn ĐỔI
+      if (currentMode === 'emoji' && k.id && k.id.startsWith('emo_0_')) {
+        const colNum = parseInt(k.id.replace('emo_0_', ''), 10);
+        if (colNum === 0 || k.c === 0) {
+          mainChar = `Bộ ${activeEmojiPageWeb}`;
+          displaySub = '';
+          el.style.background = '#1F385C';
+          el.style.borderColor = '#58A6FF';
+        } else if (colNum >= 1 && colNum <= 10) {
+          isFavoriteDockKey = true;
+          dockDigitChar = `${colNum % 10}`;
+          mainChar = favoriteEmojis[colNum - 1] || '';
+          displaySub = (selectedSwapSlot === colNum) ? 'ĐỔI' : '';
+          el.classList.add('favorite-emoji-dock-key');
+          if (selectedSwapSlot === colNum) {
+            el.style.borderColor = '#F2CC60';
+            el.style.background = '#332800';
+          }
+        }
+      }
+
+      // 30 phím kho cá nhân khi ở Emoji Mode (Kho Icon 30 ô)
+      if (currentMode === 'emoji' && VAULT_30_KEY_IDS_WEB.includes(k.id)) {
+        const vaultIdx = VAULT_30_KEY_IDS_WEB.indexOf(k.id);
+        const globalIdx = (activeEmojiPageWeb - 1) * 30 + vaultIdx;
+        const emo = personalVaultEmojis[globalIdx] || '';
+        mainChar = emo;
+        if (!emo) {
+          el.style.background = '#161B22';
+          el.style.borderColor = '#28303C';
+          mainChar = '·';
+          el.style.color = '#3A4454';
+        } else {
+          el.style.background = '#182230';
+          el.style.borderColor = '#388BFD';
+          el.style.fontSize = '17px';
+        }
+      }
+
       const charSpan = document.createElement('span');
       charSpan.className = 'key-char';
       charSpan.textContent = mainChar;
       el.appendChild(charSpan);
 
-      if (k.tl && shiftStudyMode === 0) {
+      if (isFavoriteDockKey && dockDigitChar) {
+        const tlSpan = document.createElement('span');
+        tlSpan.className = 'key-tl';
+        tlSpan.textContent = dockDigitChar;
+        el.appendChild(tlSpan);
+      } else if (k.tl && shiftStudyMode === 0) {
         const tlSpan = document.createElement('span');
         tlSpan.className = 'key-tl';
         tlSpan.textContent = k.tl;
@@ -4057,6 +4796,32 @@
             renderKeyboard();
             renderSuggestions();
             showTemporaryNotice(`📖 Chế độ Học Dấu: ${STUDY_MODE_BADGES[shiftStudyMode]}`);
+          }, 350);
+        }
+
+        // Long Press phím Undo (k_4_3) -> Redo
+        if (k.id === 'k_4_3' || k.type === 'undo' || k.id === 'emo_4_3') {
+          modeLongTimer = setTimeout(() => {
+            isModeLongTriggered = true;
+            handleRedo();
+          }, 350);
+        }
+
+        // Long Press phím Icon (k_4_5) -> mở Bàn phím Kho Icon Cá Nhân
+        if (k.id === 'k_4_5' || k.type === 'icon_toggle' || k.id === 'emo_4_5') {
+          modeLongTimer = setTimeout(() => {
+            isModeLongTriggered = true;
+            openEmojiKeyboard(activeEmojiPageWeb);
+          }, 350);
+        }
+
+        // Long Press trên Hàng 0 ở Emoji Mode -> Chọn ô Hoán Đổi Icon
+        if (currentMode === 'emoji' && k.r === 0 && k.c >= 1 && k.c <= 10) {
+          modeLongTimer = setTimeout(() => {
+            isModeLongTriggered = true;
+            selectedSwapSlot = k.c;
+            renderKeyboard();
+            showTemporaryNotice('[Chọn icon đổi]', true);
           }, 350);
         }
 
@@ -4130,7 +4895,10 @@
         }
 
         // Kích hoạt Bệ Phóng Hàng 4 (Launchpad) khi ngón tay vuốt từ hàng 4 lên trên (chuẩn Android)
-        if (gestureKeyDef && gestureKeyDef.r === 4 && shiftStudyMode === 0) {
+        // Áp dụng "Bung phím tối giản": Không cướp vuốt trên các phím độc lập hàng 4 (Undo, Icon Toggle) hoặc khi ở tầng Emoji/Numeric Context
+        const isLaunchpadRestricted = isContextualNumericMode || currentMode === 'emoji' ||
+          (k && (k.id === 'k_4_3' || k.id === 'k_4_5' || k.id === 'emo_4_5' || k.id === 'emo_4_3'));
+        if (gestureKeyDef && gestureKeyDef.r === 4 && shiftStudyMode === 0 && !isLaunchpadRestricted) {
           const dyLaunch = gestureStartY - e.clientY;
           const curK = getKeyAtPoint(e.clientX, e.clientY);
           if (dyLaunch > 12 || (curK && curK.r < 4)) {
@@ -4146,7 +4914,7 @@
         }
 
         // Đánh dấu cờ vuốt hợp lệ khi cự ly >= 30px
-        if (dist >= 30) {
+        if (dist >= 30 && !isLaunchpadRestricted) {
           isSwiping = true;
         }
       });
@@ -4165,6 +4933,25 @@
         const dx = e.clientX - gestureStartX;
         const dy = e.clientY - gestureStartY;
         const dist = Math.hypot(dx, dy);
+
+        // Bắt cử chỉ riêng cho phím Undo k_4_3: Chạm = Undo
+        if (k.id === 'k_4_3' || k.type === 'undo' || k.id === 'emo_4_3') {
+          clearGlideTrail();
+          handleUndo();
+          return;
+        }
+
+        // Bắt cử chỉ riêng cho phím Icon k_4_5: Chạm = Bật/Tắt (hoặc Đóng tầng Emoji)
+        if (k.id === 'k_4_5' || k.type === 'icon_toggle' || k.id === 'emo_4_5') {
+          clearGlideTrail();
+          if (currentMode === 'emoji') {
+            switchMode('normal');
+            showTemporaryNotice('Bàn phím chữ', false);
+            return;
+          }
+          toggleEmojiSearch();
+          return;
+        }
 
         let pathLen = 0;
         for (let i = 1; i < glidePoints.length; i++) {
@@ -4239,6 +5026,146 @@
     }
 
     function handleKeyTap(k) {
+      // Xử lý chế độ Bàn Phím Icon (Emoji Keyboard Layer)
+      if (currentMode === 'emoji') {
+        if (k.char === '🔤' || k.id === 'emo_4_0') {
+          selectedSwapSlot = null;
+          switchMode('normal');
+          showTemporaryNotice('Bàn phím chữ', false);
+          return;
+        }
+        if (k.type === 'undo' || k.id === 'emo_4_3' || k.id === 'k_4_3') {
+          selectedSwapSlot = null;
+          handleUndo();
+          return;
+        }
+        if (k.type === 'icon_toggle' || k.id === 'emo_4_5' || k.id === 'k_4_5') {
+          selectedSwapSlot = null;
+          switchMode('normal');
+          showTemporaryNotice('Bàn phím chữ', false);
+          return;
+        }
+        if (k.type === 'space') {
+          selectedSwapSlot = null;
+          pushUndoSnapshot();
+          insertTextAtCaret(' ');
+          return;
+        }
+        if (k.type === 'bksp') {
+          selectedSwapSlot = null;
+          pushUndoSnapshot();
+          if (caretIndex > 0) {
+            committedText = committedText.slice(0, caretIndex - 1) + committedText.slice(caretIndex);
+            caretIndex--;
+            updateEditorDisplay();
+            renderSuggestions();
+          }
+          return;
+        }
+        if (k.type === 'action') {
+          selectedSwapSlot = null;
+          pushUndoSnapshot();
+          insertTextAtCaret('\n');
+          return;
+        }
+        if (k.id === 'emo_0_0' || (k.r === 0 && k.c === 0)) {
+          selectedSwapSlot = null;
+          cycleEmojiPageWeb();
+          return;
+        }
+
+        // 1. Chế độ Swap
+        if (selectedSwapSlot !== null) {
+          const targetSlot = selectedSwapSlot;
+          if (k.r === 0 && k.c === targetSlot) {
+            selectedSwapSlot = null;
+            renderKeyboard();
+            showTemporaryNotice('[Đã hủy]', false);
+            return;
+          }
+
+          let chosenEmoji = null;
+          if (k.r === 0 && k.c >= 1 && k.c <= 10) {
+            chosenEmoji = favoriteEmojis[k.c - 1];
+          } else {
+            const vaultIdx = VAULT_30_KEY_IDS_WEB.indexOf(k.id);
+            if (vaultIdx !== -1) {
+              const globalIdx = (activeEmojiPageWeb - 1) * 30 + vaultIdx;
+              chosenEmoji = personalVaultEmojis[globalIdx];
+            }
+          }
+
+          if (chosenEmoji) {
+            favoriteEmojis[targetSlot - 1] = chosenEmoji;
+            saveFavoriteEmojisWeb();
+            selectedSwapSlot = null;
+            renderKeyboard();
+            showTemporaryNotice(`[Đã đổi ${chosenEmoji}]`, true);
+            return;
+          } else {
+            selectedSwapSlot = null;
+            renderKeyboard();
+            return;
+          }
+        }
+
+        // 2. Chế độ thường: Chèn emoji
+        let emojiToInsert = null;
+        if (k.r === 0 && k.c >= 1 && k.c <= 10) {
+          emojiToInsert = favoriteEmojis[k.c - 1];
+        } else {
+          const vaultIdx = VAULT_30_KEY_IDS_WEB.indexOf(k.id);
+          if (vaultIdx !== -1) {
+            const globalIdx = (activeEmojiPageWeb - 1) * 30 + vaultIdx;
+            emojiToInsert = personalVaultEmojis[globalIdx];
+          } else {
+            emojiToInsert = k.char;
+          }
+        }
+
+        if (emojiToInsert) {
+          recordEmojiUsageWeb(emojiToInsert);
+          pushUndoSnapshot();
+          insertTextAtCaret(emojiToInsert + ' ');
+        }
+        return;
+      }
+
+      // Khi Contextual Numeric Mode đang BẬT: 26 phím chữ cái biến thành các ký hiệu toán & số liệu, hàng 0 là các số
+      if (currentMode === 'normal' && isContextualNumericMode) {
+        const mathSym = NUMERIC_CONTEXT_SYMBOLS[k.id];
+        if (mathSym) {
+          pushUndoSnapshot();
+          insertTextAtCaret(mathSym);
+          checkContextualNumericModeWeb();
+          return;
+        }
+        if (k.r === 0 && k.c >= 1 && k.c <= 10) {
+          pushUndoSnapshot();
+          insertTextAtCaret(k.char);
+          checkContextualNumericModeWeb();
+          return;
+        }
+      }
+
+      // Slot 0 khi đang gắp icon ở chế độ Normal: Chạm vào là hủy
+      if (stagedEmojiWeb && (k.id === 'k_0_10' || (k.r === 0 && k.c === 10))) {
+        clearStagedEmojiWeb();
+        showTemporaryNotice('[Đã hủy]', false);
+        return;
+      }
+
+      // Khi Mặt cười Emoji Search đang BẬT: Chạm phím số hàng 0 = Gõ 10 Icon Thường Dùng và Tự động tắt (Auto-dismiss)
+      if (currentMode === 'normal' && isEmojiSearchActive && k.r === 0 && k.c >= 1 && k.c <= 10) {
+        const emo = favoriteEmojis[k.c - 1] || k.char;
+        recordEmojiUsageWeb(emo);
+        pushUndoSnapshot();
+        insertTextAtCaret(emo + ' ');
+        isEmojiSearchActive = false;
+        renderKeyboard();
+        return;
+      }
+
       // 0. Nếu đang ở Chế độ Study Mode trên Hàng 4: Bấm deck item
       if (currentMode === 'normal' && shiftStudyMode > 0) {
         if (k.id === 'k_0_0') {
@@ -4325,28 +5252,12 @@
       }
 
       // 7. Phím Điều Hướng Con Trỏ Trên Hàng 4 (‹ › ( ))
-      if (k.id === 'k_4_3') {
-        if (isShift) {
-          caretIndex = 0;
-          selectionStart = -1; selectionEnd = -1;
-          isShift = false; renderKeyboard();
-          showToast('|‹ Đã về đầu dòng');
-        } else {
-          if (caretIndex > 0) caretIndex--;
-        }
-        updateEditorDisplay();
+      if (k.id === 'k_4_3' || k.type === 'undo' || k.id === 'emo_4_3') {
+        handleUndo();
         return;
       }
-      if (k.id === 'k_4_5') {
-        if (isShift) {
-          caretIndex = committedText.length;
-          selectionStart = -1; selectionEnd = -1;
-          isShift = false; renderKeyboard();
-          showToast('›| Đã về cuối dòng');
-        } else {
-          if (caretIndex < committedText.length) caretIndex++;
-        }
-        updateEditorDisplay();
+      if (k.id === 'k_4_5' || k.type === 'icon_toggle' || k.id === 'emo_4_5') {
+        toggleEmojiSearch();
         return;
       }
       if (k.id === 'k_4_1' && isShift) {
@@ -4407,6 +5318,7 @@
         }
 
         // Xóa bình thường
+        pushUndoSnapshot();
         if (composingBuffer) {
           composingBuffer = composingBuffer.slice(0, -1);
           if (!composingBuffer) isConsonantEditActive = false;
@@ -4416,6 +5328,7 @@
         }
         updateEditorDisplay();
         renderSuggestions();
+        checkContextualNumericModeWeb();
         return;
       }
 
@@ -4558,6 +5471,7 @@
     }
 
     function insertTextAtCaret(text) {
+      pushUndoSnapshot();
       const before = committedText.slice(0, caretIndex);
       const after = committedText.slice(caretIndex);
       committedText = before + text + after;
@@ -4565,9 +5479,11 @@
       selectionStart = -1; selectionEnd = -1;
       updateEditorDisplay();
       renderSuggestions();
+      checkContextualNumericModeWeb();
     }
 
     function handleBackspaceSwipeWords(wordCount) {
+      pushUndoSnapshot();
       if (composingBuffer) {
         composingBuffer = '';
       } else if (caretIndex > 0) {
@@ -4583,9 +5499,11 @@
       }
       updateEditorDisplay();
       renderSuggestions();
+      checkContextualNumericModeWeb();
     }
 
     function handleBackspaceSwipeDown() {
+      pushUndoSnapshot();
       if (composingBuffer) {
         composingBuffer = '';
       } else if (caretIndex > 0) {
@@ -4598,6 +5516,7 @@
       }
       updateEditorDisplay();
       renderSuggestions();
+      checkContextualNumericModeWeb();
       showToast('⌫ Đã vuốt xóa cả dòng');
     }
 
