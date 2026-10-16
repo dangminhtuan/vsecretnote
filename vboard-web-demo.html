@@ -1656,27 +1656,28 @@
 
     // DECK ĐIỀU KHIỂN HÀNG 4 KHI BẬT STUDY MODE (GIỮ ⇧)
     const STUDY_ROW4_DECK = [
-      { id: 'k_4_1', char: 'B4', sub: 'Lục', targetMode: 2, colorHex: '#3FB950' },
-      { id: 'k_4_2', char: 'B5', sub: 'Vàng', targetMode: 3, colorHex: '#F2CC60' },
-      { id: 'k_4_3', char: 'B6', sub: 'Tím', targetMode: 4, colorHex: '#BC8CFF' },
-      { id: 'k_4_4', char: 'ALL', sub: 'B4-6', targetMode: 1, colorHex: '#58A6FF' },
-      { id: 'k_4_5', char: 'B1', sub: 'Telex', targetMode: 5, colorHex: '#F0883E' },
-      { id: 'k_4_6', char: 'B2', sub: 'BKVL', targetMode: 6, colorHex: '#D29922' },
-      { id: 'k_4_7', char: 'B3', sub: '0..5', targetMode: 7, colorHex: '#79C0FF' },
-      { id: 'k_4_8', char: '🎤a1', sub: 'Nói a1', targetMode: 0, colorHex: '#3FB950' },
-      { id: 'k_4_9', char: '🎤vV1', sub: 'Nói vV1', targetMode: 0, colorHex: '#F2CC60' },
-      { id: 'k_4_10', char: '🔄Mã', sub: 'Đổi câu', targetMode: 0, colorHex: '#BC8CFF' }
+      { id: 'k_4_1', char: 'ALL', sub: 'Tất cả', targetMode: 1, colorHex: '#58A6FF' },
+      { id: 'k_4_2', char: 'PA', sub: 'Phụ âm', targetMode: 8, colorHex: '#BC8CFF' },
+      { id: 'k_4_3', char: 'B2', sub: 'BKVL', targetMode: 6, colorHex: '#D29922' },
+      { id: 'k_4_4', char: 'B4', sub: 'Lục', targetMode: 2, colorHex: '#3FB950' },
+      { id: 'k_4_5', char: 'B5', sub: 'Vàng', targetMode: 3, colorHex: '#F2CC60' },
+      { id: 'k_4_6', char: 'B6', sub: 'Tím', targetMode: 4, colorHex: '#BC8CFF' },
+      { id: 'k_4_7', char: 'B1', sub: 'Telex', targetMode: 5, colorHex: '#F0883E' },
+      { id: 'k_4_8', char: 'B3', sub: '0..5', targetMode: 7, colorHex: '#79C0FF' },
+      { id: 'k_4_9', char: '🎤a1', sub: 'Nói a1', targetMode: 0, colorHex: '#3FB950' },
+      { id: 'k_4_10', char: '🎤vV1', sub: 'Nói vV1', targetMode: 0, colorHex: '#F2CC60' }
     ];
 
     const STUDY_MODE_BADGES = [
       'Tắt',
-      '🎓 Tất cả B4-B6',
+      '🎓 Tất cả B4-B6 & Phụ âm',
       '🎓 B4 Lục (aeiouy)',
       '🎓 B5 Vàng (cghmnw)',
       '🎓 B6 Tím (6789tp)',
       '🎓 B1 Telex (zsfrxj)',
       '🎓 B2 BKVL (bkvlqd)',
-      '🎓 B3 Số (0..5)'
+      '🎓 B3 Số (0..5)',
+      '🎓 Phụ âm (Th,Tr,Ch,Kh...)'
     ];
 
     // SYMBOLS LAYER (5 hàng x 12 cột)
@@ -3905,20 +3906,22 @@
           }
         }
 
-        const primaryCorner = cornerChars[0] || peakKey || '';
+        // Ký tự mở đầu chủ đích của Bệ phóng Hàng 4:
+        // BẮT BUỘC là ký tự chữ cái đầu tiên mà ngón tay bước vào từ Bệ Phóng Hàng 4 (firstCrossedLetter)
+        const firstCrossedLetter = cleanCrossed[0] || '';
+        const secondCrossedLetter = cleanCrossed[1] || '';
+
         const primaryStartCandidates = new Set();
-        if (primaryCorner) primaryStartCandidates.add(primaryCorner);
+        if (firstCrossedLetter) primaryStartCandidates.add(firstCrossedLetter);
 
         const fallbackStartCandidates = new Set();
-        const crossedBeforeEnd = (cleanCrossed.length > 1) ? cleanCrossed.slice(0, -1) : cleanCrossed;
-        for (const k of crossedBeforeEnd) fallbackStartCandidates.add(k);
+        if (secondCrossedLetter && secondCrossedLetter !== endChar) {
+          const isNearFirst = (ADJACENT_NEIGHBORS[firstCrossedLetter] || []).includes(secondCrossedLetter);
+          if (isNearFirst) fallbackStartCandidates.add(secondCrossedLetter);
+        }
 
-        const firstCrossedLetter = cleanCrossed[0] || '';
-        const primaryCornerIdxInCrossed = primaryCorner ? cleanCrossed.indexOf(primaryCorner) : -1;
-
-        const allStartCandidates = new Set([...primaryStartCandidates, ...fallbackStartCandidates]);
         const startNeighbors = new Set();
-        allStartCandidates.forEach(c => {
+        primaryStartCandidates.forEach(c => {
           (ADJACENT_NEIGHBORS[c] || []).forEach(n => startNeighbors.add(n));
         });
         const endNeighbors = endChar ? (ADJACENT_NEIGHBORS[endChar] || []) : [];
@@ -3929,24 +3932,15 @@
           if (!isLenMatch(unaccKey.length)) continue;
 
           const uStart = unaccKey[0];
-          const uSecond = unaccKey[1] || '';
           const isPrimaryStart = primaryStartCandidates.has(uStart);
           const isFallbackStart = fallbackStartCandidates.has(uStart);
           const isStartNeighbor = !isPrimaryStart && !isFallbackStart && startNeighbors.has(uStart);
           if (!isPrimaryStart && !isFallbackStart && !isStartNeighbor) continue;
 
-          const uStartIdx = cleanCrossed.indexOf(uStart);
-          const isCollinearStartToPrimaryCorner = !isPrimaryStart &&
-            primaryCorner &&
-            uSecond === primaryCorner &&
-            uStartIdx >= 0 && uStartIdx < primaryCornerIdxInCrossed;
-
           const startScore = isPrimaryStart ? 15.0
-            : (isCollinearStartToPrimaryCorner && uStart === firstCrossedLetter) ? 12.0
-            : isCollinearStartToPrimaryCorner ? 6.0
-            : (isFallbackStart && uStart === firstCrossedLetter) ? 3.5
-            : isFallbackStart ? 1.5
-            : 0.5;
+            : isFallbackStart ? 5.0
+            : isStartNeighbor ? 2.0
+            : 0.0;
 
           const uEnd = unaccKey[unaccKey.length - 1];
           const isEndExact = (endChar && uEnd === endChar);
@@ -4620,6 +4614,11 @@
         const b3 = ['0', '1', '2', '3', '4', '5'];
         const toneNames = ['ngang', 'sắc', 'huyền', 'hỏi', 'ngã', 'nặng'];
 
+        const consMap = {
+          'q': 'Qu', 'r': 'Tr', 't': 'Th', 'p': 'Ph', 'd': 'đ', 'g': 'Gh', 'h': 'Nh', 'k': 'Kh', 'c': 'Ch', 'n': 'Ng',
+          '6': 'Th', '7': 'Ch', '8': 'Tr', '9': 'Nh', '0': 'Ng', '1': 'Th', '2': 'Ch', '3': 'Tr', '4': 'Nh', '5': 'Ng'
+        };
+
         if ((shiftStudyMode === 1 || shiftStudyMode === 2) && b4.includes(ch)) {
           el.classList.add('study-key-b4');
           displaySub = toneNames[b4.indexOf(ch)];
@@ -4629,15 +4628,18 @@
         } else if ((shiftStudyMode === 1 || shiftStudyMode === 4) && b6.includes(ch)) {
           el.classList.add('study-key-b6');
           displaySub = toneNames[b6.indexOf(ch)];
+        } else if ((shiftStudyMode === 1 || shiftStudyMode === 6) && b2.includes(ch)) {
+          el.classList.add('study-key-b2');
+          displaySub = b2[ch] || toneNames[b2.indexOf(ch)] || '';
         } else if (shiftStudyMode === 5 && b1.includes(ch)) {
           el.classList.add('study-key-b1');
           displaySub = toneNames[b1.indexOf(ch)];
-        } else if (shiftStudyMode === 6 && b2.includes(ch)) {
-          el.classList.add('study-key-b2');
-          displaySub = toneNames[b2.indexOf(ch)];
         } else if (shiftStudyMode === 7 && b3.includes(ch)) {
           el.classList.add('study-key-b3');
           displaySub = toneNames[b3.indexOf(ch)];
+        } else if ((shiftStudyMode === 1 || shiftStudyMode === 8) && consMap[ch]) {
+          el.classList.add('study-key-pa');
+          displaySub = consMap[ch];
         }
 
         // Hàng 0 ở Study Mode
